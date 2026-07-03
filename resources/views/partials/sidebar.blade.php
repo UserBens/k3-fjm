@@ -1,14 +1,251 @@
+<style>
+    /* SIDEBAR */
+    #sidebar {
+        width: 220px;
+        min-width: 220px;
+        background: #fff;
+        border-right: 1px solid rgba(0, 0, 0, 0.07);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .sb-logo {
+        padding: 18px 16px 14px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .sb-logo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sb-logo-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #1A1D2E;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .sb-brand-main {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 15px;
+        color: #1A1D2E;
+        letter-spacing: 0.05em;
+        line-height: 1.1;
+    }
+
+    .sb-brand-sub {
+        font-size: 9px;
+        font-weight: 700;
+        color: #1A7A3C;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+    }
+
+    .sb-user {
+        margin: 12px 12px 0;
+        background: #F5F7FF;
+        border-radius: 10px;
+        padding: 10px 12px;
+        border: 1px solid rgba(45, 75, 158, 0.08);
+    }
+
+    .sb-user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #2D4B9E;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .sb-user-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1A1D2E;
+        line-height: 1.2;
+    }
+
+    .sb-user-role {
+        font-size: 9.5px;
+        color: #9CA3AF;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+    }
+
+    .sb-section {
+        padding: 14px 12px 4px;
+    }
+
+    .sb-section-label {
+        font-size: 9px;
+        font-weight: 800;
+        color: #CBD5E1;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 0 6px;
+        margin-bottom: 4px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.15s;
+        margin-bottom: 1px;
+    }
+
+    .nav-link:hover {
+        background: #F0F2FA;
+    }
+
+    .nav-link.active {
+        background: #2D4B9E;
+    }
+
+    .nav-link.active .nav-icon {
+        color: #fff;
+    }
+
+    .nav-link.active .nav-label {
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .nav-icon {
+        font-size: 16px;
+        color: #94A3B8;
+        width: 18px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .nav-label {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748B;
+    }
+
+    .nav-link.danger:hover {
+        background: #FEF2F2;
+    }
+
+    .nav-link.danger .nav-icon,
+    .nav-link.danger .nav-label {
+        color: #D0021B;
+    }
+
+    .sb-bottom {
+        padding: 10px 12px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        margin-top: auto;
+    }
+
+    .sb-logo-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: #1A7A3C;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .sb-logo-icon svg {
+        width: 18px;
+        height: 18px;
+        color: #fff;
+    }
+
+    .sb-logo-text {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #1A1D2E;
+        letter-spacing: 0.01em;
+        line-height: 1.3;
+    }
+
+    /* ===========================
+   DROPDOWN SIDEBAR
+=========================== */
+
+    .nav-dropdown-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .nav-dropdown-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dropdown-arrow {
+        width: 16px;
+        height: 16px;
+        color: #94A3B8;
+        transition: .3s;
+        flex-shrink: 0;
+    }
+
+    .nav-dropdown-toggle.active .dropdown-arrow {
+        color: #fff;
+    }
+
+    .dropdown-arrow.rotate {
+        transform: rotate(180deg);
+    }
+
+    /* dropdown */
+
+    .dropdown-menu {
+        height: 0;
+        overflow: hidden;
+        transition: height .35s ease;
+    }
+
+    .dropdown-menu .nav-link {
+        padding: 8px 10px 8px 44px;
+        margin: 2px 0;
+    }
+
+    .dropdown-menu .nav-label {
+        font-size: 12px;
+    }
+</style>
+
 <aside id="sidebar">
     <div class="sb-logo">
         <div class="sb-logo-row">
-            <div class="sb-logo-box">
-                <img src="{{ asset('storage/logo-h.webp') }}" alt="FJM"
-                    style="height:18px;object-fit:contain;filter:brightness(0) invert(1);" />
+            <div class="sb-logo-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12.75L11.25 15 15 9.75M21 12c0 4.556-3.207 8.377-7.5 9.32a9.735 9.735 0 01-3 0C6.207 20.377 3 16.556 3 12V6.741a3 3 0 011.5-2.598l6-3.464a3 3 0 013 0l6 3.464a3 3 0 011.5 2.598V12z" />
+                </svg>
             </div>
-            <div>
-                <div class="sb-brand-main">K3 PT. FJM</div>
-                <div class="sb-brand-sub">Portal K3</div>
-            </div>
+            <div class="sb-logo-text">K3 PT. FOKUS JASA MITRA</div>
             <div class="sb-close-btn" onclick="toggleSidebar()" aria-label="Tutup menu">
                 <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -46,14 +283,75 @@
 
     <div class="sb-section">
         <div class="sb-section-label">Key Performance Indicator</div>
-        <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}" href="{{ route('monitoring-laporan.index') }}">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+
+        @php
+            $monitoringActive =
+                request()->routeIs('monitoring-laporan.*') ||
+                request()->routeIs('monitoring-insiden.*') ||
+                request()->routeIs('monitoring-kpi.*');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $monitoringActive ? 'active' : '' }}"
+            onclick="toggleDropdown('monitoringDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+
+                <span class="nav-label">Monitoring Laporan KPI</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $monitoringActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-            <span class="nav-label">Monitoring Laporan</span>
+
         </a>
+
+        <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}"
+                href="{{ route('monitoring-laporan.index') }}">
+                <span class="nav-label">Data Pengawas</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('monitoring-insiden.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Data Medis</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Data Safety</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Cetak UA/UC</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dokumen Reject</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Monitoring SO</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard Individu</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Monitoring Pengawas</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Rekap Pengawas</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Monitoring Medis</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Rekap Medis</span>
+            </a>
+
+        </div>
     </div>
 
     <div class="sb-section">
@@ -133,3 +431,48 @@
         </a>
     </div>
 </aside>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
+    function toggleDropdown(dropdownId, toggleElement) {
+
+        const dropdown = document.getElementById(dropdownId);
+
+        const arrow = toggleElement.querySelector(".dropdown-arrow");
+
+        if (dropdown.classList.contains("show")) {
+
+            dropdown.style.height = dropdown.scrollHeight + "px";
+
+            requestAnimationFrame(() => {
+                dropdown.style.height = "0px";
+            });
+
+            dropdown.classList.remove("show");
+
+        } else {
+
+            dropdown.classList.add("show");
+
+            dropdown.style.height = dropdown.scrollHeight + "px";
+
+        }
+
+        arrow.classList.toggle("rotate");
+
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        document.querySelectorAll(".dropdown-menu.show").forEach(function(menu) {
+
+            menu.style.height = menu.scrollHeight + "px";
+
+        });
+
+    });
+</script>
