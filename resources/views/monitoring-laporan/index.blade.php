@@ -982,7 +982,7 @@
                 <div class="data-summary" id="dataSummary">Memuat data tenaga kerja...</div>
 
                 <!-- TABLE -->
-                <div class="rtable-wrap">
+                {{-- <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
@@ -1021,7 +1021,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div> --}}
 
                 <!-- PAGINATION -->
                 <div class="pagination-bar">
@@ -1040,7 +1040,7 @@
         </div>
     </div>
 
-    <script>
+    {{-- <script>
         // ══════ CONFIG ══════
         const API_ENDPOINT = "{{ route('tenaga.api') }}";
 
@@ -1279,7 +1279,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
-    </script>
+    </script> --}}
 </body>
 
 </html>
