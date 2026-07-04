@@ -185,8 +185,8 @@
     }
 
     /* ===========================
-   DROPDOWN SIDEBAR
-=========================== */
+    DROPDOWN SIDEBAR
+    =========================== */
 
     .nav-dropdown-toggle {
         display: flex;
@@ -254,8 +254,6 @@
         </div>
     </div>
 
-
-
     <div class="sb-section">
         <div class="sb-section-label">Overview</div>
         <a class="nav-link {{ request()->routeIs('dashboard') || request()->is('/') ? 'active' : '' }}"
@@ -281,6 +279,7 @@
         </a>
     </div>
 
+    {{-- KIP --}}
     <div class="sb-section">
         <div class="sb-section-label">Key Performance Indicator</div>
 
@@ -354,70 +353,319 @@
         </div>
     </div>
 
+    {{-- HSE PERFORMANCE --}}
     <div class="sb-section">
         <div class="sb-section-label">HSE Performance</div>
-        <a class="nav-link" href="#">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $jkaActive =
+                request()->routeIs('dashboard-insiden.*') ||
+                request()->routeIs('dashboard-jka.*') ||
+                request()->routeIs('dashboard-leading.*');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
+            onclick="toggleDropdown('jkaDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">JKA & Record Insiden</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $jkaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-            <span class="nav-label">JKA & Record Insiden</span>
+
         </a>
+
+        <div id="jkaDropdown" class="dropdown-menu {{ $jkaActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard Monitoring Insiden</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard JKA</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('dashboard-leading.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard Leading</span>
+            </a>
+
+        </div>
     </div>
 
+    {{-- DOCUMENT CONTROL --}}
     <div class="sb-section">
         <div class="sb-section-label">Document Control</div>
-        <a class="nav-link" href="#">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $documentcontrolActive = request()->routeIs('daftar-induk.*') || request()->routeIs('dashboard.*');
+        @endphp
+
+        <a href="javascript:void(0)"
+            class="nav-link nav-dropdown-toggle {{ $documentcontrolActive ? 'active' : '' }}"
+            onclick="toggleDropdown('documentcontrolDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">Monitoring Dokumen</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $documentcontrolActive ? 'rotate' : '' }}" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-            <span class="nav-label">Monitoring Dokumen</span>
+
         </a>
+
+        <div id="documentcontrolDropdown" class="dropdown-menu {{ $documentcontrolActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('daftar-induk.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Daftar Induk Dokumen</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('dashboard.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard</span>
+            </a>
+
+        </div>
     </div>
 
+    {{-- MATRIKS TNA --}}
     <div class="sb-section">
         <div class="sb-section-label">Training Needs Analysis</div>
-        <a class="nav-link" href="#">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $matriksActive =
+                request()->routeIs('cover.*') ||
+                request()->routeIs('matriks-tna.*') ||
+                request()->routeIs('rencana.*') ||
+                request()->routeIs('dasar-hukum.*') ||
+                request()->routeIs('form-evaluasi.*') ||
+                request()->routeIs('matriks-gap.*') ||
+                request()->routeIs('matriks-prioritas.*');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $matriksActive ? 'active' : '' }}"
+            onclick="toggleDropdown('matriksDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">Matriks Kebutuhan Pelatihan</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $matriksActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-            <span class="nav-label">Matriks Kebutuhan Pelatihan</span>
+
         </a>
+
+        <div id="matriksDropdown" class="dropdown-menu {{ $matriksActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('cover.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Cover</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-tna.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Matriks TNA K3</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('rencana.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Rencana Implementasi</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('dasar-hukum.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dasar Hukum K3</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('form-evaluasi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Form Evaluasi</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-gap.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Matriks Gap Kompetensi</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-prioritas.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Matriks Prioritas Pelatihan</span>
+            </a>
+
+        </div>
     </div>
 
+    {{-- Health Performance --}}
     <div class="sb-section">
         <div class="sb-section-label">Health Performance</div>
-        <a class="nav-link" href="#">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $healthperformanceActive =
+                request()->routeIs('dasboard-he.*') ||
+                request()->routeIs('data-dcu.*') ||
+                request()->routeIs('matriks-refrensi.*') ||
+                request()->routeIs('matriks-kesehatan.*') ||
+                request()->routeIs('program-kesehatan.*') ||
+                request()->routeIs('rekap-bulanan.*') ||
+                request()->routeIs('form-dcu.*') ||
+                request()->routeIs('lembar-folowup.*');
+        @endphp
+
+        <a href="javascript:void(0)"
+            class="nav-link nav-dropdown-toggle {{ $healthperformanceActive ? 'active' : '' }}"
+            onclick="toggleDropdown('healthperformanceDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">Pemeriksaan Kesehatan & Prokes</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $healthperformanceActive ? 'rotate' : '' }}" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-            <span class="nav-label">Pemeriksaan Kesehatan & Prokes</span>
+
         </a>
+
+        <div id="healthperformanceDropdown" class="dropdown-menu {{ $healthperformanceActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('dasboard-he.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard HE</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('data-dcu.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Data DCU</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-refrensi.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Natriks Refrensi</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-kesehatan.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Matriks Kesehatan</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('program-kesehatan.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Program Kesehatan</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('rekap-bulanan.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Rekap Bulanan</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('form-dcu.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Form DCU</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Lembar Folowup</span>
+            </a>
+
+        </div>
     </div>
 
+    {{-- Assets Management --}}
     <div class="sb-section">
         <div class="sb-section-label">Assets Management</div>
-        <a class="nav-link" href="#">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $assetsmanagementActive =
+                request()->routeIs('dasboard-apd.*') ||
+                request()->routeIs('master-stok-apd.*') ||
+                request()->routeIs('master-stok-alkes.*') ||
+                request()->routeIs('log-apd.*') ||
+                request()->routeIs('matriks-apd.*') ||
+                request()->routeIs('matriks-apd-hiradc.*') ||
+                request()->routeIs('hiradc.*') ||
+                request()->routeIs('rab.*');
+        @endphp
+
+        <a href="javascript:void(0)"
+            class="nav-link nav-dropdown-toggle {{ $assetsmanagementActive ? 'active' : '' }}"
+            onclick="toggleDropdown('assetsmanagementDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">APD & Alat Kesehatan</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $assetsmanagementActive ? 'rotate' : '' }}" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-            <span class="nav-label">APD & Alat Kesehatan</span>
+
         </a>
+
+        <div id="assetsmanagementDropdown" class="dropdown-menu {{ $assetsmanagementActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('dasboard-apd.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard APD</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Master Stok APD</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('master-stok-alkes.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Master Stok Alkes</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('log-apd.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">LOG APD</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-apd.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Matriks APD</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('matriks-apd-hiradc.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Matriks APD HIRADC</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('hiradc.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">HIRADC</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('rab.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">RAB</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Lembar Folowup</span>
+            </a>
+
+        </div>
     </div>
 
     <div class="sb-bottom">
