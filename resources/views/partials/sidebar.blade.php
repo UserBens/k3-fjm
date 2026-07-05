@@ -279,15 +279,23 @@
         </a>
     </div>
 
-    {{-- KIP --}}
+    {{-- KPI --}}
     <div class="sb-section">
         <div class="sb-section-label">Key Performance Indicator</div>
 
         @php
             $monitoringActive =
-                request()->routeIs('monitoring-laporan.*') ||
-                request()->routeIs('monitoring-insiden.*') ||
-                request()->routeIs('monitoring-kpi.*');
+                request()->routeIs('data-pengawas.*') ||
+                request()->routeIs('data-medis.*') ||
+                request()->routeIs('data-safety.*') ||
+                request()->routeIs('cetak-uauc.*') ||
+                request()->routeIs('dokumen-reject.*') ||
+                request()->routeIs('monitoring-so.*') ||
+                request()->routeIs('dashboard-individu.*') ||
+                request()->routeIs('monitoring-pengawas.*') ||
+                request()->routeIs('rekap-pengawas.*') ||
+                request()->routeIs('monitoring-medis.*') ||
+                request()->routeIs('rekap-medis.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $monitoringActive ? 'active' : '' }}"
@@ -312,41 +320,41 @@
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}"
-                href="{{ route('monitoring-laporan.index') }}">
+            <a class="nav-link {{ request()->routeIs('data-pengawas.*') ? 'active' : '' }}"
+                href="{{ route('data-pengawas.index') }}">
                 <span class="nav-label">Data Pengawas</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('monitoring-insiden.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}" href="{{ route('data-medis.index') }}">
                 <span class="nav-label">Data Medis</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('data-safety.*') ? 'active' : '' }}" href="{{ route('data-safety.index') }}">
                 <span class="nav-label">Data Safety</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('cetak-uauc.*') ? 'active' : '' }}" href="{{ route('cetak-uauc.index') }}">
                 <span class="nav-label">Cetak UA/UC</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dokumen-reject.*') ? 'active' : '' }}" href="{{ route('dokumen-reject.index') }}">
                 <span class="nav-label">Dokumen Reject</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('monitoring-so.*') ? 'active' : '' }}" href="{{ route('monitoring-so.index') }}">
                 <span class="nav-label">Monitoring SO</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}" href="{{ route('dashboard-individu.index') }}">
                 <span class="nav-label">Dashboard Individu</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}" href="{{ route('monitoring-pengawas.index') }}">
                 <span class="nav-label">Monitoring Pengawas</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('rekap-pengawas.*') ? 'active' : '' }}" href="{{ route('rekap-pengawas.index') }}">
                 <span class="nav-label">Rekap Pengawas</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('monitoring-medis.*') ? 'active' : '' }}" href="{{ route('monitoring-medis.index') }}">
                 <span class="nav-label">Monitoring Medis</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('rekap-medis.*') ? 'active' : '' }}" href="{{ route('rekap-medis.index') }}">
                 <span class="nav-label">Rekap Medis</span>
             </a>
 
@@ -387,15 +395,15 @@
 
         <div id="jkaDropdown" class="dropdown-menu {{ $jkaActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}" href="{{ route('dashboard-insiden.index') }}">
                 <span class="nav-label">Dashboard Monitoring Insiden</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}" href="{{ route('dashboard-jka.index') }}">
                 <span class="nav-label">Dashboard JKA</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('dashboard-leading.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dashboard-leading.*') ? 'active' : '' }}" href="{{ route('dashboard-leading.index') }}">
                 <span class="nav-label">Dashboard Leading</span>
             </a>
 
@@ -408,7 +416,8 @@
 
         @php
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $documentcontrolActive = request()->routeIs('daftar-induk.*') || request()->routeIs('dashboard.*');
+            $documentcontrolActive = request()->routeIs('daftar-induk.*') || 
+            request()->routeIs('dashboard-dokumen.*');
         @endphp
 
         <a href="javascript:void(0)"
@@ -438,8 +447,8 @@
                 <span class="nav-label">Daftar Induk Dokumen</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('dashboard.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Dashboard</span>
+            <a class="nav-link {{ request()->routeIs('dashboard-dokumen.*') ? 'active' : '' }}" href="#">
+                <span class="nav-label">Dashboard Dokumen</span>
             </a>
 
         </div>
