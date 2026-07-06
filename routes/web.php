@@ -15,6 +15,7 @@ Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard'
 Route::get('tenaga', [TenagaController::class, 'index'])->name('tenaga.index');
 Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
 Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
+Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
 
 Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 

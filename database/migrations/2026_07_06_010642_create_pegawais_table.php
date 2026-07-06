@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->string('nomor_kib', 100)->nullable();
             $table->string('status_kib', 50)->nullable();
+            $table->date('masa_berlaku_kib')->nullable();
             $table->timestamp('last_sync')->nullable();
             $table->timestamps();
         });

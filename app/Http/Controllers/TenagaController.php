@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
@@ -10,153 +11,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
-
-// class TenagaController extends Controller
-// {
-//     protected string $apiUrl;
-//     protected ?string $apiKey;
-
-//     public function __construct()
-//     {
-//         $this->apiUrl = config('services.pegawai.url');
-//         $this->apiKey = config('services.pegawai.key');
-//     }
-//     public function index()
-//     {
-//         return view('tenaga.index');
-//     }
-
-//     public function api(Request $request): JsonResponse
-//     {
-//         try {
-//             $pegawai = $this->getPegawaiCollection();
-//         } catch (\Throwable $e) {
-//             Log::error('Gagal mengambil data pegawai: ' . $e->getMessage());
-
-//             return response()->json([
-//                 'message' => 'Gagal mengambil data pegawai dari sistem sumber. Silakan coba lagi.',
-//             ], 502);
-//         }
-
-//         // Data mentah untuk isi dropdown filter (dibuat dari dataset penuh,
-//         // supaya pilihan filter tidak ikut menyusut saat sedang difilter)
-//         $filterOptions = [
-//             'status' => $pegawai->pluck('status')->filter()->unique()->sort()->values(),
-//             'departemen' => $pegawai->pluck('departemen')->filter()->unique()->sort()->values(),
-//             'jenis_kelamin' => $pegawai->pluck('jenis_kelamin')->filter()->unique()->sort()->values(),
-//         ];
-
-//         // ── Search: nama & NIK ──────────────────────────────
-//         if ($search = trim((string) $request->query('search', ''))) {
-//             $needle = mb_strtolower($search);
-//             $pegawai = $pegawai->filter(function ($item) use ($needle) {
-//                 return str_contains(mb_strtolower((string) $item['nama']), $needle)
-//                     || str_contains(mb_strtolower((string) $item['nik']), $needle);
-//             });
-//         }
-
-//         // ── Filter: status kerja ────────────────────────────
-//         if ($status = $request->query('status')) {
-//             $pegawai = $pegawai->filter(fn($item) => $item['status'] === $status);
-//         }
-
-//         // ── Filter: departemen / unit kerja ─────────────────
-//         if ($departemen = $request->query('departemen')) {
-//             $pegawai = $pegawai->filter(fn($item) => $item['departemen'] === $departemen);
-//         }
-
-//         // ── Filter: jenis kelamin ────────────────────────────
-//         if ($jenisKelamin = $request->query('jenis_kelamin')) {
-//             $pegawai = $pegawai->filter(fn($item) => $item['jenis_kelamin'] === $jenisKelamin);
-//         }
-
-//         $pegawai = $pegawai->values();
-
-//         // ── Pagination manual (koleksi hasil fetch API, bukan Eloquent) ──
-//         $perPage = (int) $request->query('per_page', 10);
-//         $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
-
-//         $page = (int) $request->query('page', 1);
-//         $page = $page > 0 ? $page : 1;
-
-//         $paginator = new LengthAwarePaginator(
-//             $pegawai->forPage($page, $perPage)->values(),
-//             $pegawai->count(),
-//             $perPage,
-//             $page
-//         );
-
-//         return response()->json([
-//             'data' => $paginator->items(),
-//             'meta' => [
-//                 'current_page' => $paginator->currentPage(),
-//                 'last_page' => max($paginator->lastPage(), 1),
-//                 'per_page' => $paginator->perPage(),
-//                 'total' => $paginator->total(),
-//                 'from' => $paginator->firstItem(),
-//                 'to' => $paginator->lastItem(),
-//             ],
-//             'filter_options' => $filterOptions,
-//         ]);
-//     }
-
-//     /**
-//      * Ambil & normalisasi seluruh data pegawai dari API eksternal, di-cache
-//      * sebentar (5 menit) supaya search/filter/pindah halaman tidak memukul
-//      * API eksternal berkali-kali.
-//      */
-//     protected function getPegawaiCollection()
-//     {
-//         // 1. Simpan data mentah sebagai NATIVE ARRAY ke dalam cache, bukan object Collection
-//         $cachedArray = Cache::remember('pegawai_api_raw', 300, function () {
-//             $response = Http::withHeaders([
-//                 'X-API-KEY' => $this->apiKey,
-//             ])->timeout(15)->get($this->apiUrl);
-
-//             if (! $response->successful()) {
-//                 throw new \RuntimeException(
-//                     'API pegawai merespons status ' . $response->status() . ': ' . $response->body()
-//                 );
-//             }
-
-//             $json = $response->json();
-//             $items = $json['data'] ?? $json;
-
-//             if (! is_array($items)) {
-//                 throw new \RuntimeException('Format respons API pegawai tidak dikenali.');
-//             }
-
-//             // Gunakan array_map native PHP untuk proses normalisasi sebelum masuk cache
-//             return array_map(fn($item) => $this->normalize((array) $item), $items);
-//         });
-
-//         // 2. Bungkus array menjadi Collection SETELAH keluar dari proses caching
-//         return collect($cachedArray);
-//     }
-
-//     /**
-//      * Normalisasi nama field ke key yang dipakai di frontend.
-//      *
-//      * ⚠️ ASUMSI: nama field asli dari API belum bisa dikonfirmasi (401 saat
-//      * dicoba tanpa akses langsung ke API). Silakan sesuaikan mapping di bawah
-//      * ini dengan field yang sebenarnya dikembalikan oleh
-//      * https://mobile.fokusjasamitra.com/api/erp/api/pegawai
-//      * (cek lewat Postman / `dd($response->json())` di getPegawaiCollection()).
-//      */
-//     protected function normalize(array $item): array
-//     {
-//         return [
-//             'nik' => $item['nik'] ?? $item['NIK'] ?? $item['no_ktp'] ?? '-',
-//             'nama' => $item['nama'] ?? $item['name'] ?? $item['nama_pegawai'] ?? '-',
-//             'jabatan' => $item['jabatan'] ?? $item['posisi'] ?? $item['position'] ?? '-',
-//             'departemen' => $item['departemen'] ?? $item['department'] ?? $item['unit_kerja'] ?? $item['divisi'] ?? '-',
-//             'jenis_kelamin' => $item['jenis_kelamin'] ?? $item['gender'] ?? $item['jk'] ?? '-',
-//             'status' => $item['status'] ?? $item['status_kerja'] ?? $item['employment_status'] ?? '-',
-//             'tanggal_masuk' => $item['tanggal_masuk'] ?? $item['join_date'] ?? $item['tgl_masuk'] ?? null,
-//             'no_hp' => $item['no_hp'] ?? $item['phone'] ?? $item['telepon'] ?? '-',
-//         ];
-//     }
-// }
 
 class TenagaController extends Controller
 {
@@ -177,7 +31,6 @@ class TenagaController extends Controller
             // ── Search: nama & NIK (kolom 'badge' di database) ──────────────────────────────
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
-                    // Menggunakan 'ilike' agar pencarian di PostgreSQL bersifat Case-Insensitive
                     $q->where('nama', 'ilike', "%{$search}%")
                         ->orWhere('badge', 'like', "%{$search}%");
                 });
@@ -199,6 +52,9 @@ class TenagaController extends Controller
                 $query->where('jenis_kelamin', $jenisKelamin);
             }
 
+            // Urutkan berdasarkan data yang paling baru diupdate/disync, ditampilkan paling atas
+            $query->orderByDesc('updated_at');
+
             // Dapatkan opsi filter secara dinamis berdasarkan data yang ada di database lokal
             $filterOptions = [
                 'status' => ['Aktif', 'Non-Aktif'],
@@ -214,7 +70,15 @@ class TenagaController extends Controller
 
             // Transformasi data agar struktur key JSON-nya tetap sama dengan yang dibaca JavaScript di View Anda
             $transformedData = collect($paginator->items())->map(function ($item) {
+                // Hitung sisa hari masa berlaku KIB (bisa minus jika sudah lewat)
+                $sisaHari = null;
+                if ($item->masa_berlaku_kib) {
+                    $sisaHari = (int) now()->startOfDay()
+                        ->diffInDays(\Carbon\Carbon::parse($item->masa_berlaku_kib)->startOfDay(), false);
+                }
+
                 return [
+                    'id' => $item->id,
                     'nik' => $item->badge ?? '-',
                     'nama' => $item->nama ?? '-',
                     'jabatan' => $item->jabatan ?? '-',
@@ -222,6 +86,10 @@ class TenagaController extends Controller
                     'jenis_kelamin' => $item->jenis_kelamin ?? '-',
                     'status' => $item->is_active ? 'Aktif' : 'Non-Aktif',
                     'tanggal_masuk' => $item->last_sync ? $item->last_sync : null,
+                    'nomor_kib' => $item->nomor_kib,
+                    'masa_berlaku_kib' => $item->masa_berlaku_kib,
+                    'status_kib' => $item->status_kib,
+                    'sisa_hari_kib' => $sisaHari,
                 ];
             });
 
@@ -257,7 +125,7 @@ class TenagaController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Sinkronisasi selesai! Data pegawai berhasil diperbarui dari API ERP.',
+                'message' => 'Sinkronisasi selesai! Data pegawai berhasil diperbarui dari API SIFO.',
             ]);
         } catch (\Throwable $e) {
             Log::error('Gagal menjalankan sinkronisasi via Web UI: ' . $e->getMessage());
@@ -265,6 +133,38 @@ class TenagaController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan sistem saat sinkronisasi: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id): JsonResponse
+    {
+        // Validasi input data dari Client
+        $validated = $request->validate([
+            'nomor_kib' => 'nullable|string|max:100',
+            'masa_berlaku_kib' => 'nullable|date',
+            'status_kib' => 'nullable|string|max:50',
+        ]);
+
+        try {
+            $pegawai = Pegawai::findOrFail($id);
+
+            // Simpan perubahan ke database lokal
+            $pegawai->update([
+                'nomor_kib' => $validated['nomor_kib'],
+                'masa_berlaku_kib' => $validated['masa_berlaku_kib'],
+                'status_kib' => $validated['status_kib'],
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data KIB untuk pegawai bernama ' . $pegawai->nama . ' berhasil diperbarui.',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal update data KIB pegawai: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan sistem saat memperbarui data: ' . $e->getMessage(),
             ], 500);
         }
     }

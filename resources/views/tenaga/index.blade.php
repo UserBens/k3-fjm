@@ -722,6 +722,246 @@
             }
         }
 
+        /* ══════ MODAL KONFIRMASI ══════ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 17, 26, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 380px;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.94) translateY(8px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(45, 75, 158, 0.09);
+            color: #2D4B9E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            margin-bottom: 8px;
+        }
+
+        .modal-desc {
+            font-size: 12.5px;
+            line-height: 1.55;
+            color: #64748B;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-modal-cancel {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            background: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-modal-cancel:hover {
+            background: #F8F9FF;
+        }
+
+        .btn-modal-confirm {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #2D4B9E;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-modal-confirm:hover {
+            background: #1A3C8A;
+        }
+
+        /* ══════ LOADING SCREEN ══════ */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 29, 46, 0.55);
+            backdrop-filter: blur(3px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .loading-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .loading-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 300px;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(45, 75, 158, 0.15);
+            border-top-color: #2D4B9E;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        .loading-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 17px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            margin-bottom: 4px;
+        }
+
+        .loading-sub {
+            font-size: 11.5px;
+            color: #94A3B8;
+            line-height: 1.5;
+        }
+
+        /* ══════ TOAST ══════ */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 12px 14px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #1A7A3C;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.25s ease;
+            pointer-events: auto;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.toast-error {
+            border-left-color: #D0021B;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(26, 122, 60, 0.1);
+            color: #1A7A3C;
+            margin-top: 1px;
+        }
+
+        .toast-error .toast-icon {
+            background: rgba(208, 2, 27, 0.1);
+            color: #D0021B;
+        }
+
+        .toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .toast-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #1A1D2E;
+            margin-bottom: 2px;
+        }
+
+        .toast-msg {
+            font-size: 11.5px;
+            color: #64748B;
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            padding: 2px;
+            flex-shrink: 0;
+        }
+
         @keyframes spin {
             from {
                 transform: rotate(0deg);
@@ -730,6 +970,108 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        .btn-edit-kib {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 7px;
+            border: 1px solid rgba(45, 75, 158, 0.2);
+            background: #F0F4FF;
+            color: #2D4B9E;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-edit-kib:hover {
+            background: rgba(45, 75, 158, 0.14);
+        }
+
+        /* ══════ MODAL UPDATE KIB ══════ */
+        .update-modal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 420px;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.94) translateY(8px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.open .update-modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .update-modal-header {
+            margin-bottom: 16px;
+        }
+
+        .update-modal-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .update-modal-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            line-height: 1;
+        }
+
+        .update-modal-nik {
+            font-size: 11.5px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            margin-bottom: 5px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            height: 38px;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            background: #fff;
+            font-size: 12.5px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #1A1D2E;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: #2D4B9E;
+        }
+
+        .form-select {
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -786,8 +1128,7 @@
                             <span class="pg-eyebrow">Database Tenaga · PT. Fokus Jasa Mitra</span>
                         </div>
                         <div class="pg-title">DATA <span>TENAGA KERJA</span></div>
-                        <div class="pg-sub">Cari, filter, dan kelola data tenaga kerja yang terintegrasi dengan
-                            sistem ERP.</div>
+                        <div class="pg-sub">Cari, filter, dan kelola data tenaga kerja.</div>
                     </div>
                     <div class="pg-actions">
                         <button class="btn-primary" id="btnSync" onclick="syncData()"
@@ -847,12 +1188,13 @@
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th>Nama / NIK</th>
-                                <th>Jabatan</th>
-                                <th>Departemen</th>
-                                <th>Jenis Kelamin</th>
-                                <th>Status</th>
-                                <th>Tanggal Masuk</th>
+                                <th class="px-6 py-3 text-left">Pegawai</th>
+                                <th class="px-6 py-3 text-left">Jabatan / Dept</th>
+                                <th class="px-6 py-3 text-left">Nomor KIB</th>
+                                <th class="px-6 py-3 text-left">Masa Berlaku KIB</th>
+                                <th class="px-6 py-3 text-left">Sisa Hari</th>
+                                <th class="px-6 py-3 text-left">Status KIB</th>
+                                <th class="px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -934,6 +1276,75 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+    <!-- ══════ MODAL KONFIRMASI SYNC ══════ -->
+    <div id="syncConfirmOverlay" class="modal-overlay" onclick="closeSyncModalOutside(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-icon-wrap">
+                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
+                </svg>
+            </div>
+            <div class="modal-title">Sinkronkan Data Pegawai?</div>
+            <div class="modal-desc">
+                Sistem akan menarik ulang data master pegawai langsung dari SIFO. Proses ini bisa
+                memakan waktu beberapa saat dan akan memperbarui data yang tersimpan secara lokal.
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeSyncModal()">Batal</button>
+                <button class="btn-modal-confirm" onclick="confirmSync()">Ya, Sync Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════ MODAL UPDATE KIB ══════ -->
+    <div id="updateModalOverlay" class="modal-overlay" onclick="closeUpdateModalOutside(event)">
+        <div class="update-modal-box" onclick="event.stopPropagation()">
+            <div class="update-modal-header">
+                <div class="update-modal-eyebrow">Update Data KIB</div>
+                <div class="update-modal-name" id="updateModalName">—</div>
+                <div class="update-modal-nik" id="updateModalNik">—</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Nomor KIB</label>
+                <input type="text" id="inputNomorKib" class="form-input" placeholder="Contoh: KIB-2026-0001" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Masa Berlaku KIB</label>
+                <input type="date" id="inputMasaBerlakuKib" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Status KIB</label>
+                <select id="inputStatusKib" class="form-select">
+                    <option value="">Pilih Status</option>
+                    <option value="Aktif">Aktif</option>
+                    <option value="Proses Pengajuan">Proses Pengajuan</option>
+                    <option value="Kadaluarsa">Kadaluarsa</option>
+                    <option value="Tidak Berlaku">Tidak Berlaku</option>
+                </select>
+            </div>
+
+            <div class="modal-actions" style="margin-top:20px;">
+                <button class="btn-modal-cancel" onclick="closeUpdateModal()">Batal</button>
+                <button class="btn-modal-confirm" id="btnSubmitUpdate" onclick="submitUpdateKib()">Simpan
+                    Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════ TOAST NOTIFIKASI ══════ -->
+    <div id="toastContainer" class="toast-container"></div>
+    <!-- ══════ LOADING SCREEN OVERLAY ══════ -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-box">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Menyinkronkan Data Pegawai</div>
+            <div class="loading-sub">Mohon tunggu, sedang mengambil data terbaru dari SIFO...</div>
         </div>
     </div>
 
@@ -1056,61 +1467,92 @@
             filterOptionsLoaded = true;
         }
 
+        function sisaHariBadge(sisaHari) {
+            if (sisaHari === null || sisaHari === undefined) {
+                return `<span class="status-pill sp-gray">-</span>`;
+            }
+            let cls = 'sp-green';
+            if (sisaHari < 0) cls = 'sp-red';
+            else if (sisaHari <= 30) cls = 'sp-amber';
+            const label = sisaHari < 0 ? `Lewat ${Math.abs(sisaHari)} hari` : `${sisaHari} hari`;
+            return `<span class="status-pill ${cls}">${label}</span>`;
+        }
+
+        function kibStatusPillClass(status) {
+            const s = (status || '').toLowerCase();
+            if (s.includes('aktif') || s.includes('berlaku')) return 'sp-green';
+            if (s.includes('proses') || s.includes('pengajuan')) return 'sp-amber';
+            if (s.includes('expired') || s.includes('kadaluarsa') || s.includes('habis')) return 'sp-red';
+            if (!s) return 'sp-gray';
+            return 'sp-blue';
+        }
+
         function renderTable(rows) {
             const tbody = document.getElementById('tableBody');
 
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                                <div class="empty-state-title">Data tidak ditemukan</div>
-                                <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang
-                                    digunakan.</div>
-                            </div>
-                        </td>
-                    </tr>`;
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <div class="empty-state-title">Data tidak ditemukan</div>
+                        <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang digunakan.</div>
+                    </div>
+                </td>
+            </tr>`;
                 return;
             }
 
             tbody.innerHTML = rows.map(row => `
-                <tr>
-                    <td>
-                        <div class="td-name-cell">
-                            <div class="td-avatar">${escapeHtml(initials(row.nama))}</div>
-                            <div>
-                                <div class="td-name-main">${escapeHtml(row.nama)}</div>
-                                <div class="td-name-sub">${escapeHtml(row.nik)}</div>
-                            </div>
+            <tr>
+                <td>
+                    <div class="td-name-cell">
+                        <div class="td-avatar">${escapeHtml(initials(row.nama))}</div>
+                        <div>
+                            <div class="td-name-main">${escapeHtml(row.nama)}</div>
+                            <div class="td-name-sub">${escapeHtml(row.nik)}</div>
                         </div>
-                    </td>
-                    <td>${escapeHtml(row.jabatan)}</td>
-                    <td>${escapeHtml(row.departemen)}</td>
-                    <td>${escapeHtml(row.jenis_kelamin)}</td>
-                    <td><span class="status-pill ${statusPillClass(row.status)}">${escapeHtml(row.status)}</span></td>
-                    <td style="color:#94A3B8;">${formatDate(row.tanggal_masuk)}</td>
-                </tr>
-            `).join('');
+                    </div>
+                </td>
+                <td>
+                    <div class="td-name-main" style="font-weight:600;">${escapeHtml(row.jabatan)}</div>
+                    <div class="td-name-sub">${escapeHtml(row.departemen)}</div>
+                </td>
+                <td>${row.nomor_kib ? escapeHtml(row.nomor_kib) : '<span style="color:#CBD5E1;">-</span>'}</td>
+                <td style="color:#94A3B8;">${formatDate(row.masa_berlaku_kib)}</td>
+                <td>${sisaHariBadge(row.sisa_hari_kib)}</td>
+                <td><span class="status-pill ${kibStatusPillClass(row.status_kib)}">${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}</span></td>
+                <td style="text-align:center;">
+                    <button class="btn-edit-kib" onclick='openUpdateModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+                        <svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Update
+                    </button>
+                </td>
+            </tr>
+        `).join('');
         }
 
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="error-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />
-                            </svg>
-                            <div class="error-state-title">Gagal memuat data</div>
-                            <div class="error-state-sub">${escapeHtml(message)}</div>
-                        </div>
-                    </td>
-                </tr>`;
+        <tr>
+            <td colspan="7">
+                <div class="error-state">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />
+                    </svg>
+                    <div class="error-state-title">Gagal memuat data</div>
+                    <div class="error-state-sub">${escapeHtml(message)}</div>
+                </div>
+            </td>
+        </tr>`;
             document.getElementById('paginationText').textContent = '—';
             document.getElementById('paginationPages').innerHTML = '';
             document.getElementById('dataSummary').textContent = 'Gagal memuat data tenaga kerja.';
@@ -1194,26 +1636,54 @@
         // Ambil URL Endpoint POST Sync dari Laravel route helper
         const SYNC_ENDPOINT = "{{ route('tenaga.sync') }}";
 
-        async function syncData() {
-            const btn = document.getElementById('btnSync');
-            const txt = document.getElementById('syncText');
-            const icon = document.getElementById('syncIcon');
+        function syncData() {
+            document.getElementById('syncConfirmOverlay').classList.add('open');
+        }
 
-            if (!confirm(
-                    'Apakah Anda yakin ingin menyinkronkan ulang data master pegawai langsung dari sistem ERP sekarang?'
-                )) {
-                return;
+        function closeSyncModal() {
+            document.getElementById('syncConfirmOverlay').classList.remove('open');
+        }
+
+        function closeSyncModalOutside(event) {
+            // Hanya menutup modal jika yang diklik adalah area overlay itu sendiri,
+            // bukan konten di dalam modal-box
+            if (event.target.id === 'syncConfirmOverlay') {
+                closeSyncModal();
             }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+
+            const iconSvg = type === 'error' ?
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+
+            toast.innerHTML = `
+                <div class="toast-icon">${iconSvg}</div>
+                <div class="toast-body">
+                    <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
+                    <div class="toast-msg">${escapeHtml(message)}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+            `;
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 250);
+            }, 4000);
+        }
+
+        async function confirmSync() {
+            closeSyncModal();
+            document.getElementById('loadingOverlay').classList.add('open');
 
             try {
-                // Mengubah status tombol menjadi Loading state
-                btn.disabled = true;
-                btn.style.opacity = '0.7';
-                btn.style.cursor = 'not-allowed';
-                txt.textContent = 'Menyinkronkan...';
-                icon.style.animation = 'spin 1s linear infinite'; // Efek animasi berputar jika CSS tersedia
-
-                // Eksekusi AJAX Post request dengan menyertakan CSRF Token Keamanan Laravel
                 const res = await fetch(SYNC_ENDPOINT, {
                     method: 'POST',
                     headers: {
@@ -1229,20 +1699,81 @@
                     throw new Error(json.message || `Server merespons dengan status ${res.status}`);
                 }
 
-                alert(json.message);
+                await loadData();
 
-                // Panggil kembali loadData() agar tabel otomatis ter-refresh menampilkan data terbaru dari DB lokal
-                loadData();
+                document.getElementById('loadingOverlay').classList.remove('open');
+                showToast(json.message, 'success');
 
             } catch (e) {
-                alert(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.');
+                document.getElementById('loadingOverlay').classList.remove('open');
+                showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
+            }
+        }
+
+        const UPDATE_ENDPOINT_BASE = "{{ url('/tenaga') }}";
+        let currentEditId = null;
+
+        function openUpdateModal(row) {
+            currentEditId = row.id;
+            document.getElementById('updateModalName').textContent = row.nama || '-';
+            document.getElementById('updateModalNik').textContent = row.nik || '-';
+            document.getElementById('inputNomorKib').value = row.nomor_kib || '';
+            document.getElementById('inputMasaBerlakuKib').value = row.masa_berlaku_kib ? row.masa_berlaku_kib.substring(0,
+                10) : '';
+            document.getElementById('inputStatusKib').value = row.status_kib || '';
+            document.getElementById('updateModalOverlay').classList.add('open');
+        }
+
+        function closeUpdateModal() {
+            document.getElementById('updateModalOverlay').classList.remove('open');
+            currentEditId = null;
+        }
+
+        function closeUpdateModalOutside(event) {
+            if (event.target.id === 'updateModalOverlay') {
+                closeUpdateModal();
+            }
+        }
+
+        async function submitUpdateKib() {
+            if (!currentEditId) return;
+
+            const btn = document.getElementById('btnSubmitUpdate');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            try {
+                const res = await fetch(`${UPDATE_ENDPOINT_BASE}/${currentEditId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        nomor_kib: document.getElementById('inputNomorKib').value.trim() || null,
+                        masa_berlaku_kib: document.getElementById('inputMasaBerlakuKib').value || null,
+                        status_kib: document.getElementById('inputStatusKib').value || null,
+                    })
+                });
+
+                const json = await res.json();
+
+                if (!res.ok) {
+                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
+                    throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
+                }
+
+                closeUpdateModal();
+                await loadData();
+                showToast(json.message, 'success');
+
+            } catch (e) {
+                showToast(e.message || 'Terjadi kesalahan saat memperbarui data.', 'error');
             } finally {
-                // Mengembalikan tombol ke keadaan semula setelah proses selesai
                 btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
-                txt.textContent = 'Sync Pegawai';
-                icon.style.animation = 'none';
+                btn.textContent = originalText;
             }
         }
     </script>
