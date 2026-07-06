@@ -721,6 +721,16 @@
                 justify-content: center;
             }
         }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -780,6 +790,16 @@
                             sistem ERP.</div>
                     </div>
                     <div class="pg-actions">
+                        <button class="btn-primary" id="btnSync" onclick="syncData()"
+                            style="background-color: #2563EB; color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                            <svg id="syncIcon" style="width:13px;height:13px;" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
+                            </svg>
+                            <span id="syncText">Sync Pegawai</span>
+                        </button>
+
                         <button class="btn-outline" onclick="loadData()">
                             <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -837,28 +857,64 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr class="skeleton-row">
-                                <td><div class="skeleton-bar" style="width:160px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:100px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:110px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:60px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:70px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:90px;"></div></td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:160px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:100px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:110px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:60px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px;"></div>
+                                </td>
                             </tr>
                             <tr class="skeleton-row">
-                                <td><div class="skeleton-bar" style="width:160px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:100px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:110px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:60px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:70px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:90px;"></div></td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:160px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:100px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:110px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:60px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px;"></div>
+                                </td>
                             </tr>
                             <tr class="skeleton-row">
-                                <td><div class="skeleton-bar" style="width:160px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:100px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:110px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:60px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:70px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:90px;"></div></td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:160px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:100px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:110px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:60px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px;"></div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -918,7 +974,11 @@
             if (!dateStr) return '-';
             const d = new Date(dateStr);
             if (isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            return d.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
         }
 
         function statusPillClass(status) {
@@ -969,7 +1029,10 @@
         function goToPage(page) {
             state.page = page;
             loadData();
-            document.getElementById('page-content').scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('page-content').scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
 
         function populateFilterOptions(options) {
@@ -1055,9 +1118,9 @@
 
         function renderPagination(meta) {
             document.getElementById('paginationText').textContent =
-                meta.total > 0
-                    ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data`
-                    : 'Tidak ada data';
+                meta.total > 0 ?
+                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` :
+                'Tidak ada data';
 
             document.getElementById('dataSummary').innerHTML =
                 `<strong>${meta.total}</strong> tenaga kerja ditemukan`;
@@ -1078,15 +1141,18 @@
 
             pages = [...new Set(pages)];
 
-            let html = `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
+            let html =
+                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
             pages.forEach(p => {
                 if (p === '...') {
                     html += `<span class="page-ellipsis">…</span>`;
                 } else {
-                    html += `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+                    html +=
+                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
                 }
             });
-            html += `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
+            html +=
+                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
 
             container.innerHTML = html;
         }
@@ -1102,7 +1168,9 @@
 
             try {
                 const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
-                    headers: { 'Accept': 'application/json' },
+                    headers: {
+                        'Accept': 'application/json'
+                    },
                 });
 
                 if (!res.ok) {
@@ -1120,6 +1188,63 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+
+    <script>
+        // Ambil URL Endpoint POST Sync dari Laravel route helper
+        const SYNC_ENDPOINT = "{{ route('tenaga.sync') }}";
+
+        async function syncData() {
+            const btn = document.getElementById('btnSync');
+            const txt = document.getElementById('syncText');
+            const icon = document.getElementById('syncIcon');
+
+            if (!confirm(
+                    'Apakah Anda yakin ingin menyinkronkan ulang data master pegawai langsung dari sistem ERP sekarang?'
+                )) {
+                return;
+            }
+
+            try {
+                // Mengubah status tombol menjadi Loading state
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'not-allowed';
+                txt.textContent = 'Menyinkronkan...';
+                icon.style.animation = 'spin 1s linear infinite'; // Efek animasi berputar jika CSS tersedia
+
+                // Eksekusi AJAX Post request dengan menyertakan CSRF Token Keamanan Laravel
+                const res = await fetch(SYNC_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+
+                const json = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
+                }
+
+                alert(json.message);
+
+                // Panggil kembali loadData() agar tabel otomatis ter-refresh menampilkan data terbaru dari DB lokal
+                loadData();
+
+            } catch (e) {
+                alert(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.');
+            } finally {
+                // Mengembalikan tombol ke keadaan semula setelah proses selesai
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                txt.textContent = 'Sync Pegawai';
+                icon.style.animation = 'none';
+            }
+        }
     </script>
 </body>
 

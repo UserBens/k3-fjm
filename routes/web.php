@@ -5,6 +5,7 @@ use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
+use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\TenagaController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +14,12 @@ Route::get('/', [LoginController::class, 'indexLogin'])->name('login');
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('tenaga', [TenagaController::class, 'index'])->name('tenaga.index');
 Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
+Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
+
 Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
+
+// Route::get('/k3/pegawai', [PegawaiController::class, 'index'])->name('k3.pegawai.index');
+// Route::put('/k3/pegawai/{id}/update-kib', [PegawaiController::class, 'updateKib'])->name('k3.pegawai.update_kib');
 
 // KPI
 Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
