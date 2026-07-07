@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MonitoringkpiController;
@@ -31,7 +32,14 @@ Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])-
 
 // KPI
 Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
-Route::get('data-medis', [MonitoringkpiController::class, 'indexDataMedis'])->name('data-medis.index');
+
+Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
+Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
+Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
+Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
+Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
+Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
+
 Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
 Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
 Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
