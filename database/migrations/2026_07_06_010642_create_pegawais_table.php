@@ -13,22 +13,28 @@ return new class extends Migration
     {
         Schema::create('pegawais', function (Blueprint $table) {
             $table->id();
-            // Kolom Sinkronisasi dari API ERP
-            // Pastikan id_api juga sudah string
             $table->string('id_api')->unique()->nullable();
             $table->string('badge', 50)->unique()->nullable();
             $table->string('no_ktp', 50)->nullable();
             $table->string('nama', 255);
             $table->string('jenis_kelamin', 20)->nullable();
-
-            // UBAH DUA BARIS INI MENJADI STRING
             $table->string('unit_kerjaid')->nullable();
             $table->string('lokasi_kerjaid')->nullable();
-
             $table->boolean('is_active')->default(true);
+
+            // --- TAMBAHAN KOLOM BARU SESUAI API ---
+            $table->string('tempat_lahir', 100)->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('no_bpjs_kesehatan', 50)->nullable();
+            $table->string('no_bpjs_ketenagakerjaan', 50)->nullable();
+            $table->string('kode_ok', 50)->nullable();
+            $table->string('nomor_ok', 100)->nullable();
+            // --------------------------------------
+
             $table->string('nomor_kib', 100)->nullable();
             $table->string('status_kib', 50)->nullable();
-            $table->date('masa_berlaku_kib')->nullable();
+            $table->date('masa_berlaku_kib')->nullable(); // Pastikan ini juga ada
             $table->timestamp('last_sync')->nullable();
             $table->timestamps();
         });

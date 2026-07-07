@@ -19,6 +19,15 @@ class TenagaController extends Controller
         return view('tenaga.index');
     }
 
+    public function indexPengawas()
+    {
+        // Mengambil data pegawai yang aktif. 
+        // Anda juga bisa menambahkan filter spesifik jika ada kriteria khusus untuk 'Pengawas'
+        $pengawas = Pegawai::where('is_active', true)->paginate(10);
+
+        return view('pengawas.index', compact('pengawas'));
+    }
+
     /**
      * Mengambil data dari DATABASE LOKAL (PostgreSQL) untuk keperluan tabel & filter.
      */
@@ -69,6 +78,7 @@ class TenagaController extends Controller
             $paginator = $query->paginate($perPage);
 
             // Transformasi data agar struktur key JSON-nya tetap sama dengan yang dibaca JavaScript di View Anda
+            // Transformasi data agar struktur key JSON-nya cocok dengan View
             $transformedData = collect($paginator->items())->map(function ($item) {
                 // Hitung sisa hari masa berlaku KIB (bisa minus jika sudah lewat)
                 $sisaHari = null;
@@ -77,15 +87,30 @@ class TenagaController extends Controller
                         ->diffInDays(\Carbon\Carbon::parse($item->masa_berlaku_kib)->startOfDay(), false);
                 }
 
+                // Format Jenis Kelamin
+                $jk = '-';
+                if ($item->jenis_kelamin === 'L') $jk = 'Laki-Laki';
+                if ($item->jenis_kelamin === 'P') $jk = 'Perempuan';
+
                 return [
                     'id' => $item->id,
-                    'nik' => $item->badge ?? '-',
+                    'badge' => $item->badge ?? '-',
                     'nama' => $item->nama ?? '-',
+                    'jenis_kelamin' => $jk,
+
+                    // Data Baru sesuai JSON API
+                    'no_bpjs_kesehatan' => $item->no_bpjs_kesehatan ?? '-',
+                    'no_bpjs_ketenagakerjaan' => $item->no_bpjs_ketenagakerjaan ?? '-',
+                    'tempat_lahir' => $item->tempat_lahir ?? '-',
+                    'tanggal_lahir' => $item->tanggal_lahir ?? null,
+                    'alamat' => $item->alamat ?? '-',
+                    'kode_ok' => $item->kode_ok ?? '-',
+                    'nomor_ok' => $item->nomor_ok ?? '-',
+
+                    // Data Lama yang mungkin masih dibutuhkan untuk struktur layout/modal
                     'jabatan' => $item->jabatan ?? '-',
                     'departemen' => $item->unit_kerjaid ?? '-',
-                    'jenis_kelamin' => $item->jenis_kelamin ?? '-',
                     'status' => $item->is_active ? 'Aktif' : 'Non-Aktif',
-                    'tanggal_masuk' => $item->last_sync ? $item->last_sync : null,
                     'nomor_kib' => $item->nomor_kib,
                     'masa_berlaku_kib' => $item->masa_berlaku_kib,
                     'status_kib' => $item->status_kib,

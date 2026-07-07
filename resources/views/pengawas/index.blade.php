@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Tenaga Kerja — PT. Fokus Jasa Mitra</title>
+    <title>Data Pengawas — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -332,26 +332,6 @@
 
         .filter-search .search-icon {
             left: 12px;
-        }
-
-        .filter-select {
-            height: 36px;
-            padding: 0 30px 0 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 10px center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #1A1D2E;
-            cursor: pointer;
-            min-width: 150px;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .filter-select:focus {
-            border-color: #2D4B9E;
-            outline: none;
         }
 
         .filter-reset {
@@ -707,11 +687,6 @@
                 align-items: stretch;
             }
 
-            .filter-select {
-                min-width: 0;
-                flex: 1 1 46%;
-            }
-
             .pagination-bar {
                 flex-direction: column;
                 align-items: stretch;
@@ -722,7 +697,7 @@
             }
         }
 
-        /* ══════ MODAL KONFIRMASI ══════ */
+        /* ══════ MODAL UMUM ══════ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -756,31 +731,12 @@
             transform: scale(1) translateY(0);
         }
 
-        .modal-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(45, 75, 158, 0.09);
-            color: #2D4B9E;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-        }
-
         .modal-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 20px;
             letter-spacing: 0.02em;
             color: #1A1D2E;
             margin-bottom: 8px;
-        }
-
-        .modal-desc {
-            font-size: 12.5px;
-            line-height: 1.55;
-            color: #64748B;
-            margin-bottom: 20px;
         }
 
         .modal-actions {
@@ -819,62 +775,6 @@
 
         .btn-modal-confirm:hover {
             background: #1A3C8A;
-        }
-
-        /* ══════ LOADING SCREEN ══════ */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(26, 29, 46, 0.55);
-            backdrop-filter: blur(3px);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .loading-overlay.open {
-            display: flex;
-            opacity: 1;
-        }
-
-        .loading-box {
-            background: #fff;
-            border-radius: 16px;
-            padding: 32px 36px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 300px;
-            max-width: calc(100vw - 32px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid rgba(45, 75, 158, 0.15);
-            border-top-color: #2D4B9E;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-
-        .loading-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 17px;
-            letter-spacing: 0.02em;
-            color: #1A1D2E;
-            margin-bottom: 4px;
-        }
-
-        .loading-sub {
-            font-size: 11.5px;
-            color: #94A3B8;
-            line-height: 1.5;
         }
 
         /* ══════ TOAST ══════ */
@@ -962,16 +862,6 @@
             flex-shrink: 0;
         }
 
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .btn-edit-kib {
             display: inline-flex;
             align-items: center;
@@ -992,7 +882,7 @@
             background: rgba(45, 75, 158, 0.14);
         }
 
-        /* ══════ MODAL UPDATE KIB ══════ */
+        /* ══════ MODAL DETAIL / PICKER (box lebar) ══════ */
         .update-modal-box {
             background: #fff;
             border-radius: 16px;
@@ -1039,16 +929,7 @@
             margin-bottom: 14px;
         }
 
-        .form-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748B;
-            margin-bottom: 5px;
-        }
-
-        .form-input,
-        .form-select {
+        .form-input {
             width: 100%;
             height: 38px;
             padding: 0 12px;
@@ -1062,16 +943,8 @@
             transition: border 0.2s;
         }
 
-        .form-input:focus,
-        .form-select:focus {
+        .form-input:focus {
             border-color: #2D4B9E;
-        }
-
-        .form-select {
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;
-            appearance: none;
-            -webkit-appearance: none;
-            cursor: pointer;
         }
 
         /* modal detail tenaga */
@@ -1185,6 +1058,50 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ══════ MODAL PICKER TENAGA ══════ */
+        .picker-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .picker-item:hover {
+            background: #F8F9FF;
+            border-color: rgba(45, 75, 158, 0.25);
+        }
+
+        .picker-item-name {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .btn-picker-select {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            background: #2D4B9E;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-picker-select:hover {
+            background: #1A3C8A;
+        }
     </style>
 </head>
 
@@ -1237,20 +1154,19 @@
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Database Tenaga · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Database Pengawas · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">DATA <span>TENAGA KERJA</span></div>
-                        <div class="pg-sub">Cari, filter, dan kelola data tenaga kerja.</div>
+                        <div class="pg-title">DATA <span>PENGAWAS</span></div>
+                        <div class="pg-sub">Kelola tenaga kerja yang bertugas sebagai pengawas.</div>
                     </div>
                     <div class="pg-actions">
-                        <button class="btn-primary" id="btnSync" onclick="syncData()"
-                            style="background-color: #2563EB; color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
-                            <svg id="syncIcon" style="width:13px;height:13px;" fill="none" stroke="currentColor"
+                        <button class="btn-primary" onclick="openPickerModal()">
+                            <svg style="width:13px;height:13px;" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
+                                    d="M12 4v16m8-8H4" />
                             </svg>
-                            <span id="syncText">Sync Pegawai</span>
+                            Tambah Pengawas
                         </button>
 
                         <button class="btn-outline" onclick="loadData()">
@@ -1274,26 +1190,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Cari berdasarkan nama atau NIK..."
-                            oninput="onSearchInput()" />
+                        <input type="text" id="searchInput"
+                            placeholder="Cari pengawas berdasarkan nama atau badge..." oninput="onSearchInput()" />
                     </div>
-
-                    <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status</option>
-                    </select>
-
-                    <select id="filterDepartemen" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Departemen</option>
-                    </select>
-
-                    <select id="filterJenisKelamin" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Jenis Kelamin</option>
-                    </select>
 
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data tenaga kerja...</div>
+                <div class="data-summary" id="dataSummary">Memuat data pengawas...</div>
 
                 <!-- TABLE -->
                 <div class="rtable-wrap">
@@ -1303,8 +1207,7 @@
                                 <th class="px-6 py-3 text-left">Data Pegawai</th>
                                 <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th>
                                 <th class="px-6 py-3 text-left">Data BPJS</th>
-                                <th class="px-6 py-3 text-left">Data OK</th>
-                                <th class="px-6 py-3 text-left">Status KIB</th>
+                                <th class="px-6 py-3 text-left">Sejak Bertugas</th>
                                 <th class="px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
@@ -1323,9 +1226,6 @@
                                     <div class="skeleton-bar" style="width:100px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
                                 </td>
                             </tr>
@@ -1341,9 +1241,6 @@
                                 </td>
                                 <td>
                                     <div class="skeleton-bar" style="width:90px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
@@ -1370,66 +1267,7 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL KONFIRMASI SYNC ══════ -->
-    <div id="syncConfirmOverlay" class="modal-overlay" onclick="closeSyncModalOutside(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-icon-wrap">
-                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
-                </svg>
-            </div>
-            <div class="modal-title">Sinkronkan Data Pegawai?</div>
-            <div class="modal-desc">
-                Sistem akan menarik ulang data master pegawai langsung dari SIFO. Proses ini bisa
-                memakan waktu beberapa saat dan akan memperbarui data yang tersimpan secara lokal.
-            </div>
-            <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeSyncModal()">Batal</button>
-                <button class="btn-modal-confirm" onclick="confirmSync()">Ya, Sync Sekarang</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL UPDATE KIB ══════ -->
-    <div id="updateModalOverlay" class="modal-overlay" onclick="closeUpdateModalOutside(event)">
-        <div class="update-modal-box" onclick="event.stopPropagation()">
-            <div class="update-modal-header">
-                <div class="update-modal-eyebrow">Update Data KIB</div>
-                <div class="update-modal-name" id="updateModalName">—</div>
-                <div class="update-modal-nik" id="updateModalNik">—</div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Nomor KIB</label>
-                <input type="text" id="inputNomorKib" class="form-input" placeholder="Contoh: KIB-2026-0001" />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Masa Berlaku KIB</label>
-                <input type="date" id="inputMasaBerlakuKib" class="form-input" />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Status KIB</label>
-                <select id="inputStatusKib" class="form-select">
-                    <option value="">Pilih Status</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Proses Pengajuan">Proses Pengajuan</option>
-                    <option value="Kadaluarsa">Kadaluarsa</option>
-                    <option value="Tidak Berlaku">Tidak Berlaku</option>
-                </select>
-            </div>
-
-            <div class="modal-actions" style="margin-top:20px;">
-                <button class="btn-modal-cancel" onclick="closeUpdateModal()">Batal</button>
-                <button class="btn-modal-confirm" id="btnSubmitUpdate" onclick="submitUpdateKib()">Simpan
-                    Perubahan</button>
-            </div>
-        </div>
-    </div>
-
-    {{-- MODAL DETAIL TENAGA KERJA --}}
+    <!-- ══════ MODAL DETAIL TENAGA/PENGAWAS ══════ -->
     <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
         <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
             <div class="modal-header detail-modal-header">
@@ -1445,7 +1283,6 @@
 
             <div class="modal-body detail-modal-body">
 
-                <!-- SECTION: DATA PRIBADI -->
                 <div class="detail-section">
                     <div class="detail-section-title mt-2">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1478,7 +1315,6 @@
                     </div>
                 </div>
 
-                <!-- SECTION: BPJS -->
                 <div class="detail-section">
                     <div class="detail-section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1499,27 +1335,6 @@
                     </div>
                 </div>
 
-                <!-- SECTION: DATA OK -->
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Data OK (Order Kerja)
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Kode OK</label>
-                            <input type="text" id="detailInputKodeOk" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Nomor OK</label>
-                            <input type="text" id="detailInputNomorOk" readonly>
-                        </div>
-                    </div>
-                </div>
-
             </div>
             <div class="modal-footer mt-4">
                 <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
@@ -1527,32 +1342,48 @@
         </div>
     </div>
 
-    <!-- ══════ TOAST NOTIFIKASI ══════ -->
-    <div id="toastContainer" class="toast-container"></div>
-    <!-- ══════ LOADING SCREEN OVERLAY ══════ -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-box">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Menyinkronkan Data Pegawai</div>
-            <div class="loading-sub">Mohon tunggu, sedang mengambil data terbaru dari SIFO...</div>
+    <!-- ══════ MODAL PILIH TENAGA UNTUK PENGAWAS ══════ -->
+    <div class="modal-overlay" id="pickerModalOverlay" onclick="closePickerModalOutside(event)">
+        <div class="update-modal-box" onclick="event.stopPropagation()">
+            <div class="update-modal-header">
+                <div class="update-modal-eyebrow" id="pickerModeLabel">Tambah Pengawas Baru</div>
+                <div class="update-modal-name">Pilih Tenaga Kerja</div>
+                <div class="update-modal-nik" id="pickerReplaceInfo" style="display:none;"></div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="pickerSearchInput" class="form-input"
+                    placeholder="Cari nama atau badge..." oninput="onPickerSearchInput()" />
+            </div>
+
+            <div id="pickerResultList"
+                style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+                <div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Ketik untuk mencari
+                    tenaga kerja...</div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closePickerModal()">Batal</button>
+            </div>
         </div>
     </div>
 
+    <!-- ══════ TOAST NOTIFIKASI ══════ -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <script>
         // ══════ CONFIG ══════
-        const API_ENDPOINT = "{{ route('tenaga.api') }}";
+        const API_ENDPOINT = "{{ route('pengawas.api') }}";
+        const CARI_TENAGA_ENDPOINT = "{{ route('pengawas.cari-tenaga') }}";
+        const PENGAWAS_BASE = "{{ url('/pengawas') }}";
 
         const state = {
             search: '',
-            status: '',
-            departemen: '',
-            jenis_kelamin: '',
             page: 1,
             per_page: 10,
         };
 
         let searchDebounce = null;
-        let filterOptionsLoaded = false;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1582,15 +1413,6 @@
             });
         }
 
-        function statusPillClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s.includes('aktif') && !s.includes('non')) return 'sp-green';
-            if (s.includes('non') || s.includes('resign') || s.includes('berhenti')) return 'sp-red';
-            if (s.includes('cuti') || s.includes('kontrak')) return 'sp-amber';
-            if (s === '-' || s === '') return 'sp-gray';
-            return 'sp-blue';
-        }
-
         function onSearchInput() {
             clearTimeout(searchDebounce);
             searchDebounce = setTimeout(() => {
@@ -1598,14 +1420,6 @@
                 state.page = 1;
                 loadData();
             }, 350);
-        }
-
-        function onFilterChange() {
-            state.status = document.getElementById('filterStatus').value;
-            state.departemen = document.getElementById('filterDepartemen').value;
-            state.jenis_kelamin = document.getElementById('filterJenisKelamin').value;
-            state.page = 1;
-            loadData();
         }
 
         function onPerPageChange() {
@@ -1616,13 +1430,7 @@
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterDepartemen').value = '';
-            document.getElementById('filterJenisKelamin').value = '';
             state.search = '';
-            state.status = '';
-            state.departemen = '';
-            state.jenis_kelamin = '';
             state.page = 1;
             loadData();
         }
@@ -1636,45 +1444,31 @@
             });
         }
 
-        function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
 
-            const build = (selectId, values) => {
-                const select = document.getElementById(selectId);
-                const current = select.value;
-                values.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    select.appendChild(opt);
-                });
-                select.value = current;
-            };
+            const iconSvg = type === 'error' ?
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
 
-            build('filterStatus', options.status || []);
-            build('filterDepartemen', options.departemen || []);
-            build('filterJenisKelamin', options.jenis_kelamin || []);
-            filterOptionsLoaded = true;
-        }
+            toast.innerHTML = `
+                <div class="toast-icon">${iconSvg}</div>
+                <div class="toast-body">
+                    <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
+                    <div class="toast-msg">${escapeHtml(message)}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+            `;
 
-        function sisaHariBadge(sisaHari) {
-            if (sisaHari === null || sisaHari === undefined) {
-                return `<span class="status-pill sp-gray">-</span>`;
-            }
-            let cls = 'sp-green';
-            if (sisaHari < 0) cls = 'sp-red';
-            else if (sisaHari <= 30) cls = 'sp-amber';
-            const label = sisaHari < 0 ? `Lewat ${Math.abs(sisaHari)} hari` : `${sisaHari} hari`;
-            return `<span class="status-pill ${cls}">${label}</span>`;
-        }
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
 
-        function kibStatusPillClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s.includes('aktif') || s.includes('berlaku')) return 'sp-green';
-            if (s.includes('proses') || s.includes('pengajuan')) return 'sp-amber';
-            if (s.includes('expired') || s.includes('kadaluarsa') || s.includes('habis')) return 'sp-red';
-            if (!s) return 'sp-gray';
-            return 'sp-blue';
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 250);
+            }, 4000);
         }
 
         function renderTable(rows) {
@@ -1683,14 +1477,14 @@
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="6">
+                    <td colspan="5">
                         <div class="empty-state">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-4a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
-                            <div class="empty-state-title">Data tidak ditemukan</div>
-                            <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang digunakan.</div>
+                            <div class="empty-state-title">Belum ada pengawas ditetapkan</div>
+                            <div class="empty-state-sub">Klik "Tambah Pengawas" untuk memilih dari data tenaga kerja.</div>
                         </div>
                     </td>
                 </tr>`;
@@ -1715,41 +1509,27 @@
                         <div style="font-weight:600; color:#334155; font-size: 13px; margin-bottom:3px;">
                             ${escapeHtml(row.tempat_lahir)}, ${formatDate(row.tanggal_lahir)}
                         </div>
-                        <div class="td-name-sub" style="white-space: normal; max-width: 280px; line-height: 1.4;">
+                        <div class="td-name-sub" style="white-space: normal; max-width: 260px; line-height: 1.4;">
                             ${escapeHtml(row.alamat)}
                         </div>
                     </td>
 
                     <td>
                         <div style="font-size: 12px; margin-bottom:4px;">
-                            <span style="color:#64748B;">Kes:</span> 
+                            <span style="color:#64748B;">Kes:</span>
                             <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_kesehatan)}</span>
                         </div>
                         <div style="font-size: 12px;">
-                            <span style="color:#64748B;">TK:</span> 
+                            <span style="color:#64748B;">TK:</span>
                             <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
                         </div>
                     </td>
 
                     <td>
-                        <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
-                            Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
-                        </div>
-                        <div class="td-name-sub">
-                            No: ${escapeHtml(row.nomor_ok)}
-                        </div>
+                        <span class="status-pill sp-blue">${formatDate(row.tanggal_jadi_pengawas)}</span>
                     </td>
 
-                    <td>
-                        <div style="margin-bottom: 6px;">
-                            ${sisaHariBadge(row.sisa_hari_kib)}
-                        </div>
-                        <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
-                            ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
-                        </span>
-                    </td>
-
-                   <td style="text-align:center; white-space:nowrap;">
+                    <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-detail-tenaga" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
                                 style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; margin-right:6px;">
                             <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1761,13 +1541,22 @@
                             Detail
                         </button>
 
-                        <button class="btn-edit-kib" onclick='openUpdateModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
-                                style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
-                            <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="btn-edit-kib" onclick="openPickerModal(${row.id}, '${escapeHtml(row.nama)}')"
+                                style="margin-right:6px;">
+                            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
                             </svg>
-                            Update
+                            Ganti
+                        </button>
+
+                        <button class="btn-edit-kib" onclick="copotPengawas(${row.id}, '${escapeHtml(row.nama)}')"
+                                style="color:#D0021B; border-color:rgba(208,2,27,0.2); background:rgba(208,2,27,0.06);">
+                            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Copot
                         </button>
                     </td>
                 </tr>
@@ -1777,7 +1566,7 @@
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
         <tr>
-            <td colspan="7">
+            <td colspan="5">
                 <div class="error-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1790,7 +1579,7 @@
         </tr>`;
             document.getElementById('paginationText').textContent = '—';
             document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data tenaga kerja.';
+            document.getElementById('dataSummary').textContent = 'Gagal memuat data pengawas.';
         }
 
         function renderPagination(meta) {
@@ -1800,7 +1589,7 @@
                 'Tidak ada data';
 
             document.getElementById('dataSummary').innerHTML =
-                `<strong>${meta.total}</strong> tenaga kerja ditemukan`;
+                `<strong>${meta.total}</strong> pengawas ditemukan`;
 
             const container = document.getElementById('paginationPages');
             const current = meta.current_page;
@@ -1837,9 +1626,6 @@
         async function loadData() {
             const params = new URLSearchParams();
             if (state.search) params.set('search', state.search);
-            if (state.status) params.set('status', state.status);
-            if (state.departemen) params.set('departemen', state.departemen);
-            if (state.jenis_kelamin) params.set('jenis_kelamin', state.jenis_kelamin);
             params.set('page', state.page);
             params.set('per_page', state.per_page);
 
@@ -1858,162 +1644,14 @@
                 const json = await res.json();
                 renderTable(json.data);
                 renderPagination(json.meta);
-                populateFilterOptions(json.filter_options);
             } catch (e) {
                 renderError(e.message || 'Terjadi kesalahan tak terduga.');
             }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
-    </script>
 
-    <script>
-        // Ambil URL Endpoint POST Sync dari Laravel route helper
-        const SYNC_ENDPOINT = "{{ route('tenaga.sync') }}";
-
-        function syncData() {
-            document.getElementById('syncConfirmOverlay').classList.add('open');
-        }
-
-        function closeSyncModal() {
-            document.getElementById('syncConfirmOverlay').classList.remove('open');
-        }
-
-        function closeSyncModalOutside(event) {
-            // Hanya menutup modal jika yang diklik adalah area overlay itu sendiri,
-            // bukan konten di dalam modal-box
-            if (event.target.id === 'syncConfirmOverlay') {
-                closeSyncModal();
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-
-            const iconSvg = type === 'error' ?
-                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
-                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
-
-            toast.innerHTML = `
-                <div class="toast-icon">${iconSvg}</div>
-                <div class="toast-body">
-                    <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
-                    <div class="toast-msg">${escapeHtml(message)}</div>
-                </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
-            `;
-
-            container.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.add('show'));
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 250);
-            }, 4000);
-        }
-
-        async function confirmSync() {
-            closeSyncModal();
-            document.getElementById('loadingOverlay').classList.add('open');
-
-            try {
-                const res = await fetch(SYNC_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                const json = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                }
-
-                await loadData();
-
-                document.getElementById('loadingOverlay').classList.remove('open');
-                showToast(json.message, 'success');
-
-            } catch (e) {
-                document.getElementById('loadingOverlay').classList.remove('open');
-                showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
-            }
-        }
-
-        const UPDATE_ENDPOINT_BASE = "{{ url('/tenaga') }}";
-        let currentEditId = null;
-
-        function openUpdateModal(row) {
-            currentEditId = row.id;
-            document.getElementById('updateModalName').textContent = row.nama || '-';
-            document.getElementById('updateModalNik').textContent = row.nik || '-';
-            document.getElementById('inputNomorKib').value = row.nomor_kib || '';
-            document.getElementById('inputMasaBerlakuKib').value = row.masa_berlaku_kib ? row.masa_berlaku_kib.substring(0,
-                10) : '';
-            document.getElementById('inputStatusKib').value = row.status_kib || '';
-            document.getElementById('updateModalOverlay').classList.add('open');
-        }
-
-        function closeUpdateModal() {
-            document.getElementById('updateModalOverlay').classList.remove('open');
-            currentEditId = null;
-        }
-
-        function closeUpdateModalOutside(event) {
-            if (event.target.id === 'updateModalOverlay') {
-                closeUpdateModal();
-            }
-        }
-
-        async function submitUpdateKib() {
-            if (!currentEditId) return;
-
-            const btn = document.getElementById('btnSubmitUpdate');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Menyimpan...';
-
-            try {
-                const res = await fetch(`${UPDATE_ENDPOINT_BASE}/${currentEditId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        nomor_kib: document.getElementById('inputNomorKib').value.trim() || null,
-                        masa_berlaku_kib: document.getElementById('inputMasaBerlakuKib').value || null,
-                        status_kib: document.getElementById('inputStatusKib').value || null,
-                    })
-                });
-
-                const json = await res.json();
-
-                if (!res.ok) {
-                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
-                    throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
-                }
-
-                closeUpdateModal();
-                await loadData();
-                showToast(json.message, 'success');
-
-            } catch (e) {
-                showToast(e.message || 'Terjadi kesalahan saat memperbarui data.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        }
-    </script>
-
-    <script>
+        // ══════ MODAL DETAIL ══════
         function openDetailModal(row) {
             document.getElementById('detailAvatar').textContent = initials(row.nama);
             document.getElementById('detailNamaTitle').textContent = row.nama || '-';
@@ -2027,13 +1665,10 @@
             document.getElementById('detailInputAlamat').value = row.alamat || '-';
             document.getElementById('detailInputBpjsKesehatan').value = row.no_bpjs_kesehatan || '-';
             document.getElementById('detailInputBpjsTk').value = row.no_bpjs_ketenagakerjaan || '-';
-            document.getElementById('detailInputKodeOk').value = row.kode_ok || '-';
-            document.getElementById('detailInputNomorOk').value = row.nomor_ok || '-';
 
             document.getElementById('detailModalOverlay').classList.add('open');
         }
 
-        // ── FUNGSI YANG HILANG, INI YANG BIKIN X & TUTUP TIDAK BERFUNGSI ──
         function closeDetailModal() {
             document.getElementById('detailModalOverlay').classList.remove('open');
         }
@@ -2041,6 +1676,129 @@
         function closeDetailModalOutside(event) {
             if (event.target.id === 'detailModalOverlay') {
                 closeDetailModal();
+            }
+        }
+
+        // ══════ MODAL PICKER TENAGA (Tambah / Ganti Pengawas) ══════
+        let pickerReplaceId = null;
+        let pickerSearchDebounce = null;
+
+        function openPickerModal(replaceId = null, replaceName = null) {
+            pickerReplaceId = replaceId;
+            document.getElementById('pickerSearchInput').value = '';
+            document.getElementById('pickerResultList').innerHTML =
+                '<div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Ketik untuk mencari tenaga kerja...</div>';
+
+            const modeLabel = document.getElementById('pickerModeLabel');
+            const replaceInfo = document.getElementById('pickerReplaceInfo');
+
+            if (replaceId) {
+                modeLabel.textContent = 'Ganti Pengawas';
+                replaceInfo.style.display = 'block';
+                replaceInfo.textContent = `Menggantikan: ${replaceName}`;
+            } else {
+                modeLabel.textContent = 'Tambah Pengawas Baru';
+                replaceInfo.style.display = 'none';
+            }
+
+            document.getElementById('pickerModalOverlay').classList.add('open');
+        }
+
+        function closePickerModal() {
+            document.getElementById('pickerModalOverlay').classList.remove('open');
+            pickerReplaceId = null;
+        }
+
+        function closePickerModalOutside(event) {
+            if (event.target.id === 'pickerModalOverlay') closePickerModal();
+        }
+
+        function onPickerSearchInput() {
+            clearTimeout(pickerSearchDebounce);
+            pickerSearchDebounce = setTimeout(searchTenagaPicker, 350);
+        }
+
+        async function searchTenagaPicker() {
+            const search = document.getElementById('pickerSearchInput').value.trim();
+            const listEl = document.getElementById('pickerResultList');
+            listEl.innerHTML =
+                '<div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Mencari...</div>';
+
+            try {
+                const res = await fetch(`${CARI_TENAGA_ENDPOINT}?search=${encodeURIComponent(search)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+
+                if (!json.data || json.data.length === 0) {
+                    listEl.innerHTML =
+                        '<div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Tidak ada tenaga ditemukan.</div>';
+                    return;
+                }
+
+                listEl.innerHTML = json.data.map(t => `
+                    <div class="picker-item">
+                        <div>
+                            <div class="picker-item-name">${escapeHtml(t.nama)}</div>
+                            <div class="picker-item-sub">${escapeHtml(t.badge)} • ${escapeHtml(t.departemen)}</div>
+                        </div>
+                        <button class="btn-picker-select" onclick="pilihTenaga(${t.id})">Pilih</button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                listEl.innerHTML =
+                    '<div style="text-align:center; color:#D0021B; font-size:12px; padding:20px 0;">Gagal memuat data.</div>';
+            }
+        }
+
+        async function pilihTenaga(id) {
+            try {
+                const body = pickerReplaceId ? {
+                    replace_id: pickerReplaceId
+                } : {};
+
+                const res = await fetch(`${PENGAWAS_BASE}/${id}/tetapkan`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || `Server merespons status ${res.status}`);
+
+                closePickerModal();
+                await loadData();
+                showToast(json.message, 'success');
+            } catch (e) {
+                showToast(e.message || 'Gagal menetapkan pengawas.', 'error');
+            }
+        }
+
+        async function copotPengawas(id, nama) {
+            if (!confirm(`Copot ${nama} dari jabatan pengawas?`)) return;
+
+            try {
+                const res = await fetch(`${PENGAWAS_BASE}/${id}/copot`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || `Server merespons status ${res.status}`);
+
+                await loadData();
+                showToast(json.message, 'success');
+            } catch (e) {
+                showToast(e.message || 'Gagal mencopot pengawas.', 'error');
             }
         }
     </script>

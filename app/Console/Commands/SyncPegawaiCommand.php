@@ -59,10 +59,7 @@ class SyncPegawaiCommand extends Command
 
                 // Gunakan updateOrCreate agar data lama diperbarui dan data baru ditambahkan
                 Pegawai::updateOrCreate(
-                    // Parameter Kunci Pencarian (Jika ID API ini sudah ada, lakukan UPDATE. Jika belum, lakukan INSERT)
                     ['id_api' => $idApi ?? $nik],
-
-                    // Data yang disinkronkan dari API (Kolom nomor_kib & status_kib sengaja TIDAK dimasukkan di sini agar aman)
                     [
                         'badge' => $nik,
                         'no_ktp' => $item['no_ktp'] ?? null,
@@ -72,6 +69,17 @@ class SyncPegawaiCommand extends Command
                         'unit_kerjaid' => $item['unit_kerjaid'] ?? null,
                         'lokasi_kerjaid' => $item['lokasi_kerjaid'] ?? null,
                         'is_active' => $item['is_active'] ?? true,
+
+                        // --- TAMBAHAN DATA BARU YANG DIAMBIL DARI API ---
+                        'tempat_lahir' => $item['tempat_lahir'] ?? null,
+                        'tanggal_lahir' => $item['tanggal_lahir'] ?? null,
+                        'alamat' => $item['alamat'] ?? null,
+                        'no_bpjs_kesehatan' => $item['no_bpjs_kesehatan'] ?? null,
+                        'no_bpjs_ketenagakerjaan' => $item['no_bpjs_ketenagakerjaan'] ?? null,
+                        'kode_ok' => $item['kode_ok'] ?? null,
+                        'nomor_ok' => $item['nomor_ok'] ?? null,
+                        // ------------------------------------------------
+
                         'last_sync' => Carbon::now(),
                     ]
                 );

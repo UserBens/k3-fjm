@@ -267,7 +267,7 @@
         </a>
     </div>
 
-    <div class="sb-section">
+    {{-- <div class="sb-section">
         <div class="sb-section-label">Database Tenaga</div>
         <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}" href="{{ route('tenaga.index') }}">
             <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
@@ -277,6 +277,49 @@
             </svg>
             <span class="nav-label">Data Tenaga</span>
         </a>
+    </div> --}}
+    {{-- DATABASE TENAGA --}}
+    <div class="sb-section">
+        <div class="sb-section-label">Database Tenaga</div>
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $datatenagaActive = request()->routeIs('tenaga.*') || request()->routeIs('pengawas.*');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
+            onclick="toggleDropdown('datatenagaDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">Data Tenaga</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $datatenagaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+
+        </a>
+
+        <div id="datatenagaDropdown" class="dropdown-menu {{ $datatenagaActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}"
+                href="{{ route('tenaga.index') }}">
+                <span class="nav-label">Master Tenaga</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
+                href="{{ route('pengawas.index') }}">
+                <span class="nav-label">Data Pengawas</span>
+            </a>
+
+        </div>
     </div>
 
     {{-- KPI --}}
@@ -325,36 +368,46 @@
                 <span class="nav-label">Data Pengawas</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}" href="{{ route('data-medis.index') }}">
+            <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
+                href="{{ route('data-medis.index') }}">
                 <span class="nav-label">Data Medis</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('data-safety.*') ? 'active' : '' }}" href="{{ route('data-safety.index') }}">
+            <a class="nav-link {{ request()->routeIs('data-safety.*') ? 'active' : '' }}"
+                href="{{ route('data-safety.index') }}">
                 <span class="nav-label">Data Safety</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('cetak-uauc.*') ? 'active' : '' }}" href="{{ route('cetak-uauc.index') }}">
+            <a class="nav-link {{ request()->routeIs('cetak-uauc.*') ? 'active' : '' }}"
+                href="{{ route('cetak-uauc.index') }}">
                 <span class="nav-label">Cetak UA/UC</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('dokumen-reject.*') ? 'active' : '' }}" href="{{ route('dokumen-reject.index') }}">
+            <a class="nav-link {{ request()->routeIs('dokumen-reject.*') ? 'active' : '' }}"
+                href="{{ route('dokumen-reject.index') }}">
                 <span class="nav-label">Dokumen Reject</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-so.*') ? 'active' : '' }}" href="{{ route('monitoring-so.index') }}">
+            <a class="nav-link {{ request()->routeIs('monitoring-so.*') ? 'active' : '' }}"
+                href="{{ route('monitoring-so.index') }}">
                 <span class="nav-label">Monitoring SO</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}" href="{{ route('dashboard-individu.index') }}">
+            <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-individu.index') }}">
                 <span class="nav-label">Dashboard Individu</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}" href="{{ route('monitoring-pengawas.index') }}">
+            <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}"
+                href="{{ route('monitoring-pengawas.index') }}">
                 <span class="nav-label">Monitoring Pengawas</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('rekap-pengawas.*') ? 'active' : '' }}" href="{{ route('rekap-pengawas.index') }}">
+            <a class="nav-link {{ request()->routeIs('rekap-pengawas.*') ? 'active' : '' }}"
+                href="{{ route('rekap-pengawas.index') }}">
                 <span class="nav-label">Rekap Pengawas</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-medis.*') ? 'active' : '' }}" href="{{ route('monitoring-medis.index') }}">
+            <a class="nav-link {{ request()->routeIs('monitoring-medis.*') ? 'active' : '' }}"
+                href="{{ route('monitoring-medis.index') }}">
                 <span class="nav-label">Monitoring Medis</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('rekap-medis.*') ? 'active' : '' }}" href="{{ route('rekap-medis.index') }}">
+            <a class="nav-link {{ request()->routeIs('rekap-medis.*') ? 'active' : '' }}"
+                href="{{ route('rekap-medis.index') }}">
                 <span class="nav-label">Rekap Medis</span>
             </a>
 
@@ -395,15 +448,18 @@
 
         <div id="jkaDropdown" class="dropdown-menu {{ $jkaActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}" href="{{ route('dashboard-insiden.index') }}">
+            <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-insiden.index') }}">
                 <span class="nav-label">Dashboard Monitoring Insiden</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}" href="{{ route('dashboard-jka.index') }}">
+            <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-jka.index') }}">
                 <span class="nav-label">Dashboard JKA</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('dashboard-leading.*') ? 'active' : '' }}" href="{{ route('dashboard-leading.index') }}">
+            <a class="nav-link {{ request()->routeIs('dashboard-leading.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-leading.index') }}">
                 <span class="nav-label">Dashboard Leading</span>
             </a>
 
@@ -416,8 +472,7 @@
 
         @php
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $documentcontrolActive = request()->routeIs('daftar-induk.*') || 
-            request()->routeIs('dashboard-dokumen.*');
+            $documentcontrolActive = request()->routeIs('daftar-induk.*') || request()->routeIs('dashboard-dokumen.*');
         @endphp
 
         <a href="javascript:void(0)"
@@ -642,7 +697,7 @@
                 <span class="nav-label">Dashboard APD</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}" href="{{ route('master-stok-apd.index') }}">
                 <span class="nav-label">Master Stok APD</span>
             </a>
 
