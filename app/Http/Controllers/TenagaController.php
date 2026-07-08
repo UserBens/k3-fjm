@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
+use App\Models\UnitKerja;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -34,10 +35,8 @@ class TenagaController extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            // Memulai query dari tabel pegawai_k3
-            $query = Pegawai::query();
+            $query = Pegawai::with('unitKerja'); // BARU — eager load relasi
 
-            // ── Search: nama & NIK (kolom 'badge' di database) ──────────────────────────────
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama', 'ilike', "%{$search}%")
@@ -45,49 +44,45 @@ class TenagaController extends Controller
                 });
             }
 
-            // ── Filter: status kerja ────────────────────────────
             if ($request->has('status') && $request->query('status') !== '') {
                 $statusParam = $request->query('status');
                 $query->where('is_active', $statusParam === 'Aktif');
             }
 
-            // ── Filter: departemen / unit kerja ─────────────────
+            // Filter departemen sekarang berdasarkan unit_kerjaid tetap sama (value = UUID)
             if ($departemen = $request->query('departemen')) {
                 $query->where('unit_kerjaid', $departemen);
             }
 
-            // ── Filter: jenis kelamin ────────────────────────────
             if ($jenisKelamin = $request->query('jenis_kelamin')) {
                 $query->where('jenis_kelamin', $jenisKelamin);
             }
 
-            // Urutkan berdasarkan data yang paling baru diupdate/disync, ditampilkan paling atas
             $query->orderByDesc('updated_at');
 
-            // Dapatkan opsi filter secara dinamis berdasarkan data yang ada di database lokal
+            // Filter options: value tetap UUID (id_api), tapi label sudah nama_unit_kerja
             $filterOptions = [
                 'status' => ['Aktif', 'Non-Aktif'],
-                'departemen' => Pegawai::whereNotNull('unit_kerjaid')->distinct()->pluck('unit_kerjaid')->sort()->values(),
+                'departemen' => UnitKerja::whereIn('id_api', Pegawai::whereNotNull('unit_kerjaid')->distinct()->pluck('unit_kerjaid'))
+                    ->orderBy('nama_unit_kerja')
+                    ->get(['id_api', 'nama_unit_kerja'])
+                    ->map(fn($u) => ['value' => $u->id_api, 'label' => $u->nama_unit_kerja])
+                    ->values(),
                 'jenis_kelamin' => Pegawai::whereNotNull('jenis_kelamin')->distinct()->pluck('jenis_kelamin')->sort()->values(),
             ];
 
-            // Pagination menggunakan bawaan Eloquent Builder
             $perPage = (int) $request->query('per_page', 10);
             $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
 
             $paginator = $query->paginate($perPage);
 
-            // Transformasi data agar struktur key JSON-nya tetap sama dengan yang dibaca JavaScript di View Anda
-            // Transformasi data agar struktur key JSON-nya cocok dengan View
             $transformedData = collect($paginator->items())->map(function ($item) {
-                // Hitung sisa hari masa berlaku KIB (bisa minus jika sudah lewat)
                 $sisaHari = null;
                 if ($item->masa_berlaku_kib) {
                     $sisaHari = (int) now()->startOfDay()
                         ->diffInDays(\Carbon\Carbon::parse($item->masa_berlaku_kib)->startOfDay(), false);
                 }
 
-                // Format Jenis Kelamin
                 $jk = '-';
                 if ($item->jenis_kelamin === 'L') $jk = 'Laki-Laki';
                 if ($item->jenis_kelamin === 'P') $jk = 'Perempuan';
@@ -98,7 +93,6 @@ class TenagaController extends Controller
                     'nama' => $item->nama ?? '-',
                     'jenis_kelamin' => $jk,
 
-                    // Data Baru sesuai JSON API
                     'no_bpjs_kesehatan' => $item->no_bpjs_kesehatan ?? '-',
                     'no_bpjs_ketenagakerjaan' => $item->no_bpjs_ketenagakerjaan ?? '-',
                     'tempat_lahir' => $item->tempat_lahir ?? '-',
@@ -107,7 +101,10 @@ class TenagaController extends Controller
                     'kode_ok' => $item->kode_ok ?? '-',
                     'nomor_ok' => $item->nomor_ok ?? '-',
 
-                    // Data Lama yang mungkin masih dibutuhkan untuk struktur layout/modal
+                    // BARU — data unit kerja
+                    'nama_unit_kerja' => $item->unitKerja->nama_unit_kerja ?? '-',
+                    'bagian' => $item->unitKerja->bagian ?? '-',
+
                     'jabatan' => $item->jabatan ?? '-',
                     'departemen' => $item->unit_kerjaid ?? '-',
                     'status' => $item->is_active ? 'Aktif' : 'Non-Aktif',
@@ -132,7 +129,6 @@ class TenagaController extends Controller
             ]);
         } catch (\Throwable $e) {
             Log::error('Gagal memuat data pegawai dari DB lokal: ' . $e->getMessage());
-
             return response()->json([
                 'message' => 'Gagal mengambil data dari database lokal. Pastikan migrasi sudah dijalankan.',
             ], 500);
@@ -145,12 +141,12 @@ class TenagaController extends Controller
     public function sync(): JsonResponse
     {
         try {
-            // Memanggil command 'sync:pegawai' secara programmatif
             Artisan::call('sync:pegawai');
+            Log::info('Sync output: ' . Artisan::output());
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Sinkronisasi selesai! Data pegawai berhasil diperbarui dari API SIFO.',
+                'message' => 'Sinkronisasi selesai! Data pegawai & unit kerja berhasil diperbarui dari API SIFO.',
             ]);
         } catch (\Throwable $e) {
             Log::error('Gagal menjalankan sinkronisasi via Web UI: ' . $e->getMessage());

@@ -53,7 +53,6 @@
             border-radius: 4px;
         }
 
-        /* TOPBAR */
         #topbar {
             height: 52px;
             background: #fff;
@@ -69,38 +68,6 @@
             flex: 1;
             max-width: 320px;
             position: relative;
-        }
-
-        .search-box input {
-            width: 100%;
-            height: 32px;
-            padding: 0 32px 0 30px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            border-radius: 8px;
-            background: #F8F9FF;
-            font-size: 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #1A1D2E;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        .search-box input::placeholder {
-            color: #94A3B8;
-        }
-
-        .search-box input:focus {
-            border-color: #2D4B9E;
-            background: #fff;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 9px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94A3B8;
-            font-size: 14px;
         }
 
         .tb-badge {
@@ -170,7 +137,6 @@
             background: rgba(0, 0, 0, 0.07);
         }
 
-        /* CONTENT */
         #main-content {
             flex: 1;
             display: flex;
@@ -185,7 +151,6 @@
             padding: 20px 20px 28px;
         }
 
-        /* PAGE HEADER */
         .page-hdr {
             margin-bottom: 16px;
         }
@@ -297,7 +262,6 @@
             min-width: 0;
         }
 
-        /* ══════ FILTER BAR ══════ */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -331,7 +295,11 @@
         }
 
         .filter-search .search-icon {
+            position: absolute;
             left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
         }
 
         .filter-reset {
@@ -350,7 +318,6 @@
             color: #1A1D2E;
         }
 
-        /* ══════ TABLE ══════ */
         .rtable-wrap {
             width: 100%;
             overflow-x: auto;
@@ -358,7 +325,7 @@
 
         .rtable {
             width: 100%;
-            min-width: 760px;
+            min-width: 700px;
             border-collapse: collapse;
         }
 
@@ -388,6 +355,10 @@
 
         .rtable tr:hover td {
             background: #F8F9FF;
+        }
+
+        .rtable tr.clickable-row {
+            cursor: pointer;
         }
 
         .td-name-cell {
@@ -437,11 +408,6 @@
         .sp-green {
             background: rgba(26, 122, 60, 0.09);
             color: #1A7A3C;
-        }
-
-        .sp-amber {
-            background: rgba(217, 119, 6, 0.09);
-            color: #D97706;
         }
 
         .sp-red {
@@ -509,7 +475,6 @@
             }
         }
 
-        /* ══════ PAGINATION ══════ */
         .pagination-bar {
             display: flex;
             align-items: center;
@@ -588,7 +553,6 @@
             padding: 0 2px;
         }
 
-        /* ══════ RESPONSIVE ══════ */
         .hamburger-btn {
             display: none;
             width: 32px;
@@ -618,20 +582,6 @@
             opacity: 1;
         }
 
-        .sb-close-btn {
-            display: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            align-items: center;
-            justify-content: center;
-            background: #F0F2FA;
-            color: #64748B;
-            cursor: pointer;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
         @media (max-width: 1024px) {
             #sidebar {
                 position: fixed;
@@ -651,10 +601,6 @@
                 display: flex;
             }
 
-            .sb-close-btn {
-                display: flex;
-            }
-
             .search-box {
                 max-width: none;
             }
@@ -666,10 +612,7 @@
                 gap: 8px;
             }
 
-            .tb-name {
-                display: none;
-            }
-
+            .tb-name,
             .tb-caret {
                 display: none;
             }
@@ -697,7 +640,7 @@
             }
         }
 
-        /* ══════ MODAL UMUM ══════ */
+        /* ══════ MODAL ══════ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -716,21 +659,6 @@
             opacity: 1;
         }
 
-        .modal-box {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            width: 380px;
-            max-width: calc(100vw - 32px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            transform: scale(0.94) translateY(8px);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.open .modal-box {
-            transform: scale(1) translateY(0);
-        }
-
         .modal-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 20px;
@@ -739,45 +667,6 @@
             margin-bottom: 8px;
         }
 
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        .btn-modal-cancel {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            color: #64748B;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .btn-modal-cancel:hover {
-            background: #F8F9FF;
-        }
-
-        .btn-modal-confirm {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            background: #2D4B9E;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .btn-modal-confirm:hover {
-            background: #1A3C8A;
-        }
-
-        /* ══════ TOAST ══════ */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -862,104 +751,35 @@
             flex-shrink: 0;
         }
 
-        .btn-edit-kib {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 7px;
-            border: 1px solid rgba(45, 75, 158, 0.2);
-            background: #F0F4FF;
-            color: #2D4B9E;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .btn-edit-kib:hover {
-            background: rgba(45, 75, 158, 0.14);
-        }
-
-        /* ══════ MODAL DETAIL / PICKER (box lebar) ══════ */
-        .update-modal-box {
+        /* ══════ MODAL DETAIL PENGAWAS + PEGAWAI BINAAN ══════ */
+        .binaan-modal-box {
             background: #fff;
             border-radius: 16px;
-            padding: 24px;
-            width: 420px;
+            width: 640px;
             max-width: calc(100vw - 32px);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
             transform: scale(0.94) translateY(8px);
             transition: transform 0.2s ease;
+            overflow: hidden;
         }
 
-        .modal-overlay.open .update-modal-box {
+        .modal-overlay.open .binaan-modal-box {
             transform: scale(1) translateY(0);
         }
 
-        .update-modal-header {
-            margin-bottom: 16px;
-        }
-
-        .update-modal-eyebrow {
-            font-size: 10px;
-            font-weight: 700;
-            color: #94A3B8;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .update-modal-name {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
-            letter-spacing: 0.02em;
-            color: #1A1D2E;
-            line-height: 1;
-        }
-
-        .update-modal-nik {
-            font-size: 11.5px;
-            color: #94A3B8;
-            margin-top: 2px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            height: 38px;
-            padding: 0 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff;
-            font-size: 12.5px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #1A1D2E;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        .form-input:focus {
-            border-color: #2D4B9E;
-        }
-
-        /* modal detail tenaga */
-        .detail-modal-box {
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .detail-modal-header {
+        .binaan-modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
-        .detail-avatar {
+        .binaan-avatar {
             width: 42px;
             height: 42px;
             border-radius: 10px;
@@ -973,134 +793,84 @@
             flex-shrink: 0;
         }
 
-        .detail-subtitle {
-            font-size: 12.5px;
-            color: #94A3B8;
-            font-weight: 500;
-        }
-
-        .detail-modal-body {
-            max-height: 65vh;
-            overflow-y: auto;
-            padding-top: 4px;
-        }
-
-        .detail-section {
-            margin-bottom: 18px;
-            padding-bottom: 16px;
-            border-bottom: 1px dashed #E2E8F0;
-        }
-
-        .detail-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .detail-section-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .binaan-subtitle {
             font-size: 12px;
-            font-weight: 700;
-            color: #2D4B9E;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 10px;
-        }
-
-        .detail-section-title svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .detail-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 16px;
-        }
-
-        .detail-field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .detail-field label {
-            font-size: 11px;
-            font-weight: 600;
             color: #94A3B8;
+            font-weight: 600;
         }
 
-        .detail-field input,
-        .detail-field textarea {
-            border: 1px solid #E2E8F0;
-            background: #F8FAFC;
-            border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #1E293B;
-            font-family: inherit;
-            resize: none;
-            cursor: default;
-        }
-
-        .detail-field input:focus,
-        .detail-field textarea:focus {
-            outline: none;
-            border-color: #2D4B9E;
-            background: #EEF2FB;
-        }
-
-        @media (max-width: 640px) {
-            .detail-form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ══════ MODAL PICKER TENAGA ══════ */
-        .picker-item {
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94A3B8;
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 8px 10px;
-            border: 1px solid #E2E8F0;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #F0F2FA;
+            color: #1A1D2E;
+        }
+
+        .binaan-modal-body {
+            padding: 16px 24px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .binaan-search {
+            width: 100%;
+            height: 34px;
+            padding: 0 12px;
             border-radius: 8px;
-            transition: background 0.15s;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            font-size: 12px;
+            margin-bottom: 12px;
+            outline: none;
+            font-family: inherit;
         }
 
-        .picker-item:hover {
-            background: #F8F9FF;
-            border-color: rgba(45, 75, 158, 0.25);
+        .binaan-search:focus {
+            border-color: #2D4B9E;
         }
 
-        .picker-item-name {
+        .binaan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .binaan-item:last-child {
+            border-bottom: none;
+        }
+
+        .binaan-item-name {
             font-size: 12.5px;
             font-weight: 700;
             color: #1A1D2E;
         }
 
-        .picker-item-sub {
+        .binaan-item-sub {
             font-size: 10.5px;
             color: #94A3B8;
             font-weight: 600;
+            margin-top: 1px;
         }
 
-        .btn-picker-select {
-            padding: 5px 10px;
-            border-radius: 6px;
-            border: none;
-            background: #2D4B9E;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .btn-picker-select:hover {
-            background: #1A3C8A;
+        .binaan-loading,
+        .binaan-empty {
+            text-align: center;
+            padding: 32px 12px;
+            color: #94A3B8;
+            font-size: 12.5px;
         }
     </style>
 </head>
@@ -1121,9 +891,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-            <div class="search-box" style="visibility:hidden;">
-                <input type="text" tabindex="-1" />
-            </div>
+            <div class="search-box" style="visibility:hidden;"><input type="text" tabindex="-1" /></div>
             <div style="flex:1"></div>
             <div style="display:flex;align-items:center;gap:6px;">
                 <div class="tb-badge" style="position:relative;">
@@ -1148,7 +916,6 @@
         <!-- PAGE CONTENT -->
         <div id="page-content">
 
-            <!-- PAGE HEADER -->
             <div class="page-hdr">
                 <div class="page-hdr-top">
                     <div>
@@ -1157,18 +924,9 @@
                             <span class="pg-eyebrow">Database Pengawas · PT. Fokus Jasa Mitra</span>
                         </div>
                         <div class="pg-title">DATA <span>PENGAWAS</span></div>
-                        <div class="pg-sub">Kelola tenaga kerja yang bertugas sebagai pengawas.</div>
+                        <div class="pg-sub">Daftar pengawas beserta pegawai yang menjadi tanggung jawabnya.</div>
                     </div>
                     <div class="pg-actions">
-                        <button class="btn-primary" onclick="openPickerModal()">
-                            <svg style="width:13px;height:13px;" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            Tambah Pengawas
-                        </button>
-
                         <button class="btn-outline" onclick="loadData()">
                             <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -1190,10 +948,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput"
-                            placeholder="Cari pengawas berdasarkan nama atau badge..." oninput="onSearchInput()" />
+                        <input type="text" id="searchInput" placeholder="Cari nama atau username pengawas..."
+                            oninput="onSearchInput()" />
                     </div>
-
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
@@ -1204,11 +961,11 @@
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th class="px-6 py-3 text-left">Data Pegawai</th>
-                                <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th>
-                                <th class="px-6 py-3 text-left">Data BPJS</th>
-                                <th class="px-6 py-3 text-left">Sejak Bertugas</th>
-                                <th class="px-6 py-3 text-center">Action</th>
+                                <th class="px-6 py-3 text-left">Pengawas</th>
+                                <th class="px-6 py-3 text-left">Kode OK Pekerjaan</th>
+                                <th class="px-6 py-3 text-left">Unit Kerja</th>
+                                <th class="px-6 py-3 text-left">Jumlah Pegawai Binaan</th>
+                                <th class="px-6 py-3 text-left">Status</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -1217,16 +974,16 @@
                                     <div class="skeleton-bar" style="width:160px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:180px;"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton-bar" style="width:120px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:100px;"></div>
+                                    <div class="skeleton-bar" style="width:140px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
+                                    <div class="skeleton-bar" style="width:80px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
                                 </td>
                             </tr>
                             <tr class="skeleton-row">
@@ -1234,16 +991,16 @@
                                     <div class="skeleton-bar" style="width:150px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:190px;"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton-bar" style="width:110px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:90px;"></div>
+                                    <div class="skeleton-bar" style="width:130px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1267,103 +1024,34 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL DETAIL TENAGA/PENGAWAS ══════ -->
-    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
-            <div class="modal-header detail-modal-header">
+    <!-- ══════ MODAL PEGAWAI BINAAN ══════ -->
+    <div class="modal-overlay" id="binaanModalOverlay" onclick="closeBinaanModalOutside(event)">
+        <div class="binaan-modal-box" onclick="event.stopPropagation()">
+            <div class="binaan-modal-header">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="detail-avatar" id="detailAvatar">--</div>
+                    <div class="binaan-avatar" id="binaanAvatar">--</div>
                     <div>
-                        <div class="modal-title" id="detailNamaTitle" style="margin-bottom:2px;">-</div>
-                        <div class="detail-subtitle" id="detailBadgeSub">-</div>
+                        <div class="modal-title" id="binaanNamaTitle" style="margin-bottom:2px;">-</div>
+                        <div class="binaan-subtitle" id="binaanUsernameSub">-</div>
                     </div>
                 </div>
-                <button class="modal-close" onclick="closeDetailModal()">✕</button>
+                <button class="modal-close" onclick="closeBinaanModal()">✕</button>
             </div>
 
-            <div class="modal-body detail-modal-body">
+            <div class="binaan-modal-body">
+                <input type="text" id="binaanSearchInput" class="binaan-search"
+                    placeholder="Cari nama atau badge pegawai binaan..." oninput="onBinaanSearchInput()" />
 
-                <div class="detail-section">
-                    <div class="detail-section-title mt-2">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        Data Pribadi
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Nama Lengkap</label>
-                            <input type="text" id="detailInputNama" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Badge / NIK</label>
-                            <input type="text" id="detailInputBadge" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Jenis Kelamin</label>
-                            <input type="text" id="detailInputJenisKelamin" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Tempat, Tanggal Lahir</label>
-                            <input type="text" id="detailInputTtl" readonly>
-                        </div>
-                        <div class="detail-field" style="grid-column: span 2;">
-                            <label>Alamat</label>
-                            <textarea id="detailInputAlamat" readonly rows="2"></textarea>
-                        </div>
-                    </div>
+                <div id="binaanList">
+                    <div class="binaan-loading">Memuat data pegawai binaan...</div>
                 </div>
 
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Data BPJS
+                <div class="pagination-bar" id="binaanPaginationBar" style="display:none;">
+                    <div class="pagination-info">
+                        <span id="binaanPaginationText">—</span>
                     </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>No. BPJS Kesehatan</label>
-                            <input type="text" id="detailInputBpjsKesehatan" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>No. BPJS Ketenagakerjaan</label>
-                            <input type="text" id="detailInputBpjsTk" readonly>
-                        </div>
-                    </div>
+                    <div class="pagination-pages" id="binaanPaginationPages"></div>
                 </div>
-
-            </div>
-            <div class="modal-footer mt-4">
-                <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL PILIH TENAGA UNTUK PENGAWAS ══════ -->
-    <div class="modal-overlay" id="pickerModalOverlay" onclick="closePickerModalOutside(event)">
-        <div class="update-modal-box" onclick="event.stopPropagation()">
-            <div class="update-modal-header">
-                <div class="update-modal-eyebrow" id="pickerModeLabel">Tambah Pengawas Baru</div>
-                <div class="update-modal-name">Pilih Tenaga Kerja</div>
-                <div class="update-modal-nik" id="pickerReplaceInfo" style="display:none;"></div>
-            </div>
-
-            <div class="form-group">
-                <input type="text" id="pickerSearchInput" class="form-input"
-                    placeholder="Cari nama atau badge..." oninput="onPickerSearchInput()" />
-            </div>
-
-            <div id="pickerResultList"
-                style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
-                <div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Ketik untuk mencari
-                    tenaga kerja...</div>
-            </div>
-
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closePickerModal()">Batal</button>
             </div>
         </div>
     </div>
@@ -1373,17 +1061,23 @@
 
     <script>
         // ══════ CONFIG ══════
-        const API_ENDPOINT = "{{ route('pengawas.api') }}";
-        const CARI_TENAGA_ENDPOINT = "{{ route('pengawas.cari-tenaga') }}";
+        const API_ENDPOINT = "{{ route('pengawas.data') }}";
         const PENGAWAS_BASE = "{{ url('/pengawas') }}";
 
         const state = {
             search: '',
             page: 1,
-            per_page: 10,
+            per_page: 10
         };
-
         let searchDebounce = null;
+
+        // state khusus untuk modal pegawai binaan
+        const binaanState = {
+            idApi: null,
+            search: '',
+            page: 1
+        };
+        let binaanSearchDebounce = null;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1402,17 +1096,30 @@
             return div.innerHTML;
         }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            });
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+            const iconSvg = type === 'error' ?
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+            toast.innerHTML = `
+                <div class="toast-icon">${iconSvg}</div>
+                <div class="toast-body">
+                    <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
+                    <div class="toast-msg">${escapeHtml(message)}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 250);
+            }, 4000);
         }
 
+        // ══════ LIST PENGAWAS ══════
         function onSearchInput() {
             clearTimeout(searchDebounce);
             searchDebounce = setTimeout(() => {
@@ -1444,33 +1151,6 @@
             });
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-
-            const iconSvg = type === 'error' ?
-                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
-                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
-
-            toast.innerHTML = `
-                <div class="toast-icon">${iconSvg}</div>
-                <div class="toast-body">
-                    <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
-                    <div class="toast-msg">${escapeHtml(message)}</div>
-                </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
-            `;
-
-            container.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.add('show'));
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 250);
-            }, 4000);
-        }
-
         function renderTable(rows) {
             const tbody = document.getElementById('tableBody');
 
@@ -1483,8 +1163,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                     d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-4a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
-                            <div class="empty-state-title">Belum ada pengawas ditetapkan</div>
-                            <div class="empty-state-sub">Klik "Tambah Pengawas" untuk memilih dari data tenaga kerja.</div>
+                            <div class="empty-state-title">Data pengawas tidak ditemukan</div>
+                            <div class="empty-state-sub">Coba ubah kata kunci pencarian, atau lakukan sinkronisasi data terlebih dahulu.</div>
                         </div>
                     </td>
                 </tr>`;
@@ -1492,72 +1172,23 @@
             }
 
             tbody.innerHTML = rows.map(row => `
-                <tr>
+                <tr class="clickable-row" onclick='openBinaanModal("${row.id_api}", ${JSON.stringify(row.nama_lengkap)}, ${JSON.stringify(row.username)})'>
                     <td>
                         <div class="td-name-cell">
-                            <div class="td-avatar">${escapeHtml(initials(row.nama))}</div>
+                            <div class="td-avatar">${escapeHtml(initials(row.nama_lengkap))}</div>
                             <div>
-                                <div class="td-name-main">${escapeHtml(row.nama)}</div>
-                                <div class="td-name-sub">
-                                    <span style="font-weight:600; color:#475569;">${escapeHtml(row.badge)}</span> • ${escapeHtml(row.jenis_kelamin)}
-                                </div>
+                                <div class="td-name-main">${escapeHtml(row.nama_lengkap)}</div>
+                                <div class="td-name-sub">${escapeHtml(row.username)}</div>
                             </div>
                         </div>
                     </td>
-
+                    <td>${escapeHtml(row.kode_ok_pekerjaan)}</td>
+                    <td>${escapeHtml(row.unit_kerja_pekerjaan)}</td>
                     <td>
-                        <div style="font-weight:600; color:#334155; font-size: 13px; margin-bottom:3px;">
-                            ${escapeHtml(row.tempat_lahir)}, ${formatDate(row.tanggal_lahir)}
-                        </div>
-                        <div class="td-name-sub" style="white-space: normal; max-width: 260px; line-height: 1.4;">
-                            ${escapeHtml(row.alamat)}
-                        </div>
+                        <span class="status-pill sp-blue">${row.jumlah_pegawai} pegawai</span>
                     </td>
-
                     <td>
-                        <div style="font-size: 12px; margin-bottom:4px;">
-                            <span style="color:#64748B;">Kes:</span>
-                            <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_kesehatan)}</span>
-                        </div>
-                        <div style="font-size: 12px;">
-                            <span style="color:#64748B;">TK:</span>
-                            <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
-                        </div>
-                    </td>
-
-                    <td>
-                        <span class="status-pill sp-blue">${formatDate(row.tanggal_jadi_pengawas)}</span>
-                    </td>
-
-                    <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-detail-tenaga" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
-                                style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; margin-right:6px;">
-                            <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Detail
-                        </button>
-
-                        <button class="btn-edit-kib" onclick="openPickerModal(${row.id}, '${escapeHtml(row.nama)}')"
-                                style="margin-right:6px;">
-                            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
-                            </svg>
-                            Ganti
-                        </button>
-
-                        <button class="btn-edit-kib" onclick="copotPengawas(${row.id}, '${escapeHtml(row.nama)}')"
-                                style="color:#D0021B; border-color:rgba(208,2,27,0.2); background:rgba(208,2,27,0.06);">
-                            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Copot
-                        </button>
+                        <span class="status-pill ${row.status === 'Aktif' ? 'sp-green' : 'sp-red'}">${escapeHtml(row.status)}</span>
                     </td>
                 </tr>
             `).join('');
@@ -1582,16 +1213,10 @@
             document.getElementById('dataSummary').textContent = 'Gagal memuat data pengawas.';
         }
 
-        function renderPagination(meta) {
-            document.getElementById('paginationText').textContent =
-                meta.total > 0 ?
-                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` :
-                'Tidak ada data';
+        function renderPaginationGeneric(meta, textEl, pagesEl, onPageClick) {
+            textEl.textContent = meta.total > 0 ?
+                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
 
-            document.getElementById('dataSummary').innerHTML =
-                `<strong>${meta.total}</strong> pengawas ditemukan`;
-
-            const container = document.getElementById('paginationPages');
             const current = meta.current_page;
             const last = meta.last_page;
 
@@ -1604,23 +1229,32 @@
             for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
             if (current < last - 2) addEllipsis();
             if (last > 1) addPage(last);
-
             pages = [...new Set(pages)];
 
             let html =
-                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
+                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="(${onPageClick})(${current - 1})">‹</button>`;
             pages.forEach(p => {
                 if (p === '...') {
                     html += `<span class="page-ellipsis">…</span>`;
                 } else {
                     html +=
-                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="(${onPageClick})(${p})">${p}</button>`;
                 }
             });
             html +=
-                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
+                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="(${onPageClick})(${current + 1})">›</button>`;
 
-            container.innerHTML = html;
+            pagesEl.innerHTML = html;
+        }
+
+        function renderPagination(meta) {
+            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> pengawas ditemukan`;
+            renderPaginationGeneric(
+                meta,
+                document.getElementById('paginationText'),
+                document.getElementById('paginationPages'),
+                goToPage
+            );
         }
 
         async function loadData() {
@@ -1651,154 +1285,108 @@
 
         document.addEventListener('DOMContentLoaded', loadData);
 
-        // ══════ MODAL DETAIL ══════
-        function openDetailModal(row) {
-            document.getElementById('detailAvatar').textContent = initials(row.nama);
-            document.getElementById('detailNamaTitle').textContent = row.nama || '-';
-            document.getElementById('detailBadgeSub').textContent = row.badge || '-';
+        // ══════ MODAL PEGAWAI BINAAN ══════
+        function openBinaanModal(idApi, namaLengkap, username) {
+            binaanState.idApi = idApi;
+            binaanState.search = '';
+            binaanState.page = 1;
 
-            document.getElementById('detailInputNama').value = row.nama || '-';
-            document.getElementById('detailInputBadge').value = row.badge || '-';
-            document.getElementById('detailInputJenisKelamin').value = row.jenis_kelamin || '-';
-            document.getElementById('detailInputTtl').value =
-                `${row.tempat_lahir || '-'}, ${formatDate(row.tanggal_lahir)}`;
-            document.getElementById('detailInputAlamat').value = row.alamat || '-';
-            document.getElementById('detailInputBpjsKesehatan').value = row.no_bpjs_kesehatan || '-';
-            document.getElementById('detailInputBpjsTk').value = row.no_bpjs_ketenagakerjaan || '-';
+            document.getElementById('binaanAvatar').textContent = initials(namaLengkap);
+            document.getElementById('binaanNamaTitle').textContent = namaLengkap || '-';
+            document.getElementById('binaanUsernameSub').textContent = username || '-';
+            document.getElementById('binaanSearchInput').value = '';
+            document.getElementById('binaanPaginationBar').style.display = 'none';
 
-            document.getElementById('detailModalOverlay').classList.add('open');
+            document.getElementById('binaanModalOverlay').classList.add('open');
+            loadBinaanData();
         }
 
-        function closeDetailModal() {
-            document.getElementById('detailModalOverlay').classList.remove('open');
+        function closeBinaanModal() {
+            document.getElementById('binaanModalOverlay').classList.remove('open');
+            binaanState.idApi = null;
         }
 
-        function closeDetailModalOutside(event) {
-            if (event.target.id === 'detailModalOverlay') {
-                closeDetailModal();
-            }
+        function closeBinaanModalOutside(event) {
+            if (event.target.id === 'binaanModalOverlay') closeBinaanModal();
         }
 
-        // ══════ MODAL PICKER TENAGA (Tambah / Ganti Pengawas) ══════
-        let pickerReplaceId = null;
-        let pickerSearchDebounce = null;
+        function onBinaanSearchInput() {
+            clearTimeout(binaanSearchDebounce);
+            binaanSearchDebounce = setTimeout(() => {
+                binaanState.search = document.getElementById('binaanSearchInput').value.trim();
+                binaanState.page = 1;
+                loadBinaanData();
+            }, 350);
+        }
 
-        function openPickerModal(replaceId = null, replaceName = null) {
-            pickerReplaceId = replaceId;
-            document.getElementById('pickerSearchInput').value = '';
-            document.getElementById('pickerResultList').innerHTML =
-                '<div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Ketik untuk mencari tenaga kerja...</div>';
+        function goToBinaanPage(page) {
+            binaanState.page = page;
+            loadBinaanData();
+        }
 
-            const modeLabel = document.getElementById('pickerModeLabel');
-            const replaceInfo = document.getElementById('pickerReplaceInfo');
+        function renderBinaanList(rows) {
+            const listEl = document.getElementById('binaanList');
 
-            if (replaceId) {
-                modeLabel.textContent = 'Ganti Pengawas';
-                replaceInfo.style.display = 'block';
-                replaceInfo.textContent = `Menggantikan: ${replaceName}`;
-            } else {
-                modeLabel.textContent = 'Tambah Pengawas Baru';
-                replaceInfo.style.display = 'none';
+            if (!rows || rows.length === 0) {
+                listEl.innerHTML = '<div class="binaan-empty">Belum ada pegawai binaan untuk pengawas ini.</div>';
+                return;
             }
 
-            document.getElementById('pickerModalOverlay').classList.add('open');
+            listEl.innerHTML = rows.map(p => `
+                <div class="binaan-item">
+                    <div class="td-avatar">${escapeHtml(initials(p.nama))}</div>
+                    <div style="flex:1; min-width:0;">
+                        <div class="binaan-item-name">${escapeHtml(p.nama)}</div>
+                        <div class="binaan-item-sub">
+                            ${escapeHtml(p.badge)} • ${escapeHtml(p.nama_unit_kerja)} — ${escapeHtml(p.bagian)}
+                        </div>
+                    </div>
+                    <span class="status-pill ${p.status === 'Aktif' ? 'sp-green' : 'sp-red'}">${escapeHtml(p.status)}</span>
+                </div>
+            `).join('');
         }
 
-        function closePickerModal() {
-            document.getElementById('pickerModalOverlay').classList.remove('open');
-            pickerReplaceId = null;
-        }
+        async function loadBinaanData() {
+            if (!binaanState.idApi) return;
 
-        function closePickerModalOutside(event) {
-            if (event.target.id === 'pickerModalOverlay') closePickerModal();
-        }
+            const listEl = document.getElementById('binaanList');
+            listEl.innerHTML = '<div class="binaan-loading">Memuat data pegawai binaan...</div>';
 
-        function onPickerSearchInput() {
-            clearTimeout(pickerSearchDebounce);
-            pickerSearchDebounce = setTimeout(searchTenagaPicker, 350);
-        }
-
-        async function searchTenagaPicker() {
-            const search = document.getElementById('pickerSearchInput').value.trim();
-            const listEl = document.getElementById('pickerResultList');
-            listEl.innerHTML =
-                '<div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Mencari...</div>';
+            const params = new URLSearchParams();
+            if (binaanState.search) params.set('search', binaanState.search);
+            params.set('page', binaanState.page);
+            params.set('per_page', 10);
 
             try {
-                const res = await fetch(`${CARI_TENAGA_ENDPOINT}?search=${encodeURIComponent(search)}`, {
+                const res = await fetch(`${PENGAWAS_BASE}/${binaanState.idApi}/pegawai?${params.toString()}`, {
                     headers: {
                         'Accept': 'application/json'
-                    }
+                    },
                 });
-                const json = await res.json();
 
-                if (!json.data || json.data.length === 0) {
-                    listEl.innerHTML =
-                        '<div style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Tidak ada tenaga ditemukan.</div>';
-                    return;
+                if (!res.ok) {
+                    const errJson = await res.json().catch(() => null);
+                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
                 }
 
-                listEl.innerHTML = json.data.map(t => `
-                    <div class="picker-item">
-                        <div>
-                            <div class="picker-item-name">${escapeHtml(t.nama)}</div>
-                            <div class="picker-item-sub">${escapeHtml(t.badge)} • ${escapeHtml(t.departemen)}</div>
-                        </div>
-                        <button class="btn-picker-select" onclick="pilihTenaga(${t.id})">Pilih</button>
-                    </div>
-                `).join('');
+                const json = await res.json();
+                renderBinaanList(json.data);
+
+                const barEl = document.getElementById('binaanPaginationBar');
+                if (json.meta.total > 0) {
+                    barEl.style.display = 'flex';
+                    renderPaginationGeneric(
+                        json.meta,
+                        document.getElementById('binaanPaginationText'),
+                        document.getElementById('binaanPaginationPages'),
+                        goToBinaanPage
+                    );
+                } else {
+                    barEl.style.display = 'none';
+                }
             } catch (e) {
                 listEl.innerHTML =
-                    '<div style="text-align:center; color:#D0021B; font-size:12px; padding:20px 0;">Gagal memuat data.</div>';
-            }
-        }
-
-        async function pilihTenaga(id) {
-            try {
-                const body = pickerReplaceId ? {
-                    replace_id: pickerReplaceId
-                } : {};
-
-                const res = await fetch(`${PENGAWAS_BASE}/${id}/tetapkan`, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                const json = await res.json();
-                if (!res.ok) throw new Error(json.message || `Server merespons status ${res.status}`);
-
-                closePickerModal();
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                showToast(e.message || 'Gagal menetapkan pengawas.', 'error');
-            }
-        }
-
-        async function copotPengawas(id, nama) {
-            if (!confirm(`Copot ${nama} dari jabatan pengawas?`)) return;
-
-            try {
-                const res = await fetch(`${PENGAWAS_BASE}/${id}/copot`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                const json = await res.json();
-                if (!res.ok) throw new Error(json.message || `Server merespons status ${res.status}`);
-
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                showToast(e.message || 'Gagal mencopot pengawas.', 'error');
+                    `<div class="binaan-empty" style="color:#D0021B;">${escapeHtml(e.message || 'Gagal memuat data pegawai binaan.')}</div>`;
             }
         }
     </script>

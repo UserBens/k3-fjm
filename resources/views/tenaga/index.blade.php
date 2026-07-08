@@ -1245,21 +1245,12 @@
                     <div class="pg-actions">
                         <button class="btn-primary" id="btnSync" onclick="syncData()"
                             style="background-color: #2563EB; color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
-                            <svg id="syncIcon" style="width:13px;height:13px;" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
-                            </svg>
-                            <span id="syncText">Sync Pegawai</span>
-                        </button>
-
-                        <button class="btn-outline" onclick="loadData()">
                             <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>
-                            Muat Ulang
+                            <span id="syncText">Sync Pegawai</span>
                         </button>
                     </div>
                 </div>
@@ -1301,10 +1292,11 @@
                         <thead>
                             <tr>
                                 <th class="px-6 py-3 text-left">Data Pegawai</th>
-                                <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th>
-                                <th class="px-6 py-3 text-left">Data BPJS</th>
+                                {{-- <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th> --}}
+                                <th class="px-6 py-3 text-left">Unit Kerja</th>
                                 <th class="px-6 py-3 text-left">Data OK</th>
                                 <th class="px-6 py-3 text-left">Status KIB</th>
+                                <th class="px-6 py-3 text-left">Data BPJS</th>
                                 <th class="px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
@@ -1478,6 +1470,26 @@
                     </div>
                 </div>
 
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
+                        </svg>
+                        Unit Kerja
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Nama Unit Kerja</label>
+                            <input type="text" id="detailInputUnitKerja" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Bagian</label>
+                            <input type="text" id="detailInputBagian" readonly>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- SECTION: BPJS -->
                 <div class="detail-section">
                     <div class="detail-section-title">
@@ -1529,6 +1541,7 @@
 
     <!-- ══════ TOAST NOTIFIKASI ══════ -->
     <div id="toastContainer" class="toast-container"></div>
+
     <!-- ══════ LOADING SCREEN OVERLAY ══════ -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-box">
@@ -1538,6 +1551,7 @@
         </div>
     </div>
 
+    {{-- RENDER DATA DI TABEL --}}
     <script>
         // ══════ CONFIG ══════
         const API_ENDPOINT = "{{ route('tenaga.api') }}";
@@ -1639,22 +1653,26 @@
         function populateFilterOptions(options) {
             if (filterOptionsLoaded || !options) return;
 
-            const build = (selectId, values) => {
+            const build = (selectId, values, isObjectOption = false) => {
                 const select = document.getElementById(selectId);
                 const current = select.value;
                 values.forEach(val => {
                     const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
+                    if (isObjectOption) {
+                        opt.value = val.value;
+                        opt.textContent = val.label;
+                    } else {
+                        opt.value = val;
+                        opt.textContent = val;
+                    }
                     select.appendChild(opt);
                 });
                 select.value = current;
             };
 
             build('filterStatus', options.status || []);
-            build('filterDepartemen', options.departemen || []);
+            build('filterDepartemen', options.departemen || [], true); // BARU: pakai object
             build('filterJenisKelamin', options.jenis_kelamin || []);
-            filterOptionsLoaded = true;
         }
 
         function sisaHariBadge(sisaHari) {
@@ -1711,14 +1729,46 @@
                         </div>
                     </td>
 
+                    
                     <td>
-                        <div style="font-weight:600; color:#334155; font-size: 13px; margin-bottom:3px;">
-                            ${escapeHtml(row.tempat_lahir)}, ${formatDate(row.tanggal_lahir)}
+                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_unit_kerja)}</div>
+                        <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
+                    </td>
+
+                      ${'' /* Kolom tempat lahir dan alamat dinonaktifkan
+                        <td>
+                            <div style="font-weight:600; color:#334155; font-size:13px; margin-bottom:3px;">
+                                ${escapeHtml(row.tempat_lahir)}, ${formatDate(row.tanggal_lahir)}
+                            </div>
+
+                            <div class="td-name-sub" style="white-space: normal; max-width:280px; line-height:1.4;">
+                                ${escapeHtml(row.alamat)}
+                            </div>
+                        </td>
+                        */}
+
+
+                    <td>
+                        <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
+                            Kode OK : <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
                         </div>
-                        <div class="td-name-sub" style="white-space: normal; max-width: 280px; line-height: 1.4;">
-                            ${escapeHtml(row.alamat)}
+                        <div class="td-name-sub">
+                            Nomor OK: ${escapeHtml(row.nomor_ok)}
                         </div>
                     </td>
+                    
+
+                  
+
+                    <td>
+                        <div style="margin-bottom: 6px;">
+                            ${sisaHariBadge(row.sisa_hari_kib)}
+                        </div>
+                        <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
+                            ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
+                        </span>
+                    </td>
+
 
                     <td>
                         <div style="font-size: 12px; margin-bottom:4px;">
@@ -1729,24 +1779,6 @@
                             <span style="color:#64748B;">TK:</span> 
                             <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
                         </div>
-                    </td>
-
-                    <td>
-                        <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
-                            Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
-                        </div>
-                        <div class="td-name-sub">
-                            No: ${escapeHtml(row.nomor_ok)}
-                        </div>
-                    </td>
-
-                    <td>
-                        <div style="margin-bottom: 6px;">
-                            ${sisaHariBadge(row.sisa_hari_kib)}
-                        </div>
-                        <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
-                            ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
-                        </span>
                     </td>
 
                    <td style="text-align:center; white-space:nowrap;">
@@ -2013,6 +2045,7 @@
         }
     </script>
 
+    {{-- MODAL DETAIL --}}
     <script>
         function openDetailModal(row) {
             document.getElementById('detailAvatar').textContent = initials(row.nama);
@@ -2025,6 +2058,9 @@
             document.getElementById('detailInputTtl').value =
                 `${row.tempat_lahir || '-'}, ${formatDate(row.tanggal_lahir)}`;
             document.getElementById('detailInputAlamat').value = row.alamat || '-';
+            // BARU — Unit Kerja
+            document.getElementById('detailInputUnitKerja').value = row.nama_unit_kerja || '-';
+            document.getElementById('detailInputBagian').value = row.bagian || '-';
             document.getElementById('detailInputBpjsKesehatan').value = row.no_bpjs_kesehatan || '-';
             document.getElementById('detailInputBpjsTk').value = row.no_bpjs_ketenagakerjaan || '-';
             document.getElementById('detailInputKodeOk').value = row.kode_ok || '-';

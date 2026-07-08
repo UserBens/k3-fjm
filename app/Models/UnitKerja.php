@@ -3,16 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
-class Pegawai extends Model
+class UnitKerja extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
-
-    public function unitKerja()
-    {
-        return $this->belongsTo(UnitKerja::class, 'unit_kerjaid', 'id_api');
-    }
 }

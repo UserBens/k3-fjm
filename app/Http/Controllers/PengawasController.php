@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pegawai;
+use App\Models\PengawasIntraUser;
+use App\Models\PengawasPekerjaan;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
@@ -14,50 +16,39 @@ class PengawasController extends Controller
         return view('pengawas.index');
     }
 
-    /**
-     * Daftar tenaga kerja yang SUDAH ditetapkan sebagai pengawas.
-     */
-    public function api(Request $request): JsonResponse
+    // List pengawas + jumlah pegawai binaan
+    public function data(Request $request): JsonResponse
     {
         try {
-            $query = Pegawai::where('is_pengawas', true);
+            $query = PengawasIntraUser::where('role_user', 'PENGAWAS');
 
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('nama', 'ilike', "%{$search}%")
-                        ->orWhere('badge', 'like', "%{$search}%");
+                    $q->where('nama_lengkap', 'ilike', "%{$search}%")
+                        ->orWhere('username', 'ilike', "%{$search}%");
                 });
             }
 
-            $query->orderByDesc('tanggal_jadi_pengawas');
+            $query->withCount('pengawasPekerjaans as jumlah_pegawai')
+                ->orderBy('nama_lengkap');
 
             $perPage = (int) $request->query('per_page', 10);
             $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
 
             $paginator = $query->paginate($perPage);
 
-            $data = collect($paginator->items())->map(function ($item) {
-                $jk = '-';
-                if ($item->jenis_kelamin === 'L') $jk = 'Laki-Laki';
-                if ($item->jenis_kelamin === 'P') $jk = 'Perempuan';
-
-                return [
-                    'id' => $item->id,
-                    'badge' => $item->badge ?? '-',
-                    'nama' => $item->nama ?? '-',
-                    'jenis_kelamin' => $jk,
-                    'departemen' => $item->unit_kerjaid ?? '-',
-                    'tempat_lahir' => $item->tempat_lahir ?? '-',
-                    'tanggal_lahir' => $item->tanggal_lahir,
-                    'alamat' => $item->alamat ?? '-',
-                    'no_bpjs_kesehatan' => $item->no_bpjs_kesehatan ?? '-',
-                    'no_bpjs_ketenagakerjaan' => $item->no_bpjs_ketenagakerjaan ?? '-',
-                    'tanggal_jadi_pengawas' => $item->tanggal_jadi_pengawas,
-                ];
-            });
+            $transformed = collect($paginator->items())->map(fn($item) => [
+                'id_api' => $item->id_api,
+                'username' => $item->username ?? '-',
+                'nama_lengkap' => $item->nama_lengkap ?? '-',
+                'kode_ok_pekerjaan' => $item->kode_ok_pekerjaan ?? '-',
+                'unit_kerja_pekerjaan' => $item->unit_kerja_pekerjaan ?? '-',
+                'jumlah_pegawai' => $item->jumlah_pegawai ?? 0,
+                'status' => $item->is_active ? 'Aktif' : 'Non-Aktif',
+            ]);
 
             return response()->json([
-                'data' => $data,
+                'data' => $transformed,
                 'meta' => [
                     'current_page' => $paginator->currentPage(),
                     'last_page' => max($paginator->lastPage(), 1),
@@ -73,93 +64,57 @@ class PengawasController extends Controller
         }
     }
 
-    /**
-     * Pencarian tenaga kerja untuk dipilih jadi pengawas (dipakai di modal picker).
-     * Hanya menampilkan tenaga yang BELUM jadi pengawas & masih aktif.
-     */
-    public function cariTenaga(Request $request): JsonResponse
-    {
-        $search = trim((string) $request->query('search', ''));
-
-        $query = Pegawai::where('is_pengawas', false)
-            ->where('is_active', true);
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nama', 'ilike', "%{$search}%")
-                    ->orWhere('badge', 'like', "%{$search}%");
-            });
-        }
-
-        $results = $query->orderBy('nama')->limit(20)->get()->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'badge' => $item->badge ?? '-',
-                'nama' => $item->nama ?? '-',
-                'departemen' => $item->unit_kerjaid ?? '-',
-            ];
-        });
-
-        return response()->json(['data' => $results]);
-    }
-
-    /**
-     * Menetapkan satu tenaga kerja sebagai pengawas.
-     * Jika request membawa 'replace_id', pengawas lama otomatis dicopot (fungsi "Ganti Pengawas").
-     */
-    public function tetapkan(Request $request, $id): JsonResponse
+    // List pegawai binaan untuk satu pengawas (dipanggil saat baris diklik)
+    public function pegawaiBinaan(Request $request, string $idApi): JsonResponse
     {
         try {
-            $pegawai = Pegawai::findOrFail($id);
+            $pengawas = PengawasIntraUser::where('id_api', $idApi)->firstOrFail();
 
-            if ($pegawai->is_pengawas) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Tenaga ini sudah berstatus pengawas.',
-                ], 422);
+            $pegawaiIds = PengawasPekerjaan::where('pengguna_id', $pengawas->id_api)
+                ->pluck('pegawai_id');
+
+            $query = Pegawai::with('unitKerja')->whereIn('id_api', $pegawaiIds);
+
+            if ($search = trim((string) $request->query('search', ''))) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama', 'ilike', "%{$search}%")
+                        ->orWhere('badge', 'ilike', "%{$search}%");
+                });
             }
 
-            $pegawai->update([
-                'is_pengawas' => true,
-                'tanggal_jadi_pengawas' => now(),
-            ]);
+            $perPage = (int) $request->query('per_page', 10);
+            $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
 
-            if ($replaceId = $request->input('replace_id')) {
-                Pegawai::where('id', $replaceId)->update([
-                    'is_pengawas' => false,
-                    'tanggal_jadi_pengawas' => null,
-                ]);
-            }
+            $paginator = $query->orderBy('nama')->paginate($perPage);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => $pegawai->nama . ' berhasil ditetapkan sebagai pengawas.',
-            ]);
-        } catch (\Throwable $e) {
-            Log::error('Gagal menetapkan pengawas: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan sistem.'], 500);
-        }
-    }
-
-    /**
-     * Mencopot status pengawas (kembali jadi tenaga biasa, TIDAK dihapus dari database).
-     */
-    public function copot($id): JsonResponse
-    {
-        try {
-            $pegawai = Pegawai::findOrFail($id);
-            $pegawai->update([
-                'is_pengawas' => false,
-                'tanggal_jadi_pengawas' => null,
+            $transformed = collect($paginator->items())->map(fn($p) => [
+                'id' => $p->id,
+                'badge' => $p->badge ?? '-',
+                'nama' => $p->nama ?? '-',
+                'jenis_kelamin' => $p->jenis_kelamin === 'L' ? 'Laki-Laki' : ($p->jenis_kelamin === 'P' ? 'Perempuan' : '-'),
+                'nama_unit_kerja' => $p->unitKerja->nama_unit_kerja ?? '-',
+                'bagian' => $p->unitKerja->bagian ?? '-',
+                'status' => $p->is_active ? 'Aktif' : 'Non-Aktif',
             ]);
 
             return response()->json([
-                'status' => 'success',
-                'message' => $pegawai->nama . ' berhasil dicopot dari jabatan pengawas.',
+                'pengawas' => [
+                    'nama_lengkap' => $pengawas->nama_lengkap,
+                    'username' => $pengawas->username,
+                ],
+                'data' => $transformed,
+                'meta' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => max($paginator->lastPage(), 1),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                    'from' => $paginator->firstItem(),
+                    'to' => $paginator->lastItem(),
+                ],
             ]);
         } catch (\Throwable $e) {
-            Log::error('Gagal mencopot pengawas: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan sistem.'], 500);
+            Log::error('Gagal memuat pegawai binaan pengawas: ' . $e->getMessage());
+            return response()->json(['message' => 'Gagal mengambil data pegawai untuk pengawas ini.'], 500);
         }
     }
 }

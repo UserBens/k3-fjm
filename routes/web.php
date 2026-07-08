@@ -23,10 +23,8 @@ Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.syn
 Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
 
 Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
-Route::get('/pengawas/api', [PengawasController::class, 'api'])->name('pengawas.api');
-Route::get('/pengawas/cari-tenaga', [PengawasController::class, 'cariTenaga'])->name('pengawas.cari-tenaga');
-Route::post('/pengawas/{id}/tetapkan', [PengawasController::class, 'tetapkan'])->name('pengawas.tetapkan');
-Route::delete('/pengawas/{id}/copot', [PengawasController::class, 'copot'])->name('pengawas.copot');
+Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
+Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
 
 Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 

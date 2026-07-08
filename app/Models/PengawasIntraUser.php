@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
-class Pegawai extends Model
+class PengawasIntraUser extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function unitKerja()
+    public function pengawasPekerjaans()
     {
-        return $this->belongsTo(UnitKerja::class, 'unit_kerjaid', 'id_api');
+        return $this->hasMany(PengawasPekerjaan::class, 'pengguna_id', 'id_api');
     }
 }
