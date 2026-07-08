@@ -1295,8 +1295,9 @@
                                 {{-- <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th> --}}
                                 <th class="px-6 py-3 text-left">Unit Kerja</th>
                                 <th class="px-6 py-3 text-left">Data OK</th>
+                                <th class="px-6 py-3 text-left">Pengawas</th> <!-- BARU -->
                                 <th class="px-6 py-3 text-left">Status KIB</th>
-                                <th class="px-6 py-3 text-left">Data BPJS</th>
+                                {{-- <th class="px-6 py-3 text-left">Data BPJS</th> --}}
                                 <th class="px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
@@ -1366,9 +1367,10 @@
     <div id="syncConfirmOverlay" class="modal-overlay" onclick="closeSyncModalOutside(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="modal-icon-wrap">
-                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>
             </div>
             <div class="modal-title">Sinkronkan Data Pegawai?</div>
@@ -1530,6 +1532,11 @@
                             <input type="text" id="detailInputNomorOk" readonly>
                         </div>
                     </div>
+                </div>
+
+                <div class="detail-field">
+                    <label>Pengawas</label>
+                    <input type="text" id="detailInputPengawas" readonly>
                 </div>
 
             </div>
@@ -1701,7 +1708,7 @@
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="6">
+                    <td colspan="8">
                         <div class="empty-state">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1729,59 +1736,61 @@
                         </div>
                     </td>
 
-                    
                     <td>
                         <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_unit_kerja)}</div>
                         <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
                     </td>
 
-                      ${'' /* Kolom tempat lahir dan alamat dinonaktifkan
-                        <td>
-                            <div style="font-weight:600; color:#334155; font-size:13px; margin-bottom:3px;">
-                                ${escapeHtml(row.tempat_lahir)}, ${formatDate(row.tanggal_lahir)}
-                            </div>
-
-                            <div class="td-name-sub" style="white-space: normal; max-width:280px; line-height:1.4;">
-                                ${escapeHtml(row.alamat)}
-                            </div>
-                        </td>
-                        */}
-
-
-                    <td>
+                   <td>
                         <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
-                            Kode OK : <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
+                            Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
                         </div>
                         <div class="td-name-sub">
-                            Nomor OK: ${escapeHtml(row.nomor_ok)}
+                            No: ${escapeHtml(row.nomor_ok)}
                         </div>
                     </td>
-                    
 
-                  
+                     <td>
+                        ${row.nama_pengawas === '-' ? `
+                                            <span class="status-pill sp-gray">-</span>
+                                        ` : `
+                                            <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
+                                            <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
+                                        `}
+                    </td>
 
                     <td>
                         <div style="margin-bottom: 6px;">
                             ${sisaHariBadge(row.sisa_hari_kib)}
                         </div>
-                        <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
-                            ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
-                        </span>
-                    </td>
 
-
-                    <td>
-                        <div style="font-size: 12px; margin-bottom:4px;">
-                            <span style="color:#64748B;">Kes:</span> 
-                            <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_kesehatan)}</span>
+                        <div style="margin-bottom: 6px;">
+                            <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
+                                ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
+                            </span>
                         </div>
-                        <div style="font-size: 12px;">
-                            <span style="color:#64748B;">TK:</span> 
-                            <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
+
+                        <div>
+                            <span class="status-pill ${kibStatusPillClass(row.nomor_kib)}">
+                                ${row.nomor_kib ? escapeHtml(row.nomor_kib) : 'Belum Diisi'}
+                            </span>
                         </div>
                     </td>
 
-                   <td style="text-align:center; white-space:nowrap;">
+                    ${'' /* Kolom tempat lahir dan alamat dinonaktifkan
+                        <td>
+                            <div style="font-size: 12px; margin-bottom:4px;">
+                                <span style="color:#64748B;">Kes:</span> 
+                                <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_kesehatan)}</span>
+                            </div>
+                            <div style="font-size: 12px;">
+                                <span style="color:#64748B;">TK:</span> 
+                                <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
+                            </div>
+                        </td>
+                    */}
+
+                    <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-detail-tenaga" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
                                 style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; margin-right:6px;">
                             <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1809,7 +1818,7 @@
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 <div class="error-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -2065,6 +2074,8 @@
             document.getElementById('detailInputBpjsTk').value = row.no_bpjs_ketenagakerjaan || '-';
             document.getElementById('detailInputKodeOk').value = row.kode_ok || '-';
             document.getElementById('detailInputNomorOk').value = row.nomor_ok || '-';
+            document.getElementById('detailInputPengawas').value =
+                row.nama_pengawas !== '-' ? `${row.nama_pengawas} (${row.badge_pengawas})` : '-';
 
             document.getElementById('detailModalOverlay').classList.add('open');
         }

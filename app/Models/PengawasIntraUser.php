@@ -16,4 +16,10 @@ class PengawasIntraUser extends Model
     {
         return $this->hasMany(PengawasPekerjaan::class, 'pengguna_id', 'id_api');
     }
+
+    // BARU — relasi ke data pegawai milik pengawas itu sendiri, via matching username = badge
+    public function dataPegawai()
+    {
+        return $this->belongsTo(Pegawai::class, 'username', 'badge');
+    }
 }

@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->boolean('is_active')->default(true);
             $table->string('role_user')->nullable();
-            $table->string('kode_ok_tagihan')->nullable();
-            $table->string('kode_ok_pekerjaan')->nullable();
-            $table->string('unit_kerja_pekerjaan')->nullable();
-            $table->string('unit_kerja_tagihan')->nullable();
+            $table->text('kode_ok_tagihan')->nullable();
+            $table->text('kode_ok_pekerjaan')->nullable();
+            $table->text('unit_kerja_pekerjaan')->nullable();
+            $table->text('unit_kerja_tagihan')->nullable();
             $table->timestamp('last_sync')->nullable();
             $table->timestamps();
         });

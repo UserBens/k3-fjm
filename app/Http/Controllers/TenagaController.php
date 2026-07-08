@@ -35,7 +35,7 @@ class TenagaController extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            $query = Pegawai::with('unitKerja'); // BARU — eager load relasi
+            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas']); // BARU — tambah eager load pengawas
 
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
@@ -49,7 +49,6 @@ class TenagaController extends Controller
                 $query->where('is_active', $statusParam === 'Aktif');
             }
 
-            // Filter departemen sekarang berdasarkan unit_kerjaid tetap sama (value = UUID)
             if ($departemen = $request->query('departemen')) {
                 $query->where('unit_kerjaid', $departemen);
             }
@@ -60,7 +59,6 @@ class TenagaController extends Controller
 
             $query->orderByDesc('updated_at');
 
-            // Filter options: value tetap UUID (id_api), tapi label sudah nama_unit_kerja
             $filterOptions = [
                 'status' => ['Aktif', 'Non-Aktif'],
                 'departemen' => UnitKerja::whereIn('id_api', Pegawai::whereNotNull('unit_kerjaid')->distinct()->pluck('unit_kerjaid'))
@@ -101,9 +99,12 @@ class TenagaController extends Controller
                     'kode_ok' => $item->kode_ok ?? '-',
                     'nomor_ok' => $item->nomor_ok ?? '-',
 
-                    // BARU — data unit kerja
                     'nama_unit_kerja' => $item->unitKerja->nama_unit_kerja ?? '-',
                     'bagian' => $item->unitKerja->bagian ?? '-',
+
+                    // BARU — nama pengawas dari pegawai ini
+                    'nama_pengawas' => $item->pengawasPekerjaan->pengawas->nama_lengkap ?? '-',
+                    'badge_pengawas' => $item->pengawasPekerjaan->pengawas->username ?? '-', // BARU
 
                     'jabatan' => $item->jabatan ?? '-',
                     'departemen' => $item->unit_kerjaid ?? '-',

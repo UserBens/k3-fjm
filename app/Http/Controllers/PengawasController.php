@@ -30,6 +30,7 @@ class PengawasController extends Controller
             }
 
             $query->withCount('pengawasPekerjaans as jumlah_pegawai')
+                ->with('dataPegawai.unitKerja') // BARU — eager load unit kerja milik si pengawas sendiri
                 ->orderBy('nama_lengkap');
 
             $perPage = (int) $request->query('per_page', 10);
@@ -42,7 +43,8 @@ class PengawasController extends Controller
                 'username' => $item->username ?? '-',
                 'nama_lengkap' => $item->nama_lengkap ?? '-',
                 'kode_ok_pekerjaan' => $item->kode_ok_pekerjaan ?? '-',
-                'unit_kerja_pekerjaan' => $item->unit_kerja_pekerjaan ?? '-',
+                'nama_unit_kerja' => $item->dataPegawai->unitKerja->nama_unit_kerja ?? '-', // BARU
+                'bagian' => $item->dataPegawai->unitKerja->bagian ?? '-', // BARU
                 'jumlah_pegawai' => $item->jumlah_pegawai ?? 0,
                 'status' => $item->is_active ? 'Aktif' : 'Non-Aktif',
             ]);

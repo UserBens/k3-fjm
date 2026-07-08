@@ -1183,7 +1183,10 @@
                         </div>
                     </td>
                     <td>${escapeHtml(row.kode_ok_pekerjaan)}</td>
-                    <td>${escapeHtml(row.unit_kerja_pekerjaan)}</td>
+                    <td>
+                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_unit_kerja)}</div>
+                        <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
+                    </td>
                     <td>
                         <span class="status-pill sp-blue">${row.jumlah_pegawai} pegawai</span>
                     </td>

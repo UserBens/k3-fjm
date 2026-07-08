@@ -15,4 +15,10 @@ class Pegawai extends Model
     {
         return $this->belongsTo(UnitKerja::class, 'unit_kerjaid', 'id_api');
     }
+
+    // BARU — relasi ke baris pengawas_pekerjaan yang menaungi pegawai ini
+    public function pengawasPekerjaan()
+    {
+        return $this->hasOne(PengawasPekerjaan::class, 'pegawai_id', 'id_api');
+    }
 }
