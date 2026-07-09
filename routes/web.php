@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\JKARecordInsidenController;
@@ -12,52 +13,65 @@ use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\TenagaController;
 use Illuminate\Support\Facades\Route;
 
+// ══════ LOGIN (tidak perlu auth) ══════
 Route::get('/', [LoginController::class, 'indexLogin'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.attempt');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth.custom'])->group(function () {
 
-// DATA TENAGA
-Route::get('tenaga', [TenagaController::class, 'index'])->name('tenaga.index');
-Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
-Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
-Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // ══════ AKTIVASI AKUN — KHUSUS ADMIN ══════
+    Route::middleware(['admin.custom'])->group(function () {
+        Route::get('/aktivasi-akun', [AktivasiAkunController::class, 'index'])->name('aktivasi.index');
+        Route::get('/aktivasi-akun/data', [AktivasiAkunController::class, 'data'])->name('aktivasi.data');
+        Route::post('/aktivasi-akun/{username}/toggle', [AktivasiAkunController::class, 'toggle'])->name('aktivasi.toggle');
+    });
 
-Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
-Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
-Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
+    // DATA TENAGA
+    Route::get('tenaga', [TenagaController::class, 'index'])->name('tenaga.index');
+    Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
+    Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
+    Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
 
-Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
+    Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
+    Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
+    Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
 
-// KPI
-Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
+    Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 
-Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
-Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
-Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
-Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
-Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
-Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
+    // KPI
+    Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
 
-Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
-Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
-Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
-Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
-Route::get('dashboard-individu', [MonitoringkpiController::class, 'indexDashboardIndividu'])->name('dashboard-individu.index');
-Route::get('monitoring-pengawas', [MonitoringkpiController::class, 'indexMonitoringPengawas'])->name('monitoring-pengawas.index');
-Route::get('rekap-pengawas', [MonitoringkpiController::class, 'indexRekapPengawas'])->name('rekap-pengawas.index');
-Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
-Route::get('rekap-medis', [MonitoringkpiController::class, 'indexRekapMedis'])->name('rekap-medis.index');
+    Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
+    Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
+    Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
+    Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
+    Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
+    Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
 
-// JKA % RECORD INSIDEN
-Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
-Route::get('dashboard-jka', [JKARecordInsidenController::class, 'indexDashboardJKA'])->name('dashboard-jka.index');
-Route::get('dashboard-leading', [JKARecordInsidenController::class, 'indexDashboardLeading'])->name('dashboard-leading.index');
+    Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
+    Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
+    Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
+    Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
+    Route::get('dashboard-individu', [MonitoringkpiController::class, 'indexDashboardIndividu'])->name('dashboard-individu.index');
+    Route::get('monitoring-pengawas', [MonitoringkpiController::class, 'indexMonitoringPengawas'])->name('monitoring-pengawas.index');
+    Route::get('rekap-pengawas', [MonitoringkpiController::class, 'indexRekapPengawas'])->name('rekap-pengawas.index');
+    Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
+    Route::get('rekap-medis', [MonitoringkpiController::class, 'indexRekapMedis'])->name('rekap-medis.index');
 
-// APD
-Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
-    Route::get('/', [StokAPDController::class, 'index'])->name('index');
-    Route::get('/data', [StokAPDController::class, 'data'])->name('data');
-    Route::post('/', [StokAPDController::class, 'store'])->name('store');
-    Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
-    Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
+    // JKA % RECORD INSIDEN
+    Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
+    Route::get('dashboard-jka', [JKARecordInsidenController::class, 'indexDashboardJKA'])->name('dashboard-jka.index');
+    Route::get('dashboard-leading', [JKARecordInsidenController::class, 'indexDashboardLeading'])->name('dashboard-leading.index');
+
+    // APD
+    Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
+        Route::get('/', [StokAPDController::class, 'index'])->name('index');
+        Route::get('/data', [StokAPDController::class, 'data'])->name('data');
+        Route::post('/', [StokAPDController::class, 'store'])->name('store');
+        Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
+        Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
+    });
 });

@@ -49,8 +49,14 @@ return [
         'url' => env('PENGAWAS_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/pengawas'),
         'key' => env('PEGAWAI_API_KEY'),
     ],
+
     'pengawas_pekerjaan' => [
         'url' => env('PENGAWAS_PEKERJAAN_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/pengawas-pekerjaan'),
         'key' => env('PEGAWAI_API_KEY'),
+    ],
+
+    'user_login' => [
+        'url' => env('USER_LOGIN_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/user'),
+        'key' => env('PEGAWAI_API_KEY'), // reuse key yang sama
     ],
 ];

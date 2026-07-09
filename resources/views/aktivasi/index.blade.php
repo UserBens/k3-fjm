@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Pengawas — PT. Fokus Jasa Mitra</title>
+    <title>Aktivasi Akun — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -62,12 +62,6 @@
             gap: 12px;
             padding: 0 20px;
             flex-shrink: 0;
-        }
-
-        .search-box {
-            flex: 1;
-            max-width: 320px;
-            position: relative;
         }
 
         .tb-badge {
@@ -190,12 +184,6 @@
             margin-top: 2px;
         }
 
-        .pg-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
         .btn-outline {
             padding: 6px 14px;
             border-radius: 8px;
@@ -211,26 +199,6 @@
 
         .btn-outline:hover {
             background: #F0F4FF;
-        }
-
-        .btn-primary {
-            padding: 6px 14px;
-            border-radius: 8px;
-            border: none;
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #fff;
-            background: #2D4B9E;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            background: #1A3C8A;
         }
 
         .pulse-dot {
@@ -325,7 +293,7 @@
 
         .rtable {
             width: 100%;
-            min-width: 700px;
+            min-width: 720px;
             border-collapse: collapse;
         }
 
@@ -355,10 +323,6 @@
 
         .rtable tr:hover td {
             background: #F8F9FF;
-        }
-
-        .rtable tr.clickable-row {
-            cursor: pointer;
         }
 
         .td-name-cell {
@@ -423,6 +387,11 @@
         .sp-gray {
             background: rgba(100, 116, 139, 0.09);
             color: #64748B;
+        }
+
+        .sp-amber {
+            background: rgba(217, 119, 6, 0.09);
+            color: #D97706;
         }
 
         .empty-state,
@@ -600,10 +569,6 @@
             .hamburger-btn {
                 display: flex;
             }
-
-            .search-box {
-                max-width: none;
-            }
         }
 
         @media (max-width: 640px) {
@@ -640,31 +605,50 @@
             }
         }
 
-        /* ══════ MODAL ══════ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 17, 26, 0.5);
-            backdrop-filter: blur(2px);
-            z-index: 100;
+        .btn-toggle-aktif {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 7px;
+            border: 1px solid rgba(26, 122, 60, 0.25);
+            background: rgba(26, 122, 60, 0.08);
+            color: #1A7A3C;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
         }
 
-        .modal-overlay.open {
-            display: flex;
-            opacity: 1;
+        .btn-toggle-aktif:hover {
+            background: rgba(26, 122, 60, 0.16);
         }
 
-        .modal-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
-            letter-spacing: 0.02em;
-            color: #1A1D2E;
-            margin-bottom: 8px;
+        .btn-toggle-nonaktif {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 7px;
+            border: 1px solid rgba(208, 2, 27, 0.2);
+            background: rgba(208, 2, 27, 0.06);
+            color: #D0021B;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-toggle-nonaktif:hover {
+            background: rgba(208, 2, 27, 0.14);
+        }
+
+        .btn-toggle-aktif:disabled,
+        .btn-toggle-nonaktif:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .toast-container {
@@ -750,128 +734,6 @@
             padding: 2px;
             flex-shrink: 0;
         }
-
-        /* ══════ MODAL DETAIL PENGAWAS + PEGAWAI BINAAN ══════ */
-        .binaan-modal-box {
-            background: #fff;
-            border-radius: 16px;
-            width: 640px;
-            max-width: calc(100vw - 32px);
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            transform: scale(0.94) translateY(8px);
-            transition: transform 0.2s ease;
-            overflow: hidden;
-        }
-
-        .modal-overlay.open .binaan-modal-box {
-            transform: scale(1) translateY(0);
-        }
-
-        .binaan-modal-header {
-            padding: 20px 24px 16px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .binaan-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2D4B9E, #1A1D2E);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .binaan-subtitle {
-            font-size: 12px;
-            color: #94A3B8;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #94A3B8;
-            font-size: 16px;
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-close:hover {
-            background: #F0F2FA;
-            color: #1A1D2E;
-        }
-
-        .binaan-modal-body {
-            padding: 16px 24px 20px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .binaan-search {
-            width: 100%;
-            height: 34px;
-            padding: 0 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            font-size: 12px;
-            margin-bottom: 12px;
-            outline: none;
-            font-family: inherit;
-        }
-
-        .binaan-search:focus {
-            border-color: #2D4B9E;
-        }
-
-        .binaan-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 8px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .binaan-item:last-child {
-            border-bottom: none;
-        }
-
-        .binaan-item-name {
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #1A1D2E;
-        }
-
-        .binaan-item-sub {
-            font-size: 10.5px;
-            color: #94A3B8;
-            font-weight: 600;
-            margin-top: 1px;
-        }
-
-        .binaan-loading,
-        .binaan-empty {
-            text-align: center;
-            padding: 32px 12px;
-            color: #94A3B8;
-            font-size: 12.5px;
-        }
     </style>
 </head>
 
@@ -884,7 +746,33 @@
     <!-- ══════ MAIN ══════ -->
     <div id="main-content">
 
-        @include('partials.topbar')
+        <!-- TOPBAR -->
+        <div id="topbar">
+            <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+                <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <div style="flex:1"></div>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <div class="tb-badge" style="position:relative;">
+                    <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span class="notif-dot"></span>
+                </div>
+                <div class="tb-divider"></div>
+                <div class="tb-user">
+                    <div class="tb-avatar">{{ strtoupper(substr(session('auth_user.nama_lengkap', 'U'), 0, 2)) }}</div>
+                    <span class="tb-name">{{ session('auth_user.nama_lengkap', 'User') }}</span>
+                    <svg class="tb-caret" style="width:12px;height:12px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
 
         <!-- PAGE CONTENT -->
         <div id="page-content">
@@ -894,10 +782,11 @@
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Database Pengawas · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Manajemen Akses · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">DATA <span>PENGAWAS</span></div>
-                        <div class="pg-sub">Daftar pengawas beserta pegawai yang menjadi tanggung jawabnya.</div>
+                        <div class="pg-title">AKTIVASI <span>AKUN</span></div>
+                        <div class="pg-sub">Pilih siapa saja dari daftar user ERP yang diberi izin untuk masuk ke sistem
+                            ini.</div>
                     </div>
                     <div class="pg-actions">
                         <button class="btn-outline" onclick="loadData()">
@@ -921,24 +810,25 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Cari nama atau username pengawas..."
+                        <input type="text" id="searchInput" placeholder="Cari nama atau username..."
                             oninput="onSearchInput()" />
                     </div>
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data pengawas...</div>
+                <div class="data-summary" id="dataSummary">Memuat data user...</div>
 
                 <!-- TABLE -->
                 <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th class="px-6 py-3 text-left">Pengawas</th>
-                                <th class="px-6 py-3 text-left">Kode OK Pekerjaan</th>
-                                <th class="px-6 py-3 text-left">Unit Kerja</th>
-                                <th class="px-6 py-3 text-left">Jumlah Pegawai Binaan</th>
-                                <th class="px-6 py-3 text-left">Status</th>
+                                <th class="px-6 py-3 text-left">User</th>
+                                <th class="px-6 py-3 text-left">Person ID</th>
+                                <th class="px-6 py-3 text-left">Level</th>
+                                <th class="px-6 py-3 text-left">Status ERP</th>
+                                <th class="px-6 py-3 text-left">Akses Login</th>
+                                <th class="px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -947,10 +837,7 @@
                                     <div class="skeleton-bar" style="width:160px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:120px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:140px;"></div>
+                                    <div class="skeleton-bar" style="width:100px;"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton-bar" style="width:80px;"></div>
@@ -958,22 +845,31 @@
                                 <td>
                                     <div class="skeleton-bar" style="width:70px;"></div>
                                 </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
+                                </td>
                             </tr>
                             <tr class="skeleton-row">
                                 <td>
                                     <div class="skeleton-bar" style="width:150px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:110px;"></div>
+                                    <div class="skeleton-bar" style="width:100px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:130px;"></div>
+                                    <div class="skeleton-bar" style="width:80px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:70px;"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton-bar" style="width:70px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:70px;"></div>
+                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -997,45 +893,13 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL PEGAWAI BINAAN ══════ -->
-    <div class="modal-overlay" id="binaanModalOverlay" onclick="closeBinaanModalOutside(event)">
-        <div class="binaan-modal-box" onclick="event.stopPropagation()">
-            <div class="binaan-modal-header">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="binaan-avatar" id="binaanAvatar">--</div>
-                    <div>
-                        <div class="modal-title" id="binaanNamaTitle" style="margin-bottom:2px;">-</div>
-                        <div class="binaan-subtitle" id="binaanUsernameSub">-</div>
-                    </div>
-                </div>
-                <button class="modal-close" onclick="closeBinaanModal()">✕</button>
-            </div>
-
-            <div class="binaan-modal-body">
-                <input type="text" id="binaanSearchInput" class="binaan-search"
-                    placeholder="Cari nama atau badge pegawai binaan..." oninput="onBinaanSearchInput()" />
-
-                <div id="binaanList">
-                    <div class="binaan-loading">Memuat data pegawai binaan...</div>
-                </div>
-
-                <div class="pagination-bar" id="binaanPaginationBar" style="display:none;">
-                    <div class="pagination-info">
-                        <span id="binaanPaginationText">—</span>
-                    </div>
-                    <div class="pagination-pages" id="binaanPaginationPages"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- ══════ TOAST NOTIFIKASI ══════ -->
     <div id="toastContainer" class="toast-container"></div>
 
     <script>
-        // ══════ CONFIG ══════
-        const API_ENDPOINT = "{{ route('pengawas.data') }}";
-        const PENGAWAS_BASE = "{{ url('/pengawas') }}";
+        const API_ENDPOINT = "{{ route('aktivasi.data') }}";
+        const TOGGLE_BASE = "{{ url('/aktivasi-akun') }}";
+        const CURRENT_USERNAME = "{{ session('auth_user.username') }}";
 
         const state = {
             search: '',
@@ -1043,14 +907,6 @@
             per_page: 10
         };
         let searchDebounce = null;
-
-        // state khusus untuk modal pegawai binaan
-        const binaanState = {
-            idApi: null,
-            search: '',
-            page: 1
-        };
-        let binaanSearchDebounce = null;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1092,7 +948,6 @@
             }, 4000);
         }
 
-        // ══════ LIST PENGAWAS ══════
         function onSearchInput() {
             clearTimeout(searchDebounce);
             searchDebounce = setTimeout(() => {
@@ -1130,50 +985,62 @@
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <div class="empty-state">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-4a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            <div class="empty-state-title">Data pengawas tidak ditemukan</div>
-                            <div class="empty-state-sub">Coba ubah kata kunci pencarian, atau lakukan sinkronisasi data terlebih dahulu.</div>
+                            <div class="empty-state-title">User tidak ditemukan</div>
+                            <div class="empty-state-sub">Coba ubah kata kunci pencarian.</div>
                         </div>
                     </td>
                 </tr>`;
                 return;
             }
 
-            tbody.innerHTML = rows.map(row => `
-                <tr class="clickable-row" onclick='openBinaanModal("${row.id_api}", ${JSON.stringify(row.nama_lengkap)}, ${JSON.stringify(row.username)})'>
+            tbody.innerHTML = rows.map(row => {
+                const isSelf = row.username === CURRENT_USERNAME;
+                const actionBtn = row.is_active ?
+                    `<button class="btn-toggle-nonaktif" ${isSelf ? 'disabled title="Tidak dapat menonaktifkan akun sendiri"' : ''}
+                            onclick='toggleAkses("${row.username}", ${JSON.stringify(row.nama_lengkap)}, false)'>
+                            Nonaktifkan
+                       </button>` :
+                    `<button class="btn-toggle-aktif"
+                            onclick='toggleAkses("${row.username}", ${JSON.stringify(row.nama_lengkap)}, true)'>
+                            Aktifkan
+                       </button>`;
+
+                return `
+                <tr>
                     <td>
                         <div class="td-name-cell">
                             <div class="td-avatar">${escapeHtml(initials(row.nama_lengkap))}</div>
                             <div>
                                 <div class="td-name-main">${escapeHtml(row.nama_lengkap)}</div>
-                                <div class="td-name-sub">${escapeHtml(row.username)}</div>
+                                <div class="td-name-sub">${escapeHtml(row.username)}${row.is_admin ? ' • Admin' : ''}</div>
                             </div>
                         </div>
                     </td>
-                    <td>${escapeHtml(row.kode_ok_pekerjaan)}</td>
+                    <td>${escapeHtml(row.person_id)}</td>
+                    <td>${escapeHtml(row.level)}</td>
                     <td>
-                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_unit_kerja)}</div>
-                        <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
+                        <span class="status-pill ${row.blokir_erp ? 'sp-red' : 'sp-green'}">${row.blokir_erp ? 'Diblokir ERP' : 'Normal'}</span>
                     </td>
                     <td>
-                        <span class="status-pill sp-blue">${row.jumlah_pegawai} pegawai</span>
+                        <span class="status-pill ${row.is_active ? 'sp-green' : 'sp-gray'}">${row.is_active ? 'Aktif' : 'Belum Aktif'}</span>
                     </td>
-                    <td>
-                        <span class="status-pill ${row.status === 'Aktif' ? 'sp-green' : 'sp-red'}">${escapeHtml(row.status)}</span>
+                    <td style="text-align:center; white-space:nowrap;">
+                        ${actionBtn}
                     </td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
         }
 
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
         <tr>
-            <td colspan="5">
+            <td colspan="6">
                 <div class="error-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1186,13 +1053,15 @@
         </tr>`;
             document.getElementById('paginationText').textContent = '—';
             document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data pengawas.';
+            document.getElementById('dataSummary').textContent = 'Gagal memuat data user.';
         }
 
-        function renderPaginationGeneric(meta, textEl, pagesEl, onPageClick) {
-            textEl.textContent = meta.total > 0 ?
-                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
+        function renderPagination(meta) {
+            document.getElementById('paginationText').textContent =
+                meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
+            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> user ditemukan`;
 
+            const container = document.getElementById('paginationPages');
             const current = meta.current_page;
             const last = meta.last_page;
 
@@ -1208,29 +1077,18 @@
             pages = [...new Set(pages)];
 
             let html =
-                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="(${onPageClick})(${current - 1})">‹</button>`;
+                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
             pages.forEach(p => {
                 if (p === '...') {
                     html += `<span class="page-ellipsis">…</span>`;
                 } else {
                     html +=
-                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="(${onPageClick})(${p})">${p}</button>`;
+                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
                 }
             });
             html +=
-                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="(${onPageClick})(${current + 1})">›</button>`;
-
-            pagesEl.innerHTML = html;
-        }
-
-        function renderPagination(meta) {
-            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> pengawas ditemukan`;
-            renderPaginationGeneric(
-                meta,
-                document.getElementById('paginationText'),
-                document.getElementById('paginationPages'),
-                goToPage
-            );
+                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
+            container.innerHTML = html;
         }
 
         async function loadData() {
@@ -1259,112 +1117,38 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        async function toggleAkses(username, namaLengkap, aktifkan) {
+            const confirmMsg = aktifkan ?
+                `Aktifkan akses login untuk ${namaLengkap} (${username})?` :
+                `Nonaktifkan akses login untuk ${namaLengkap} (${username})?`;
 
-        // ══════ MODAL PEGAWAI BINAAN ══════
-        function openBinaanModal(idApi, namaLengkap, username) {
-            binaanState.idApi = idApi;
-            binaanState.search = '';
-            binaanState.page = 1;
-
-            document.getElementById('binaanAvatar').textContent = initials(namaLengkap);
-            document.getElementById('binaanNamaTitle').textContent = namaLengkap || '-';
-            document.getElementById('binaanUsernameSub').textContent = username || '-';
-            document.getElementById('binaanSearchInput').value = '';
-            document.getElementById('binaanPaginationBar').style.display = 'none';
-
-            document.getElementById('binaanModalOverlay').classList.add('open');
-            loadBinaanData();
-        }
-
-        function closeBinaanModal() {
-            document.getElementById('binaanModalOverlay').classList.remove('open');
-            binaanState.idApi = null;
-        }
-
-        function closeBinaanModalOutside(event) {
-            if (event.target.id === 'binaanModalOverlay') closeBinaanModal();
-        }
-
-        function onBinaanSearchInput() {
-            clearTimeout(binaanSearchDebounce);
-            binaanSearchDebounce = setTimeout(() => {
-                binaanState.search = document.getElementById('binaanSearchInput').value.trim();
-                binaanState.page = 1;
-                loadBinaanData();
-            }, 350);
-        }
-
-        function goToBinaanPage(page) {
-            binaanState.page = page;
-            loadBinaanData();
-        }
-
-        function renderBinaanList(rows) {
-            const listEl = document.getElementById('binaanList');
-
-            if (!rows || rows.length === 0) {
-                listEl.innerHTML = '<div class="binaan-empty">Belum ada pegawai binaan untuk pengawas ini.</div>';
-                return;
-            }
-
-            listEl.innerHTML = rows.map(p => `
-                <div class="binaan-item">
-                    <div class="td-avatar">${escapeHtml(initials(p.nama))}</div>
-                    <div style="flex:1; min-width:0;">
-                        <div class="binaan-item-name">${escapeHtml(p.nama)}</div>
-                        <div class="binaan-item-sub">
-                            ${escapeHtml(p.badge)} • ${escapeHtml(p.nama_unit_kerja)} — ${escapeHtml(p.bagian)}
-                        </div>
-                    </div>
-                    <span class="status-pill ${p.status === 'Aktif' ? 'sp-green' : 'sp-red'}">${escapeHtml(p.status)}</span>
-                </div>
-            `).join('');
-        }
-
-        async function loadBinaanData() {
-            if (!binaanState.idApi) return;
-
-            const listEl = document.getElementById('binaanList');
-            listEl.innerHTML = '<div class="binaan-loading">Memuat data pegawai binaan...</div>';
-
-            const params = new URLSearchParams();
-            if (binaanState.search) params.set('search', binaanState.search);
-            params.set('page', binaanState.page);
-            params.set('per_page', 10);
+            if (!confirm(confirmMsg)) return;
 
             try {
-                const res = await fetch(`${PENGAWAS_BASE}/${binaanState.idApi}/pegawai?${params.toString()}`, {
+                const res = await fetch(`${TOGGLE_BASE}/${encodeURIComponent(username)}/toggle`, {
+                    method: 'POST',
                     headers: {
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
+                    body: JSON.stringify({
+                        nama_lengkap: namaLengkap,
+                        aktifkan: aktifkan,
+                    })
                 });
 
-                if (!res.ok) {
-                    const errJson = await res.json().catch(() => null);
-                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
-                }
-
                 const json = await res.json();
-                renderBinaanList(json.data);
+                if (!res.ok) throw new Error(json.message || `Server merespons status ${res.status}`);
 
-                const barEl = document.getElementById('binaanPaginationBar');
-                if (json.meta.total > 0) {
-                    barEl.style.display = 'flex';
-                    renderPaginationGeneric(
-                        json.meta,
-                        document.getElementById('binaanPaginationText'),
-                        document.getElementById('binaanPaginationPages'),
-                        goToBinaanPage
-                    );
-                } else {
-                    barEl.style.display = 'none';
-                }
+                await loadData();
+                showToast(json.message, 'success');
             } catch (e) {
-                listEl.innerHTML =
-                    `<div class="binaan-empty" style="color:#D0021B;">${escapeHtml(e.message || 'Gagal memuat data pegawai binaan.')}</div>`;
+                showToast(e.message || 'Gagal mengubah status akses.', 'error');
             }
         }
+
+        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 

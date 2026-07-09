@@ -309,8 +309,7 @@
 
         <div id="datatenagaDropdown" class="dropdown-menu {{ $datatenagaActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}"
-                href="{{ route('tenaga.index') }}">
+            <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}" href="{{ route('tenaga.index') }}">
                 <span class="nav-label">Master Tenaga</span>
             </a>
 
@@ -328,7 +327,7 @@
 
         @php
             $monitoringActive =
-                request()->routeIs('data-pengawas.*') ||
+                // request()->routeIs('data-pengawas.*') ||
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
                 request()->routeIs('cetak-uauc.*') ||
@@ -363,10 +362,10 @@
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('data-pengawas.*') ? 'active' : '' }}"
+            {{-- <a class="nav-link {{ request()->routeIs('data-pengawas.*') ? 'active' : '' }}"
                 href="{{ route('data-pengawas.index') }}">
                 <span class="nav-label">Data Pengawas</span>
-            </a>
+            </a> --}}
 
             <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
                 href="{{ route('data-medis.index') }}">
@@ -697,7 +696,8 @@
                 <span class="nav-label">Dashboard APD</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}" href="{{ route('master-stok-apd.index') }}">
+            <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}"
+                href="{{ route('master-stok-apd.index') }}">
                 <span class="nav-label">Master Stok APD</span>
             </a>
 
@@ -732,15 +732,38 @@
         </div>
     </div>
 
+
+    @if (session('auth_user.is_admin'))
+        {{-- User Management --}}
+        <div class="sb-section">
+            <div class="sb-section-label">User Management</div>
+
+            <a href="{{ route('aktivasi.index') }}"
+                class="nav-link {{ request()->routeIs('aktivasi.*') ? 'active' : '' }}">
+
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+
+                <span class="nav-label">Aktivasi Akun</span>
+            </a>
+        </div>
+    @endif
+
     <div class="sb-bottom">
-        <a class="nav-link danger" href="#">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span class="nav-label">Keluar</span>
-        </a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn-outline" style="width:100%;">
+                <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Keluar
+            </button>
+        </form>
     </div>
 </aside>
 
