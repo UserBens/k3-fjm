@@ -286,6 +286,7 @@
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
             $datatenagaActive = request()->routeIs('tenaga.*') || 
             request()->routeIs('memo-kib.*') || 
+            request()->routeIs('safety-officer.*') || 
             request()->routeIs('pengawas.*');
         @endphp
 
@@ -322,6 +323,11 @@
             <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
                 href="{{ route('pengawas.index') }}">
                 <span class="nav-label">Data Pengawas</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('safety-officer.*') ? 'active' : '' }}"
+                href="{{ route('safety-officer.index') }}">
+                <span class="nav-label">Data Safety Officer</span>
             </a>
 
         </div>

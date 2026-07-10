@@ -10,6 +10,7 @@ use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
+use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\TenagaController;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +23,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth.custom'])->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // ══════ AKTIVASI AKUN — KHUSUS ADMIN ══════
     Route::middleware(['admin.custom'])->group(function () {
         Route::get('/aktivasi-akun', [AktivasiAkunController::class, 'index'])->name('aktivasi.index');
@@ -42,6 +43,11 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
     Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
     Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
+
+    Route::get('/safety-officer', [SafetyOfficerController::class, 'index'])->name('safety-officer.index');
+    Route::get('/safety-officer/data', [SafetyOfficerController::class, 'data'])->name('safety-officer.data');
+    Route::delete('/safety-officer/{pegawai}', [SafetyOfficerController::class, 'destroy'])->name('safety-officer.destroy');
+
 
     Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 

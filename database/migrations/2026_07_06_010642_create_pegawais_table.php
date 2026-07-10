@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('unit_kerjaid')->nullable();
             $table->string('lokasi_kerjaid')->nullable();
             $table->boolean('is_active')->default(true);
-
+            $table->boolean('is_safety_officer')->default(false);
+            $table->timestamp('safety_officer_since')->nullable();
             // --- TAMBAHAN KOLOM BARU SESUAI API ---
             $table->string('tempat_lahir', 100)->nullable();
             $table->date('tanggal_lahir')->nullable();

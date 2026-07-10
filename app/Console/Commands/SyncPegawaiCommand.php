@@ -102,6 +102,24 @@ use Illuminate\Support\Facades\Http;
 // }
 class SyncPegawaiCommand extends Command
 {
+    protected array $safetyOfficerBadges = [
+        'K.202737', // ARI ANGGI WICAKSONO
+        'K.240394', // GLADIOL QUEEN DANATAMA
+        'K.210050', // RAHMAT BUDI PRASETYO
+        'K.230218', // YOGA PRASETYA BHASKARA
+        'K.210838', // A. SULTHONI MAHFUD
+        'K.210283', // ABDUL HAMID JUNAIDI
+        'K.240385', // ERINA AVIDAH AULIA
+        'K.250351', // AYU PUSPA ARUM M.K.W
+        'K.210112', // M FARIZ ALEXFAN
+        'K.210282', // FUADUR ZAKKI KURNIAWAN
+        'K.210837', // MUHAMMAD SYAMSUL HUDA
+        'K.230219', // RICKO ADISETYO
+        'K.210835', // ADITYA PRADANA PUTRA
+        'K.200384', // MUKHLISIN
+        'K.230229', // GIGIH PRILLA ADITAMA
+        'K.202860', // SYAFRIZAL FIRDAUS
+    ];
     protected $signature = 'sync:pegawai';
     protected $description = 'Sinkronisasi data master pegawai (beserta unit kerja) dari API ERP ke database lokal K3';
 
@@ -142,6 +160,12 @@ class SyncPegawaiCommand extends Command
         if (!$this->syncPengawasPekerjaan()) {
             $this->error('Sinkronisasi dibatalkan karena gagal sync pengawas pekerjaan.');
             return Command::FAILURE;
+        }
+
+        if (!$this->assignSafetyOfficers()) {
+            $this->error('Sinkronisasi dilanjutkan, tapi gagal menetapkan status Safety Officer.');
+            // sengaja TIDAK return FAILURE di sini — kegagalan tagging Safety Officer
+            // tidak perlu membatalkan sync pegawai/pengawas yang sudah berhasil.
         }
 
         $this->info('Semua sinkronisasi (unit kerja, pegawai, pengawas, pengawas pekerjaan) selesai!');
@@ -465,6 +489,39 @@ class SyncPegawaiCommand extends Command
             return true;
         } catch (\Exception $e) {
             $this->error('Terjadi kesalahan saat sinkronisasi subkon: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    protected function assignSafetyOfficers(): bool
+    {
+        $this->info('Menetapkan status Safety Officer berdasarkan daftar badge...');
+
+        try {
+            // Reset dulu semua ke false, supaya badge yang sudah dikeluarkan dari
+            // daftar $safetyOfficerBadges ikut ter-unflag otomatis saat sync berikutnya.
+            Pegawai::where('is_safety_officer', true)->update([
+                'is_safety_officer' => false,
+            ]);
+
+            $count = Pegawai::whereIn('badge', $this->safetyOfficerBadges)
+                ->update([
+                    'is_safety_officer' => true,
+                    'safety_officer_since' => Carbon::now(),
+                ]);
+
+            $matchedBadges = Pegawai::whereIn('badge', $this->safetyOfficerBadges)->pluck('badge');
+            $notFound = collect($this->safetyOfficerBadges)->diff($matchedBadges);
+
+            if ($notFound->isNotEmpty()) {
+                $this->warn('Badge berikut ada di daftar Safety Officer tapi TIDAK ditemukan di tabel pegawai: '
+                    . $notFound->implode(', '));
+            }
+
+            $this->info("Status Safety Officer diterapkan ke {$count} pegawai.");
+            return true;
+        } catch (\Exception $e) {
+            $this->error('Terjadi kesalahan saat menetapkan Safety Officer: ' . $e->getMessage());
             return false;
         }
     }

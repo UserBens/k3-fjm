@@ -36,18 +36,14 @@ class TenagaController extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas', 'lokasiKerja', 'subkon']);
+            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas', 'lokasiKerja', 'subkon'])
+                ->where('is_active', true); // BARU — wajib hanya pegawai aktif, tidak bisa dioverride
 
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama', 'ilike', "%{$search}%")
                         ->orWhere('badge', 'like', "%{$search}%");
                 });
-            }
-
-            if ($request->has('status') && $request->query('status') !== '') {
-                $statusParam = $request->query('status');
-                $query->where('is_active', $statusParam === 'Aktif');
             }
 
             if ($departemen = $request->query('departemen')) {
@@ -61,13 +57,14 @@ class TenagaController extends Controller
             $query->orderByDesc('updated_at');
 
             $filterOptions = [
-                'status' => ['Aktif', 'Non-Aktif'],
-                'departemen' => UnitKerja::whereIn('id_api', Pegawai::whereNotNull('unit_kerjaid')->distinct()->pluck('unit_kerjaid'))
+                // BARU — hapus opsi 'Non-Aktif' karena tidak akan pernah muncul lagi
+                'status' => ['Aktif'],
+                'departemen' => UnitKerja::whereIn('id_api', Pegawai::where('is_active', true)->whereNotNull('unit_kerjaid')->distinct()->pluck('unit_kerjaid'))
                     ->orderBy('nama_unit_kerja')
                     ->get(['id_api', 'nama_unit_kerja'])
                     ->map(fn($u) => ['value' => $u->id_api, 'label' => $u->nama_unit_kerja])
                     ->values(),
-                'jenis_kelamin' => Pegawai::whereNotNull('jenis_kelamin')->distinct()->pluck('jenis_kelamin')->sort()->values(),
+                'jenis_kelamin' => Pegawai::where('is_active', true)->whereNotNull('jenis_kelamin')->distinct()->pluck('jenis_kelamin')->sort()->values(),
             ];
 
             $perPage = (int) $request->query('per_page', 10);
@@ -103,9 +100,8 @@ class TenagaController extends Controller
                     'nama_unit_kerja' => $item->unitKerja->nama_unit_kerja ?? '-',
                     'bagian' => $item->unitKerja->bagian ?? '-',
 
-                    // BARU — nama pengawas dari pegawai ini
                     'nama_pengawas' => $item->pengawasPekerjaan->pengawas->nama_lengkap ?? '-',
-                    'badge_pengawas' => $item->pengawasPekerjaan->pengawas->username ?? '-', // BARU
+                    'badge_pengawas' => $item->pengawasPekerjaan->pengawas->username ?? '-',
 
                     'jabatan' => $item->jabatan ?? '-',
                     'departemen' => $item->unit_kerjaid ?? '-',
@@ -115,7 +111,6 @@ class TenagaController extends Controller
                     'status_kib' => $item->status_kib,
                     'sisa_hari_kib' => $sisaHari,
                     'gambar_kib_url' => $item->gambar_kib ? asset('storage/' . $item->gambar_kib) : null,
-                    // BARU — Ambil data dari relasi hasil sinkronisasi database lokal
                     'nama_lokasi' => $item->lokasiKerja->nama_lokasi ?? '-',
                     'nama_subkon' => $item->subkon->nama_subkon ?? '-',
                 ];

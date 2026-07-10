@@ -1535,9 +1535,25 @@
                     </div>
                 </div>
 
-                <div class="detail-field">
-                    <label>Pengawas</label>
-                    <input type="text" id="detailInputPengawas" readonly>
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <!-- User Check Icon -->
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="10" cy="7" r="4" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11l2 2 4-4" />
+                        </svg>
+                        Data Pengawas
+                    </div>
+
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Pengawas</label>
+                            <input type="text" id="detailInputPengawas" readonly>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="detail-section mt-4">
@@ -1774,11 +1790,11 @@
 
                      <td>
                         ${row.nama_pengawas === '-' ? `
-                                     <span class="status-pill sp-gray">-</span>
-                                        ` : `
-                                    <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
-                                    <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
-                                      `}
+                                         <span class="status-pill sp-gray">-</span>
+                                            ` : `
+                                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
+                                        <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
+                                          `}
                     </td>
 
                     <td>
