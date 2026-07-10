@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 class TenagaController extends Controller
 {
@@ -35,7 +36,7 @@ class TenagaController extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas']); // BARU — tambah eager load pengawas
+            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas', 'lokasiKerja', 'subkon']);
 
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
@@ -113,6 +114,10 @@ class TenagaController extends Controller
                     'masa_berlaku_kib' => $item->masa_berlaku_kib,
                     'status_kib' => $item->status_kib,
                     'sisa_hari_kib' => $sisaHari,
+                    'gambar_kib_url' => $item->gambar_kib ? asset('storage/' . $item->gambar_kib) : null,
+                    // BARU — Ambil data dari relasi hasil sinkronisasi database lokal
+                    'nama_lokasi' => $item->lokasiKerja->nama_lokasi ?? '-',
+                    'nama_subkon' => $item->subkon->nama_subkon ?? '-',
                 ];
             });
 
@@ -161,22 +166,34 @@ class TenagaController extends Controller
 
     public function update(Request $request, $id): JsonResponse
     {
-        // Validasi input data dari Client
+        // Validasi input data dari Client ditambah validasi file gambar
         $validated = $request->validate([
             'nomor_kib' => 'nullable|string|max:100',
             'masa_berlaku_kib' => 'nullable|date',
             'status_kib' => 'nullable|string|max:50',
+            'gambar_kib' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
         ]);
 
         try {
             $pegawai = Pegawai::findOrFail($id);
 
+            // Cek apakah ada file gambar yang diupload
+            if ($request->hasFile('gambar_kib')) {
+                // Hapus gambar lama jika ada
+                if ($pegawai->gambar_kib && Storage::disk('public')->exists($pegawai->gambar_kib)) {
+                    Storage::disk('public')->delete($pegawai->gambar_kib);
+                }
+
+                // Simpan gambar baru ke folder storage/app/public/kib_images
+                $path = $request->file('gambar_kib')->store('kib_images', 'public');
+                $pegawai->gambar_kib = $path;
+            }
+
             // Simpan perubahan ke database lokal
-            $pegawai->update([
-                'nomor_kib' => $validated['nomor_kib'],
-                'masa_berlaku_kib' => $validated['masa_berlaku_kib'],
-                'status_kib' => $validated['status_kib'],
-            ]);
+            $pegawai->nomor_kib = $validated['nomor_kib'];
+            $pegawai->masa_berlaku_kib = $validated['masa_berlaku_kib'];
+            $pegawai->status_kib = $validated['status_kib'];
+            $pegawai->save();
 
             return response()->json([
                 'status' => 'success',

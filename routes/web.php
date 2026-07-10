@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\PegawaiController;
@@ -34,6 +35,9 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
     Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
     Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
+
+    Route::get('/memo-kib', [MemoKibController::class, 'index'])->name('memo-kib.index');
+    Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
 
     Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
     Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');

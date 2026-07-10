@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('nomor_kib', 100)->nullable();
             $table->string('status_kib', 50)->nullable();
             $table->date('masa_berlaku_kib')->nullable(); // Pastikan ini juga ada
+            $table->string('gambar_kib')->nullable(); // <-- TAMBAHAN KOLOM INI
             $table->timestamp('last_sync')->nullable();
             $table->timestamps();
         });

@@ -21,4 +21,14 @@ class Pegawai extends Model
     {
         return $this->hasOne(PengawasPekerjaan::class, 'pegawai_id', 'id_api');
     }
+
+    public function lokasiKerja()
+    {
+        return $this->belongsTo(LokasiKerja::class, 'lokasi_kerjaid', 'id_api');
+    }
+
+    public function subkon()
+    {
+        return $this->belongsTo(Subkon::class, 'perusahaan_subkonid', 'id_api');
+    }
 }

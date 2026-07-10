@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Tenaga Kerja — PT. Fokus Jasa Mitra</title>
+    <title>Memo KIB Tenaga Kerja — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -1208,10 +1208,10 @@
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Database Tenaga · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Memo KIB Tenaga · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">DATA <span>TENAGA KERJA</span></div>
-                        <div class="pg-sub">Cari, filter, dan kelola data tenaga kerja.</div>
+                        <div class="pg-title">MEMO KIB <span>TENAGA KERJA</span></div>
+                        <div class="pg-sub">Cari, filter, dan kelola data memo kibtenaga kerja.</div>
                     </div>
                     <div class="pg-actions">
                         <button class="btn-primary" id="btnSync" onclick="syncData()"
@@ -1265,7 +1265,6 @@
                                 <th class="px-6 py-3 text-left">Data Pegawai</th>
                                 {{-- <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th> --}}
                                 <th class="px-6 py-3 text-left">Unit Kerja</th>
-                                <th class="px-6 py-3 text-left">Lokasi & Subkon</th>
                                 <th class="px-6 py-3 text-left">Data OK</th>
                                 <th class="px-6 py-3 text-left">Pengawas</th> <!-- BARU -->
                                 <th class="px-6 py-3 text-left">Status KIB</th>
@@ -1387,13 +1386,6 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Upload Gambar KIB (Opsional)</label>
-                <input type="file" id="inputGambarKib" class="form-input"
-                    accept="image/png, image/jpeg, image/jpg" />
-                <small style="color:#666; font-size: 12px;">Format: JPG, JPEG, PNG (Maks 2MB)</small>
-            </div>
-
             <div class="modal-actions" style="margin-top:20px;">
                 <button class="btn-modal-cancel" onclick="closeUpdateModal()">Batal</button>
                 <button class="btn-modal-confirm" id="btnSubmitUpdate" onclick="submitUpdateKib()">Simpan
@@ -1471,28 +1463,6 @@
                     </div>
                 </div>
 
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        Penempatan Kerja
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Lokasi Kerja</label>
-                            <input type="text" id="detailInputLokasiKerja" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Perusahaan Subkon</label>
-                            <input type="text" id="detailInputSubkon" readonly>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- SECTION: BPJS -->
                 <div class="detail-section">
                     <div class="detail-section-title">
@@ -1540,22 +1510,6 @@
                     <input type="text" id="detailInputPengawas" readonly>
                 </div>
 
-                <div class="detail-section mt-4">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        Dokumen KIB
-                    </div>
-                    <div class="detail-field"
-                        style="text-align: center; background: #f9fafb; padding: 15px; border-radius: 8px;">
-                        <img id="detailImageKib" src="" alt="Gambar KIB"
-                            style="max-width: 100%; max-height: 300px; display: none; border-radius: 8px; border: 1px solid #e5e7eb; object-fit: contain;" />
-                        <p id="detailImageKibEmpty" style="color: #6b7280; font-style: italic; margin: 0;">Gambar KIB
-                            belum diunggah</p>
-                    </div>
-                </div>
             </div>
             <div class="modal-footer mt-4">
                 <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
@@ -1758,11 +1712,6 @@
                         <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
                     </td>
 
-                    <td>
-                        <div style="font-weight:600; color:#0f172a; font-size:13px;">${escapeHtml(row.nama_lokasi)}</div>
-                        <div class="td-name-sub" style="color: #0284c7; font-weight: 500;">Subkon: ${escapeHtml(row.nama_subkon)}</div>
-                    </td>
-            
                    <td>
                         <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
                             Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
@@ -1774,11 +1723,11 @@
 
                      <td>
                         ${row.nama_pengawas === '-' ? `
-                                     <span class="status-pill sp-gray">-</span>
-                                        ` : `
-                                    <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
-                                    <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
-                                      `}
+                                                <span class="status-pill sp-gray">-</span>
+                                            ` : `
+                                                <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
+                                                <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
+                                            `}
                     </td>
 
                     <td>
@@ -2042,27 +1991,18 @@
             btn.textContent = 'Menyimpan...';
 
             try {
-                // Menggunakan FormData untuk mendukung file upload
-                const formData = new FormData();
-                formData.append('_method', 'PUT'); // Trik Laravel untuk menyimulasikan PUT request dengan FormData
-                formData.append('nomor_kib', document.getElementById('inputNomorKib').value.trim() || '');
-                formData.append('masa_berlaku_kib', document.getElementById('inputMasaBerlakuKib').value || '');
-                formData.append('status_kib', document.getElementById('inputStatusKib').value || '');
-
-                const fileInput = document.getElementById('inputGambarKib');
-                if (fileInput.files.length > 0) {
-                    formData.append('gambar_kib', fileInput.files[0]);
-                }
-
                 const res = await fetch(`${UPDATE_ENDPOINT_BASE}/${currentEditId}`, {
-                    method: 'POST', // Gunakan POST karena FormData, Laravel akan membacanya sebagai PUT dari '_method'
+                    method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        // PENTING: Jangan set 'Content-Type' saat menggunakan FormData.
-                        // Browser akan otomatis men-set 'multipart/form-data' dengan boundary yang benar.
                     },
-                    body: formData
+                    body: JSON.stringify({
+                        nomor_kib: document.getElementById('inputNomorKib').value.trim() || null,
+                        masa_berlaku_kib: document.getElementById('inputMasaBerlakuKib').value || null,
+                        status_kib: document.getElementById('inputStatusKib').value || null,
+                    })
                 });
 
                 const json = await res.json();
@@ -2075,9 +2015,6 @@
                 closeUpdateModal();
                 await loadData();
                 showToast(json.message, 'success');
-
-                // Reset input file setelah sukses
-                document.getElementById('inputGambarKib').value = '';
 
             } catch (e) {
                 showToast(e.message || 'Terjadi kesalahan saat memperbarui data.', 'error');
@@ -2110,22 +2047,6 @@
             document.getElementById('detailInputNomorOk').value = row.nomor_ok || '-';
             document.getElementById('detailInputPengawas').value =
                 row.nama_pengawas !== '-' ? `${row.nama_pengawas} (${row.badge_pengawas})` : '-';
-            document.getElementById('detailInputLokasiKerja').value = row.nama_lokasi;
-            document.getElementById('detailInputSubkon').value = row.nama_subkon;
-            // BARU - Logika untuk menampilkan Gambar KIB
-            const imgKib = document.getElementById('detailImageKib');
-            const imgEmpty = document.getElementById('detailImageKibEmpty');
-
-
-            if (row.gambar_kib_url) {
-                imgKib.src = row.gambar_kib_url;
-                imgKib.style.display = 'inline-block'; // Tampilkan gambar
-                imgEmpty.style.display = 'none'; // Sembunyikan teks placeholder
-            } else {
-                imgKib.src = '';
-                imgKib.style.display = 'none'; // Sembunyikan gambar yang kosong
-                imgEmpty.style.display = 'block'; // Tampilkan teks placeholder
-            }
 
             document.getElementById('detailModalOverlay').classList.add('open');
         }

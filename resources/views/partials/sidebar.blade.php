@@ -284,7 +284,9 @@
 
         @php
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $datatenagaActive = request()->routeIs('tenaga.*') || request()->routeIs('pengawas.*');
+            $datatenagaActive = request()->routeIs('tenaga.*') || 
+            request()->routeIs('memo-kib.*') || 
+            request()->routeIs('pengawas.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
@@ -311,6 +313,10 @@
 
             <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}" href="{{ route('tenaga.index') }}">
                 <span class="nav-label">Master Tenaga</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
+                <span class="nav-label">Memo KIB</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"

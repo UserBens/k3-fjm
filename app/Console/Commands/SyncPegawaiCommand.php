@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\LokasiKerja;
 use App\Models\Pegawai;
 use App\Models\PengawasIntraUser;
 use App\Models\PengawasPekerjaan;
+use App\Models\Subkon;
 use App\Models\UnitKerja;
 use Carbon\Carbon;
 use Illuminate\Console\Attributes\Description;
@@ -111,6 +113,18 @@ class SyncPegawaiCommand extends Command
             return Command::FAILURE;
         }
 
+        // ── STEP 1b: Sync Master Lokasi Kerja ──
+        if (!$this->syncLokasiKerja()) {
+            $this->error('Sinkronisasi dibatalkan karena gagal sync lokasi kerja.');
+            return Command::FAILURE;
+        }
+
+        // ── STEP 1c: Sync Master Subkon ──
+        if (!$this->syncSubkon()) {
+            $this->error('Sinkronisasi dibatalkan karena gagal sync subkon.');
+            return Command::FAILURE;
+        }
+
         // ── STEP 2: Sync Pegawai ──
         $pegawaiResult = $this->syncPegawai();
         if ($pegawaiResult !== Command::SUCCESS) {
@@ -190,7 +204,6 @@ class SyncPegawaiCommand extends Command
             return false;
         }
     }
-
     /**
      * Sinkronisasi data pegawai (kode asli Anda, tidak diubah).
      */
@@ -361,6 +374,97 @@ class SyncPegawaiCommand extends Command
             return true;
         } catch (\Exception $e) {
             $this->error('Terjadi kesalahan saat sinkronisasi pengawas pekerjaan: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    protected function syncLokasiKerja(): bool
+    {
+        $this->info('Memulai sinkronisasi data lokasi kerja dari API...');
+        $url = 'https://mobile.fokusjasamitra.com/api/erp/api/lokasi-kerja?api_key=VXME9exqyx7j77rbAmlSPw8UjuJpRHjsLH0cm7zTF64VjU19mhXqkdxbExTvQRME';
+
+        try {
+            $response = Http::timeout(30)->get($url);
+
+            if (!$response->successful()) {
+                $this->error('Gagal mengambil data lokasi kerja. Status: ' . $response->status());
+                return false;
+            }
+
+            $json = $response->json();
+            $items = $json['data'] ?? $json;
+
+            if (!is_array($items)) {
+                $this->error('Format data respons API lokasi kerja tidak dikenali.');
+                return false;
+            }
+
+            $count = 0;
+            foreach ($items as $item) {
+                $idApi = $item['id'] ?? null;
+                if (!$idApi) continue;
+
+                LokasiKerja::updateOrCreate(
+                    ['id_api' => $idApi],
+                    [
+                        'nama_lokasi' => $item['nama_lokasi'] ?? null,
+                        'kode_lokasi' => $item['kode_lokasi'] ?? null,
+                    ]
+                );
+                $count++;
+            }
+
+            $this->info("Sinkronisasi lokasi kerja berhasil! {$count} data diperbarui/ditambahkan.");
+            return true;
+        } catch (\Exception $e) {
+            $this->error('Terjadi kesalahan saat sinkronisasi lokasi kerja: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Sinkronisasi Master Subkon.
+     */
+    protected function syncSubkon(): bool
+    {
+        $this->info('Memulai sinkronisasi data subkon dari API...');
+        $url = 'https://mobile.fokusjasamitra.com/api/erp/api/lokasi-kerja-subkon?api_key=VXME9exqyx7j77rbAmlSPw8UjuJpRHjsLH0cm7zTF64VjU19mhXqkdxbExTvQRME';
+
+        try {
+            $response = Http::timeout(30)->get($url);
+
+            if (!$response->successful()) {
+                $this->error('Gagal mengambil data subkon. Status: ' . $response->status());
+                return false;
+            }
+
+            $json = $response->json();
+            $items = $json['data'] ?? $json;
+
+            if (!is_array($items)) {
+                $this->error('Format data respons API subkon tidak dikenali.');
+                return false;
+            }
+
+            $count = 0;
+            foreach ($items as $item) {
+                $idApi = $item['id'] ?? null;
+                if (!$idApi) continue;
+
+                Subkon::updateOrCreate(
+                    ['id_api' => $idApi],
+                    [
+                        'nama_subkon' => $item['nama_subkon'] ?? null,
+                        'kode_subkon' => $item['kode_subkon'] ?? null,
+                    ]
+                );
+                $count++;
+            }
+
+            $this->info("Sinkronisasi subkon berhasil! {$count} data diperbarui/ditambahkan.");
+            return true;
+        } catch (\Exception $e) {
+            $this->error('Terjadi kesalahan saat sinkronisasi subkon: ' . $e->getMessage());
             return false;
         }
     }
