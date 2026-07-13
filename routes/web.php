@@ -4,6 +4,7 @@ use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
+use App\Http\Controllers\DcuController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemoKibController;
@@ -106,4 +107,13 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('alber-operatornonaktif', [AlatBeratController::class, 'indexOperatorNonAktif'])->name('alber.operatornonaktif');
     Route::get('alber-master-oncall', [AlatBeratController::class, 'indexMasterOncall'])->name('alber.master-oncall');
     Route::get('alber-master-allin', [AlatBeratController::class, 'indexMasterAllIn'])->name('alber.master-allin');
+
+    Route::prefix('data-dcu')->name('dcu.')->group(function () {
+        Route::get('/', [DcuController::class, 'index'])->name('index');
+        Route::get('/data', [DcuController::class, 'data'])->name('data');
+        Route::post('/', [DcuController::class, 'store'])->name('store');
+        Route::put('/{dcu}', [DcuController::class, 'update'])->name('update');
+        Route::delete('/{dcu}', [DcuController::class, 'destroy'])->name('destroy');
+        Route::get('/cari-pegawai', [DcuController::class, 'cariPegawai'])->name('cari-pegawai');
+    });
 });

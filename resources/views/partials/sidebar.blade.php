@@ -587,7 +587,7 @@
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
             $healthperformanceActive =
                 request()->routeIs('dasboard-he.*') ||
-                request()->routeIs('data-dcu.*') ||
+                request()->routeIs('dcu.*') ||
                 request()->routeIs('matriks-refrensi.*') ||
                 request()->routeIs('matriks-kesehatan.*') ||
                 request()->routeIs('program-kesehatan.*') ||
@@ -623,12 +623,13 @@
                 <span class="nav-label">Dashboard HE</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('data-dcu.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('data-dcu.*') ? 'active' : '' }}"
+                href="{{ route('dcu.index') }}">
                 <span class="nav-label">Data DCU</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('matriks-refrensi.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Natriks Refrensi</span>
+                <span class="nav-label">Matriks Refrensi</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('matriks-kesehatan.*') ? 'active' : '' }}" href="#">
