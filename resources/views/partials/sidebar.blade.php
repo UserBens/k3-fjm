@@ -364,11 +364,6 @@
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
 
-            {{-- <a class="nav-link {{ request()->routeIs('data-pengawas.*') ? 'active' : '' }}"
-                href="{{ route('data-pengawas.index') }}">
-                <span class="nav-label">Data Pengawas</span>
-            </a> --}}
-
             <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
                 href="{{ route('data-medis.index') }}">
                 <span class="nav-label">Data Medis</span>

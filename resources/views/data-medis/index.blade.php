@@ -1127,6 +1127,92 @@
                 grid-column: span 1;
             }
         }
+
+        .picker-wrap {
+            position: relative;
+        }
+
+        .picker-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            z-index: 20;
+        }
+
+        .picker-dropdown.open {
+            display: block;
+        }
+
+        .picker-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .picker-item:hover {
+            background: #F0F4FF;
+        }
+
+        .picker-item-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .picker-selected-chip {
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            background: #F0F4FF;
+            font-size: 12px;
+        }
+
+        .picker-selected-chip .chip-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-selected-chip .chip-sub {
+            font-size: 10.5px;
+            color: #64748B;
+        }
+
+        .picker-clear-btn {
+            background: none;
+            border: none;
+            color: #D0021B;
+            cursor: pointer;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .file-current-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #2D4B9E;
+            text-decoration: none;
+        }
+
+        .file-current-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -1163,7 +1249,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Tambah Data
+                            Tambah Laporan
                         </button>
                         <button class="btn-outline" onclick="loadData()">
                             <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
@@ -1212,19 +1298,18 @@
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th>Tenaga & Tanggal</th>
-                                <th>Area & Unit Kerja</th>
-                                <th>Jenis Aktivitas KPI</th>
-                                <th>Evidence & Formulir</th>
-                                <th>Status Pindah</th>
-                                <th>Link Arsip</th>
+                                <th>Tenaga Medis</th>
+                                <th>Kegiatan</th>
+                                <th>Tgl Pelaksanaan</th>
+                                <th>Dokumen</th>
+                                <th>Status</th>
                                 <th>Keputusan</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="8">
+                                <td colspan="7">
                                     <div class="skeleton-bar" style="width:100%;height:40px;"></div>
                                 </td>
                             </tr>
@@ -1260,14 +1345,24 @@
             <div class="form-modal-body">
                 <div class="form-section-title">Data Tenaga & Waktu</div>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Badge Tenaga</label>
-                        <input type="text" id="fBadgeTenaga" class="form-input" placeholder="K.250455" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Nama Tenaga</label>
-                        <input type="text" id="fNamaTenaga" class="form-input"
-                            placeholder="MUHAMMAD HAFIZ MAULANA" />
+                    <div class="form-group span-2">
+                        <label class="form-label">Tenaga Medis</label>
+                        <div class="picker-wrap" id="tenagaPickerWrap">
+                            <input type="text" id="tenagaPickerInput" class="form-input"
+                                placeholder="Cari nama atau badge tenaga medis..." oninput="onTenagaPickerInput()"
+                                autocomplete="off" />
+                            <div class="picker-dropdown" id="tenagaPickerDropdown"></div>
+                        </div>
+                        <div class="picker-selected-chip" id="tenagaSelectedChip" style="display:none;">
+                            <div>
+                                <div class="chip-name" id="tenagaSelectedName">-</div>
+                                <div class="chip-sub" id="tenagaSelectedSub">-</div>
+                            </div>
+                            <button type="button" class="picker-clear-btn" onclick="clearTenagaPicker()">Ganti
+                                Tenaga</button>
+                        </div>
+                        <input type="hidden" id="fBadgeTenaga" />
+                        <input type="hidden" id="fNamaTenaga" />
                     </div>
                     <div class="form-group span-2">
                         <label class="form-label">Tanggal Pelaksanaan</label>
@@ -1296,18 +1391,26 @@
                 <div class="form-section-title">Evidence & Arsip</div>
                 <div class="form-grid">
                     <div class="form-group span-2">
-                        <label class="form-label">Link Foto Evidence Kegiatan</label>
-                        <input type="url" id="fFotoEvidence" class="form-input"
-                            placeholder="https://drive.google.com/..." />
+                        <label class="form-label">Foto Evidence Kegiatan</label>
+                        <input type="file" id="fFotoEvidence" class="form-input"
+                            style="padding:8px 12px; height:auto;" accept=".jpg,.jpeg,.png,.webp" />
+                        <a href="#" id="fFotoEvidenceCurrent" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file saat ini ↗</a>
                     </div>
                     <div class="form-group span-2">
-                        <label class="form-label">Link Upload Formulir Kegiatan</label>
-                        <input type="url" id="fFormulirKegiatan" class="form-input"
-                            placeholder="https://drive.google.com/..." />
+                        <label class="form-label">Upload Formulir Kegiatan</label>
+                        <input type="file" id="fFormulirKegiatan" class="form-input"
+                            style="padding:8px 12px; height:auto;" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+                        <a href="#" id="fFormulirKegiatanCurrent" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file saat ini ↗</a>
                     </div>
                     <div class="form-group span-2">
-                        <label class="form-label">Link Arsip (satu link per baris jika lebih dari satu)</label>
-                        <textarea id="fLinkArsip" class="form-textarea" rows="2" placeholder="https://drive.google.com/..."></textarea>
+                        <label class="form-label">Arsip</label>
+                        <input type="file" id="fArsip" class="form-input"
+                            style="padding:8px 12px; height:auto;"
+                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" />
+                        <a href="#" id="fArsipCurrent" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file saat ini ↗</a>
                     </div>
                 </div>
 
@@ -1461,6 +1564,7 @@
         const DATA_ENDPOINT = "{{ route('data-medis.data') }}";
         const STORE_ENDPOINT = "{{ route('data-medis.store') }}";
         const BASE_ENDPOINT = "{{ url('/data-medis') }}";
+        const CARI_TENAGA_ENDPOINT = "{{ route('data-medis.cari-tenaga') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1607,24 +1711,11 @@
 
         function renderTable(rows) {
             const tbody = document.getElementById('tableBody');
-
             if (!rows || rows.length === 0) {
-                tbody.innerHTML = `
-                <tr>
-                    <td colspan="8">
-                        <div class="empty-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <div class="empty-state-title">Data tidak ditemukan</div>
-                            <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang digunakan.</div>
-                        </div>
-                    </td>
-                </tr>`;
+                tbody.innerHTML =
+                    `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
                 return;
             }
-
             tbody.innerHTML = rows.map(row => `
                 <tr>
                     <td>
@@ -1632,76 +1723,26 @@
                             <div class="td-avatar">${escapeHtml(initials(row.nama_tenaga))}</div>
                             <div>
                                 <div class="td-name-main">${escapeHtml(row.nama_tenaga)}</div>
-                                <div class="td-name-sub">
-                                    <span style="font-weight:600; color:#475569;">${escapeHtml(row.badge_tenaga)}</span> · ${formatDate(row.tanggal_pelaksanaan)}
-                                </div>
+                                <div class="td-name-sub">${escapeHtml(row.badge_tenaga)}</div>
                             </div>
                         </div>
                     </td>
-
-                    <td style="max-width:180px;">
-                        <div style="font-weight:600; color:#334155; font-size:12.5px; margin-bottom:2px;">${escapeHtml(row.area_kerja)}</div>
-                        <div class="td-name-sub" style="white-space:normal; line-height:1.4;">${escapeHtml(row.unit_kerja)}</div>
-                    </td>
-
-                    <td style="max-width:180px;">
-                        <div style="white-space:normal; line-height:1.4; font-size:12px; color:#334155;">${escapeHtml(row.jenis_aktifitas_kpi)}</div>
-                    </td>
-
                     <td>
-                        ${row.foto_evidence_url ? `<a class="link-line" href="${escapeHtml(row.foto_evidence_url)}" target="_blank" rel="noopener">Foto Evidence</a>` : '<span class="link-line empty">Belum ada foto</span>'}
-                        ${row.formulir_kegiatan_url ? `<a class="link-line" href="${escapeHtml(row.formulir_kegiatan_url)}" target="_blank" rel="noopener">Formulir Kegiatan</a>` : '<span class="link-line empty">Belum ada formulir</span>'}
+                        <div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.jenis_aktifitas_kpi)}</div>
+                        <div class="td-name-sub">${escapeHtml(row.area_kerja)} · ${escapeHtml(row.unit_kerja)}</div>
                     </td>
-
+                    <td>${formatDate(row.tanggal_pelaksanaan)}</td>
                     <td>
-                        <span class="status-pill ${statusPindahPillClass(row.status_pindah)}">${escapeHtml(row.status_pindah)}</span>
+                        ${row.foto_evidence_url ? `<a href="${row.foto_evidence_url}" target="_blank" class="btn-outline" style="padding:3px 8px; font-size:10px; margin-right:4px;">Foto</a>` : ''}
+                        ${row.formulir_kegiatan_url ? `<a href="${row.formulir_kegiatan_url}" target="_blank" class="btn-outline" style="padding:3px 8px; font-size:10px; margin-right:4px;">Formulir</a>` : ''}
+                        ${row.arsip_url ? `<a href="${row.arsip_url}" target="_blank" class="btn-outline" style="padding:3px 8px; font-size:10px;">Arsip</a>` : ''}
+                        ${!row.foto_evidence_url && !row.formulir_kegiatan_url && !row.arsip_url ? '<span class="td-name-sub">Belum ada dokumen</span>' : ''}
                     </td>
-
-                    <td>
-                        ${renderLinkList(row.link_arsip)}
-                    </td>
-
-                    <td>
-                        <span class="status-pill ${keputusanPillClass(row.keputusan)}">${escapeHtml(row.keputusan)}</span>
-                    </td>
-
+                    <td><span class="status-pill ${row.status_pindah === 'SUKSES' ? 'sp-green' : row.status_pindah === 'GAGAL' ? 'sp-red' : 'sp-amber'}">${row.status_pindah}</span></td>
+                    <td><span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span></td>
                     <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-row-action" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
-                            <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Detail
-                        </button>
-                        <button class="btn-row-action" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
-                            <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Edit
-                        </button>
-                        ${row.keputusan !== 'APPROVE' ? `
-                                <button class="btn-row-action approve" onclick="setKeputusan(${row.id}, 'APPROVE', '${escapeHtml(row.nama_tenaga)}')">
-                                    <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Approve
-                                </button>` : ''}
-                        ${row.keputusan !== 'REJECT' ? `
-                                <button class="btn-row-action reject" onclick="setKeputusan(${row.id}, 'REJECT', '${escapeHtml(row.nama_tenaga)}')">
-                                    <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Reject
-                                </button>` : ''}
-                        <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.nama_tenaga)}')">
-                            <svg style="width:14px;height:14px; color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Hapus
-                        </button>
+                        <button class="btn-outline" style="padding:5px 8px;" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
+                        <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteData(${row.id}, ${JSON.stringify(row.nama_tenaga)})">Hapus</button>
                     </td>
                 </tr>
             `).join('');
@@ -1822,32 +1863,132 @@
             }, 4000);
         }
 
+        // ══════ PICKER TENAGA MEDIS ══════
+        let tenagaPickerDebounce = null;
+
+        function onTenagaPickerInput() {
+            clearTimeout(tenagaPickerDebounce);
+            tenagaPickerDebounce = setTimeout(searchTenagaPicker, 350);
+        }
+
+        async function searchTenagaPicker() {
+            const search = document.getElementById('tenagaPickerInput').value.trim();
+            const dropdown = document.getElementById('tenagaPickerDropdown');
+            if (search.length < 2) {
+                dropdown.classList.remove('open');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${CARI_TENAGA_ENDPOINT}?search=${encodeURIComponent(search)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+
+                dropdown.innerHTML = (!json.data || json.data.length === 0) ?
+                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada tenaga ditemukan.</div>` :
+                    json.data.map(t => `
+                <div class="picker-item" onclick='pilihTenaga(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
+                    <div class="picker-item-name">${escapeHtml(t.nama)}</div>
+                    <div class="picker-item-sub">${escapeHtml(t.badge)} · ${escapeHtml(t.unit_kerja)}</div>
+                </div>
+            `).join('');
+                dropdown.classList.add('open');
+            } catch (e) {
+                dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;
+                dropdown.classList.add('open');
+            }
+        }
+
+        function pilihTenaga(t) {
+            document.getElementById('fBadgeTenaga').value = t.badge;
+            document.getElementById('fNamaTenaga').value = t.nama;
+            document.getElementById('fUnitKerja').value = t.unit_kerja !== '-' ? t.unit_kerja : '';
+            document.getElementById('tenagaPickerDropdown').classList.remove('open');
+            showTenagaChip(t.nama, t.badge);
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('tenagaPickerInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('tenagaPickerDropdown')?.classList.remove('open');
+            }
+        });
+
         // ══════ MODAL TAMBAH / EDIT ══════
         function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
 
-            document.getElementById('formModalTitle').textContent = row ? 'Edit Laporan KPI' : 'Tambah Laporan KPI';
-            document.getElementById('formModalSub').textContent = row ?
-                `Perbarui data laporan untuk ${row.nama_tenaga}` :
-                'Lengkapi data laporan aktivitas KPI di bawah ini.';
+            document.getElementById('formModalTitle').textContent = row ? 'Edit Laporan KPI Medis' :
+                'Tambah Laporan KPI Medis';
+            document.getElementById('formModalSub').textContent = row ? `Perbarui data untuk ${row.nama_tenaga}` :
+                'Lengkapi data kegiatan di bawah ini.';
 
+            // Reset picker
+            document.getElementById('tenagaPickerInput').value = '';
+            document.getElementById('tenagaPickerDropdown').classList.remove('open');
+            document.getElementById('tenagaPickerDropdown').innerHTML = '';
             document.getElementById('fBadgeTenaga').value = row?.badge_tenaga && row.badge_tenaga !== '-' ? row
                 .badge_tenaga : '';
             document.getElementById('fNamaTenaga').value = row?.nama_tenaga && row.nama_tenaga !== '-' ? row.nama_tenaga :
                 '';
-            document.getElementById('fTanggalPelaksanaan').value = row?.tanggal_pelaksanaan ? row.tanggal_pelaksanaan
-                .substring(0, 10) : '';
+
+            if (row && row.nama_tenaga && row.nama_tenaga !== '-') {
+                showTenagaChip(row.nama_tenaga, row.badge_tenaga);
+            } else {
+                hideTenagaChip();
+            }
+
+            document.getElementById('fTanggalPelaksanaan').value = row?.tanggal_pelaksanaan || '';
             document.getElementById('fAreaKerja').value = row?.area_kerja && row.area_kerja !== '-' ? row.area_kerja : '';
             document.getElementById('fUnitKerja').value = row?.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja : '';
             document.getElementById('fJenisAktifitas').value = row?.jenis_aktifitas_kpi && row.jenis_aktifitas_kpi !== '-' ?
                 row.jenis_aktifitas_kpi : '';
-            document.getElementById('fFotoEvidence').value = row?.foto_evidence_url || '';
-            document.getElementById('fFormulirKegiatan').value = row?.formulir_kegiatan_url || '';
-            document.getElementById('fLinkArsip').value = row?.link_arsip || '';
             document.getElementById('fStatusPindah').value = row?.status_pindah || 'PENDING';
             document.getElementById('fKeputusan').value = row?.keputusan || 'PENDING';
 
+            // File input selalu dikosongkan; hanya terisi jika user upload file baru
+            document.getElementById('fFotoEvidence').value = '';
+            document.getElementById('fFormulirKegiatan').value = '';
+            document.getElementById('fArsip').value = '';
+
+            setCurrentFileLink('fFotoEvidenceCurrent', row?.foto_evidence_url);
+            setCurrentFileLink('fFormulirKegiatanCurrent', row?.formulir_kegiatan_url);
+            setCurrentFileLink('fArsipCurrent', row?.arsip_url);
+
             document.getElementById('formModalOverlay').classList.add('open');
+        }
+
+        function setCurrentFileLink(id, url) {
+            const el = document.getElementById(id);
+            if (url) {
+                el.href = url;
+                el.style.display = 'inline-block';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
+        function showTenagaChip(nama, badge) {
+            document.getElementById('tenagaSelectedName').textContent = nama;
+            document.getElementById('tenagaSelectedSub').textContent = badge && badge !== '-' ? badge : '-';
+            document.getElementById('tenagaSelectedChip').style.display = 'flex';
+            document.getElementById('tenagaPickerWrap').style.display = 'none';
+        }
+
+        function hideTenagaChip() {
+            document.getElementById('tenagaSelectedChip').style.display = 'none';
+            document.getElementById('tenagaPickerWrap').style.display = 'block';
+        }
+
+        function clearTenagaPicker() {
+            document.getElementById('fBadgeTenaga').value = '';
+            document.getElementById('fNamaTenaga').value = '';
+            document.getElementById('tenagaPickerInput').value = '';
+            hideTenagaChip();
+            document.getElementById('tenagaPickerInput').focus();
         }
 
         function closeFormModal() {
@@ -1862,35 +2003,50 @@
         async function submitForm() {
             const btn = document.getElementById('btnSubmitForm');
             const originalText = btn.textContent;
+
+            const namaTenaga = document.getElementById('fNamaTenaga').value.trim();
+            if (!namaTenaga) {
+                showToast('Silakan pilih tenaga medis terlebih dahulu.', 'error');
+                return;
+            }
+
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const payload = {
-                badge_tenaga: document.getElementById('fBadgeTenaga').value.trim() || null,
-                nama_tenaga: document.getElementById('fNamaTenaga').value.trim(),
-                tanggal_pelaksanaan: document.getElementById('fTanggalPelaksanaan').value || null,
-                area_kerja: document.getElementById('fAreaKerja').value.trim() || null,
-                unit_kerja: document.getElementById('fUnitKerja').value.trim() || null,
-                jenis_aktifitas_kpi: document.getElementById('fJenisAktifitas').value.trim() || null,
-                foto_evidence_url: document.getElementById('fFotoEvidence').value.trim() || null,
-                formulir_kegiatan_url: document.getElementById('fFormulirKegiatan').value.trim() || null,
-                link_arsip: document.getElementById('fLinkArsip').value.trim() || null,
-                status_pindah: document.getElementById('fStatusPindah').value,
-                keputusan: document.getElementById('fKeputusan').value,
-            };
+            const formData = new FormData();
+            formData.append('badge_tenaga', document.getElementById('fBadgeTenaga').value.trim());
+            formData.append('nama_tenaga', namaTenaga);
+            formData.append('tanggal_pelaksanaan', document.getElementById('fTanggalPelaksanaan').value || '');
+            formData.append('area_kerja', document.getElementById('fAreaKerja').value.trim());
+            formData.append('unit_kerja', document.getElementById('fUnitKerja').value.trim());
+            formData.append('jenis_aktifitas_kpi', document.getElementById('fJenisAktifitas').value.trim());
+            formData.append('status_pindah', document.getElementById('fStatusPindah').value);
+            formData.append('keputusan', document.getElementById('fKeputusan').value);
 
-            const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-            const method = currentEditId ? 'PUT' : 'POST';
+            const fotoFile = document.getElementById('fFotoEvidence').files[0];
+            if (fotoFile) formData.append('foto_evidence', fotoFile);
+
+            const formulirFile = document.getElementById('fFormulirKegiatan').files[0];
+            if (formulirFile) formData.append('formulir_kegiatan', formulirFile);
+
+            const arsipFile = document.getElementById('fArsip').files[0];
+            if (arsipFile) formData.append('arsip', arsipFile);
+
+            let url = STORE_ENDPOINT;
+            if (currentEditId) {
+                url = `${BASE_ENDPOINT}/${currentEditId}`;
+                formData.append('_method', 'PUT'); // spoofing, karena PHP tidak parse file di request PUT asli
+            }
 
             try {
                 const res = await fetch(url, {
-                    method,
+                    method: 'POST', // selalu POST; PUT di-spoof via _method di atas
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN,
+                        // JANGAN set Content-Type manual — browser yang atur boundary multipart
                     },
-                    body: JSON.stringify(payload),
+                    body: formData,
                 });
 
                 const json = await res.json();
@@ -1910,7 +2066,6 @@
                 btn.textContent = originalText;
             }
         }
-
         // ══════ MODAL DETAIL ══════
         function openDetailModal(row) {
             document.getElementById('detailAvatar').textContent = initials(row.nama_tenaga);

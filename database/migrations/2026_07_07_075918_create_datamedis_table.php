@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('area_kerja', 100)->nullable();
             $table->string('unit_kerja', 150)->nullable();
             $table->string('jenis_aktifitas_kpi', 150)->nullable();
-            $table->text('foto_evidence_url')->nullable();
-            $table->text('formulir_kegiatan_url')->nullable();
+            $table->text('foto_evidence_path')->nullable();
+            $table->text('formulir_kegiatan_path')->nullable();
             $table->string('status_pindah', 30)->default('PENDING'); // SUKSES / GAGAL / PENDING
-            $table->text('link_arsip')->nullable();
+            $table->text('arsip_path')->nullable();
             $table->string('keputusan', 30)->default('PENDING'); // APPROVE / REJECT / PENDING
             $table->timestamps();
         });

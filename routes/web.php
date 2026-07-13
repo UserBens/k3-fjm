@@ -77,6 +77,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
     Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
     Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
+    Route::get('/data-medis/cari-tenaga', [DataMedisController::class, 'cariTenagaMedis'])->name('data-medis.cari-tenaga');
 
     Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
     Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');

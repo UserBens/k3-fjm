@@ -721,6 +721,80 @@
                 justify-content: center;
             }
         }
+
+        .picker-wrap {
+            position: relative;
+        }
+
+        .picker-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 20;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .picker-dropdown.open {
+            display: block;
+        }
+
+        .picker-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .picker-item:last-child {
+            border-bottom: none;
+        }
+
+        .picker-item:hover {
+            background: #F8F9FF;
+        }
+
+        .picker-item-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+        }
+
+        .file-upload-box {
+            border: 1px dashed #CBD5E1;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        .file-upload-current {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11.5px;
+        }
+
+        .file-upload-current a {
+            color: #2D4B9E;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .file-upload-current a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -823,7 +897,7 @@
                 <div class="data-summary" id="dataSummary">Memuat data tenaga kerja...</div>
 
                 <!-- TABLE -->
-                {{-- <div class="rtable-wrap">
+                <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
@@ -862,7 +936,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div> --}}
+                </div>
 
                 <!-- PAGINATION -->
                 <div class="pagination-bar">
@@ -878,6 +952,101 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- ══════ MODAL TAMBAH/EDIT LAPORAN KPI MEDIS ══════ -->
+    <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
+        <div class="modal-box form-modal-box" onclick="event.stopPropagation()">
+            <div class="form-modal-header">
+                <div class="modal-title" id="formModalTitle">Tambah Laporan KPI Medis</div>
+                <div class="pg-sub" id="formModalSub" style="margin:0;">Lengkapi data kegiatan di bawah ini.</div>
+            </div>
+
+            <div class="form-modal-body">
+                <div class="form-section-title">Tenaga Medis</div>
+                <div class="picker-wrap" style="margin-bottom:10px;">
+                    <input type="text" id="tenagaPickerInput" class="form-input"
+                        placeholder="Cari nama atau badge tenaga medis..." oninput="onTenagaPickerInput()"
+                        autocomplete="off" />
+                    <div class="picker-dropdown" id="tenagaPickerDropdown"></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Badge</label><input type="text"
+                            id="fBadgeTenaga" class="form-input" readonly style="background:#F8FAFC;" /></div>
+                    <div class="form-group span-2"><label class="form-label">Nama Tenaga</label><input type="text"
+                            id="fNamaTenaga" class="form-input" readonly style="background:#F8FAFC;" /></div>
+                    <div class="form-group"><label class="form-label">Tanggal Pelaksanaan</label><input
+                            type="date" id="fTanggalPelaksanaan" class="form-input" /></div>
+                    <div class="form-group"><label class="form-label">Area Kerja</label><input type="text"
+                            id="fAreaKerja" class="form-input" /></div>
+                    <div class="form-group span-2"><label class="form-label">Unit Kerja</label><input type="text"
+                            id="fUnitKerja" class="form-input" /></div>
+                    <div class="form-group span-2"><label class="form-label">Jenis Aktifitas KPI</label><input
+                            type="text" id="fJenisAktifitas" class="form-input" /></div>
+                </div>
+
+                <div class="form-section-title">Dokumen</div>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label class="form-label">Foto Evidence Kegiatan</label>
+                        <div class="file-upload-box">
+                            <div class="file-upload-current" id="fotoCurrentWrap" style="display:none;">
+                                <a id="fotoCurrentLink" href="#" target="_blank">Lihat file saat ini</a>
+                            </div>
+                            <input type="file" id="fFotoEvidence"
+                                accept="image/png,image/jpeg,image/jpg,image/webp" />
+                            <div class="td-name-sub" style="margin-top:4px;">JPG/PNG/WEBP, maks 4MB.</div>
+                        </div>
+                    </div>
+                    <div class="form-group span-2">
+                        <label class="form-label">Upload Formulir Kegiatan</label>
+                        <div class="file-upload-box">
+                            <div class="file-upload-current" id="formulirCurrentWrap" style="display:none;">
+                                <a id="formulirCurrentLink" href="#" target="_blank">Lihat file saat ini</a>
+                            </div>
+                            <input type="file" id="fFormulirKegiatan" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+                            <div class="td-name-sub" style="margin-top:4px;">PDF/DOC/Gambar, maks 5MB.</div>
+                        </div>
+                    </div>
+                    <div class="form-group span-4">
+                        <label class="form-label">Arsip</label>
+                        <div class="file-upload-box">
+                            <div class="file-upload-current" id="arsipCurrentWrap" style="display:none;">
+                                <a id="arsipCurrentLink" href="#" target="_blank">Lihat file saat ini</a>
+                            </div>
+                            <input type="file" id="fArsip"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" />
+                            <div class="td-name-sub" style="margin-top:4px;">PDF/DOC/XLS/Gambar, maks 5MB.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Status</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Status Pindah</label>
+                        <select id="fStatusPindah" class="form-select">
+                            <option value="PENDING">PENDING</option>
+                            <option value="SUKSES">SUKSES</option>
+                            <option value="GAGAL">GAGAL</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Keputusan</label>
+                        <select id="fKeputusan" class="form-select">
+                            <option value="PENDING">PENDING</option>
+                            <option value="APPROVE">APPROVE</option>
+                            <option value="REJECT">REJECT</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closeFormModal()">Batal</button>
+                <button class="btn-modal-confirm" id="btnSubmitForm" onclick="submitForm()">Simpan</button>
+            </div>
         </div>
     </div>
 
