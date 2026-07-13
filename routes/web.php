@@ -44,10 +44,25 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
     Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
 
-    Route::get('/safety-officer', [SafetyOfficerController::class, 'index'])->name('safety-officer.index');
-    Route::get('/safety-officer/data', [SafetyOfficerController::class, 'data'])->name('safety-officer.data');
-    Route::delete('/safety-officer/{pegawai}', [SafetyOfficerController::class, 'destroy'])->name('safety-officer.destroy');
+    // Route::get('/safety-officer', [SafetyOfficerController::class, 'index'])->name('safety-officer.index');
+    // Route::get('/safety-officer/data', [SafetyOfficerController::class, 'data'])->name('safety-officer.data');
+    // Route::delete('/safety-officer/{pegawai}', [SafetyOfficerController::class, 'destroy'])->name('safety-officer.destroy');
 
+    Route::prefix('safety-officer')->name('safety-officer.')->group(function () {
+        Route::get('/', [SafetyOfficerController::class, 'index'])->name('index');
+        Route::get('/data', [SafetyOfficerController::class, 'data'])->name('data');
+        Route::get('/{badge}/tenaga', [SafetyOfficerController::class, 'tenagaBinaan'])->name('tenaga');
+
+        // Manajemen (Tab 2)
+        Route::get('/list-so', [SafetyOfficerController::class, 'listSO'])->name('list-so');
+        Route::get('/cari-pegawai-so', [SafetyOfficerController::class, 'cariPegawaiUntukSO'])->name('cari-pegawai-so');
+        Route::post('/tetapkan', [SafetyOfficerController::class, 'tetapkanSO'])->name('tetapkan');
+        Route::delete('/{badge}/lepas', [SafetyOfficerController::class, 'lepasSO'])->name('lepas');
+
+        Route::get('/{badge}/cari-tenaga', [SafetyOfficerController::class, 'cariTenaga'])->name('cari-tenaga');
+        Route::post('/{badge}/assign-tenaga', [SafetyOfficerController::class, 'assignTenaga'])->name('assign-tenaga');
+        Route::delete('/{badge}/unassign-tenaga/{pegawaiId}', [SafetyOfficerController::class, 'unassignTenaga'])->name('unassign-tenaga');
+    });
 
     Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 

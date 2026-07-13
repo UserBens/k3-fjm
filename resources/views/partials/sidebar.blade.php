@@ -316,9 +316,9 @@
                 <span class="nav-label">Master Tenaga</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
+            {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
                 <span class="nav-label">Memo KIB</span>
-            </a>
+            </a> --}}
 
             <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
                 href="{{ route('pengawas.index') }}">

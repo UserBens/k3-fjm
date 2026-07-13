@@ -31,4 +31,10 @@ class Pegawai extends Model
     {
         return $this->belongsTo(Subkon::class, 'perusahaan_subkonid', 'id_api');
     }
+
+    // BARU — daftar tenaga yang dibina oleh pegawai ini (kalau dia berstatus Safety Officer)
+    public function tenagaBinaanSafety()
+    {
+        return $this->hasMany(SafetyOfficerPegawai::class, 'badge_safety_officer', 'badge');
+    }
 }
