@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AktivasiAkunController;
+use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\JKARecordInsidenController;
@@ -99,4 +100,10 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
         Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
     });
+
+    // MONITORING ALBER
+    Route::get('alber', [AlatBeratController::class, 'index'])->name('alber.index');
+    Route::get('alber-operatornonaktif', [AlatBeratController::class, 'indexOperatorNonAktif'])->name('alber.operatornonaktif');
+    Route::get('alber-master-oncall', [AlatBeratController::class, 'indexMasterOncall'])->name('alber.master-oncall');
+    Route::get('alber-master-allin', [AlatBeratController::class, 'indexMasterAllIn'])->name('alber.master-allin');
 });

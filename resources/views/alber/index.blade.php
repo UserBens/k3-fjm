@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Stok APD — PT. Fokus Jasa Mitra</title>
+    <title>Monitoring Operator Alat Berat — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -63,6 +63,44 @@
             gap: 12px;
             padding: 0 20px;
             flex-shrink: 0;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 320px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 32px;
+            padding: 0 32px 0 30px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            border-radius: 8px;
+            background: #F8F9FF;
+            font-size: 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #1A1D2E;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .search-box input::placeholder {
+            color: #94A3B8;
+        }
+
+        .search-box input:focus {
+            border-color: #2D4B9E;
+            background: #fff;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 9px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 14px;
         }
 
         .tb-badge {
@@ -147,6 +185,7 @@
             padding: 20px 20px 28px;
         }
 
+        /* PAGE HEADER */
         .page-hdr {
             margin-bottom: 16px;
         }
@@ -258,7 +297,7 @@
             min-width: 0;
         }
 
-        /* FILTER BAR */
+        /* ══════ FILTER BAR ══════ */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -292,11 +331,7 @@
         }
 
         .filter-search .search-icon {
-            position: absolute;
             left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94A3B8;
         }
 
         .filter-select {
@@ -335,7 +370,7 @@
             color: #1A1D2E;
         }
 
-        /* TABLE */
+        /* ══════ TABLE ══════ */
         .rtable-wrap {
             width: 100%;
             overflow-x: auto;
@@ -343,7 +378,7 @@
 
         .rtable {
             width: 100%;
-            min-width: 900px;
+            min-width: 760px;
             border-collapse: collapse;
         }
 
@@ -385,7 +420,7 @@
         .td-avatar {
             width: 30px;
             height: 30px;
-            border-radius: 9px;
+            border-radius: 50%;
             background: #E0E7FF;
             display: flex;
             align-items: center;
@@ -472,6 +507,10 @@
             font-size: 11.5px;
         }
 
+        .skeleton-row td {
+            padding: 12px 8px;
+        }
+
         .skeleton-bar {
             height: 12px;
             border-radius: 6px;
@@ -490,21 +529,7 @@
             }
         }
 
-        /* stok mini bar */
-        .stok-line {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: #64748B;
-            margin-bottom: 2px;
-        }
-
-        .stok-line b {
-            color: #1A1D2E;
-        }
-
-        /* PAGINATION */
+        /* ══════ PAGINATION ══════ */
         .pagination-bar {
             display: flex;
             align-items: center;
@@ -583,7 +608,7 @@
             padding: 0 2px;
         }
 
-        /* RESPONSIVE */
+        /* ══════ RESPONSIVE ══════ */
         .hamburger-btn {
             display: none;
             width: 32px;
@@ -613,6 +638,20 @@
             opacity: 1;
         }
 
+        .sb-close-btn {
+            display: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            background: #F0F2FA;
+            color: #64748B;
+            cursor: pointer;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
         @media (max-width: 1024px) {
             #sidebar {
                 position: fixed;
@@ -631,6 +670,14 @@
             .hamburger-btn {
                 display: flex;
             }
+
+            .sb-close-btn {
+                display: flex;
+            }
+
+            .search-box {
+                max-width: none;
+            }
         }
 
         @media (max-width: 640px) {
@@ -639,7 +686,10 @@
                 gap: 8px;
             }
 
-            .tb-name,
+            .tb-name {
+                display: none;
+            }
+
             .tb-caret {
                 display: none;
             }
@@ -672,7 +722,7 @@
             }
         }
 
-        /* MODAL GENERIC */
+        /* ══════ MODAL KONFIRMASI ══════ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -684,7 +734,6 @@
             justify-content: center;
             opacity: 0;
             transition: opacity 0.2s ease;
-            padding: 20px;
         }
 
         .modal-overlay.open {
@@ -711,8 +760,8 @@
             width: 44px;
             height: 44px;
             border-radius: 12px;
-            background: rgba(208, 2, 27, 0.09);
-            color: #D0021B;
+            background: rgba(45, 75, 158, 0.09);
+            color: #2D4B9E;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -772,23 +821,63 @@
             background: #1A3C8A;
         }
 
-        .btn-modal-danger {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            background: #D0021B;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.15s;
+        /* ══════ LOADING SCREEN ══════ */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 29, 46, 0.55);
+            backdrop-filter: blur(3px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
 
-        .btn-modal-danger:hover {
-            background: #A80115;
+        .loading-overlay.open {
+            display: flex;
+            opacity: 1;
         }
 
-        /* TOAST */
+        .loading-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 300px;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(45, 75, 158, 0.15);
+            border-top-color: #2D4B9E;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        .loading-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 17px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            margin-bottom: 4px;
+        }
+
+        .loading-sub {
+            font-size: 11.5px;
+            color: #94A3B8;
+            line-height: 1.5;
+        }
+
+        /* ══════ TOAST ══════ */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -873,71 +962,81 @@
             flex-shrink: 0;
         }
 
-        /* ACTION BUTTONS */
-        .btn-row-action {
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-edit-kib {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            background: transparent;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 7px;
+            border: 1px solid rgba(45, 75, 158, 0.2);
+            background: #F0F4FF;
+            color: #2D4B9E;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 6px;
             transition: background 0.15s;
             white-space: nowrap;
         }
 
-        .btn-row-action:hover {
-            background: #F8F9FF;
+        .btn-edit-kib:hover {
+            background: rgba(45, 75, 158, 0.14);
         }
 
-        /* FORM (modal tambah/edit) */
-        .form-modal-box {
-            width: 640px;
+        /* ══════ MODAL UPDATE KIB ══════ */
+        .update-modal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 420px;
             max-width: calc(100vw - 32px);
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.94) translateY(8px);
+            transition: transform 0.2s ease;
         }
 
-        .form-modal-header {
-            margin-bottom: 14px;
+        .modal-overlay.open .update-modal-box {
+            transform: scale(1) translateY(0);
         }
 
-        .form-modal-body {
-            overflow-y: auto;
-            padding-right: 4px;
+        .update-modal-header {
+            margin-bottom: 16px;
         }
 
-        .form-section-title {
-            font-size: 11px;
-            font-weight: 800;
-            color: #2D4B9E;
+        .update-modal-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin: 14px 0 8px;
+            margin-bottom: 4px;
         }
 
-        .form-section-title:first-child {
-            margin-top: 0;
+        .update-modal-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            line-height: 1;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 14px;
+        .update-modal-nik {
+            font-size: 11.5px;
+            color: #94A3B8;
+            margin-top: 2px;
         }
 
         .form-group {
-            margin-bottom: 0;
-        }
-
-        .form-group.span-2 {
-            grid-column: span 2;
+            margin-bottom: 14px;
         }
 
         .form-label {
@@ -949,9 +1048,9 @@
         }
 
         .form-input,
-        .form-select,
-        .form-textarea {
+        .form-select {
             width: 100%;
+            height: 38px;
             padding: 0 12px;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.09);
@@ -963,19 +1062,8 @@
             transition: border 0.2s;
         }
 
-        .form-input,
-        .form-select {
-            height: 38px;
-        }
-
-        .form-textarea {
-            padding: 8px 12px;
-            resize: none;
-        }
-
         .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        .form-select:focus {
             border-color: #2D4B9E;
         }
 
@@ -986,19 +1074,9 @@
             cursor: pointer;
         }
 
-        @media (max-width: 640px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.span-2 {
-                grid-column: span 1;
-            }
-        }
-
-        /* MODAL DETAIL */
+        /* modal detail tenaga */
         .detail-modal-box {
-            max-width: 620px;
+            max-width: 600px;
             width: 100%;
         }
 
@@ -1018,7 +1096,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             flex-shrink: 0;
         }
 
@@ -1056,8 +1134,6 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
             margin-bottom: 10px;
-            margin-top: 20px;
-
         }
 
         .detail-section-title svg {
@@ -1075,10 +1151,6 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-        }
-
-        .detail-field.span-2 {
-            grid-column: span 2;
         }
 
         .detail-field label {
@@ -1101,62 +1173,24 @@
             cursor: default;
         }
 
+        .detail-field input:focus,
+        .detail-field textarea:focus {
+            outline: none;
+            border-color: #2D4B9E;
+            background: #EEF2FB;
+        }
+
         @media (max-width: 640px) {
             .detail-form-grid {
                 grid-template-columns: 1fr;
             }
-
-            .detail-field.span-2 {
-                grid-column: span 1;
-            }
-        }
-
-        .kode-ok-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .kode-ok-row .form-input {
-            flex: 1;
-        }
-
-        .btn-remove-kode-ok {
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
-            border-radius: 8px;
-            border: 1px solid rgba(208, 2, 27, 0.2);
-            background: rgba(208, 2, 27, 0.06);
-            color: #D0021B;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s;
-        }
-
-        .btn-remove-kode-ok:hover {
-            background: rgba(208, 2, 27, 0.14);
-        }
-
-        .kode-ok-pill {
-            display: inline-flex;
-            align-items: center;
-            padding: 1px 7px;
-            border-radius: 6px;
-            background: rgba(45, 75, 158, 0.08);
-            color: #2D4B9E;
-            font-size: 10px;
-            font-weight: 700;
-            margin: 0 4px 4px 0;
         }
     </style>
 </head>
 
 <body class="flex h-screen overflow-hidden">
 
-    <!-- ══════ SIDEBAR (pakai partial existing app Anda) ══════ -->
+    <!-- ══════ SIDEBAR ══════ -->
     @include('partials.sidebar')
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
@@ -1174,21 +1208,21 @@
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Master Data · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Database Tenaga · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">DATA STOK <span>APD</span></div>
-                        <div class="pg-sub">Kelola master data & stok Alat Pelindung Diri.</div>
+                        <div class="pg-title">DATA <span>TENAGA KERJA</span></div>
+                        <div class="pg-sub">Cari, filter, dan kelola data tenaga kerja.</div>
                     </div>
                     <div class="pg-actions">
-                        <button class="btn-primary" onclick="openFormModal()">
-                            <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                        <button class="btn-primary" id="btnSync" onclick="syncData()"
+                            style="background-color: #2563EB; color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                            <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
+                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>
-                            Tambah APD
+                            <span id="syncText">Sync Pegawai</span>
                         </button>
-
                     </div>
                 </div>
             </div>
@@ -1202,45 +1236,82 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput"
-                            placeholder="Cari berdasarkan kode APD, jenis, atau merk..." oninput="onSearchInput()" />
+                        <input type="text" id="searchInput" placeholder="Cari berdasarkan nama atau NIK..."
+                            oninput="onSearchInput()" />
                     </div>
-
-                    <select id="filterKategori" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Kategori</option>
-                    </select>
 
                     <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
                         <option value="">Semua Status</option>
                     </select>
 
-                    <select id="filterSupplier" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Supplier</option>
+                    <select id="filterDepartemen" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Departemen</option>
+                    </select>
+
+                    <select id="filterJenisKelamin" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Jenis Kelamin</option>
                     </select>
 
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data stok APD...</div>
+                <div class="data-summary" id="dataSummary">Memuat data tenaga kerja...</div>
 
                 <!-- TABLE -->
                 <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th>Data APD</th>
-                                <th>Fungsi &amp; Merk Rekomendasi</th>
-                                <th>Spesifikasi &amp; Standar</th>
-                                <th>Stok</th>
-                                <th>Harga &amp; Supplier</th>
-                                <th>Status</th>
-                                <th style="text-align:center;">Aksi</th>
+                                <th class="px-6 py-3 text-left">Data Pegawai</th>
+                                {{-- <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th> --}}
+                                <th class="px-6 py-3 text-left">Unit Kerja</th>
+                                <th class="px-6 py-3 text-left">Lokasi & Subkon</th>
+                                <th class="px-6 py-3 text-left">Data OK</th>
+                                <th class="px-6 py-3 text-left">Pengawas</th> <!-- BARU -->
+                                <th class="px-6 py-3 text-left">Status KIB</th>
+                                {{-- <th class="px-6 py-3 text-left">Data BPJS</th> --}}
+                                <th class="px-6 py-3 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <tr>
-                                <td colspan="7">
-                                    <div class="skeleton-bar" style="width:100%;height:40px;"></div>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton-bar" style="width:160px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:180px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:120px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:100px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:80px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
+                                </td>
+                            </tr>
+                            <tr class="skeleton-row">
+                                <td>
+                                    <div class="skeleton-bar" style="width:150px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:190px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:110px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:80px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1264,231 +1335,202 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL TAMBAH / EDIT APD ══════ -->
-    <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
-        <div class="modal-box form-modal-box" onclick="event.stopPropagation()">
-            <div class="form-modal-header">
-                <div class="modal-title" id="formModalTitle">Tambah APD</div>
-                <div class="detail-subtitle" id="formModalSub">Lengkapi data master &amp; stok di bawah ini.</div>
+    <!-- ══════ MODAL KONFIRMASI SYNC ══════ -->
+    <div id="syncConfirmOverlay" class="modal-overlay" onclick="closeSyncModalOutside(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-icon-wrap">
+                <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
             </div>
-
-            <div class="form-modal-body">
-                <div class="form-section-title">Data Umum</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Kode APD</label>
-                        <input type="text" id="fKodeApd" class="form-input" readonly disabled
-                            style="background:#F1F5F9; color:#64748B; cursor:not-allowed;"
-                            placeholder="Otomatis digenerate setelah disimpan" />
-                    </div>
-
-                    <div class="form-group span-2">
-                        <label class="form-label">Foto APD</label>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div id="fGambarPreviewWrap"
-                                style="width:64px; height:64px; border-radius:10px; overflow:hidden; background:#F1F5F9; border:1px solid #E2E8F0; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
-                                <img id="fGambarPreview" src="" alt="Preview"
-                                    style="display:none; width:100%; height:100%; object-fit:cover;" />
-                                <svg id="fGambarPlaceholderIcon" style="width:22px;height:22px;color:#CBD5E1;"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
-                                </svg>
-                            </div>
-                            <div style="flex:1;">
-                                <input type="file" id="fGambarApd" class="form-input"
-                                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                                    style="padding:6px 12px; height:auto;" onchange="onGambarApdChange(event)" />
-                                <div class="detail-subtitle" style="margin-top:4px;">JPG/PNG/WEBP, maks 2MB.</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Jenis APD</label>
-                        <input type="text" id="fJenisApd" class="form-input" placeholder="Helm Safety" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kategori</label>
-                        <select id="fKategori" class="form-select">
-                            <option value="WAJIB">WAJIB</option>
-                            <option value="KHUSUS">KHUSUS</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Merk Rekomendasi</label>
-                        <input type="text" id="fMerk" class="form-input" placeholder="MSA, Honeywell, 3M" />
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Fungsi / Sasaran Dilindungi</label>
-                        <textarea id="fFungsi" class="form-textarea" rows="2"
-                            placeholder="Pelindung kepala dari benturan, benda jatuh, listrik"></textarea>
-                    </div>
-                </div>
-                <!-- ═══ SECTION KODE OK — DI SINI TEMPATNYA, BUKAN DI MODAL DETAIL ═══ -->
-                <div class="form-section-title">Kode OK (Order Kerja)</div>
-                <div id="kodeOkList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:4px;"></div>
-                <button type="button" class="btn-outline" style="margin-top:2px;" onclick="addKodeOkRow()">
-                    + Tambah Kode OK
-                </button>
-                <div class="detail-subtitle" style="margin-top:6px; margin-bottom:4px;">
-                    Satu APD boleh punya lebih dari satu Kode OK, contoh: 999
-                </div>
-                <!-- ═══════════════════════════════════════════════════════════ -->
-
-                <div class="form-section-title">Spesifikasi &amp; Standar</div>
-                <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">Spesifikasi Teknis</label>
-                        <textarea id="fSpesifikasi" class="form-textarea" rows="2"
-                            placeholder="ABS/HDPE, class E (≤20kV), impact resistance ANSI Z89.1"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ukuran Tersedia</label>
-                        <select id="fUkuran" class="form-select">
-                            <option value="">Pilih Ukuran</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="ALL SIZE">ALL SIZE</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Standar SNI / Regulasi</label>
-                        <input type="text" id="fStandar" class="form-input"
-                            placeholder="SNI 07-1811 / ANSI Z89.1" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Stok</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Stok Awal</label>
-                        <input type="number" min="0" id="fStokAwal" class="form-input" placeholder="0" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Digunakan</label>
-                        <input type="number" min="0" id="fDigunakan" class="form-input" placeholder="0" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Rusak</label>
-                        <input type="number" min="0" id="fRusak" class="form-input" placeholder="0" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Reorder Point</label>
-                        <input type="number" min="0" id="fReorderPoint" class="form-input"
-                            placeholder="0" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Harga &amp; Pengadaan</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Harga Satuan (Rp)</label>
-                        <input type="number" min="0" id="fHarga" class="form-input" placeholder="0" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Supplier</label>
-                        <input type="text" id="fSupplier" class="form-input"
-                            placeholder="PT. Sumber Jaya Safety" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Masa Pakai</label>
-                        <input type="text" id="fMasaPakai" class="form-input"
-                            placeholder="5 tahun / Sekali pakai" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Terakhir Pengadaan</label>
-                        <input type="date" id="fTerakhirPengadaan" class="form-input" />
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea id="fKeterangan" class="form-textarea" rows="2" placeholder="Wajib seluruh area, dsb."></textarea>
-                    </div>
-                </div>
+            <div class="modal-title">Sinkronkan Data Pegawai?</div>
+            <div class="modal-desc">
+                Sistem akan menarik ulang data master pegawai langsung dari SIFO. Proses ini bisa
+                memakan waktu beberapa saat dan akan memperbarui data yang tersimpan secara lokal.
             </div>
-
-            <div class="modal-actions" style="margin-top:18px;">
-                <button class="btn-modal-cancel" onclick="closeFormModal()">Batal</button>
-                <button class="btn-modal-confirm" id="btnSubmitForm" onclick="submitForm()">Simpan</button>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeSyncModal()">Batal</button>
+                <button class="btn-modal-confirm" onclick="confirmSync()">Ya, Sync Sekarang</button>
             </div>
         </div>
     </div>
 
-    <!-- ══════ MODAL DETAIL APD ══════ -->
-    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
-            <div class="detail-modal-header">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="detail-avatar" id="detailAvatar"
-                        style="overflow:hidden; padding:0; position:relative;">
-                        <img id="detailAvatarImg" src="" alt=""
-                            style="display:none; width:100%; height:100%; object-fit:cover;">
-                        <span id="detailAvatarInitial"></span>
-                    </div>
-                    <div>
-                        <div class="modal-title" id="detailJenisTitle" style="margin-bottom:2px;">-</div>
-                        <div class="detail-subtitle" id="detailKodeSub">-</div>
-                    </div>
-                </div>
-                <button class="toast-close" style="font-size:18px;" onclick="closeDetailModal()">✕</button>
+    <!-- ══════ MODAL UPDATE KIB ══════ -->
+    <div id="updateModalOverlay" class="modal-overlay" onclick="closeUpdateModalOutside(event)">
+        <div class="update-modal-box" onclick="event.stopPropagation()">
+            <div class="update-modal-header">
+                <div class="update-modal-eyebrow">Update Data KIB</div>
+                <div class="update-modal-name" id="updateModalName">—</div>
+                <div class="update-modal-nik" id="updateModalNik">—</div>
             </div>
 
-            <div class="detail-modal-body">
+            <div class="form-group">
+                <label class="form-label">Nomor KIB</label>
+                <input type="text" id="inputNomorKib" class="form-input" placeholder="Contoh: KIB-2026-0001" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Masa Berlaku KIB</label>
+                <input type="date" id="inputMasaBerlakuKib" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Status KIB</label>
+                <select id="inputStatusKib" class="form-select">
+                    <option value="">Pilih Status</option>
+                    <option value="Aktif">Aktif</option>
+                    <option value="Proses Pengajuan">Proses Pengajuan</option>
+                    <option value="Kadaluarsa">Kadaluarsa</option>
+                    <option value="Tidak Berlaku">Tidak Berlaku</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Upload Gambar KIB (Opsional)</label>
+                <input type="file" id="inputGambarKib" class="form-input"
+                    accept="image/png, image/jpeg, image/jpg" />
+                <small style="color:#666; font-size: 12px;">Format: JPG, JPEG, PNG (Maks 2MB)</small>
+            </div>
+
+            <div class="modal-actions" style="margin-top:20px;">
+                <button class="btn-modal-cancel" onclick="closeUpdateModal()">Batal</button>
+                <button class="btn-modal-confirm" id="btnSubmitUpdate" onclick="submitUpdateKib()">Simpan
+                    Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL DETAIL TENAGA KERJA --}}
+    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
+        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header detail-modal-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="detail-avatar" id="detailAvatar">--</div>
+                    <div>
+                        <div class="modal-title" id="detailNamaTitle" style="margin-bottom:2px;">-</div>
+                        <div class="detail-subtitle" id="detailBadgeSub">-</div>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeDetailModal()">✕</button>
+            </div>
+
+            <div class="modal-body detail-modal-body">
+
+                <!-- SECTION: DATA PRIBADI -->
+                <div class="detail-section">
+                    <div class="detail-section-title mt-2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Data Pribadi
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Nama Lengkap</label>
+                            <input type="text" id="detailInputNama" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Badge / NIK</label>
+                            <input type="text" id="detailInputBadge" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Jenis Kelamin</label>
+                            <input type="text" id="detailInputJenisKelamin" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Tempat, Tanggal Lahir</label>
+                            <input type="text" id="detailInputTtl" readonly>
+                        </div>
+                        <div class="detail-field" style="grid-column: span 2;">
+                            <label>Alamat</label>
+                            <textarea id="detailInputAlamat" readonly rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
+                        </svg>
+                        Unit Kerja
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Nama Unit Kerja</label>
+                            <input type="text" id="detailInputUnitKerja" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Bagian</label>
+                            <input type="text" id="detailInputBagian" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Penempatan Kerja
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Lokasi Kerja</label>
+                            <input type="text" id="detailInputLokasiKerja" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Perusahaan Subkon</label>
+                            <input type="text" id="detailInputSubkon" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: BPJS -->
                 <div class="detail-section">
                     <div class="detail-section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Data Umum
+                        Data BPJS
                     </div>
                     <div class="detail-form-grid">
                         <div class="detail-field">
-                            <label>Kode APD</label>
-                            <input type="text" id="dKodeApd" readonly>
+                            <label>No. BPJS Kesehatan</label>
+                            <input type="text" id="detailInputBpjsKesehatan" readonly>
                         </div>
                         <div class="detail-field">
-                            <label>Kategori</label>
-                            <input type="text" id="dKategori" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Merk Rekomendasi</label>
-                            <input type="text" id="dMerk" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Ukuran Tersedia</label>
-                            <input type="text" id="dUkuran" readonly>
-                        </div>
-                        <!-- ═══ FIELD BARU — Kode OK, read-only ═══ -->
-                        <div class="detail-field span-2">
-                            <label>Kode OK</label>
-                            <input type="text" id="dKodeOk" readonly>
-                        </div>
-                        <!-- ═══════════════════════════════════════ -->
-                        <div class="detail-field span-2">
-                            <label>Fungsi / Sasaran Dilindungi</label>
-                            <textarea id="dFungsi" readonly rows="2"></textarea>
+                            <label>No. BPJS Ketenagakerjaan</label>
+                            <input type="text" id="detailInputBpjsTk" readonly>
                         </div>
                     </div>
                 </div>
 
+                <!-- SECTION: DATA OK -->
                 <div class="detail-section">
                     <div class="detail-section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Spesifikasi &amp; Standar
+                        Data OK (Order Kerja)
                     </div>
                     <div class="detail-form-grid">
-                        <div class="detail-field span-2">
-                            <label>Spesifikasi Teknis</label>
-                            <textarea id="dSpesifikasi" readonly rows="2"></textarea>
+                        <div class="detail-field">
+                            <label>Kode OK</label>
+                            <input type="text" id="detailInputKodeOk" readonly>
                         </div>
-                        <div class="detail-field span-2">
-                            <label>Standar SNI / Regulasi</label>
-                            <input type="text" id="dStandar" readonly>
+                        <div class="detail-field">
+                            <label>Nomor OK</label>
+                            <input type="text" id="detailInputNomorOk" readonly>
                         </div>
                     </div>
                 </div>
@@ -1496,137 +1538,91 @@
                 <div class="detail-section">
                     <div class="detail-section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <!-- User Check Icon -->
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="10" cy="7" r="4" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11l2 2 4-4" />
                         </svg>
-                        Stok
+                        Data Pengawas
                     </div>
+
                     <div class="detail-form-grid">
                         <div class="detail-field">
-                            <label>Stok Awal</label>
-                            <input type="text" id="dStokAwal" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Digunakan</label>
-                            <input type="text" id="dDigunakan" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Rusak</label>
-                            <input type="text" id="dRusak" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Stok Tersedia</label>
-                            <input type="text" id="dStokTersedia" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Reorder Point</label>
-                            <input type="text" id="dReorderPoint" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Status</label>
-                            <input type="text" id="dStatus" readonly>
+                            <label>Pengawas</label>
+                            <input type="text" id="detailInputPengawas" readonly>
                         </div>
                     </div>
                 </div>
 
-                <div class="detail-section">
+                <div class="detail-section mt-4">
                     <div class="detail-section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        Harga &amp; Pengadaan
+                        Dokumen KIB
                     </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Harga Satuan</label>
-                            <input type="text" id="dHarga" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Supplier</label>
-                            <input type="text" id="dSupplier" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Masa Pakai</label>
-                            <input type="text" id="dMasaPakai" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Terakhir Pengadaan</label>
-                            <input type="text" id="dTerakhirPengadaan" readonly>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>Keterangan</label>
-                            <textarea id="dKeterangan" readonly rows="2"></textarea>
-                        </div>
+                    <div class="detail-field"
+                        style="text-align: center; background: #f9fafb; padding: 15px; border-radius: 8px;">
+                        <img id="detailImageKib" src="" alt="Gambar KIB"
+                            style="max-width: 100%; max-height: 300px; display: none; border-radius: 8px; border: 1px solid #e5e7eb; object-fit: contain;" />
+                        <p id="detailImageKibEmpty" style="color: #6b7280; font-style: italic; margin: 0;">Gambar KIB
+                            belum diunggah</p>
                     </div>
                 </div>
             </div>
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeDetailModal()">Tutup</button>
+            <div class="modal-footer mt-4">
+                <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- ══════ MODAL KONFIRMASI HAPUS ══════ -->
-    <div id="deleteConfirmOverlay" class="modal-overlay" onclick="closeDeleteModalOutside(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-icon-wrap">
-                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </div>
-            <div class="modal-title">Hapus Data APD?</div>
-            <div class="modal-desc" id="deleteModalDesc">
-                Data yang sudah dihapus tidak dapat dikembalikan. Pastikan Anda yakin sebelum melanjutkan.
-            </div>
-            <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
-                <button class="btn-modal-danger" onclick="confirmDelete()">Ya, Hapus</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ TOAST ══════ -->
+    <!-- ══════ TOAST NOTIFIKASI ══════ -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <!-- ══════ LOADING SCREEN OVERLAY ══════ -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-box">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Menyinkronkan Data Pegawai</div>
+            <div class="loading-sub">Mohon tunggu, sedang mengambil data terbaru dari SIFO...</div>
+        </div>
+    </div>
+
+    {{-- RENDER DATA DI TABEL --}}
     <script>
         // ══════ CONFIG ══════
-        const DATA_ENDPOINT = "{{ route('master-stok-apd.data') }}";
-        const STORE_ENDPOINT = "{{ route('master-stok-apd.store') }}";
-        const BASE_ENDPOINT = "{{ url('/master-stok-apd') }}";
-        const CSRF_TOKEN = "{{ csrf_token() }}";
+        const API_ENDPOINT = "{{ route('tenaga.api') }}";
 
         const state = {
             search: '',
-            kategori: '',
             status: '',
-            supplier: '',
+            departemen: '',
+            jenis_kelamin: '',
             page: 1,
             per_page: 10,
         };
 
         let searchDebounce = null;
         let filterOptionsLoaded = false;
-        let currentEditId = null;
-        let currentDeleteId = null;
-        let currentDeleteName = '';
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebar-overlay').classList.toggle('open');
         }
 
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str ?? '';
-            return div.innerHTML;
-        }
-
         function initials(name) {
             if (!name || name === '-') return '—';
             const parts = name.trim().split(/\s+/);
             return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str ?? '';
+            return div.innerHTML;
         }
 
         function formatDate(dateStr) {
@@ -1640,19 +1636,13 @@
             });
         }
 
-        function formatRupiah(value) {
-            const num = Number(value) || 0;
-            return 'Rp ' + num.toLocaleString('id-ID', {
-                maximumFractionDigits: 0
-            });
-        }
-
-        function kategoriPillClass(kategori) {
-            return kategori === 'KHUSUS' ? 'sp-blue' : 'sp-gray';
-        }
-
         function statusPillClass(status) {
-            return status === 'REORDER' ? 'sp-red' : 'sp-green';
+            const s = (status || '').toLowerCase();
+            if (s.includes('aktif') && !s.includes('non')) return 'sp-green';
+            if (s.includes('non') || s.includes('resign') || s.includes('berhenti')) return 'sp-red';
+            if (s.includes('cuti') || s.includes('kontrak')) return 'sp-amber';
+            if (s === '-' || s === '') return 'sp-gray';
+            return 'sp-blue';
         }
 
         function onSearchInput() {
@@ -1665,9 +1655,9 @@
         }
 
         function onFilterChange() {
-            state.kategori = document.getElementById('filterKategori').value;
             state.status = document.getElementById('filterStatus').value;
-            state.supplier = document.getElementById('filterSupplier').value;
+            state.departemen = document.getElementById('filterDepartemen').value;
+            state.jenis_kelamin = document.getElementById('filterJenisKelamin').value;
             state.page = 1;
             loadData();
         }
@@ -1680,13 +1670,13 @@
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('filterKategori').value = '';
             document.getElementById('filterStatus').value = '';
-            document.getElementById('filterSupplier').value = '';
+            document.getElementById('filterDepartemen').value = '';
+            document.getElementById('filterJenisKelamin').value = '';
             state.search = '';
-            state.kategori = '';
             state.status = '';
-            state.supplier = '';
+            state.departemen = '';
+            state.jenis_kelamin = '';
             state.page = 1;
             loadData();
         }
@@ -1703,22 +1693,46 @@
         function populateFilterOptions(options) {
             if (filterOptionsLoaded || !options) return;
 
-            const build = (selectId, values) => {
+            const build = (selectId, values, isObjectOption = false) => {
                 const select = document.getElementById(selectId);
                 const current = select.value;
                 values.forEach(val => {
                     const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
+                    if (isObjectOption) {
+                        opt.value = val.value;
+                        opt.textContent = val.label;
+                    } else {
+                        opt.value = val;
+                        opt.textContent = val;
+                    }
                     select.appendChild(opt);
                 });
                 select.value = current;
             };
 
-            build('filterKategori', options.kategori || []);
             build('filterStatus', options.status || []);
-            build('filterSupplier', options.supplier || []);
-            filterOptionsLoaded = true;
+            build('filterDepartemen', options.departemen || [], true); // BARU: pakai object
+            build('filterJenisKelamin', options.jenis_kelamin || []);
+        }
+
+        function sisaHariBadge(sisaHari) {
+            if (sisaHari === null || sisaHari === undefined) {
+                return `<span class="status-pill sp-gray">-</span>`;
+            }
+            let cls = 'sp-green';
+            if (sisaHari < 0) cls = 'sp-red';
+            else if (sisaHari <= 30) cls = 'sp-amber';
+            const label = sisaHari < 0 ? `Lewat ${Math.abs(sisaHari)} hari` : `${sisaHari} hari`;
+            return `<span class="status-pill ${cls}">${label}</span>`;
+        }
+
+        function kibStatusPillClass(status) {
+            const s = (status || '').toLowerCase();
+            if (s.includes('aktif') || s.includes('berlaku')) return 'sp-green';
+            if (s.includes('proses') || s.includes('pengajuan')) return 'sp-amber';
+            if (s.includes('expired') || s.includes('kadaluarsa') || s.includes('habis')) return 'sp-red';
+            if (!s) return 'sp-gray';
+            return 'sp-blue';
         }
 
         function renderTable(rows) {
@@ -1727,7 +1741,7 @@
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="7">
+                    <td colspan="8">
                         <div class="empty-state">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1743,77 +1757,96 @@
 
             tbody.innerHTML = rows.map(row => `
                 <tr>
-                   <td>
+                    <td>
                         <div class="td-name-cell">
-                                <div class="td-avatar" style="overflow:hidden; padding:0;">
-                                    ${row.gambar_apd_url
-                                        ? `<img src="${row.gambar_apd_url}" alt="${escapeHtml(row.jenis_apd)}" style="width:100%;height:100%;object-fit:cover;">`
-                                        : escapeHtml(initials(row.jenis_apd))}
-                                </div>                            
-                        <div>
-                            <div class="td-name-main">${escapeHtml(row.jenis_apd)}</div>
+                            <div class="td-avatar">${escapeHtml(initials(row.nama))}</div>
+                            <div>
+                                <div class="td-name-main">${escapeHtml(row.nama)}</div>
                                 <div class="td-name-sub">
-                                    <span style="font-weight:600; color:#475569;">${escapeHtml(row.kode_apd)}</span>
-                                    · <span class="status-pill ${kategoriPillClass(row.kategori)}" style="margin-left:2px;">${escapeHtml(row.kategori)}</span>
+                                    <span style="font-weight:600; color:#475569;">${escapeHtml(row.badge)}</span> • ${escapeHtml(row.jenis_kelamin)}
                                 </div>
                             </div>
                         </div>
-                        <div style="margin-top:4px;">
-                            ${(row.kode_ok || []).map(k => `<span class="kode-ok-pill">OK ${escapeHtml(k)}</span>`).join('') || '<span class="td-name-sub">Belum ada OK</span>'}
-                        </div>
-                    </td>
-
-                    <td style="max-width:220px;">
-                        <div class="td-name-sub" style="white-space:normal; line-height:1.4; color:#334155; font-weight:600; margin-bottom:3px;">
-                            ${escapeHtml(row.fungsi_sasaran || '-')}
-                        </div>
-                        <div class="td-name-sub">${escapeHtml(row.merk_rekomendasi || '-')}</div>
-                    </td>
-
-                    <td style="max-width:220px;">
-                        <div style="font-size:12px; color:#334155; white-space:normal; line-height:1.4; margin-bottom:3px;">
-                            ${escapeHtml(row.spesifikasi_teknis || '-')}
-                        </div>
-                        <div class="td-name-sub">${escapeHtml(row.ukuran_tersedia || '-')} · ${escapeHtml(row.standar_regulasi || '-')}</div>
                     </td>
 
                     <td>
-                        <div class="stok-line">Awal: <b>${row.stok_awal}</b></div>
-                        <div class="stok-line">Pakai/Rusak: <b>${row.digunakan}</b> / <b>${row.rusak}</b></div>
-                        <div class="stok-line">Tersedia: <b>${row.stok_tersedia}</b> (RP ${row.reorder_point})</div>
+                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_unit_kerja)}</div>
+                        <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
                     </td>
 
                     <td>
-                        <div style="font-weight:700; font-size:12.5px; margin-bottom:3px;">${formatRupiah(row.harga_satuan)}</div>
-                        <div class="td-name-sub">${escapeHtml(row.supplier || '-')}</div>
+                        <div style="font-weight:600; color:#0f172a; font-size:13px;">${escapeHtml(row.nama_lokasi)}</div>
+                        <div class="td-name-sub" style="color: #0284c7; font-weight: 500;">Subkon: ${escapeHtml(row.nama_subkon)}</div>
+                    </td>
+            
+                   <td>
+                        <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
+                            Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
+                        </div>
+                        <div class="td-name-sub">
+                            No: ${escapeHtml(row.nomor_ok)}
+                        </div>
+                    </td>
+
+                     <td>
+                        ${row.nama_pengawas === '-' ? `
+                                         <span class="status-pill sp-gray">-</span>
+                                            ` : `
+                                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
+                                        <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
+                                          `}
                     </td>
 
                     <td>
-                        <span class="status-pill ${statusPillClass(row.status)}">${row.status}</span>
+                        <div style="margin-bottom: 6px;">
+                            ${sisaHariBadge(row.sisa_hari_kib)}
+                        </div>
+
+                        <div style="margin-bottom: 6px;">
+                            <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
+                                ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
+                            </span>
+                        </div>
+
+                        <div>
+                            <span class="status-pill ${kibStatusPillClass(row.nomor_kib)}">
+                                ${row.nomor_kib ? escapeHtml(row.nomor_kib) : 'Belum Diisi'}
+                            </span>
+                        </div>
                     </td>
+
+                    ${'' /* Kolom tempat lahir dan alamat dinonaktifkan
+                        <td>
+                            <div style="font-size: 12px; margin-bottom:4px;">
+                                <span style="color:#64748B;">Kes:</span> 
+                                <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_kesehatan)}</span>
+                            </div>
+                            <div style="font-size: 12px;">
+                                <span style="color:#64748B;">TK:</span> 
+                                <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
+                            </div>
+                        </td>
+                    */}
 
                     <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-row-action" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+                        <button class="btn-detail-tenaga" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
+                                style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; margin-right:6px;">
                             <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                             Detail
                         </button>
-                        <button class="btn-row-action" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+
+                        <button class="btn-edit-kib" onclick='openUpdateModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
+                                style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
                             <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
-                            Edit
-                        </button>
-                        <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.jenis_apd)}')">
-                            <svg style="width:14px;height:14px; color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Hapus
+                            Update
                         </button>
                     </td>
                 </tr>
@@ -1823,7 +1856,7 @@
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 <div class="error-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1836,14 +1869,17 @@
         </tr>`;
             document.getElementById('paginationText').textContent = '—';
             document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data stok APD.';
+            document.getElementById('dataSummary').textContent = 'Gagal memuat data tenaga kerja.';
         }
 
         function renderPagination(meta) {
             document.getElementById('paginationText').textContent =
-                meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
+                meta.total > 0 ?
+                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` :
+                'Tidak ada data';
 
-            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> jenis APD ditemukan`;
+            document.getElementById('dataSummary').innerHTML =
+                `<strong>${meta.total}</strong> tenaga kerja ditemukan`;
 
             const container = document.getElementById('paginationPages');
             const current = meta.current_page;
@@ -1880,14 +1916,14 @@
         async function loadData() {
             const params = new URLSearchParams();
             if (state.search) params.set('search', state.search);
-            if (state.kategori) params.set('kategori', state.kategori);
             if (state.status) params.set('status', state.status);
-            if (state.supplier) params.set('supplier', state.supplier);
+            if (state.departemen) params.set('departemen', state.departemen);
+            if (state.jenis_kelamin) params.set('jenis_kelamin', state.jenis_kelamin);
             params.set('page', state.page);
             params.set('per_page', state.per_page);
 
             try {
-                const res = await fetch(`${DATA_ENDPOINT}?${params.toString()}`, {
+                const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
                     headers: {
                         'Accept': 'application/json'
                     },
@@ -1907,7 +1943,29 @@
             }
         }
 
-        // ══════ TOAST ══════
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+
+    <script>
+        // Ambil URL Endpoint POST Sync dari Laravel route helper
+        const SYNC_ENDPOINT = "{{ route('tenaga.sync') }}";
+
+        function syncData() {
+            document.getElementById('syncConfirmOverlay').classList.add('open');
+        }
+
+        function closeSyncModal() {
+            document.getElementById('syncConfirmOverlay').classList.remove('open');
+        }
+
+        function closeSyncModalOutside(event) {
+            // Hanya menutup modal jika yang diklik adalah area overlay itu sendiri,
+            // bukan konten di dalam modal-box
+            if (event.target.id === 'syncConfirmOverlay') {
+                closeSyncModal();
+            }
+        }
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1935,170 +1993,92 @@
             }, 4000);
         }
 
-        function kodeOkRowHtml(value = '') {
-            return `
-            <div class="kode-ok-row">
-                <input type="text" class="form-input kode-ok-input" placeholder="Contoh: 999" value="${escapeHtml(value)}" />
-                <button type="button" class="btn-remove-kode-ok" onclick="this.parentElement.remove()">
-                    <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>`;
-        }
+        async function confirmSync() {
+            closeSyncModal();
+            document.getElementById('loadingOverlay').classList.add('open');
 
-        function addKodeOkRow(value = '') {
-            document.getElementById('kodeOkList').insertAdjacentHTML('beforeend', kodeOkRowHtml(value));
-        }
+            try {
+                const res = await fetch(SYNC_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
 
-        function renderKodeOkRows(kodeOkArray) {
-            const container = document.getElementById('kodeOkList');
-            container.innerHTML = '';
-            if (kodeOkArray && kodeOkArray.length > 0) {
-                kodeOkArray.forEach(k => addKodeOkRow(k));
-            } else {
-                addKodeOkRow(); // minimal 1 baris kosong biar gampang mulai isi
+                const json = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
+                }
+
+                await loadData();
+
+                document.getElementById('loadingOverlay').classList.remove('open');
+                showToast(json.message, 'success');
+
+            } catch (e) {
+                document.getElementById('loadingOverlay').classList.remove('open');
+                showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
             }
         }
 
-        function collectKodeOkValues() {
-            return Array.from(document.querySelectorAll('#kodeOkList .kode-ok-input'))
-                .map(el => el.value.trim())
-                .filter(v => v !== '');
+        const UPDATE_ENDPOINT_BASE = "{{ url('/tenaga') }}";
+        let currentEditId = null;
+
+        function openUpdateModal(row) {
+            currentEditId = row.id;
+            document.getElementById('updateModalName').textContent = row.nama || '-';
+            document.getElementById('updateModalNik').textContent = row.nik || '-';
+            document.getElementById('inputNomorKib').value = row.nomor_kib || '';
+            document.getElementById('inputMasaBerlakuKib').value = row.masa_berlaku_kib ? row.masa_berlaku_kib.substring(0,
+                10) : '';
+            document.getElementById('inputStatusKib').value = row.status_kib || '';
+            document.getElementById('updateModalOverlay').classList.add('open');
         }
 
-        function onGambarApdChange(event) {
-            const file = event.target.files[0];
-            const img = document.getElementById('fGambarPreview');
-            const icon = document.getElementById('fGambarPlaceholderIcon');
-
-            if (!file) {
-                img.style.display = 'none';
-                icon.style.display = 'block';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = e => {
-                img.src = e.target.result;
-                img.style.display = 'block';
-                icon.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function resetGambarApdPreview(existingUrl = null) {
-            const img = document.getElementById('fGambarPreview');
-            const icon = document.getElementById('fGambarPlaceholderIcon');
-            document.getElementById('fGambarApd').value = ''; // selalu kosongkan input file
-
-            if (existingUrl) {
-                img.src = existingUrl;
-                img.style.display = 'block';
-                icon.style.display = 'none';
-            } else {
-                img.src = '';
-                img.style.display = 'none';
-                icon.style.display = 'block';
-            }
-        }
-
-        // ══════ MODAL TAMBAH / EDIT ══════
-        function openFormModal(row = null) {
-            currentEditId = row ? row.id : null;
-
-            document.getElementById('formModalTitle').textContent = row ? 'Edit Data APD' : 'Tambah APD';
-            document.getElementById('formModalSub').textContent = row ?
-                `Perbarui data untuk ${row.jenis_apd}` :
-                'Lengkapi data master & stok di bawah ini.';
-
-            document.getElementById('fKodeApd').value = row?.kode_apd || '';
-            document.getElementById('fKodeApd').placeholder = row ?
-                '' :
-                'Otomatis digenerate setelah disimpan';
-            document.getElementById('fJenisApd').value = row?.jenis_apd || '';
-            document.getElementById('fKategori').value = row?.kategori || 'WAJIB';
-            document.getElementById('fMerk').value = row?.merk_rekomendasi || '';
-            document.getElementById('fFungsi').value = row?.fungsi_sasaran || '';
-            document.getElementById('fSpesifikasi').value = row?.spesifikasi_teknis || '';
-            document.getElementById('fUkuran').value = row?.ukuran_tersedia || '';
-            document.getElementById('fStandar').value = row?.standar_regulasi || '';
-            document.getElementById('fStokAwal').value = row?.stok_awal ?? 0;
-            document.getElementById('fDigunakan').value = row?.digunakan ?? 0;
-            document.getElementById('fRusak').value = row?.rusak ?? 0;
-            document.getElementById('fReorderPoint').value = row?.reorder_point ?? 0;
-            document.getElementById('fHarga').value = row?.harga_satuan ?? 0;
-            document.getElementById('fSupplier').value = row?.supplier || '';
-            document.getElementById('fMasaPakai').value = row?.masa_pakai || '';
-            document.getElementById('fTerakhirPengadaan').value = row?.terakhir_pengadaan ? row.terakhir_pengadaan
-                .substring(0, 10) : '';
-            document.getElementById('fKeterangan').value = row?.keterangan || '';
-
-            renderKodeOkRows(row?.kode_ok || []);
-            resetGambarApdPreview(row?.gambar_apd_url || null);
-            renderKodeOkRows(row?.kode_ok || []);
-            document.getElementById('formModalOverlay').classList.add('open');
-
-        }
-
-        function closeFormModal() {
-            document.getElementById('formModalOverlay').classList.remove('open');
+        function closeUpdateModal() {
+            document.getElementById('updateModalOverlay').classList.remove('open');
             currentEditId = null;
         }
 
-        function closeFormModalOutside(event) {
-            if (event.target.id === 'formModalOverlay') closeFormModal();
+        function closeUpdateModalOutside(event) {
+            if (event.target.id === 'updateModalOverlay') {
+                closeUpdateModal();
+            }
         }
 
-        async function submitForm() {
-            const btn = document.getElementById('btnSubmitForm');
+        async function submitUpdateKib() {
+            if (!currentEditId) return;
+
+            const btn = document.getElementById('btnSubmitUpdate');
             const originalText = btn.textContent;
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const formData = new FormData();
-            formData.append('jenis_apd', document.getElementById('fJenisApd').value.trim());
-            formData.append('kategori', document.getElementById('fKategori').value);
-            formData.append('merk_rekomendasi', document.getElementById('fMerk').value.trim());
-            formData.append('fungsi_sasaran', document.getElementById('fFungsi').value.trim());
-            formData.append('spesifikasi_teknis', document.getElementById('fSpesifikasi').value.trim());
-            formData.append('ukuran_tersedia', document.getElementById('fUkuran').value.trim());
-            formData.append('standar_regulasi', document.getElementById('fStandar').value.trim());
-            formData.append('stok_awal', document.getElementById('fStokAwal').value || 0);
-            formData.append('digunakan', document.getElementById('fDigunakan').value || 0);
-            formData.append('rusak', document.getElementById('fRusak').value || 0);
-            formData.append('reorder_point', document.getElementById('fReorderPoint').value || 0);
-            formData.append('harga_satuan', document.getElementById('fHarga').value || 0);
-            formData.append('supplier', document.getElementById('fSupplier').value.trim());
-            formData.append('masa_pakai', document.getElementById('fMasaPakai').value.trim());
-            formData.append('terakhir_pengadaan', document.getElementById('fTerakhirPengadaan').value || '');
-            formData.append('keterangan', document.getElementById('fKeterangan').value.trim());
-
-            collectKodeOkValues().forEach(k => formData.append('kode_ok[]', k));
-
-            const gambarFile = document.getElementById('fGambarApd').files[0];
-            if (gambarFile) {
-                formData.append('gambar_apd', gambarFile);
-            }
-
-            // Laravel butuh method spoofing kalau upload file lewat PUT,
-            // jadi untuk edit tetap kirim POST tapi disisipi _method=PUT.
-            if (currentEditId) {
-                formData.append('_method', 'PUT');
-            }
-
-            const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-
             try {
-                const res = await fetch(url, {
-                    method: 'POST', // selalu POST, PUT di-spoof lewat field _method di atas
+                // Menggunakan FormData untuk mendukung file upload
+                const formData = new FormData();
+                formData.append('_method', 'PUT'); // Trik Laravel untuk menyimulasikan PUT request dengan FormData
+                formData.append('nomor_kib', document.getElementById('inputNomorKib').value.trim() || '');
+                formData.append('masa_berlaku_kib', document.getElementById('inputMasaBerlakuKib').value || '');
+                formData.append('status_kib', document.getElementById('inputStatusKib').value || '');
+
+                const fileInput = document.getElementById('inputGambarKib');
+                if (fileInput.files.length > 0) {
+                    formData.append('gambar_kib', fileInput.files[0]);
+                }
+
+                const res = await fetch(`${UPDATE_ENDPOINT_BASE}/${currentEditId}`, {
+                    method: 'POST', // Gunakan POST karena FormData, Laravel akan membacanya sebagai PUT dari '_method'
                     headers: {
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN,
-                        // JANGAN set 'Content-Type' manual — browser yang atur
-                        // boundary multipart-nya otomatis kalau body-nya FormData.
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        // PENTING: Jangan set 'Content-Type' saat menggunakan FormData.
+                        // Browser akan otomatis men-set 'multipart/form-data' dengan boundary yang benar.
                     },
-                    body: formData,
+                    body: formData
                 });
 
                 const json = await res.json();
@@ -2108,114 +2088,74 @@
                     throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
                 }
 
-                closeFormModal();
+                closeUpdateModal();
                 await loadData();
                 showToast(json.message, 'success');
+
+                // Reset input file setelah sukses
+                document.getElementById('inputGambarKib').value = '';
+
             } catch (e) {
-                showToast(e.message || 'Terjadi kesalahan saat menyimpan data.', 'error');
+                showToast(e.message || 'Terjadi kesalahan saat memperbarui data.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = originalText;
             }
         }
+    </script>
 
-        // ══════ MODAL DETAIL ══════
+    {{-- MODAL DETAIL --}}
+    <script>
         function openDetailModal(row) {
-            const avatarImg = document.getElementById('detailAvatarImg');
-            const avatarInitial = document.getElementById('detailAvatarInitial');
-            if (row.gambar_apd_url) {
-                avatarImg.src = row.gambar_apd_url;
-                avatarImg.style.display = 'block';
-                avatarInitial.style.display = 'none';
+            document.getElementById('detailAvatar').textContent = initials(row.nama);
+            document.getElementById('detailNamaTitle').textContent = row.nama || '-';
+            document.getElementById('detailBadgeSub').textContent = row.badge || '-';
+
+            document.getElementById('detailInputNama').value = row.nama || '-';
+            document.getElementById('detailInputBadge').value = row.badge || '-';
+            document.getElementById('detailInputJenisKelamin').value = row.jenis_kelamin || '-';
+            document.getElementById('detailInputTtl').value =
+                `${row.tempat_lahir || '-'}, ${formatDate(row.tanggal_lahir)}`;
+            document.getElementById('detailInputAlamat').value = row.alamat || '-';
+            // BARU — Unit Kerja
+            document.getElementById('detailInputUnitKerja').value = row.nama_unit_kerja || '-';
+            document.getElementById('detailInputBagian').value = row.bagian || '-';
+            document.getElementById('detailInputBpjsKesehatan').value = row.no_bpjs_kesehatan || '-';
+            document.getElementById('detailInputBpjsTk').value = row.no_bpjs_ketenagakerjaan || '-';
+            document.getElementById('detailInputKodeOk').value = row.kode_ok || '-';
+            document.getElementById('detailInputNomorOk').value = row.nomor_ok || '-';
+            document.getElementById('detailInputPengawas').value =
+                row.nama_pengawas !== '-' ? `${row.nama_pengawas} (${row.badge_pengawas})` : '-';
+            document.getElementById('detailInputLokasiKerja').value = row.nama_lokasi;
+            document.getElementById('detailInputSubkon').value = row.nama_subkon;
+            // BARU - Logika untuk menampilkan Gambar KIB
+            const imgKib = document.getElementById('detailImageKib');
+            const imgEmpty = document.getElementById('detailImageKibEmpty');
+
+
+            if (row.gambar_kib_url) {
+                imgKib.src = row.gambar_kib_url;
+                imgKib.style.display = 'inline-block'; // Tampilkan gambar
+                imgEmpty.style.display = 'none'; // Sembunyikan teks placeholder
             } else {
-                avatarImg.style.display = 'none';
-                avatarInitial.style.display = 'block';
-                avatarInitial.textContent = initials(row.jenis_apd);
+                imgKib.src = '';
+                imgKib.style.display = 'none'; // Sembunyikan gambar yang kosong
+                imgEmpty.style.display = 'block'; // Tampilkan teks placeholder
             }
-            document.getElementById('detailJenisTitle').textContent = row.jenis_apd || '-';
-            document.getElementById('detailKodeSub').textContent = row.kode_apd || '-';
-
-            document.getElementById('dKodeApd').value = row.kode_apd || '-';
-            document.getElementById('dKategori').value = row.kategori || '-';
-            document.getElementById('dMerk').value = row.merk_rekomendasi || '-';
-            document.getElementById('dUkuran').value = row.ukuran_tersedia || '-';
-            document.getElementById('dFungsi').value = row.fungsi_sasaran || '-';
-
-            document.getElementById('dSpesifikasi').value = row.spesifikasi_teknis || '-';
-            document.getElementById('dStandar').value = row.standar_regulasi || '-';
-
-            document.getElementById('dStokAwal').value = row.stok_awal;
-            document.getElementById('dDigunakan').value = row.digunakan;
-            document.getElementById('dRusak').value = row.rusak;
-            document.getElementById('dStokTersedia').value = row.stok_tersedia;
-            document.getElementById('dReorderPoint').value = row.reorder_point;
-            document.getElementById('dStatus').value = row.status;
-
-            document.getElementById('dHarga').value = formatRupiah(row.harga_satuan);
-            document.getElementById('dSupplier').value = row.supplier || '-';
-            document.getElementById('dMasaPakai').value = row.masa_pakai || '-';
-            document.getElementById('dTerakhirPengadaan').value = formatDate(row.terakhir_pengadaan);
-            document.getElementById('dKeterangan').value = row.keterangan || '-';
 
             document.getElementById('detailModalOverlay').classList.add('open');
-            document.getElementById('dKodeOk').value =
-                (row.kode_ok && row.kode_ok.length > 0) ? row.kode_ok.join(', ') : '-';
         }
 
+        // ── FUNGSI YANG HILANG, INI YANG BIKIN X & TUTUP TIDAK BERFUNGSI ──
         function closeDetailModal() {
             document.getElementById('detailModalOverlay').classList.remove('open');
         }
 
         function closeDetailModalOutside(event) {
-            if (event.target.id === 'detailModalOverlay') closeDetailModal();
-        }
-
-        // ══════ MODAL HAPUS ══════
-        function openDeleteModal(id, nama) {
-            currentDeleteId = id;
-            currentDeleteName = nama;
-            document.getElementById('deleteModalDesc').textContent =
-                `Data "${nama}" akan dihapus permanen dan tidak dapat dikembalikan. Lanjutkan?`;
-            document.getElementById('deleteConfirmOverlay').classList.add('open');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteConfirmOverlay').classList.remove('open');
-            currentDeleteId = null;
-        }
-
-        function closeDeleteModalOutside(event) {
-            if (event.target.id === 'deleteConfirmOverlay') closeDeleteModal();
-        }
-
-        async function confirmDelete() {
-            if (!currentDeleteId) return;
-
-            try {
-                const res = await fetch(`${BASE_ENDPOINT}/${currentDeleteId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN,
-                    },
-                });
-
-                const json = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                }
-
-                closeDeleteModal();
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                closeDeleteModal();
-                showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
+            if (event.target.id === 'detailModalOverlay') {
+                closeDetailModal();
             }
         }
-
-        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 

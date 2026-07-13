@@ -46,4 +46,27 @@ class StokAPD extends Model
                 ->orWhere('merk_rekomendasi', 'like', "%{$term}%");
         });
     }
+
+    public static function generateKode(string $jenisApd): string
+    {
+        $inisial = strtoupper(substr(trim($jenisApd), 0, 1));
+        $inisial = $inisial ?: 'X';
+
+        $prefix = "FJM-{$inisial}-";
+
+        // Ambil nomor urut tertinggi yang sudah dipakai untuk inisial ini.
+        // SUBSTRING ... FROM '[0-9]+$' mengambil digit di ujung kode (Postgres).
+        $lastNumber = static::where('kode_apd', 'like', "{$prefix}%")
+            ->selectRaw("MAX(CAST(SUBSTRING(kode_apd FROM '[0-9]+$') AS INTEGER)) as max_num")
+            ->value('max_num');
+
+        $next = ((int) $lastNumber) + 1;
+
+        return $prefix . str_pad((string) $next, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function kodeOk()
+    {
+        return $this->hasMany(StokApdKode::class, 'stok_apd_id');
+    }
 }

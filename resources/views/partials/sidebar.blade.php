@@ -267,27 +267,17 @@
         </a>
     </div>
 
-    {{-- <div class="sb-section">
-        <div class="sb-section-label">Database Tenaga</div>
-        <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}" href="{{ route('tenaga.index') }}">
-            <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span class="nav-label">Data Tenaga</span>
-        </a>
-    </div> --}}
     {{-- DATABASE TENAGA --}}
     <div class="sb-section">
         <div class="sb-section-label">Database Tenaga</div>
 
         @php
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $datatenagaActive = request()->routeIs('tenaga.*') || 
-            request()->routeIs('memo-kib.*') || 
-            request()->routeIs('safety-officer.*') || 
-            request()->routeIs('pengawas.*');
+            $datatenagaActive =
+                request()->routeIs('tenaga.*') ||
+                request()->routeIs('memo-kib.*') ||
+                request()->routeIs('safety-officer.*') ||
+                request()->routeIs('pengawas.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
@@ -739,6 +729,64 @@
 
             <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Lembar Folowup</span>
+            </a>
+
+        </div>
+    </div>
+
+    {{-- ALAT BERAT --}}
+    <div class="sb-section">
+        <div class="sb-section-label">Alat Berat All In & On Call</div>
+
+        @php
+            // Hapus .* agar nama route cocok persis dengan yang ada di web.php
+            $alberActive =
+                request()->routeIs('alber.index') ||
+                request()->routeIs('alber.operatornonaktif') ||
+                request()->routeIs('alber.master-oncall') ||
+                request()->routeIs('alber.master-allin');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
+            onclick="toggleDropdown('alberDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+
+                <span class="nav-label">Monitoring Operator Alat Berat</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $alberActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+
+        </a>
+
+        <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
+
+            <a class="nav-link {{ request()->routeIs('alber.index') ? 'active' : '' }}"
+                href="{{ route('alber.index') }}">
+                <span class="nav-label">Dashboard Alat Berat</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('alber.operatornonaktif') ? 'active' : '' }}"
+                href="{{ route('alber.operatornonaktif') }}">
+                <span class="nav-label">Operator Non-Aktif</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('alber.master-oncall') ? 'active' : '' }}"
+                href="{{ route('alber.master-oncall') }}">
+                <span class="nav-label">Master On Call</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}"
+                href="{{ route('alber.master-allin') }}">
+                <span class="nav-label">Master All In</span>
             </a>
 
         </div>

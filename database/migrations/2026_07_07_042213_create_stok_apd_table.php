@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('stok_apd', function (Blueprint $table) {
             $table->id();
             $table->string('kode_apd')->unique();          // FJM-KJ-UB-01
+            $table->string('gambar_apd')->nullable();
             $table->string('jenis_apd');                    // Helm Safety
             $table->enum('kategori', ['WAJIB', 'KHUSUS'])->default('WAJIB');
 

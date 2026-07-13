@@ -6,6 +6,7 @@ use App\Models\StokAPD;
 use Illuminate\Validation\Rule;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StokAPDController extends Controller
 {
@@ -26,7 +27,7 @@ class StokAPDController extends Controller
         $status     = $request->input('status');     // OK | REORDER
         $supplier   = $request->input('supplier');
 
-        $query = StokAPD::query()->search($search);
+        $query = StokAPD::query()->with('kodeOk')->search($search);
 
         if ($kategori) {
             $query->where('kategori', $kategori);
@@ -36,8 +37,6 @@ class StokAPDController extends Controller
             $query->where('supplier', $supplier);
         }
 
-        // status dihitung dari (stok_awal - digunakan - rusak) vs reorder_point,
-        // jadi difilter langsung lewat raw expression, bukan kolom tersimpan.
         if ($status === 'REORDER') {
             $query->whereRaw('(stok_awal - digunakan - rusak) <= reorder_point');
         } elseif ($status === 'OK') {
@@ -48,7 +47,10 @@ class StokAPDController extends Controller
 
         return response()->json([
             'data' => collect($paginated->items())->map(function (StokAPD $item) {
-                return $item->toArray(); // stok_tersedia & status ikut karena $appends
+                $arr = $item->toArray(); // stok_tersedia & status ikut karena $appends
+                $arr['kode_ok'] = $item->kodeOk->pluck('kode_ok')->values();
+                $arr['gambar_apd_url'] = $item->gambar_apd ? asset('storage/' . $item->gambar_apd) : null;
+                return $arr;
             }),
             'meta' => [
                 'current_page' => $paginated->currentPage(),
@@ -69,6 +71,7 @@ class StokAPDController extends Controller
         ]);
     }
 
+
     /**
      * Simpan APD baru.
      * POST /master-stok-apd
@@ -76,14 +79,38 @@ class StokAPDController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateData($request);
+        $kodeOkList = $this->sanitizeKodeOkList($request->input('kode_ok', []));
+        unset($validated['kode_ok']);
 
-        $apd = StokAPD::create($validated);
+        if ($request->hasFile('gambar_apd')) {
+            $validated['gambar_apd'] = $request->file('gambar_apd')->store('apd_images', 'public');
+        }
+
+        $attempts = 0;
+        do {
+            $validated['kode_apd'] = StokAPD::generateKode($validated['jenis_apd']);
+
+            try {
+                $apd = StokAPD::create($validated);
+                break;
+            } catch (\Illuminate\Database\QueryException $e) {
+                $attempts++;
+                if ($attempts >= 3) {
+                    throw $e;
+                }
+            }
+        } while (true);
+
+        foreach ($kodeOkList as $kode) {
+            $apd->kodeOk()->create(['kode_ok' => $kode]);
+        }
 
         return response()->json([
-            'message' => "APD '{$apd->jenis_apd}' berhasil ditambahkan.",
-            'data'    => $apd,
+            'message' => "APD '{$apd->jenis_apd}' berhasil ditambahkan dengan kode {$apd->kode_apd}.",
+            'data'    => $apd->fresh('kodeOk'),
         ], 201);
     }
+
 
     /**
      * Update data APD (spesifikasi maupun angka stok).
@@ -92,13 +119,41 @@ class StokAPDController extends Controller
     public function update(Request $request, StokAPD $stokApd)
     {
         $validated = $this->validateData($request, $stokApd->id);
+        $kodeOkList = $this->sanitizeKodeOkList($request->input('kode_ok', []));
+        unset($validated['kode_ok']);
+
+        if ($request->hasFile('gambar_apd')) {
+            if ($stokApd->gambar_apd && Storage::disk('public')->exists($stokApd->gambar_apd)) {
+                Storage::disk('public')->delete($stokApd->gambar_apd);
+            }
+            $validated['gambar_apd'] = $request->file('gambar_apd')->store('apd_images', 'public');
+        }
 
         $stokApd->update($validated);
 
+        $stokApd->kodeOk()->delete();
+        foreach ($kodeOkList as $kode) {
+            $stokApd->kodeOk()->create(['kode_ok' => $kode]);
+        }
+
         return response()->json([
             'message' => "Data '{$stokApd->jenis_apd}' berhasil diperbarui.",
-            'data'    => $stokApd->fresh(),
+            'data'    => $stokApd->fresh('kodeOk'),
         ]);
+    }
+
+    private function sanitizeKodeOkList($rawList): array
+    {
+        if (!is_array($rawList)) {
+            return [];
+        }
+
+        return collect($rawList)
+            ->map(fn($k) => trim((string) $k))
+            ->filter(fn($k) => $k !== '')
+            ->unique()
+            ->values()
+            ->all();
     }
 
     /**
@@ -118,15 +173,6 @@ class StokAPDController extends Controller
     private function validateData(Request $request, ?int $ignoreId = null): array
     {
         return $request->validate([
-            'kode_apd' => [
-                'required',
-                'string',
-                'max:50',
-                // PENTING: nama tabel di sini harus "stok_apd" (sesuai migration),
-                // bukan "stok_apds" — kalau salah, validasi unique akan query ke
-                // tabel yang tidak ada dan melempar 500 error.
-                Rule::unique('stok_apd', 'kode_apd')->ignore($ignoreId),
-            ],
             'jenis_apd'          => ['required', 'string', 'max:150'],
             'kategori'           => ['required', Rule::in(['WAJIB', 'KHUSUS'])],
             'fungsi_sasaran'     => ['nullable', 'string'],
@@ -143,6 +189,11 @@ class StokAPDController extends Controller
             'masa_pakai'         => ['nullable', 'string', 'max:100'],
             'terakhir_pengadaan' => ['nullable', 'date'],
             'keterangan'         => ['nullable', 'string'],
+            'kode_ok'            => ['nullable', 'array'],
+            'kode_ok.*'          => ['nullable', 'string', 'max:50'],
+
+            // maksimal 2MB, format umum foto
+            'gambar_apd'         => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
     }
 }
