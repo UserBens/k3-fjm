@@ -4,6 +4,7 @@ use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
+use App\Http\Controllers\DataSafetyController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
@@ -71,6 +72,7 @@ Route::middleware(['auth.custom'])->group(function () {
     // KPI
     Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
 
+    // DATA MEDIS
     Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
     Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
     Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
@@ -79,7 +81,16 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
     Route::get('/data-medis/cari-tenaga', [DataMedisController::class, 'cariTenagaMedis'])->name('data-medis.cari-tenaga');
 
-    Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
+    // DATA SAFETY
+    Route::prefix('data-safety')->name('data-safety.')->group(function () {
+        Route::get('/', [DataSafetyController::class, 'index'])->name('index');
+        Route::get('/data', [DataSafetyController::class, 'data'])->name('data');
+        Route::post('/', [DataSafetyController::class, 'store'])->name('store');
+        Route::put('/{dataSafety}', [DataSafetyController::class, 'update'])->name('update');
+        Route::delete('/{dataSafety}', [DataSafetyController::class, 'destroy'])->name('destroy');
+        Route::get('/cari-tenaga', [DataSafetyController::class, 'cariTenaga'])->name('cari-tenaga');
+    });
+    // Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
     Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
     Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
     Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
