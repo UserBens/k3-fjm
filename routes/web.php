@@ -10,6 +10,8 @@ use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LpiKejadianController;
+use App\Http\Controllers\LpiKorbanController;
 use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
@@ -120,6 +122,21 @@ Route::middleware(['auth.custom'])->group(function () {
 
     // JKA % RECORD INSIDEN
     Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
+   
+    //    LPI KEJADIAN
+    Route::get('/lpi-kejadian', [LpiKejadianController::class, 'index'])->name('lpi-kejadian.index');
+    Route::get('/lpi-kejadian/data', [LpiKejadianController::class, 'data'])->name('lpi-kejadian.data');
+    Route::post('/lpi-kejadian', [LpiKejadianController::class, 'store'])->name('lpi-kejadian.store');
+    Route::put('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'update'])->name('lpi-kejadian.update');
+    Route::delete('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'destroy'])->name('lpi-kejadian.destroy');
+
+    // LPI KORBAN
+    Route::get('/lpi-kejadian/{lpiKejadian}/korban', [LpiKorbanController::class, 'data'])->name('lpi-korban.data');
+    Route::post('/lpi-kejadian/{lpiKejadian}/korban', [LpiKorbanController::class, 'store'])->name('lpi-korban.store');
+    Route::put('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'update'])->name('lpi-korban.update');
+    Route::delete('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'destroy'])->name('lpi-korban.destroy');
+    Route::get('/lpi-korban/cari-karyawan', [LpiKorbanController::class, 'cariKaryawan'])->name('lpi-korban.cari-karyawan');
+
     Route::get('dashboard-jka', [JKARecordInsidenController::class, 'indexDashboardJKA'])->name('dashboard-jka.index');
     Route::get('dashboard-leading', [JKARecordInsidenController::class, 'indexDashboardLeading'])->name('dashboard-leading.index');
 

@@ -418,6 +418,7 @@
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
             $jkaActive =
                 request()->routeIs('dashboard-insiden.*') ||
+                request()->routeIs('lpi-kejadian.*') ||
                 request()->routeIs('dashboard-jka.*') ||
                 request()->routeIs('dashboard-leading.*');
         @endphp
@@ -447,6 +448,11 @@
             <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}"
                 href="{{ route('dashboard-insiden.index') }}">
                 <span class="nav-label">Dashboard Monitoring Insiden</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('lpi-kejadian.*') ? 'active' : '' }}"
+                href="{{ route('lpi-kejadian.index') }}">
+                <span class="nav-label">LPI Kejadian</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}"
