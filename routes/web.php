@@ -4,7 +4,9 @@ use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
+use App\Http\Controllers\DataRejectMonitoringController;
 use App\Http\Controllers\DataSafetyController;
+use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LoginController;
@@ -90,9 +92,25 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{dataSafety}', [DataSafetyController::class, 'destroy'])->name('destroy');
         Route::get('/cari-tenaga', [DataSafetyController::class, 'cariTenaga'])->name('cari-tenaga');
     });
+
     // Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
-    Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
-    Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
+    //    DATA UNSAFE
+    Route::get('/data-unsafe', [DataUnsafeController::class, 'index'])->name('data-unsafe.index');
+    Route::get('/data-unsafe/data', [DataUnsafeController::class, 'data'])->name('data-unsafe.data');
+    Route::post('/data-unsafe', [DataUnsafeController::class, 'store'])->name('data-unsafe.store');
+    Route::put('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'update'])->name('data-unsafe.update');
+    Route::delete('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'destroy'])->name('data-unsafe.destroy');
+    Route::get('/data-unsafe/cari-so', [DataUnsafeController::class, 'cariSafetyOfficer'])->name('data-unsafe.cari-so');
+
+    // Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
+    Route::get('/data-reject-monitoring', [DataRejectMonitoringController::class, 'index'])->name('data-reject-monitoring.index');
+    Route::get('/data-reject-monitoring/data', [DataRejectMonitoringController::class, 'data'])->name('data-reject-monitoring.data');
+    Route::post('/data-reject-monitoring', [DataRejectMonitoringController::class, 'store'])->name('data-reject-monitoring.store');
+    Route::put('/data-reject-monitoring/{dataRejectMonitoring}', [DataRejectMonitoringController::class, 'update'])->name('data-reject-monitoring.update');
+    Route::delete('/data-reject-monitoring/{dataRejectMonitoring}', [DataRejectMonitoringController::class, 'destroy'])->name('data-reject-monitoring.destroy');
+    Route::get('/data-reject-monitoring/cari-pelapor', [DataRejectMonitoringController::class, 'cariPelapor'])->name('data-reject-monitoring.cari-pelapor');
+
+    // Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
     Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
     Route::get('dashboard-individu', [MonitoringkpiController::class, 'indexDashboardIndividu'])->name('dashboard-individu.index');
     Route::get('monitoring-pengawas', [MonitoringkpiController::class, 'indexMonitoringPengawas'])->name('monitoring-pengawas.index');

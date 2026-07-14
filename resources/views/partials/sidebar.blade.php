@@ -332,8 +332,8 @@
                 // request()->routeIs('data-pengawas.*') ||
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
-                request()->routeIs('cetak-uauc.*') ||
-                request()->routeIs('dokumen-reject.*') ||
+                request()->routeIs('data-unsafe.*') ||
+                request()->routeIs('data-reject-monitoring.*') ||
                 request()->routeIs('monitoring-so.*') ||
                 request()->routeIs('dashboard-individu.*') ||
                 request()->routeIs('monitoring-pengawas.*') ||
@@ -374,13 +374,13 @@
                 <span class="nav-label">Data Safety</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('cetak-uauc.*') ? 'active' : '' }}"
-                href="{{ route('cetak-uauc.index') }}">
-                <span class="nav-label">Cetak UA/UC</span>
+            <a class="nav-link {{ request()->routeIs('data-unsafe.*') ? 'active' : '' }}"
+                href="{{ route('data-unsafe.index') }}">
+                <span class="nav-label">Data UA/UC</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('dokumen-reject.*') ? 'active' : '' }}"
-                href="{{ route('dokumen-reject.index') }}">
-                <span class="nav-label">Dokumen Reject</span>
+            <a class="nav-link {{ request()->routeIs('data-reject-monitoring.*') ? 'active' : '' }}"
+                href="{{ route('data-reject-monitoring.index') }}">
+                <span class="nav-label">Monitoring Dokumen Reject</span>
             </a>
             <a class="nav-link {{ request()->routeIs('monitoring-so.*') ? 'active' : '' }}"
                 href="{{ route('monitoring-so.index') }}">
