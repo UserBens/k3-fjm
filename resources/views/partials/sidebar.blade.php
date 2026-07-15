@@ -705,7 +705,7 @@
                 <span class="nav-label">Master Stok APD</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('master-stok-alkes.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('master-stok-alkes.*') ? 'active' : '' }}" href="{{ route('master-stok-alkes.index') }}">
                 <span class="nav-label">Master Stok Alkes</span>
             </a>
 

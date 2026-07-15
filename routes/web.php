@@ -20,6 +20,7 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
+use App\Http\Controllers\StokAlkesController;
 use App\Http\Controllers\TenagaController;
 use Illuminate\Support\Facades\Route;
 
@@ -181,6 +182,15 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::post('/', [StokAPDController::class, 'store'])->name('store');
         Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
         Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
+    });
+  
+    // APD
+    Route::prefix('master-stok-alkes')->name('master-stok-alkes.')->group(function () {
+        Route::get('/', [StokAlkesController::class, 'index'])->name('index');
+        Route::get('/data', [StokAlkesController::class, 'data'])->name('data');
+        Route::post('/', [StokAlkesController::class, 'store'])->name('store');
+        Route::put('/{stokAlkes}', [StokAlkesController::class, 'update'])->name('update');
+        Route::delete('/{stokAlkes}', [StokAlkesController::class, 'destroy'])->name('destroy');
     });
 
     // MONITORING ALBER
