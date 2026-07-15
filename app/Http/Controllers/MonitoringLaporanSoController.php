@@ -8,17 +8,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
-class DataUnsafeController extends Controller
+class MonitoringLaporanSoController extends Controller
 {
-    private array $fileFields = [
-        'foto_temuan' => ['foto_temuan_path', 'foto-temuan'],
-        'dokumen_laporan' => ['dokumen_laporan_path', 'dokumen-laporan'],
-    ];
-
     public function index()
     {
-        return view('data-unsafe.index');
+        return view('monitoring-laporan-so.index');
     }
 
     public function data(Request $request): JsonResponse
@@ -44,11 +40,6 @@ class DataUnsafeController extends Controller
 
             if ($status = $request->query('status_temuan')) {
                 $query->where('status_temuan', $status);
-            }
-
-            // BARU — filter status keputusan
-            if ($keputusan = $request->query('keputusan')) {
-                $query->where('keputusan', $keputusan);
             }
 
             if ($search = trim((string) $request->query('search', ''))) {
@@ -77,7 +68,7 @@ class DataUnsafeController extends Controller
                     'deskripsi_temuan' => $item->deskripsi_temuan ?? '-',
                     'rekomendasi_perbaikan' => $item->rekomendasi_perbaikan ?? '-',
                     'status_temuan' => $item->status_temuan,
-                    'keputusan' => $item->keputusan, // BARU
+                    'keputusan' => $item->keputusan ?? 'PENDING',
                     'foto_temuan_url' => $item->foto_temuan_path ? asset('storage/' . $item->foto_temuan_path) : null,
                     'dokumen_laporan_url' => $item->dokumen_laporan_path ? asset('storage/' . $item->dokumen_laporan_path) : null,
                 ];
@@ -96,7 +87,6 @@ class DataUnsafeController extends Controller
                 'filter_options' => [
                     'jenis_penyebab' => ['Unsafe Action', 'Unsafe Condition'],
                     'status_temuan' => ['OPEN', 'CLOSE'],
-                    'keputusan' => ['PENDING', 'APPROVE', 'REJECT'], // BARU
                     'tahun' => DataUnsafe::whereNotNull('tanggal_temuan')
                         ->selectRaw('DISTINCT EXTRACT(YEAR FROM tanggal_temuan) as tahun')
                         ->orderByDesc('tahun')
@@ -116,7 +106,7 @@ class DataUnsafeController extends Controller
         try {
             $validated['waktu_submit'] = now();
             $validated['status_temuan'] = $validated['status_temuan'] ?? 'OPEN';
-            $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING'; // BARU
+            $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING';
 
             $validated['foto_temuan_path'] = $this->storeFileIfPresent($request, 'foto_temuan', 'foto-temuan');
             $validated['dokumen_laporan_path'] = $this->storeFileIfPresent($request, 'dokumen_laporan', 'dokumen-laporan');
@@ -133,6 +123,49 @@ class DataUnsafeController extends Controller
         }
     }
 
+    public function update(Request $request, DataUnsafe $dataUnsafe): JsonResponse
+    {
+        $validated = $this->validateData($request);
+
+        try {
+            $newFoto = $this->storeFileIfPresent($request, 'foto_temuan', 'foto-temuan');
+            if ($newFoto) {
+                $this->deleteFileIfExists($dataUnsafe->foto_temuan_path);
+                $validated['foto_temuan_path'] = $newFoto;
+            }
+
+            $newDokumen = $this->storeFileIfPresent($request, 'dokumen_laporan', 'dokumen-laporan');
+            if ($newDokumen) {
+                $this->deleteFileIfExists($dataUnsafe->dokumen_laporan_path);
+                $validated['dokumen_laporan_path'] = $newDokumen;
+            }
+
+            $dataUnsafe->update($validated);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "Laporan temuan {$dataUnsafe->item_temuan} berhasil diperbarui.",
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal memperbarui data unsafe: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Gagal memperbarui data.'], 500);
+        }
+    }
+
+    public function updateStatus(Request $request, DataUnsafe $dataUnsafe): JsonResponse
+    {
+        $validated = $request->validate([
+            'status_temuan' => 'required|string|in:OPEN,CLOSE',
+        ]);
+
+        $dataUnsafe->update(['status_temuan' => $validated['status_temuan']]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Status temuan berhasil diubah menjadi {$validated['status_temuan']}.",
+        ]);
+    }
+
     public function updateKeputusan(Request $request, DataUnsafe $dataUnsafe): JsonResponse
     {
         $validated = $request->validate([
@@ -147,58 +180,41 @@ class DataUnsafeController extends Controller
         ]);
     }
 
-    public function update(Request $request, DataUnsafe $dataUnsafe): JsonResponse
-    {
-        $validated = $this->validateData($request);
-
-        try {
-            foreach ($this->fileFields as $formField => [$column, $folder]) {
-                $path = $this->storeFileIfPresent($request, $formField, $folder);
-                if ($path) {
-                    $this->deleteFileIfExists($dataUnsafe->{$column});
-                    $validated[$column] = $path;
-                }
-            }
-
-            $dataUnsafe->update($validated);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Data unsafe action/condition berhasil diperbarui.',
-                'data' => $this->transform($dataUnsafe->fresh()),
-            ]);
-        } catch (\Throwable $e) {
-            Log::error('Gagal memperbarui data unsafe: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Gagal memperbarui data.'], 500);
-        }
-    }
-
     public function destroy(DataUnsafe $dataUnsafe): JsonResponse
     {
         try {
-            foreach ($this->fileFields as [$column, $folder]) {
-                $this->deleteFileIfExists($dataUnsafe->{$column});
-            }
+            $this->deleteFileIfExists($dataUnsafe->foto_temuan_path);
+            $this->deleteFileIfExists($dataUnsafe->dokumen_laporan_path);
             $dataUnsafe->delete();
 
-            return response()->json(['status' => 'success', 'message' => 'Data berhasil dihapus.']);
+            return response()->json(['status' => 'success', 'message' => 'Laporan temuan berhasil dihapus.']);
         } catch (\Throwable $e) {
             Log::error('Gagal menghapus data unsafe: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Gagal menghapus data.'], 500);
         }
     }
 
-    /**
-     * Picker Safety Officer — hanya pegawai yang badge-nya terdaftar
-     * sebagai badge_safety_officer di tabel safety_officer_pegawais.
-     */
+    // Dropdown "Pilih Nama" — hanya pegawai berstatus Safety Officer
+    public function daftarSafetyOfficer(): JsonResponse
+    {
+        $data = Pegawai::where('is_active', true)
+            ->where('is_safety_officer', true)
+            ->orderBy('nama')
+            ->get(['badge', 'nama'])
+            ->map(fn(Pegawai $p) => [
+                'badge' => $p->badge,
+                'nama' => $p->nama,
+                'label' => "{$p->badge}-{$p->nama}",
+            ]);
+
+        return response()->json(['data' => $data]);
+    }
+
+    // Picker Safety Officer untuk form tambah/edit (auto-fill area/unit kerja dari data pegawai)
     public function cariSafetyOfficer(Request $request): JsonResponse
     {
         $search = trim((string) $request->query('search', ''));
-
-        $query = Pegawai::with('unitKerja')
-            ->where('is_active', true)
-            ->where('is_safety_officer', true);
+        $query = Pegawai::with('unitKerja')->where('is_active', true)->where('is_safety_officer', true);
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
@@ -207,8 +223,8 @@ class DataUnsafeController extends Controller
         }
 
         $results = $query->orderBy('nama')->limit(20)->get()->map(fn(Pegawai $p) => [
-            'badge' => $p->badge ?? '-',
-            'nama' => $p->nama ?? '-',
+            'badge' => $p->badge,
+            'nama' => $p->nama,
             'unit_kerja' => $p->unitKerja->nama_unit_kerja ?? '-',
         ]);
 
@@ -228,38 +244,22 @@ class DataUnsafeController extends Controller
         }
     }
 
-    private function transform(DataUnsafe $d): array
-    {
-        $base = $d->toArray();
-        foreach ($this->fileFields as [$column, $folder]) {
-            $base[$column . '_url'] = $d->{$column} ? asset('storage/' . $d->{$column}) : null;
-        }
-        return $base;
-    }
-
     private function validateData(Request $request): array
     {
-        $rules = [
+        return $request->validate([
             'tanggal_temuan' => 'nullable|date',
             'badge_so' => 'nullable|string|max:50',
-            'nama_so' => 'nullable|string|max:255',
+            'nama_so' => 'required|string|max:255',
             'area_kerja' => 'nullable|string|max:150',
             'unit_kerja' => 'nullable|string|max:150',
             'item_temuan' => 'nullable|string',
-            'jenis_penyebab' => 'nullable|string|max:50|in:Unsafe Action,Unsafe Condition',
+            'jenis_penyebab' => 'nullable|string|in:Unsafe Action,Unsafe Condition',
             'deskripsi_temuan' => 'nullable|string',
             'rekomendasi_perbaikan' => 'nullable|string',
-            'status_temuan' => 'nullable|string|max:20|in:OPEN,CLOSE',
-            'keputusan' => 'nullable|string|in:PENDING,APPROVE,REJECT', // BARU
-
-        ];
-
-        foreach ($this->fileFields as $formField => [$column, $folder]) {
-            $rules[$formField] = $formField === 'foto_temuan'
-                ? 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:4096'
-                : 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx|max:5120';
-        }
-
-        return $request->validate($rules);
+            'status_temuan' => 'nullable|string|in:OPEN,CLOSE',
+            'keputusan' => 'nullable|string|in:PENDING,APPROVE,REJECT',
+            'foto_temuan' => 'nullable|file|image|max:4096',
+            'dokumen_laporan' => 'nullable|file|max:5120',
+        ]);
     }
 }

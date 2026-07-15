@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('deskripsi_temuan')->nullable();
             $table->text('rekomendasi_perbaikan')->nullable();
             $table->string('status_temuan', 20)->default('OPEN'); // OPEN / CLOSE
+            $table->string('keputusan', 20)->default('PENDING'); // PENDING / APPROVE / REJECT
 
             $table->string('foto_temuan_path')->nullable();
             $table->string('dokumen_laporan_path')->nullable();

@@ -1624,6 +1624,32 @@
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
+    <div class="modal-overlay" id="confirmModalOverlay" onclick="closeConfirmModalOutside(event)">
+        <div class="modal-box" style="max-width:430px;" onclick="event.stopPropagation()">
+
+            <div class="modal-title" id="confirmModalTitle">
+                Konfirmasi
+            </div>
+
+            <div id="confirmModalMessage"
+                style="margin-top:12px;
+                   color:#64748B;
+                   font-size:14px;
+                   line-height:1.7;">
+            </div>
+
+            <div class="modal-actions" style="margin-top:20px;">
+                <button class="btn-modal-cancel" onclick="closeConfirmModal()">
+                    Batal
+                </button>
+
+                <button class="btn-modal-confirm" id="confirmModalButton">
+                    Ya
+                </button>
+            </div>
+
+        </div>
+    </div>
     <script>
         const KEJADIAN_DATA_ENDPOINT = "{{ route('lpi-kejadian.data') }}";
         const KEJADIAN_STORE_ENDPOINT = "{{ route('lpi-kejadian.store') }}";
@@ -1639,12 +1665,12 @@
             page: 1,
             per_page: 10
         };
+
         let searchDebounce = null,
-            currentEditKejadianId = null;
-        let currentDetailKejadian = null; // objek kejadian yang sedang dibuka detail/korban-nya
-        let currentEditKorbanId = null;
-        let karyawanPickerDebounce = null;
-        let activeKaryawanPickerTarget = null; // 'korban' | 'saksi'
+            soListLoaded = false,
+            tahunListLoaded = false,
+            currentEditId = null,
+            confirmAction = null;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1685,6 +1711,50 @@
                 setTimeout(() => toast.remove(), 250);
             }, 4000);
         }
+
+        function openConfirmModal(title, message, callback) {
+
+            document.getElementById('confirmModalTitle').textContent = title;
+
+            document.getElementById('confirmModalMessage').textContent = message;
+
+            confirmAction = callback;
+
+            document.getElementById('confirmModalOverlay')
+                .classList.add('open');
+
+        }
+
+        function closeConfirmModal() {
+
+            document.getElementById('confirmModalOverlay')
+                .classList.remove('open');
+
+            confirmAction = null;
+
+        }
+
+        function closeConfirmModalOutside(e) {
+
+            if (e.target.id === 'confirmModalOverlay')
+                closeConfirmModal();
+
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            document
+                .getElementById('confirmModalButton')
+                .addEventListener('click', async () => {
+
+                    if (confirmAction)
+                        await confirmAction();
+
+                    closeConfirmModal();
+
+                });
+
+        });
 
         function autoFillHari() {
             const val = document.getElementById('kTanggal_insiden').value;
@@ -1853,7 +1923,8 @@
             });
 
             KEJADIAN_FILE_FIELDS.forEach(f => {
-                const inputId = 'k' + f.split('_').map((segment, index) => index === 0 ? segment.charAt(0).toUpperCase() + segment.slice(1) : segment).join('_');
+                const inputId = 'k' + f.split('_').map((segment, index) => index === 0 ? segment.charAt(0)
+                    .toUpperCase() + segment.slice(1) : segment).join('_');
                 const input = document.getElementById(inputId);
                 if (input) {
                     input.value = '';
@@ -1891,8 +1962,14 @@
             });
             KEJADIAN_FILE_FIELDS.forEach(f => {
                 const inputId = 'k' + f.replace(/(^|_)([a-z])/g, (_, p1, p2) => p2.toUpperCase());
-                const file = document.getElementById(inputId).files[0];
-                if (file) formData.append(f, file);
+
+                console.log(f, inputId, document.getElementById(inputId));
+
+                const input = document.getElementById(inputId);
+
+                if (input && input.files.length > 0) {
+                    formData.append(f, input.files[0]);
+                }
             });
 
             if (currentEditKejadianId) formData.append('_method', 'PUT');
@@ -1981,7 +2058,7 @@
             ];
             document.getElementById('detailWaktuGrid').innerHTML = waktu.map(f =>
                 `<div class="detail-field${f.span ? ' span-' + f.span : ''}"><label>${f.label}</label><div class="detail-value">${escapeHtml(f.value)}</div></div>`
-                ).join('');
+            ).join('');
 
             const evidenceLinks = ['evidence_1_url', 'evidence_2_url', 'evidence_3_url', 'evidence_4_url', 'evidence_5_url',
                     'lampiran_dokumen_url'
@@ -2499,7 +2576,7 @@
                     `<div class="picker-item" style="color:#94A3B8;">Tidak ada karyawan ditemukan.</div>` :
                     json.data.map(t =>
                         `<div class="picker-item" onclick='pilihKaryawan("${target}", ${JSON.stringify(t).replace(/'/g, "&#39;")})'><div class="picker-item-name">${escapeHtml(t.nama)}</div><div class="picker-item-sub">${escapeHtml(t.badge)} · ${escapeHtml(t.unit_kerja)}</div></div>`
-                        ).join('');
+                    ).join('');
                 dropdown.classList.add('open');
             } catch (e) {
                 dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Monitoring Pengawas — PT. Fokus Jasa Mitra</title>
+    <title>Monitoring Laporan Perseorangan — Tim Pengawas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -51,6 +51,393 @@
         ::-webkit-scrollbar-thumb {
             background: rgba(45, 75, 158, 0.25);
             border-radius: 4px;
+        }
+
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        #page-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 20px 28px;
+        }
+
+        .page-hdr {
+            margin-bottom: 16px;
+        }
+
+        .page-hdr-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pg-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .pg-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            color: #1A1D2E;
+            letter-spacing: 0.02em;
+            line-height: 1;
+        }
+
+        .pg-title span {
+            color: #2D4B9E;
+        }
+
+        .pg-sub {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #D0021B;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.35
+            }
+        }
+
+        .section-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 16px;
+            min-width: 0;
+        }
+
+        /* Letterhead style banner (mengacu pada layout laporan) */
+        .report-banner {
+            background: linear-gradient(135deg, var(--dark), #232742);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .report-banner-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.03em;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .report-banner-sub {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.55);
+            font-weight: 600;
+            margin-top: 2px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .filter-select {
+            height: 40px;
+            width: 100%;
+            padding: 0 34px 0 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1A1D2E;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: border 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: #2D4B9E;
+            outline: none;
+        }
+
+        .info-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 0;
+            margin-bottom: 14px;
+        }
+
+        .info-cell {
+            padding: 14px 18px;
+            border-right: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .info-cell:last-child {
+            border-right: none;
+        }
+
+        .info-cell-label {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .info-cell-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 0.01em;
+            color: #1A1D2E;
+            line-height: 1.15;
+        }
+
+        .info-cell.accent-blue .info-cell-value {
+            color: #2D4B9E;
+        }
+
+        .section-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 17px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+        }
+
+        .stat-note {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .rtable-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .rtable {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+        }
+
+        .rtable th {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #94A3B8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0 8px 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+        }
+
+        .rtable th.center,
+        .rtable td.center {
+            text-align: center;
+        }
+
+        .rtable td {
+            font-size: 12px;
+            color: #1A1D2E;
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            vertical-align: middle;
+        }
+
+        .rtable tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rtable tr:hover td {
+            background: #F8F9FF;
+        }
+
+        .kode-chip {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(45, 75, 158, 0.09);
+            color: #2D4B9E;
+            font-size: 10.5px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 10.5px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .sp-green {
+            background: rgba(26, 122, 60, 0.09);
+            color: #1A7A3C;
+        }
+
+        .sp-amber {
+            background: rgba(217, 119, 6, 0.09);
+            color: #D97706;
+        }
+
+        .sp-red {
+            background: rgba(208, 2, 27, 0.08);
+            color: #D0021B;
+        }
+
+        .sp-gray {
+            background: rgba(100, 116, 139, 0.09);
+            color: #64748B;
+        }
+
+        .skeleton-bar {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #F0F2FA 25%, #E5E9F5 37%, #F0F2FA 63%);
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        .empty-state,
+        .error-state {
+            text-align: center;
+            padding: 48px 12px;
+            color: #94A3B8;
+        }
+
+        .empty-state svg,
+        .error-state svg {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 10px;
+            color: #CBD5E1;
+        }
+
+        .empty-state-title,
+        .error-state-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748B;
+            margin-bottom: 3px;
+        }
+
+        .empty-state-sub,
+        .error-state-sub {
+            font-size: 11.5px;
+        }
+
+        @media (max-width: 780px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-strip {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .info-cell:nth-child(2) {
+                border-right: none;
+            }
+
+            .info-cell:last-child {
+                grid-column: span 2;
+                border-top: 1px solid rgba(0, 0, 0, 0.06);
+            }
+        }
+
+        @media (max-width: 640px) {
+            #page-content {
+                padding: 14px 14px 22px;
+            }
+
+            .pg-title {
+                font-size: 24px;
+            }
+
+            .report-banner-title {
+                font-size: 16px;
+            }
+
+            .info-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .info-cell {
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            }
+
+            .info-cell:last-child {
+                grid-column: span 1;
+                border-top: none;
+            }
         }
 
         /* TOPBAR */
@@ -169,744 +556,162 @@
             height: 20px;
             background: rgba(0, 0, 0, 0.07);
         }
-
-        /* CONTENT */
-        #main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        #page-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 20px 28px;
-        }
-
-        /* PAGE HEADER */
-        .page-hdr {
-            margin-bottom: 16px;
-        }
-
-        .page-hdr-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .pg-eyebrow {
-            font-size: 10px;
-            font-weight: 700;
-            color: #94A3B8;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .pg-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 30px;
-            color: #1A1D2E;
-            letter-spacing: 0.02em;
-            line-height: 1;
-        }
-
-        .pg-title span {
-            color: #2D4B9E;
-        }
-
-        .pg-sub {
-            font-size: 12px;
-            color: #94A3B8;
-            margin-top: 2px;
-        }
-
-        .pg-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-outline {
-            padding: 6px 14px;
-            border-radius: 8px;
-            border: 1px solid rgba(45, 75, 158, 0.25);
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #2D4B9E;
-            background: #fff;
-            cursor: pointer;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .btn-outline:hover {
-            background: #F0F4FF;
-        }
-
-        .btn-primary {
-            padding: 6px 14px;
-            border-radius: 8px;
-            border: none;
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #fff;
-            background: #2D4B9E;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            background: #1A3C8A;
-        }
-
-        .pulse-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #D0021B;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: 0.35
-            }
-        }
-
-        .section-card {
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            padding: 16px;
-            min-width: 0;
-        }
-
-        /* ══════ FILTER BAR ══════ */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .filter-search {
-            flex: 1;
-            min-width: 220px;
-            position: relative;
-        }
-
-        .filter-search input {
-            width: 100%;
-            height: 36px;
-            padding: 0 12px 0 34px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            border-radius: 8px;
-            background: #fff;
-            font-size: 12.5px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #1A1D2E;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        .filter-search input:focus {
-            border-color: #2D4B9E;
-        }
-
-        .filter-search .search-icon {
-            left: 12px;
-        }
-
-        .filter-select {
-            height: 36px;
-            padding: 0 30px 0 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 10px center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #1A1D2E;
-            cursor: pointer;
-            min-width: 150px;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .filter-select:focus {
-            border-color: #2D4B9E;
-            outline: none;
-        }
-
-        .filter-reset {
-            height: 36px;
-            padding: 0 14px;
-        }
-
-        .data-summary {
-            font-size: 11px;
-            color: #94A3B8;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .data-summary strong {
-            color: #1A1D2E;
-        }
-
-        /* ══════ TABLE ══════ */
-        .rtable-wrap {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .rtable {
-            width: 100%;
-            min-width: 760px;
-            border-collapse: collapse;
-        }
-
-        .rtable th {
-            font-size: 9.5px;
-            font-weight: 800;
-            color: #94A3B8;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 0 8px 8px;
-            text-align: left;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            white-space: nowrap;
-        }
-
-        .rtable td {
-            font-size: 12px;
-            color: #1A1D2E;
-            padding: 10px 8px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-            vertical-align: middle;
-        }
-
-        .rtable tr:last-child td {
-            border-bottom: none;
-        }
-
-        .rtable tr:hover td {
-            background: #F8F9FF;
-        }
-
-        .td-name-cell {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            white-space: nowrap;
-        }
-
-        .td-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #E0E7FF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: #2D4B9E;
-            flex-shrink: 0;
-        }
-
-        .td-name-main {
-            font-weight: 700;
-            color: #1A1D2E;
-            line-height: 1.3;
-        }
-
-        .td-name-sub {
-            font-size: 10.5px;
-            color: #94A3B8;
-            font-weight: 600;
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .sp-green {
-            background: rgba(26, 122, 60, 0.09);
-            color: #1A7A3C;
-        }
-
-        .sp-amber {
-            background: rgba(217, 119, 6, 0.09);
-            color: #D97706;
-        }
-
-        .sp-red {
-            background: rgba(208, 2, 27, 0.08);
-            color: #D0021B;
-        }
-
-        .sp-blue {
-            background: rgba(45, 75, 158, 0.09);
-            color: #2D4B9E;
-        }
-
-        .sp-gray {
-            background: rgba(100, 116, 139, 0.09);
-            color: #64748B;
-        }
-
-        .empty-state,
-        .error-state {
-            text-align: center;
-            padding: 48px 12px;
-            color: #94A3B8;
-        }
-
-        .empty-state svg,
-        .error-state svg {
-            width: 32px;
-            height: 32px;
-            margin: 0 auto 10px;
-            color: #CBD5E1;
-        }
-
-        .empty-state-title,
-        .error-state-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748B;
-            margin-bottom: 3px;
-        }
-
-        .empty-state-sub,
-        .error-state-sub {
-            font-size: 11.5px;
-        }
-
-        .skeleton-row td {
-            padding: 12px 8px;
-        }
-
-        .skeleton-bar {
-            height: 12px;
-            border-radius: 6px;
-            background: linear-gradient(90deg, #F0F2FA 25%, #E5E9F5 37%, #F0F2FA 63%);
-            background-size: 400% 100%;
-            animation: shimmer 1.4s ease infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0 50%;
-            }
-        }
-
-        /* ══════ PAGINATION ══════ */
-        .pagination-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .pagination-info {
-            font-size: 11px;
-            color: #94A3B8;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .per-page-select {
-            height: 28px;
-            padding: 0 24px 0 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 6px center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #1A1D2E;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .pagination-pages {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            min-width: 28px;
-            height: 28px;
-            padding: 0 6px;
-            border-radius: 7px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748B;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .page-btn:hover:not(:disabled):not(.active) {
-            background: #F0F4FF;
-            border-color: rgba(45, 75, 158, 0.25);
-        }
-
-        .page-btn.active {
-            background: #2D4B9E;
-            border-color: #2D4B9E;
-            color: #fff;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .page-ellipsis {
-            font-size: 11px;
-            color: #94A3B8;
-            padding: 0 2px;
-        }
-
-        /* ══════ RESPONSIVE ══════ */
-        .hamburger-btn {
-            display: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: #F8F9FF;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #1A1D2E;
-            flex-shrink: 0;
-        }
-
-        #sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 17, 26, 0.45);
-            z-index: 40;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        #sidebar-overlay.open {
-            display: block;
-            opacity: 1;
-        }
-
-        .sb-close-btn {
-            display: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            align-items: center;
-            justify-content: center;
-            background: #F0F2FA;
-            color: #64748B;
-            cursor: pointer;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 1024px) {
-            #sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                z-index: 50;
-                transform: translateX(-100%);
-                transition: transform 0.25s ease;
-                box-shadow: 12px 0 32px rgba(0, 0, 0, 0.18);
-            }
-
-            #sidebar.open {
-                transform: translateX(0);
-            }
-
-            .hamburger-btn {
-                display: flex;
-            }
-
-            .sb-close-btn {
-                display: flex;
-            }
-
-            .search-box {
-                max-width: none;
-            }
-        }
-
-        @media (max-width: 640px) {
-            #topbar {
-                padding: 0 12px;
-                gap: 8px;
-            }
-
-            .tb-name {
-                display: none;
-            }
-
-            .tb-caret {
-                display: none;
-            }
-
-            #page-content {
-                padding: 14px 14px 22px;
-            }
-
-            .pg-title {
-                font-size: 24px;
-            }
-
-            .page-hdr-top {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-select {
-                min-width: 0;
-                flex: 1 1 46%;
-            }
-
-            .pagination-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .pagination-pages {
-                justify-content: center;
-            }
-        }
     </style>
 </head>
 
 <body class="flex h-screen overflow-hidden">
 
-    <!-- ══════ SIDEBAR ══════ -->
     @include('partials.sidebar')
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- ══════ MAIN ══════ -->
     <div id="main-content">
+        @include('partials.topbar')
 
-        <!-- TOPBAR -->
-        <div id="topbar">
-            <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
-                <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-            <div class="search-box" style="visibility:hidden;">
-                <input type="text" tabindex="-1" />
-            </div>
-            <div style="flex:1"></div>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <div class="tb-badge" style="position:relative;">
-                    <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                    <span class="notif-dot"></span>
-                </div>
-                <div class="tb-divider"></div>
-                <div class="tb-user">
-                    <div class="tb-avatar">AR</div>
-                    <span class="tb-name">Ahmad R.</span>
-                    <svg class="tb-caret" style="width:12px;height:12px" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAGE CONTENT -->
         <div id="page-content">
-
-            <!-- PAGE HEADER -->
             <div class="page-hdr">
                 <div class="page-hdr-top">
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Database Tenaga · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Monitoring Laporan · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">DATA <span>TENAGA KERJA</span></div>
-                        <div class="pg-sub">Cari, filter, dan kelola data tenaga kerja yang terintegrasi dengan
-                            sistem ERP.</div>
-                    </div>
-                    <div class="pg-actions">
-                        <button class="btn-outline" onclick="loadData()">
-                            <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                            Muat Ulang
-                        </button>
+                        <div class="pg-title">MONITORING <span>PENGAWAS</span></div>
+                        <div class="pg-sub">Rekap laporan KPI yang ditemukan per Pengawas, berdasarkan jenis
+                            laporan dan periode.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- FILTER BAR -->
+            <!-- ══════ LETTERHEAD ══════ -->
+            <div class="report-banner">
+                <div class="report-banner-title">MONITORING LAPORAN PERSEORANGAN — TIM PENGAWAS</div>
+                <div class="report-banner-sub">PT. Fokus Jasa Mitra</div>
+            </div>
+
+            <!-- ══════ FILTER: NAMA & JENIS LAPORAN ══════ -->
             <div class="section-card" style="margin-bottom:14px;">
-                <div class="filter-bar">
-                    <div class="filter-search">
-                        <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="Cari berdasarkan nama atau NIK..."
-                            oninput="onSearchInput()" />
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Pilih Nama Pengawas</label>
+                        <select id="filterPengawas" class="filter-select" onchange="onFilterChange()">
+                            <option value="">Memuat daftar pengawas...</option>
+                        </select>
                     </div>
-
-                    <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status</option>
-                    </select>
-
-                    <select id="filterDepartemen" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Departemen</option>
-                    </select>
-
-                    <select id="filterJenisKelamin" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Jenis Kelamin</option>
-                    </select>
-
-                    <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
+                    <div class="filter-group">
+                        <label class="filter-label">Jenis Laporan</label>
+                        <select id="filterJenisLaporan" class="filter-select" onchange="onFilterChange()">
+                            <option value="">Semua Jenis</option>
+                            <option value="[C.1] Laporan Inspeksi Peralatan">[C.1] Laporan Inspeksi Peralatan</option>
+                            <option value="[C.2] Laporan Temuan UA/UC">[C.2] Laporan Temuan UA/UC</option>
+                            <option value="[C.4] Laporan OBSERI">[C.4] Laporan OBSERI</option>
+                            <option value="[C.5] Laporan Safety Permit">[C.5] Laporan Safety Permit</option>
+                            <option value="[D.1] Laporan Nearmiss">[D.1] Laporan Nearmiss</option>
+                            <option value="[D.2] Pelaporan Safety Briefing">[D.2] Pelaporan Safety Briefing</option>
+                            <option value="[D.3] Laporan Reward/Punishment">[D.3] Laporan Reward/Punishment</option>
+                            <option value="[D.4] Laporan Sosialisasi Keselamatan Kerja">[D.4] Laporan Sosialisasi
+                                Keselamatan Kerja</option>
+                            <option value="[E.1] Laporan DCU">[E.1] Laporan DCU</option>
+                            <option value="[E.2] Laporan Bugar Sehat">[E.2] Laporan Bugar Sehat</option>
+                            <option value="[E.4] Laporan Evaluasi Fatigue">[E.4] Laporan Evaluasi Fatigue</option>
+                            <option value="[E.5] Laporan Sosialisasi Kesehatan Kerja">[E.5] Laporan Sosialisasi
+                                Kesehatan Kerja</option>
+                            <option value="[E.6] Laporan Inspeksi Kotak P3K">[E.6] Laporan Inspeksi Kotak P3K
+                            </option>
+                        </select>
+                    </div>
                 </div>
+            </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data tenaga kerja...</div>
+            <!-- ══════ FILTER PERIODE + TOTAL DITEMUKAN ══════ -->
+            <div class="section-card info-strip">
+                <div class="info-cell">
+                    <div class="info-cell-label">Tahun</div>
+                    <select id="filterTahun" class="filter-select"
+                        style="height:34px;font-size:14px;padding:0 28px 0 0;background-position:right 2px center;border:none;"
+                        onchange="onFilterChange()"></select>
+                </div>
+                <div class="info-cell">
+                    <div class="info-cell-label">Bulan</div>
+                    <select id="filterBulan" class="filter-select"
+                        style="height:34px;font-size:14px;padding:0 28px 0 0;background-position:right 2px center;border:none;"
+                        onchange="onFilterChange()"></select>
+                </div>
+                <div class="info-cell accent-blue">
+                    <div class="info-cell-label">Total Laporan Ditemukan</div>
+                    <div class="info-cell-value" id="statTotalDitemukan">—</div>
+                </div>
+            </div>
 
-                <!-- TABLE -->
-                {{-- <div class="rtable-wrap">
+            <!-- ══════ TABEL LAPORAN ══════ -->
+            <div class="section-card" style="margin-top:14px;">
+                <div class="section-title-row">
+                    <div class="section-title">Daftar Laporan Ditemukan</div>
+                    <span id="tableCount" class="stat-note">—</span>
+                </div>
+                <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th>Nama / NIK</th>
-                                <th>Jabatan</th>
-                                <th>Departemen</th>
-                                <th>Jenis Kelamin</th>
-                                <th>Status</th>
-                                <th>Tanggal Masuk</th>
+                                <th style="width:34px;">No</th>
+                                <th>Tanggal Pelaksanaan</th>
+                                <th>Kode KPI</th>
+                                <th>Jenis Aktifitas KPI</th>
+                                <th class="center">Status Keputusan</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <tr class="skeleton-row">
-                                <td><div class="skeleton-bar" style="width:160px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:100px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:110px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:60px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:70px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:90px;"></div></td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td><div class="skeleton-bar" style="width:160px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:100px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:110px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:60px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:70px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:90px;"></div></td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td><div class="skeleton-bar" style="width:160px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:100px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:110px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:60px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:70px;"></div></td>
-                                <td><div class="skeleton-bar" style="width:90px;"></div></td>
+                            <tr>
+                                <td colspan="5">
+                                    <div class="skeleton-bar" style="width:100%;height:40px;"></div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
-                </div> --}}
-
-                <!-- PAGINATION -->
-                <div class="pagination-bar">
-                    <div class="pagination-info">
-                        <span id="paginationText">—</span>
-                        <select id="perPageSelect" class="per-page-select" onchange="onPerPageChange()">
-                            <option value="10">10 / halaman</option>
-                            <option value="25">25 / halaman</option>
-                            <option value="50">50 / halaman</option>
-                        </select>
-                    </div>
-                    <div class="pagination-pages" id="paginationPages"></div>
                 </div>
             </div>
 
         </div>
     </div>
 
-    {{-- <script>
-        // ══════ CONFIG ══════
-        const API_ENDPOINT = "{{ route('tenaga.api') }}";
+    <script>
+        // ══════════════════════════════════════════════════════════════════
+        // KONTRAK BACKEND (sesuaikan dengan route Laravel di aplikasi Anda)
+        //
+        // 1) LIST_PENGAWAS_ENDPOINT  GET
+        //    → [ { id_api: '123', label: 'K.201340-H. SUNANDAR' }, ... ]
+        //    Diambil dari PengawasIntraUser (id_api, username sebagai badge,
+        //    nama_lengkap), contoh query di controller:
+        //      PengawasIntraUser::query()
+        //          ->where('is_active', true)
+        //          ->orderBy('nama_lengkap')
+        //          ->get(['id_api', 'username', 'nama_lengkap'])
+        //          ->map(fn ($p) => [
+        //              'id_api' => $p->id_api,
+        //              'label'  => strtoupper($p->username . '-' . $p->nama_lengkap),
+        //          ]);
+        //
+        // 2) DATA_ENDPOINT  GET  ?pengawas_id=&jenis_laporan=&tahun=&bulan=
+        //    → { total_ditemukan: 1,
+        //        items: [ { no, tanggal_pelaksanaan, kode_kpi,
+        //                   jenis_aktifitas_kpi, status_keputusan } , ... ] }
+        //    pengawas_id = id_api dari pengawas_intra_users (pengguna_id pada
+        //    pengawas_pekerjaans), dipakai untuk menelusuri seluruh tenaga
+        //    binaan pengawas tsb lalu mengumpulkan laporan KPI mereka.
+        // ══════════════════════════════════════════════════════════════════
+        const LIST_PENGAWAS_ENDPOINT = "{{ route('monitoring-pengawas.list-pengawas') }}";
+        const DATA_ENDPOINT = "{{ route('monitoring-pengawas.data') }}";
+
+        const BULAN_LIST = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
 
         const state = {
-            search: '',
-            status: '',
-            departemen: '',
-            jenis_kelamin: '',
-            page: 1,
-            per_page: 10,
+            pengawas_id: '{{ $defaultPengawasId ?? '' }}',
+            jenis_laporan: '',
+            tahun: new Date().getFullYear(),
+            bulan: new Date().getMonth() + 1,
         };
-
-        let searchDebounce = null;
-        let filterOptionsLoaded = false;
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-overlay').classList.toggle('open');
-        }
-
-        function initials(name) {
-            if (!name || name === '-') return '—';
-            const parts = name.trim().split(/\s+/);
-            return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
-        }
 
         function escapeHtml(str) {
             const div = document.createElement('div');
@@ -914,213 +719,152 @@
             return div.innerHTML;
         }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        function fmtDate(d) {
+            if (!d) return '-';
+            const dt = new Date(d);
+            return isNaN(dt.getTime()) ? d : dt.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
         }
 
         function statusPillClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s.includes('aktif') && !s.includes('non')) return 'sp-green';
-            if (s.includes('non') || s.includes('resign') || s.includes('berhenti')) return 'sp-red';
-            if (s.includes('cuti') || s.includes('kontrak')) return 'sp-amber';
-            if (s === '-' || s === '') return 'sp-gray';
-            return 'sp-blue';
+            const s = (status || '').toUpperCase();
+            if (s === 'APPROVE') return 'sp-green';
+            if (s === 'REJECT') return 'sp-red';
+            if (s === 'PENDING') return 'sp-amber';
+            return 'sp-gray';
         }
 
-        function onSearchInput() {
-            clearTimeout(searchDebounce);
-            searchDebounce = setTimeout(() => {
-                state.search = document.getElementById('searchInput').value.trim();
-                state.page = 1;
-                loadData();
-            }, 350);
+        function initYearOptions() {
+            const select = document.getElementById('filterTahun');
+            const current = new Date().getFullYear();
+            select.innerHTML = '';
+            for (let y = current + 1; y >= current - 3; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                if (y === state.tahun) opt.selected = true;
+                select.appendChild(opt);
+            }
+        }
+
+        function initMonthOptions() {
+            const select = document.getElementById('filterBulan');
+            select.innerHTML = '';
+            BULAN_LIST.forEach((nama, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx + 1;
+                opt.textContent = nama;
+                if (idx + 1 === state.bulan) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        async function loadListPengawas() {
+            const select = document.getElementById('filterPengawas');
+            try {
+                const res = await fetch(LIST_PENGAWAS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!res.ok) throw new Error('Gagal memuat daftar pengawas');
+                const list = await res.json();
+                if (!list || list.length === 0) {
+                    select.innerHTML = '<option value="">Belum ada pengawas terdaftar</option>';
+                    return;
+                }
+                select.innerHTML = list.map(p =>
+                    `<option value="${p.id_api}">${escapeHtml(p.label)}</option>`
+                ).join('');
+                if (!state.pengawas_id) state.pengawas_id = list[0].id_api;
+                select.value = state.pengawas_id;
+            } catch (e) {
+                select.innerHTML = '<option value="">Gagal memuat daftar pengawas</option>';
+            }
         }
 
         function onFilterChange() {
-            state.status = document.getElementById('filterStatus').value;
-            state.departemen = document.getElementById('filterDepartemen').value;
-            state.jenis_kelamin = document.getElementById('filterJenisKelamin').value;
-            state.page = 1;
+            state.pengawas_id = document.getElementById('filterPengawas').value;
+            state.jenis_laporan = document.getElementById('filterJenisLaporan').value;
+            state.tahun = parseInt(document.getElementById('filterTahun').value, 10);
+            state.bulan = parseInt(document.getElementById('filterBulan').value, 10);
             loadData();
         }
 
-        function onPerPageChange() {
-            state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
-            state.page = 1;
-            loadData();
+        function showSkeleton() {
+            document.getElementById('tableBody').innerHTML =
+                `<tr><td colspan="5"><div class="skeleton-bar" style="width:100%;height:40px;"></div></td></tr>`;
         }
 
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterDepartemen').value = '';
-            document.getElementById('filterJenisKelamin').value = '';
-            state.search = '';
-            state.status = '';
-            state.departemen = '';
-            state.jenis_kelamin = '';
-            state.page = 1;
-            loadData();
+        function showError(message) {
+            document.getElementById('tableBody').innerHTML =
+                `<tr><td colspan="5"><div class="error-state"><div class="error-state-title">Gagal memuat data</div><div class="error-state-sub">${escapeHtml(message)}</div></div></td></tr>`;
         }
 
-        function goToPage(page) {
-            state.page = page;
-            loadData();
-            document.getElementById('page-content').scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
-
-            const build = (selectId, values) => {
-                const select = document.getElementById(selectId);
-                const current = select.value;
-                values.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    select.appendChild(opt);
-                });
-                select.value = current;
-            };
-
-            build('filterStatus', options.status || []);
-            build('filterDepartemen', options.departemen || []);
-            build('filterJenisKelamin', options.jenis_kelamin || []);
-            filterOptionsLoaded = true;
-        }
-
-        function renderTable(rows) {
+        function renderTable(items) {
             const tbody = document.getElementById('tableBody');
+            document.getElementById('tableCount').textContent = items?.length ?
+                `${items.length} laporan` : '';
 
-            if (!rows || rows.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                                <div class="empty-state-title">Data tidak ditemukan</div>
-                                <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang
-                                    digunakan.</div>
-                            </div>
-                        </td>
-                    </tr>`;
+            if (!items || items.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="5"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div><div class="empty-state-sub">Belum ada laporan untuk filter yang dipilih.</div></div></td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = rows.map(row => `
+            tbody.innerHTML = items.map(item => `
                 <tr>
-                    <td>
-                        <div class="td-name-cell">
-                            <div class="td-avatar">${escapeHtml(initials(row.nama))}</div>
-                            <div>
-                                <div class="td-name-main">${escapeHtml(row.nama)}</div>
-                                <div class="td-name-sub">${escapeHtml(row.nik)}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${escapeHtml(row.jabatan)}</td>
-                    <td>${escapeHtml(row.departemen)}</td>
-                    <td>${escapeHtml(row.jenis_kelamin)}</td>
-                    <td><span class="status-pill ${statusPillClass(row.status)}">${escapeHtml(row.status)}</span></td>
-                    <td style="color:#94A3B8;">${formatDate(row.tanggal_masuk)}</td>
+                    <td>${item.no}</td>
+                    <td>${fmtDate(item.tanggal_pelaksanaan)}</td>
+                    <td><span class="kode-chip">${escapeHtml(item.kode_kpi)}</span></td>
+                    <td>${escapeHtml(item.jenis_aktifitas_kpi)}</td>
+                    <td class="center"><span class="status-pill ${statusPillClass(item.status_keputusan)}">${escapeHtml(item.status_keputusan)}</span></td>
                 </tr>
             `).join('');
         }
 
-        function renderError(message) {
-            document.getElementById('tableBody').innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="error-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />
-                            </svg>
-                            <div class="error-state-title">Gagal memuat data</div>
-                            <div class="error-state-sub">${escapeHtml(message)}</div>
-                        </div>
-                    </td>
-                </tr>`;
-            document.getElementById('paginationText').textContent = '—';
-            document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data tenaga kerja.';
-        }
-
-        function renderPagination(meta) {
-            document.getElementById('paginationText').textContent =
-                meta.total > 0
-                    ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data`
-                    : 'Tidak ada data';
-
-            document.getElementById('dataSummary').innerHTML =
-                `<strong>${meta.total}</strong> tenaga kerja ditemukan`;
-
-            const container = document.getElementById('paginationPages');
-            const current = meta.current_page;
-            const last = meta.last_page;
-
-            let pages = [];
-            const addPage = p => pages.push(p);
-            const addEllipsis = () => pages.push('...');
-
-            addPage(1);
-            if (current > 3) addEllipsis();
-            for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
-            if (current < last - 2) addEllipsis();
-            if (last > 1) addPage(last);
-
-            pages = [...new Set(pages)];
-
-            let html = `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
-            pages.forEach(p => {
-                if (p === '...') {
-                    html += `<span class="page-ellipsis">…</span>`;
-                } else {
-                    html += `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-                }
-            });
-            html += `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-
-            container.innerHTML = html;
-        }
-
         async function loadData() {
+            if (!state.pengawas_id) return;
+            showSkeleton();
+
             const params = new URLSearchParams();
-            if (state.search) params.set('search', state.search);
-            if (state.status) params.set('status', state.status);
-            if (state.departemen) params.set('departemen', state.departemen);
-            if (state.jenis_kelamin) params.set('jenis_kelamin', state.jenis_kelamin);
-            params.set('page', state.page);
-            params.set('per_page', state.per_page);
+            params.set('pengawas_id', state.pengawas_id);
+            if (state.jenis_laporan) params.set('jenis_laporan', state.jenis_laporan);
+            params.set('tahun', state.tahun);
+            params.set('bulan', state.bulan);
 
             try {
-                const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
-                    headers: { 'Accept': 'application/json' },
+                const res = await fetch(`${DATA_ENDPOINT}?${params.toString()}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
-
-                if (!res.ok) {
-                    const errJson = await res.json().catch(() => null);
-                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
-                }
-
+                if (!res.ok) throw new Error((await res.json().catch(() => null))?.message || `Status ${res.status}`);
                 const json = await res.json();
-                renderTable(json.data);
-                renderPagination(json.meta);
-                populateFilterOptions(json.filter_options);
+
+                document.getElementById('statTotalDitemukan').textContent = json.total_ditemukan ?? 0;
+                renderTable(json.items);
             } catch (e) {
-                renderError(e.message || 'Terjadi kesalahan tak terduga.');
+                document.getElementById('statTotalDitemukan').textContent = '-';
+                showError(e.message || 'Terjadi kesalahan saat memuat data.');
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
-    </script> --}}
+        function toggleSidebar() {
+            document.getElementById('sidebar')?.classList.toggle('open');
+            document.getElementById('sidebar-overlay')?.classList.toggle('open');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initYearOptions();
+            initMonthOptions();
+            await loadListPengawas();
+            loadData();
+        });
+    </script>
 </body>
 
 </html>

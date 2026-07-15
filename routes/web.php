@@ -15,6 +15,7 @@ use App\Http\Controllers\LpiKorbanController;
 use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
+use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
 use App\Http\Controllers\SafetyOfficerController;
@@ -113,16 +114,49 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/data-reject-monitoring/cari-pelapor', [DataRejectMonitoringController::class, 'cariPelapor'])->name('data-reject-monitoring.cari-pelapor');
 
     // Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
-    Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
-    Route::get('dashboard-individu', [MonitoringkpiController::class, 'indexDashboardIndividu'])->name('dashboard-individu.index');
-    Route::get('monitoring-pengawas', [MonitoringkpiController::class, 'indexMonitoringPengawas'])->name('monitoring-pengawas.index');
+    // Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
+    Route::prefix('monitoring-laporan-so')->name('monitoring-laporan-so.')->group(function () {
+        Route::get('/', [MonitoringLaporanSoController::class, 'index'])->name('index');
+        Route::get('/data', [MonitoringLaporanSoController::class, 'data'])->name('data');
+        Route::post('/', [MonitoringLaporanSoController::class, 'store'])->name('store');
+        Route::put('/{dataUnsafe}', [MonitoringLaporanSoController::class, 'update'])->name('update');
+        Route::patch('/{dataUnsafe}/status', [MonitoringLaporanSoController::class, 'updateStatus'])->name('status');
+        Route::patch('/{dataUnsafe}/keputusan', [MonitoringLaporanSoController::class, 'updateKeputusan'])->name('keputusan');
+        Route::delete('/{dataUnsafe}', [MonitoringLaporanSoController::class, 'destroy'])->name('destroy');
+        Route::get('/daftar-so', [MonitoringLaporanSoController::class, 'daftarSafetyOfficer'])->name('daftar-so');
+        Route::get('/cari-so', [MonitoringLaporanSoController::class, 'cariSafetyOfficer'])->name('cari-so');
+    });
+
+    Route::prefix('dashboard-individu')
+        ->name('dashboard-individu.')
+        ->group(function () {
+
+            Route::get('/', [MonitoringkpiController::class, 'indexDashboardIndividu'])
+                ->name('index');
+
+            Route::get('/list-hse', [MonitoringkpiController::class, 'listHseDashboardIndividu'])
+                ->name('list-hse');
+
+            Route::get('/data', [MonitoringkpiController::class, 'dataDashboardIndividu'])
+                ->name('data');
+        });
+
+    // routes/web.php
+    Route::get('monitoring-pengawas', [MonitoringkpiController::class, 'indexMonitoringPengawas'])
+        ->name('monitoring-pengawas.index');
+    Route::get('monitoring-pengawas/list-pengawas', [MonitoringkpiController::class, 'listPengawas'])
+        ->name('monitoring-pengawas.list-pengawas');
+
+    Route::get('monitoring-pengawas/data', [MonitoringkpiController::class, 'dataMonitoringPengawas'])
+        ->name('monitoring-pengawas.data');
+
     Route::get('rekap-pengawas', [MonitoringkpiController::class, 'indexRekapPengawas'])->name('rekap-pengawas.index');
     Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
     Route::get('rekap-medis', [MonitoringkpiController::class, 'indexRekapMedis'])->name('rekap-medis.index');
 
     // JKA % RECORD INSIDEN
     Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
-   
+
     //    LPI KEJADIAN
     Route::get('/lpi-kejadian', [LpiKejadianController::class, 'index'])->name('lpi-kejadian.index');
     Route::get('/lpi-kejadian/data', [LpiKejadianController::class, 'data'])->name('lpi-kejadian.data');

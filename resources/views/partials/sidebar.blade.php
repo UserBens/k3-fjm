@@ -382,8 +382,8 @@
                 href="{{ route('data-reject-monitoring.index') }}">
                 <span class="nav-label">Monitoring Dokumen Reject</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-so.*') ? 'active' : '' }}"
-                href="{{ route('monitoring-so.index') }}">
+            <a class="nav-link {{ request()->routeIs('monitoring-laporan-so.*') ? 'active' : '' }}"
+                href="{{ route('monitoring-laporan-so.index') }}">
                 <span class="nav-label">Monitoring SO</span>
             </a>
             <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}"
