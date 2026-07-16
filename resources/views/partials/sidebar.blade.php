@@ -665,13 +665,13 @@
             $assetsmanagementActive =
                 request()->routeIs('dasboard-apd.*') ||
                 request()->routeIs('master-stok-apd.*') ||
+                request()->routeIs('log-apd.*') ||
                 request()->routeIs('master-stok-alkes.*') ||
                 request()->routeIs('penggunaan-alkes.*') ||
-                request()->routeIs('log-apd.*') ||
                 request()->routeIs('matriks-apd.*') ||
                 request()->routeIs('matriks-apd-hiradc.*') ||
                 request()->routeIs('hiradc.*') ||
-                request()->routeIs('rab.*');
+                request()->routeIs('rab-anggaran.*');
         @endphp
 
         <a href="javascript:void(0)"
@@ -714,7 +714,7 @@
             </a>
 
             <a class="nav-link {{ request()->routeIs('penggunaan-alkes.*') ? 'active' : '' }}" href="{{ route('penggunaan-alkes.index') }}">
-                <span class="nav-label">Log Penggunaan Alkes</span>
+                <span class="nav-label">LOG ALKES</span>
             </a>
 
 
@@ -730,7 +730,7 @@
                 <span class="nav-label">HIRADC</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('rab.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('rab-anggaran.*') ? 'active' : '' }}" href="{{ route('rab-anggaran.index') }}">
                 <span class="nav-label">RAB</span>
             </a>
 

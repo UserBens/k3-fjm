@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Penggunaan Alat Kesehatan — PT. Fokus Jasa Mitra</title>
+    <title>Data Stok APD — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -1174,10 +1174,11 @@
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Log Transaksi · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Anggaran · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">LOG <span>APD</span></div>
-                        <div class="pg-sub">Catatan keluar-masuk / serah terima APD ke karyawan.</div>
+                        <div class="pg-title">RAB <span>APD &amp; ALKES</span></div>
+                        <div class="pg-sub">Rencana Anggaran Biaya pengajuan aset APD &amp; Alat Kesehatan tahunan.
+                        </div>
                     </div>
                     <div class="pg-actions">
                         <button class="btn-primary" onclick="openFormModal()">
@@ -1186,7 +1187,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Tambah Log
+                            Buat RAB Baru
                         </button>
                     </div>
                 </div>
@@ -1202,41 +1203,36 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input type="text" id="searchInput"
-                            placeholder="Cari no. dokumen, nama/ID karyawan, kode OK, jenis APD..."
+                            placeholder="Cari no. RAB, departemen, dibuat/disetujui oleh..."
                             oninput="onSearchInput()" />
                     </div>
 
-                    <select id="filterJenisTransaksi" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Jenis Transaksi</option>
+                    <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Status</option>
                     </select>
 
-                    <select id="filterUnitKerja" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Unit Kerja</option>
+                    <select id="filterTahun" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Tahun</option>
                     </select>
-
-                    <input type="date" id="filterTanggalDari" class="filter-select" onchange="onFilterChange()"
-                        title="Tanggal Dari" />
-                    <input type="date" id="filterTanggalSampai" class="filter-select" onchange="onFilterChange()"
-                        title="Tanggal Sampai" />
 
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data log APD...</div>
+                <div class="data-summary" id="dataSummary">Memuat data RAB...</div>
 
                 <!-- TABLE -->
                 <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th>Tanggal &amp; Dokumen</th>
-                                <th>Karyawan</th>
-                                <th>Kode OK / Unit Kerja / Jabatan</th>
-                                <th>Data APD</th>
-                                <th>Qty &amp; Transaksi</th>
-                                <th>PO/PR &amp; Kondisi Lama</th>
-                                <th>Alasan &amp; Diterima Oleh</th>
-                                <th>Keterangan</th>
+                                <th>No. RAB &amp; Tahun</th>
+                                <th>Departemen</th>
+                                <th>Dibuat / Disetujui Oleh</th>
+                                <th>Tanggal Pengajuan</th>
+                                <th>Jumlah Item</th>
+                                <th>Subtotal APD / Alkes</th>
+                                <th>Grand Total</th>
+                                <th>Status</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
@@ -1267,134 +1263,56 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL TAMBAH / EDIT LOG APD ══════ -->
+    <!-- ══════ MODAL TAMBAH / EDIT RAB ══════ -->
     <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
         <div class="modal-box form-modal-box" onclick="event.stopPropagation()">
             <div class="form-modal-header">
-                <div class="modal-title" id="formModalTitle">Tambah Log APD</div>
-                <div class="detail-subtitle" id="formModalSub">Lengkapi data transaksi APD di bawah ini.</div>
+                <div class="modal-title" id="formModalTitle">Buat RAB Baru</div>
+                <div class="detail-subtitle" id="formModalSub">Lengkapi data header RAB. Item APD &amp; Alkes
+                    ditambahkan
+                    di halaman detail setelah RAB disimpan.</div>
             </div>
 
             <div class="form-modal-body">
-                <div class="form-section-title">Data Transaksi</div>
+                <div class="form-section-title">Data RAB</div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">No. Dokumen</label>
-                        <input type="text" id="fNoDokumen" class="form-input" readonly disabled
+                        <label class="form-label">No. RAB</label>
+                        <input type="text" id="fNomorRab" class="form-input" readonly disabled
                             style="background:#F1F5F9; color:#64748B; cursor:not-allowed;"
                             placeholder="Otomatis digenerate setelah disimpan" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tanggal</label>
-                        <input type="date" id="fTanggal" class="form-input" />
+                        <label class="form-label">Nama Perusahaan</label>
+                        <input type="text" id="fNamaPerusahaan" class="form-input"
+                            placeholder="PT. Fokus Jasa Mitra" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Jenis Transaksi</label>
-                        <select id="fJenisTransaksi" class="form-select"></select>
-                    </div>
-                </div>
-
-                <div class="form-section-title">Data Karyawan</div>
-                <div class="detail-subtitle" style="margin-top:-4px; margin-bottom:8px;">
-                    Kosongkan jika transaksi tidak terkait karyawan (mis. barang masuk gudang / PO).
-                </div>
-                <div class="picker-wrap" style="margin-bottom:10px;">
-                    <input type="text" id="pegawaiPickerInput" class="form-input"
-                        placeholder="Cari nama atau badge karyawan..." oninput="onPegawaiPickerInput()"
-                        autocomplete="off" />
-                    <div class="picker-dropdown" id="pegawaiPickerDropdown"></div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">ID Karyawan</label>
-                        <input type="text" id="fIdKaryawan" class="form-input" readonly
-                            style="background:#F8FAFC;" placeholder="Terisi otomatis dari pencarian" />
+                        <label class="form-label">Departemen</label>
+                        <input type="text" id="fDepartemen" class="form-input"
+                            placeholder="Departemen K3 & Operasional" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Nama Karyawan</label>
-                        <input type="text" id="fNamaKaryawan" class="form-input" readonly
-                            style="background:#F8FAFC;" placeholder="Terisi otomatis dari pencarian" />
+                        <label class="form-label">Tahun Anggaran</label>
+                        <input type="number" id="fTahunAnggaran" class="form-input" placeholder="2026"
+                            min="2000" max="2100" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Jabatan</label>
-                        <input type="text" id="fJabatan" class="form-input" readonly style="background:#F8FAFC;"
-                            placeholder="Terisi otomatis dari pencarian" />
+                        <label class="form-label">Tanggal Pengajuan</label>
+                        <input type="date" id="fTanggalPengajuan" class="form-input" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Unit Kerja</label>
-                        <input type="text" id="fUnitKerja" class="form-input" readonly
-                            style="background:#F8FAFC;" placeholder="Terisi otomatis dari pencarian" />
+                        <label class="form-label">Status</label>
+                        <select id="fStatus" class="form-select"></select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Kode OK</label>
-                        <input type="text" id="fKodeOk" class="form-input" placeholder="PCS 01" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Data APD</div>
-                <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">Pilih dari Master Stok APD (opsional)</label>
-                        <select id="fStokApdId" class="form-select" onchange="onStokApdSelectChange()">
-                            <option value="">— Pilih untuk autofill kode/merk/ukuran, atau isi manual di bawah —
-                            </option>
-                        </select>
+                        <label class="form-label">Dibuat Oleh</label>
+                        <input type="text" id="fDibuatOleh" class="form-input" placeholder="Luki Nurdiansyah" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Kode APD</label>
-                        <input type="text" id="fKodeApd" class="form-input" placeholder="FJM-H-01" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Jenis APD</label>
-                        <input type="text" id="fJenisApd" class="form-input" placeholder="Helm Safety" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Merk / Type</label>
-                        <input type="text" id="fMerkType" class="form-input" placeholder="MSA V-Gard" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ukuran</label>
-                        <input type="text" id="fUkuran" class="form-input" placeholder="L / Universal" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Kuantitas</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Qty Keluar</label>
-                        <input type="number" min="0" id="fQtyKeluar" class="form-input" placeholder="0" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Qty Masuk</label>
-                        <input type="number" min="0" id="fQtyMasuk" class="form-input" placeholder="0" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">No. PO/PR (jika ada)</label>
-                        <input type="text" id="fNoPoPr" class="form-input" placeholder="PO-2025-001" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Detail Penggantian</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Kondisi APD Lama</label>
-                        <input type="text" id="fKondisiApdLama" class="form-input"
-                            placeholder="Baik / Rusak – lens retak" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Diterima Oleh</label>
-                        <div class="picker-wrap">
-                            <input type="text" id="diterimaOlehPickerInput" class="form-input"
-                                placeholder="Cari nama atau badge karyawan..." oninput="onDiterimaOlehPickerInput()"
-                                autocomplete="off" />
-                            <div class="picker-dropdown" id="diterimaOlehPickerDropdown"></div>
-                        </div>
-                        <input type="hidden" id="fDiterimaOleh" />
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Alasan Penggantian</label>
-                        <textarea id="fAlasanPenggantian" class="form-textarea" rows="2"
-                            placeholder="Masa pakai habis / pecah saat kerja / karyawan baru"></textarea>
+                        <label class="form-label">Disetujui Oleh</label>
+                        <input type="text" id="fDisetujuiOleh" class="form-input"
+                            placeholder="Rangga Dwiki Anjasmoro" />
                     </div>
                     <div class="form-group span-2">
                         <label class="form-label">Keterangan</label>
@@ -1410,165 +1328,6 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL DETAIL LOG APD ══════ -->
-    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
-            <div class="detail-modal-header">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="detail-avatar" id="detailAvatar">
-                        <span id="detailAvatarInitial"></span>
-                    </div>
-                    <div>
-                        <div class="modal-title" id="detailJenisTitle" style="margin-bottom:2px;">-</div>
-                        <div class="detail-subtitle" id="detailNoDokumenSub">-</div>
-                    </div>
-                </div>
-                <button class="toast-close" style="font-size:18px;" onclick="closeDetailModal()">✕</button>
-            </div>
-
-            <div class="detail-modal-body">
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Data Transaksi
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>No. Dokumen</label>
-                            <input type="text" id="dNoDokumen" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Tanggal</label>
-                            <input type="text" id="dTanggal" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Jenis Transaksi</label>
-                            <input type="text" id="dJenisTransaksi" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        Data Karyawan
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>ID Karyawan</label>
-                            <input type="text" id="dIdKaryawan" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Nama Karyawan</label>
-                            <input type="text" id="dNamaKaryawan" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Kode OK</label>
-                            <input type="text" id="dKodeOk" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Unit Kerja</label>
-                            <input type="text" id="dUnitKerja" readonly>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>Jabatan</label>
-                            <input type="text" id="dJabatan" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Data APD
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Kode APD</label>
-                            <input type="text" id="dKodeApd" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Jenis APD</label>
-                            <input type="text" id="dJenisApd" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Merk / Type</label>
-                            <input type="text" id="dMerkType" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Ukuran</label>
-                            <input type="text" id="dUkuran" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                        Kuantitas &amp; Pengadaan
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Qty Keluar</label>
-                            <input type="text" id="dQtyKeluar" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Qty Masuk</label>
-                            <input type="text" id="dQtyMasuk" readonly>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>No. PO/PR</label>
-                            <input type="text" id="dNoPoPr" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Detail Penggantian
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Kondisi APD Lama</label>
-                            <input type="text" id="dKondisiApdLama" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Diterima Oleh</label>
-                            <input type="text" id="dDiterimaOleh" readonly>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>Alasan Penggantian</label>
-                            <textarea id="dAlasanPenggantian" readonly rows="2"></textarea>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>Keterangan</label>
-                            <textarea id="dKeterangan" readonly rows="2"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeDetailModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
     <!-- ══════ MODAL KONFIRMASI HAPUS ══════ -->
     <div id="deleteConfirmOverlay" class="modal-overlay" onclick="closeDeleteModalOutside(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
@@ -1578,9 +1337,9 @@
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
             </div>
-            <div class="modal-title">Hapus Log APD?</div>
+            <div class="modal-title">Hapus RAB?</div>
             <div class="modal-desc" id="deleteModalDesc">
-                Data yang sudah dihapus tidak dapat dikembalikan. Pastikan Anda yakin sebelum melanjutkan.
+                RAB beserta seluruh item APD &amp; Alkes di dalamnya akan dihapus permanen. Pastikan Anda yakin.
             </div>
             <div class="modal-actions">
                 <button class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
@@ -1594,29 +1353,23 @@
 
     <script>
         // ══════ CONFIG ══════
-        const DATA_ENDPOINT = "{{ route('log-apd.data') }}";
-        const STORE_ENDPOINT = "{{ route('log-apd.store') }}";
-        const APD_OPTIONS_ENDPOINT = "{{ route('log-apd.apd-options') }}";
-        const CARI_PEGAWAI_ENDPOINT = "{{ route('log-apd.cari-pegawai') }}";
-        const BASE_ENDPOINT = "{{ url('/log-apd') }}";
+        const DATA_ENDPOINT = "{{ route('rab-anggaran.data') }}";
+        const STORE_ENDPOINT = "{{ route('rab-anggaran.store') }}";
+        const BASE_ENDPOINT = "{{ url('/rab-anggaran') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
-        const JENIS_TRANSAKSI_OPTIONS = @json(\App\Models\LogApd::JENIS_TRANSAKSI);
-        const FALLBACK_KARYAWAN = @json(\App\Models\LogApd::FALLBACK_KARYAWAN);
+        const STATUS_OPTIONS = @json(\App\Models\RabAnggaran::STATUS);
 
         const state = {
             search: '',
-            jenis_transaksi: '',
-            unit_kerja: '',
-            tanggal_dari: '',
-            tanggal_sampai: '',
+            status: '',
+            tahun_anggaran: '',
             page: 1,
             per_page: 10,
         };
 
         let searchDebounce = null;
         let filterOptionsLoaded = false;
-        let apdOptionsCache = [];
         let currentEditId = null;
         let currentDeleteId = null;
 
@@ -1635,12 +1388,6 @@
             return (value === null || value === undefined || value === '') ? fallback : value;
         }
 
-        function initials(name) {
-            if (!name || name === '-') return '—';
-            const parts = String(name).trim().split(/\s+/);
-            return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
-        }
-
         function formatDate(dateStr) {
             if (!dateStr) return '-';
             const d = new Date(dateStr);
@@ -1652,11 +1399,17 @@
             });
         }
 
-        function transaksiPillClass(jenis) {
-            if (jenis === 'MASUK (PP/PO)') return 'sp-blue';
-            if (jenis === 'TUKAR RUSAK' || jenis === 'HILANG') return 'sp-red';
-            if (jenis === 'TUKAR LAMA') return 'sp-gray';
-            return 'sp-green'; // JATAH BARU, LAINNYA
+        function formatRupiah(value) {
+            const num = Number(value) || 0;
+            return 'Rp ' + num.toLocaleString('id-ID', {
+                maximumFractionDigits: 0
+            });
+        }
+
+        function statusPillClass(status) {
+            if (status === 'DISETUJUI') return 'sp-green';
+            if (status === 'DIAJUKAN') return 'sp-blue';
+            return 'sp-gray'; // DRAFT
         }
 
         function onSearchInput() {
@@ -1669,10 +1422,8 @@
         }
 
         function onFilterChange() {
-            state.jenis_transaksi = document.getElementById('filterJenisTransaksi').value;
-            state.unit_kerja = document.getElementById('filterUnitKerja').value;
-            state.tanggal_dari = document.getElementById('filterTanggalDari').value;
-            state.tanggal_sampai = document.getElementById('filterTanggalSampai').value;
+            state.status = document.getElementById('filterStatus').value;
+            state.tahun_anggaran = document.getElementById('filterTahun').value;
             state.page = 1;
             loadData();
         }
@@ -1685,17 +1436,13 @@
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('filterJenisTransaksi').value = '';
-            document.getElementById('filterUnitKerja').value = '';
-            document.getElementById('filterTanggalDari').value = '';
-            document.getElementById('filterTanggalSampai').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterTahun').value = '';
             Object.assign(state, {
                 search: '',
-                jenis_transaksi: '',
-                unit_kerja: '',
-                tanggal_dari: '',
-                tanggal_sampai: '',
-                page: 1,
+                status: '',
+                tahun_anggaran: '',
+                page: 1
             });
             loadData();
         }
@@ -1711,7 +1458,6 @@
 
         function populateFilterOptions(options) {
             if (filterOptionsLoaded || !options) return;
-
             const build = (selectId, values) => {
                 const select = document.getElementById(selectId);
                 const current = select.value;
@@ -1723,9 +1469,8 @@
                 });
                 select.value = current;
             };
-
-            build('filterJenisTransaksi', options.jenis_transaksi || []);
-            build('filterUnitKerja', options.unit_kerja || []);
+            build('filterStatus', options.status || []);
+            build('filterTahun', options.tahun_anggaran || []);
             filterOptionsLoaded = true;
         }
 
@@ -1737,7 +1482,10 @@
                 <tr>
                     <td colspan="9">
                         <div class="empty-state">
-                            
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                             <div class="empty-state-title">Data tidak ditemukan</div>
                             <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang digunakan.</div>
                         </div>
@@ -1749,57 +1497,35 @@
             tbody.innerHTML = rows.map(row => `
                 <tr>
                     <td>
-                        <div class="td-name-main">${formatDate(row.tanggal)}</div>
-                        <div class="td-name-sub" style="font-weight:600; color:#475569;">${escapeHtml(row.no_dokumen)}</div>
+                        <div class="td-name-main">${escapeHtml(row.nomor_rab)}</div>
+                        <div class="td-name-sub">Tahun Anggaran ${escapeHtml(row.tahun_anggaran)}</div>
                     </td>
- 
                     <td>
-                        <div class="td-name-main">${escapeHtml(display(row.nama_karyawan, FALLBACK_KARYAWAN))}</div>
-                        <div class="td-name-sub">${escapeHtml(display(row.id_karyawan, FALLBACK_KARYAWAN))}</div>
+                        <div class="td-name-sub">${escapeHtml(display(row.departemen))}</div>
                     </td>
- 
                     <td>
-                        <div class="td-name-sub"><b>OK:</b> ${escapeHtml(display(row.kode_ok, FALLBACK_KARYAWAN))}</div>
-                        <div class="td-name-sub">${escapeHtml(display(row.unit_kerja, FALLBACK_KARYAWAN))}</div>
-                        <div class="td-name-sub">${escapeHtml(display(row.jabatan, FALLBACK_KARYAWAN))}</div>
+                        <div class="td-name-sub"><b>Dibuat:</b> ${escapeHtml(display(row.dibuat_oleh))}</div>
+                        <div class="td-name-sub"><b>Disetujui:</b> ${escapeHtml(display(row.disetujui_oleh))}</div>
                     </td>
- 
-                    <td style="max-width:200px;">
-                        <div class="td-name-main">${escapeHtml(display(row.jenis_apd))}</div>
-                        <div class="td-name-sub">${escapeHtml(display(row.kode_apd))} · ${escapeHtml(display(row.merk_type))}</div>
-                        <div class="td-name-sub">Ukuran: ${escapeHtml(display(row.ukuran))}</div>
-                    </td>
- 
+                    <td>${formatDate(row.tanggal_pengajuan)}</td>
+                    <td style="text-align:center;">${row.jumlah_item}</td>
                     <td>
-                        <div class="stok-line">Keluar: <b>${row.qty_keluar}</b> · Masuk: <b>${row.qty_masuk}</b></div>
-                        <span class="status-pill ${transaksiPillClass(row.jenis_transaksi)}" style="margin-top:4px; display:inline-block;">
-                            ${escapeHtml(row.jenis_transaksi)}
-                        </span>
+                        <div class="stok-line">APD: <b>${formatRupiah(row.subtotal_apd)}</b></div>
+                        <div class="stok-line">Alkes: <b>${formatRupiah(row.subtotal_alkes)}</b></div>
                     </td>
- 
-                    <td style="max-width:180px;">
-                        <div class="td-name-sub">PO/PR: ${escapeHtml(display(row.no_po_pr))}</div>
-                        <div class="td-name-sub">Kondisi lama: ${escapeHtml(display(row.kondisi_apd_lama))}</div>
+                    <td><b>${formatRupiah(row.grand_total)}</b></td>
+                    <td>
+                        <span class="status-pill ${statusPillClass(row.status)}">${escapeHtml(row.status)}</span>
                     </td>
- 
-                    <td style="max-width:200px;">
-                        <div class="td-name-sub" style="white-space:normal; line-height:1.4;">${escapeHtml(display(row.alasan_penggantian))}</div>
-                        <div class="td-name-sub" style="margin-top:3px;">Diterima: ${escapeHtml(display(row.diterima_oleh))}</div>
-                    </td>
- 
-                    <td style="max-width:180px;">
-                        <div class="td-name-sub" style="white-space:normal; line-height:1.4;">${escapeHtml(display(row.keterangan))}</div>
-                    </td>
- 
                     <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-row-action" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
+                        <a class="btn-row-action" href="${BASE_ENDPOINT}/${row.id}/detail">
                             <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                             Detail
-                        </button>
+                        </a>
                         <button class="btn-row-action" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
                             <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1807,7 +1533,7 @@
                             </svg>
                             Edit
                         </button>
-                        <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.no_dokumen)}')">
+                        <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.nomor_rab)}')">
                             <svg style="width:14px;height:14px; color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -1835,14 +1561,14 @@
         </tr>`;
             document.getElementById('paginationText').textContent = '—';
             document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data log APD.';
+            document.getElementById('dataSummary').textContent = 'Gagal memuat data RAB.';
         }
 
         function renderPagination(meta) {
             document.getElementById('paginationText').textContent =
                 meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
 
-            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> log transaksi ditemukan`;
+            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> dokumen RAB ditemukan`;
 
             const container = document.getElementById('paginationPages');
             const current = meta.current_page;
@@ -1879,10 +1605,8 @@
         async function loadData() {
             const params = new URLSearchParams();
             if (state.search) params.set('search', state.search);
-            if (state.jenis_transaksi) params.set('jenis_transaksi', state.jenis_transaksi);
-            if (state.unit_kerja) params.set('unit_kerja', state.unit_kerja);
-            if (state.tanggal_dari) params.set('tanggal_dari', state.tanggal_dari);
-            if (state.tanggal_sampai) params.set('tanggal_sampai', state.tanggal_sampai);
+            if (state.status) params.set('status', state.status);
+            if (state.tahun_anggaran) params.set('tahun_anggaran', state.tahun_anggaran);
             params.set('page', state.page);
             params.set('per_page', state.per_page);
 
@@ -1935,194 +1659,31 @@
             }, 4000);
         }
 
-        // ══════ OPSI JENIS TRANSAKSI & MASTER APD (dropdown) ══════
-        function populateJenisTransaksiSelect() {
-            const select = document.getElementById('fJenisTransaksi');
-            select.innerHTML = JENIS_TRANSAKSI_OPTIONS
-                .map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`)
-                .join('');
+        function populateStatusSelect() {
+            document.getElementById('fStatus').innerHTML = STATUS_OPTIONS
+                .map(v => `<option value="${v}">${v}</option>`).join('');
         }
-
-        async function loadApdOptions() {
-            if (apdOptionsCache.length > 0) return;
-            try {
-                const res = await fetch(APD_OPTIONS_ENDPOINT, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                const json = await res.json();
-                apdOptionsCache = json.data || [];
-
-                const select = document.getElementById('fStokApdId');
-                const placeholder = select.querySelector('option[value=""]');
-                select.innerHTML = '';
-                select.appendChild(placeholder);
-                apdOptionsCache.forEach(item => {
-                    const opt = document.createElement('option');
-                    opt.value = item.id;
-                    opt.textContent = `${item.jenis_apd} (${item.kode_apd})`;
-                    select.appendChild(opt);
-                });
-            } catch (e) {
-                // Diamkan — dropdown tetap bisa diisi manual tanpa master data
-            }
-        }
-
-        function onStokApdSelectChange() {
-            const id = document.getElementById('fStokApdId').value;
-            if (!id) return;
-
-            const item = apdOptionsCache.find(i => String(i.id) === String(id));
-            if (!item) return;
-
-            document.getElementById('fKodeApd').value = item.kode_apd || '';
-            document.getElementById('fJenisApd').value = item.jenis_apd || '';
-            document.getElementById('fMerkType').value = item.merk_rekomendasi || '';
-            document.getElementById('fUkuran').value = item.ukuran_tersedia || '';
-        }
-
-        // ══════ PICKER PEGAWAI — Data Karyawan ══════
-        let pegawaiPickerDebounce = null;
-
-        function onPegawaiPickerInput() {
-            clearTimeout(pegawaiPickerDebounce);
-            pegawaiPickerDebounce = setTimeout(searchPegawaiPicker, 350);
-        }
-
-        async function searchPegawaiPicker() {
-            const search = document.getElementById('pegawaiPickerInput').value.trim();
-            const dropdown = document.getElementById('pegawaiPickerDropdown');
-            if (search.length < 2) {
-                dropdown.classList.remove('open');
-                return;
-            }
-            try {
-                const res = await fetch(`${CARI_PEGAWAI_ENDPOINT}?search=${encodeURIComponent(search)}`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                });
-                const json = await res.json();
-                dropdown.innerHTML = (!json.data || json.data.length === 0) ?
-                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada karyawan ditemukan.</div>` :
-                    json.data.map(p => `
-                        <div class="picker-item" onclick='pilihPegawai(${JSON.stringify(p).replace(/'/g, "&#39;")})'>
-                            <div class="picker-item-name">${escapeHtml(p.nama)}</div>
-                            <div class="picker-item-sub">${escapeHtml(p.badge)} · ${escapeHtml(p.jabatan)} · ${escapeHtml(p.unit_kerja)}</div>
-                        </div>`).join('');
-                dropdown.classList.add('open');
-            } catch (e) {
-                dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;
-                dropdown.classList.add('open');
-            }
-        }
-
-        function pilihPegawai(p) {
-            document.getElementById('fIdKaryawan').value = p.badge;
-            document.getElementById('fNamaKaryawan').value = p.nama;
-            document.getElementById('fJabatan').value = p.jabatan;
-            document.getElementById('fUnitKerja').value = p.unit_kerja;
-            document.getElementById('pegawaiPickerInput').value = `${p.nama} (${p.badge})`;
-            document.getElementById('pegawaiPickerDropdown').classList.remove('open');
-        }
-
-        // ══════ PICKER PEGAWAI — Diterima Oleh ══════
-        let diterimaOlehPickerDebounce = null;
-
-        function onDiterimaOlehPickerInput() {
-            clearTimeout(diterimaOlehPickerDebounce);
-            diterimaOlehPickerDebounce = setTimeout(searchDiterimaOlehPicker, 350);
-        }
-
-        async function searchDiterimaOlehPicker() {
-            const search = document.getElementById('diterimaOlehPickerInput').value.trim();
-            const dropdown = document.getElementById('diterimaOlehPickerDropdown');
-            if (search.length < 2) {
-                dropdown.classList.remove('open');
-                return;
-            }
-            try {
-                const res = await fetch(`${CARI_PEGAWAI_ENDPOINT}?search=${encodeURIComponent(search)}`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                });
-                const json = await res.json();
-                dropdown.innerHTML = (!json.data || json.data.length === 0) ?
-                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada karyawan ditemukan.</div>` :
-                    json.data.map(p => `
-                        <div class="picker-item" onclick='pilihDiterimaOleh(${JSON.stringify(p).replace(/'/g, "&#39;")})'>
-                            <div class="picker-item-name">${escapeHtml(p.nama)}</div>
-                            <div class="picker-item-sub">${escapeHtml(p.badge)} · ${escapeHtml(p.jabatan)} · ${escapeHtml(p.unit_kerja)}</div>
-                        </div>`).join('');
-                dropdown.classList.add('open');
-            } catch (e) {
-                dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;
-                dropdown.classList.add('open');
-            }
-        }
-
-        function pilihDiterimaOleh(p) {
-            document.getElementById('fDiterimaOleh').value = p.nama;
-            document.getElementById('diterimaOlehPickerInput').value = `${p.nama} (${p.badge})`;
-            document.getElementById('diterimaOlehPickerDropdown').classList.remove('open');
-        }
-
-        // Tutup dropdown picker saat klik di luar area
-        document.addEventListener('click', (e) => {
-            const wrapPegawai = document.getElementById('pegawaiPickerInput')?.closest('.picker-wrap');
-            if (wrapPegawai && !wrapPegawai.contains(e.target)) {
-                document.getElementById('pegawaiPickerDropdown')?.classList.remove('open');
-            }
-            const wrapDiterima = document.getElementById('diterimaOlehPickerInput')?.closest('.picker-wrap');
-            if (wrapDiterima && !wrapDiterima.contains(e.target)) {
-                document.getElementById('diterimaOlehPickerDropdown')?.classList.remove('open');
-            }
-        });
 
         // ══════ MODAL TAMBAH / EDIT ══════
-        async function openFormModal(row = null) {
+        function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
+            populateStatusSelect();
 
-            populateJenisTransaksiSelect();
-            await loadApdOptions();
-
-            document.getElementById('formModalTitle').textContent = row ? 'Edit Log APD' : 'Tambah Log APD';
+            document.getElementById('formModalTitle').textContent = row ? 'Edit RAB' : 'Buat RAB Baru';
             document.getElementById('formModalSub').textContent = row ?
-                `Perbarui data transaksi ${row.no_dokumen}` :
-                'Lengkapi data transaksi APD di bawah ini.';
+                `Perbarui data header RAB ${row.nomor_rab}` :
+                'Lengkapi data header RAB. Item APD & Alkes ditambahkan di halaman detail setelah RAB disimpan.';
 
-            document.getElementById('fNoDokumen').value = row?.no_dokumen || '';
-            document.getElementById('fNoDokumen').placeholder = row ? '' : 'Otomatis digenerate setelah disimpan';
-            document.getElementById('fTanggal').value = row?.tanggal || '';
-            document.getElementById('fJenisTransaksi').value = row?.jenis_transaksi || JENIS_TRANSAKSI_OPTIONS[0];
-
-            document.getElementById('fIdKaryawan').value = row?.id_karyawan || '';
-            document.getElementById('fNamaKaryawan').value = row?.nama_karyawan || '';
-            document.getElementById('fKodeOk').value = row?.kode_ok || '';
-            document.getElementById('fUnitKerja').value = row?.unit_kerja || '';
-            document.getElementById('fJabatan').value = row?.jabatan || '';
-            document.getElementById('pegawaiPickerInput').value =
-                (row?.nama_karyawan && row?.id_karyawan) ? `${row.nama_karyawan} (${row.id_karyawan})` : '';
-            document.getElementById('pegawaiPickerDropdown').classList.remove('open');
-
-            document.getElementById('fDiterimaOleh').value = row?.diterima_oleh || '';
-            document.getElementById('diterimaOlehPickerInput').value = row?.diterima_oleh || '';
-            document.getElementById('diterimaOlehPickerDropdown').classList.remove('open');
-
-            document.getElementById('fStokApdId').value = row?.stok_apd_id || '';
-            document.getElementById('fKodeApd').value = row?.kode_apd || '';
-            document.getElementById('fJenisApd').value = row?.jenis_apd || '';
-            document.getElementById('fMerkType').value = row?.merk_type || '';
-            document.getElementById('fUkuran').value = row?.ukuran || '';
-
-            document.getElementById('fQtyKeluar').value = row?.qty_keluar ?? 0;
-            document.getElementById('fQtyMasuk').value = row?.qty_masuk ?? 0;
-            document.getElementById('fNoPoPr').value = row?.no_po_pr || '';
-
-            document.getElementById('fKondisiApdLama').value = row?.kondisi_apd_lama || '';
-            document.getElementById('fAlasanPenggantian').value = row?.alasan_penggantian || '';
+            document.getElementById('fNomorRab').value = row?.nomor_rab || '';
+            document.getElementById('fNomorRab').placeholder = row ? '' : 'Otomatis digenerate setelah disimpan';
+            document.getElementById('fNamaPerusahaan').value = row?.nama_perusahaan || 'PT. Fokus Jasa Mitra';
+            document.getElementById('fDepartemen').value = row?.departemen || '';
+            document.getElementById('fTahunAnggaran').value = row?.tahun_anggaran || new Date().getFullYear();
+            document.getElementById('fTanggalPengajuan').value = row?.tanggal_pengajuan || new Date().toISOString()
+                .substring(0, 10);
+            document.getElementById('fStatus').value = row?.status || 'DRAFT';
+            document.getElementById('fDibuatOleh').value = row?.dibuat_oleh || '';
+            document.getElementById('fDisetujuiOleh').value = row?.disetujui_oleh || '';
             document.getElementById('fKeterangan').value = row?.keterangan || '';
 
             document.getElementById('formModalOverlay').classList.add('open');
@@ -2144,28 +1705,13 @@
             btn.textContent = 'Menyimpan...';
 
             const payload = {
-                tanggal: document.getElementById('fTanggal').value,
-                jenis_transaksi: document.getElementById('fJenisTransaksi').value,
-
-                id_karyawan: document.getElementById('fIdKaryawan').value.trim() || null,
-                nama_karyawan: document.getElementById('fNamaKaryawan').value.trim() || null,
-                kode_ok: document.getElementById('fKodeOk').value.trim() || null,
-                unit_kerja: document.getElementById('fUnitKerja').value.trim() || null,
-                jabatan: document.getElementById('fJabatan').value.trim() || null,
-
-                stok_apd_id: document.getElementById('fStokApdId').value || null,
-                kode_apd: document.getElementById('fKodeApd').value.trim() || null,
-                jenis_apd: document.getElementById('fJenisApd').value.trim(),
-                merk_type: document.getElementById('fMerkType').value.trim() || null,
-                ukuran: document.getElementById('fUkuran').value.trim() || null,
-
-                qty_keluar: document.getElementById('fQtyKeluar').value || 0,
-                qty_masuk: document.getElementById('fQtyMasuk').value || 0,
-                no_po_pr: document.getElementById('fNoPoPr').value.trim() || null,
-
-                kondisi_apd_lama: document.getElementById('fKondisiApdLama').value.trim() || null,
-                diterima_oleh: document.getElementById('fDiterimaOleh').value.trim() || null,
-                alasan_penggantian: document.getElementById('fAlasanPenggantian').value.trim() || null,
+                nama_perusahaan: document.getElementById('fNamaPerusahaan').value.trim() || null,
+                departemen: document.getElementById('fDepartemen').value.trim() || null,
+                tahun_anggaran: document.getElementById('fTahunAnggaran').value,
+                tanggal_pengajuan: document.getElementById('fTanggalPengajuan').value || null,
+                status: document.getElementById('fStatus').value,
+                dibuat_oleh: document.getElementById('fDibuatOleh').value.trim() || null,
+                disetujui_oleh: document.getElementById('fDisetujuiOleh').value.trim() || null,
                 keterangan: document.getElementById('fKeterangan').value.trim() || null,
             };
 
@@ -2201,52 +1747,11 @@
             }
         }
 
-        // ══════ MODAL DETAIL ══════
-        function openDetailModal(row) {
-            document.getElementById('detailAvatarInitial').textContent = initials(row.jenis_apd);
-            document.getElementById('detailJenisTitle').textContent = row.jenis_apd || '-';
-            document.getElementById('detailNoDokumenSub').textContent = row.no_dokumen || '-';
-
-            document.getElementById('dNoDokumen').value = row.no_dokumen || '-';
-            document.getElementById('dTanggal').value = formatDate(row.tanggal);
-            document.getElementById('dJenisTransaksi').value = row.jenis_transaksi || '-';
-
-            document.getElementById('dIdKaryawan').value = display(row.id_karyawan, FALLBACK_KARYAWAN);
-            document.getElementById('dNamaKaryawan').value = display(row.nama_karyawan, FALLBACK_KARYAWAN);
-            document.getElementById('dKodeOk').value = display(row.kode_ok, FALLBACK_KARYAWAN);
-            document.getElementById('dUnitKerja').value = display(row.unit_kerja, FALLBACK_KARYAWAN);
-            document.getElementById('dJabatan').value = display(row.jabatan, FALLBACK_KARYAWAN);
-
-            document.getElementById('dKodeApd').value = display(row.kode_apd);
-            document.getElementById('dJenisApd').value = display(row.jenis_apd);
-            document.getElementById('dMerkType').value = display(row.merk_type);
-            document.getElementById('dUkuran').value = display(row.ukuran);
-
-            document.getElementById('dQtyKeluar').value = row.qty_keluar;
-            document.getElementById('dQtyMasuk').value = row.qty_masuk;
-            document.getElementById('dNoPoPr').value = display(row.no_po_pr);
-
-            document.getElementById('dKondisiApdLama').value = display(row.kondisi_apd_lama);
-            document.getElementById('dDiterimaOleh').value = display(row.diterima_oleh);
-            document.getElementById('dAlasanPenggantian').value = display(row.alasan_penggantian);
-            document.getElementById('dKeterangan').value = display(row.keterangan);
-
-            document.getElementById('detailModalOverlay').classList.add('open');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModalOverlay').classList.remove('open');
-        }
-
-        function closeDetailModalOutside(event) {
-            if (event.target.id === 'detailModalOverlay') closeDetailModal();
-        }
-
         // ══════ MODAL HAPUS ══════
-        function openDeleteModal(id, noDokumen) {
+        function openDeleteModal(id, nomorRab) {
             currentDeleteId = id;
             document.getElementById('deleteModalDesc').textContent =
-                `Log "${noDokumen}" akan dihapus permanen dan tidak dapat dikembalikan. Lanjutkan?`;
+                `RAB "${nomorRab}" beserta seluruh item APD & Alkes di dalamnya akan dihapus permanen. Lanjutkan?`;
             document.getElementById('deleteConfirmOverlay').classList.add('open');
         }
 
@@ -2289,5 +1794,13 @@
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
+
+
+
+
+
+
+
+
 
 </html>

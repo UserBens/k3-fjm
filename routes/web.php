@@ -20,6 +20,7 @@ use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
+use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\StokAlkesController;
@@ -217,6 +218,26 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
         Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
     });
+
+    // RAB
+    Route::prefix('rab-anggaran')->name('rab-anggaran.')->group(function () {
+        Route::get('/', [RabAnggaranController::class, 'index'])->name('index');
+        Route::get('/data', [RabAnggaranController::class, 'data'])->name('data');
+        Route::get('/apd-options', [RabAnggaranController::class, 'apdOptions'])->name('apd-options');
+        Route::get('/alkes-options', [RabAnggaranController::class, 'alkesOptions'])->name('alkes-options');
+        Route::post('/', [RabAnggaranController::class, 'store'])->name('store');
+        Route::put('/{rabAnggaran}', [RabAnggaranController::class, 'update'])->name('update');
+        Route::delete('/{rabAnggaran}', [RabAnggaranController::class, 'destroy'])->name('destroy');
+
+        // Halaman & data detail (Tabel A APD + Tabel B Alkes)
+        Route::get('/{rabAnggaran}/detail', [RabAnggaranController::class, 'show'])->name('detail');
+        Route::get('/{rabAnggaran}/detail-data', [RabAnggaranController::class, 'detailData'])->name('detail-data');
+        Route::get('/{rabAnggaran}/export', [RabAnggaranController::class, 'exportExcel'])->name('export');
+        Route::post('/{rabAnggaran}/items', [RabAnggaranController::class, 'storeItem'])->name('items.store');
+        Route::put('/items/{item}', [RabAnggaranController::class, 'updateItem'])->name('items.update');
+        Route::delete('/items/{item}', [RabAnggaranController::class, 'destroyItem'])->name('items.destroy');
+    });
+
 
     // MONITORING ALBER
     Route::get('alber', [AlatBeratController::class, 'index'])->name('alber.index');
