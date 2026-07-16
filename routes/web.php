@@ -163,9 +163,11 @@ Route::middleware(['auth.custom'])->group(function () {
     // JKA % RECORD INSIDEN
     Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
 
-    //    LPI KEJADIAN
+    // LPI KEJADIAN
     Route::get('/lpi-kejadian', [LpiKejadianController::class, 'index'])->name('lpi-kejadian.index');
     Route::get('/lpi-kejadian/data', [LpiKejadianController::class, 'data'])->name('lpi-kejadian.data');
+    Route::get('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'show'])->name('lpi-kejadian.show');
+    Route::get('/lpi-kejadian/{lpiKejadian}/detail', [LpiKejadianController::class, 'detail'])->name('lpi-kejadian.detail');
     Route::post('/lpi-kejadian', [LpiKejadianController::class, 'store'])->name('lpi-kejadian.store');
     Route::put('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'update'])->name('lpi-kejadian.update');
     Route::delete('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'destroy'])->name('lpi-kejadian.destroy');

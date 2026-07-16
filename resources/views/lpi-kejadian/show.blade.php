@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Safety — PT. Fokus Jasa Mitra</title>
+    <title>Detail LPI — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -158,6 +158,21 @@
             gap: 12px;
         }
 
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #64748B;
+            text-decoration: none;
+            margin-bottom: 8px;
+        }
+
+        .back-link:hover {
+            color: #2D4B9E;
+        }
+
         .pg-eyebrow {
             font-size: 10px;
             font-weight: 700;
@@ -227,183 +242,6 @@
             background: #1A3C8A;
         }
 
-        .pulse-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #D0021B;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: 0.35
-            }
-        }
-
-        .section-card {
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            padding: 16px;
-            min-width: 0;
-        }
-
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .filter-search {
-            flex: 1;
-            min-width: 220px;
-            position: relative;
-        }
-
-        .filter-search input {
-            width: 100%;
-            height: 36px;
-            padding: 0 12px 0 34px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            border-radius: 8px;
-            background: #fff;
-            font-size: 12.5px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #1A1D2E;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        .filter-search input:focus {
-            border-color: #2D4B9E;
-        }
-
-        .filter-search .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94A3B8;
-        }
-
-        .filter-select {
-            height: 36px;
-            padding: 0 30px 0 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 10px center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #1A1D2E;
-            cursor: pointer;
-            min-width: 150px;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .filter-select:focus {
-            border-color: #2D4B9E;
-            outline: none;
-        }
-
-        .filter-reset {
-            height: 36px;
-            padding: 0 14px;
-        }
-
-        .data-summary {
-            font-size: 11px;
-            color: #94A3B8;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .data-summary strong {
-            color: #1A1D2E;
-        }
-
-        .rtable-wrap {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .rtable {
-            width: 100%;
-            min-width: 980px;
-            border-collapse: collapse;
-        }
-
-        .rtable th {
-            font-size: 9.5px;
-            font-weight: 800;
-            color: #94A3B8;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 0 8px 8px;
-            text-align: left;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            white-space: nowrap;
-        }
-
-        .rtable td {
-            font-size: 12px;
-            color: #1A1D2E;
-            padding: 10px 8px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-            vertical-align: middle;
-        }
-
-        .rtable tr:last-child td {
-            border-bottom: none;
-        }
-
-        .rtable tr:hover td {
-            background: #F8F9FF;
-        }
-
-        .td-name-cell {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            white-space: nowrap;
-        }
-
-        .td-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 9px;
-            background: #E0E7FF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: #2D4B9E;
-            flex-shrink: 0;
-        }
-
-        .td-name-main {
-            font-weight: 700;
-            color: #1A1D2E;
-            line-height: 1.3;
-        }
-
-        .td-name-sub {
-            font-size: 10.5px;
-            color: #94A3B8;
-            font-weight: 600;
-        }
-
         .status-pill {
             display: inline-flex;
             align-items: center;
@@ -430,42 +268,12 @@
             color: #D0021B;
         }
 
-        .sp-blue {
-            background: rgba(45, 75, 158, 0.09);
-            color: #2D4B9E;
-        }
-
-        .sp-gray {
-            background: rgba(100, 116, 139, 0.09);
-            color: #64748B;
-        }
-
-        .empty-state,
-        .error-state {
-            text-align: center;
-            padding: 48px 12px;
-            color: #94A3B8;
-        }
-
-        .empty-state svg,
-        .error-state svg {
-            width: 32px;
-            height: 32px;
-            margin: 0 auto 10px;
-            color: #CBD5E1;
-        }
-
-        .empty-state-title,
-        .error-state-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748B;
-            margin-bottom: 3px;
-        }
-
-        .empty-state-sub,
-        .error-state-sub {
-            font-size: 11.5px;
+        .section-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 18px 20px;
+            min-width: 0;
         }
 
         .skeleton-bar {
@@ -486,101 +294,19 @@
             }
         }
 
-        .link-line {
-            display: block;
-            font-size: 11px;
-            color: #2D4B9E;
-            font-weight: 700;
-            text-decoration: none;
-            margin-bottom: 3px;
-        }
-
-        .link-line:hover {
-            text-decoration: underline;
-        }
-
-        .link-line.empty {
-            color: #CBD5E1;
-            font-weight: 500;
-            text-decoration: none;
-        }
-
-        .pagination-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .pagination-info {
-            font-size: 11px;
+        .empty-state,
+        .error-state {
+            text-align: center;
+            padding: 48px 12px;
             color: #94A3B8;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
         }
 
-        .per-page-select {
-            height: 28px;
-            padding: 0 24px 0 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 6px center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #1A1D2E;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .pagination-pages {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            min-width: 28px;
-            height: 28px;
-            padding: 0 6px;
-            border-radius: 7px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: #fff;
-            font-size: 11px;
+        .empty-state-title,
+        .error-state-title {
+            font-size: 13px;
             font-weight: 700;
             color: #64748B;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .page-btn:hover:not(:disabled):not(.active) {
-            background: #F0F4FF;
-            border-color: rgba(45, 75, 158, 0.25);
-        }
-
-        .page-btn.active {
-            background: #2D4B9E;
-            border-color: #2D4B9E;
-            color: #fff;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .page-ellipsis {
-            font-size: 11px;
-            color: #94A3B8;
-            padding: 0 2px;
+            margin-bottom: 3px;
         }
 
         .hamburger-btn {
@@ -655,20 +381,6 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-
-            .filter-select {
-                min-width: 0;
-                flex: 1 1 46%;
-            }
-
-            .pagination-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .pagination-pages {
-                justify-content: center;
-            }
         }
 
         .modal-overlay {
@@ -705,31 +417,12 @@
             transform: scale(1) translateY(0);
         }
 
-        .modal-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(208, 2, 27, 0.09);
-            color: #D0021B;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-        }
-
         .modal-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 20px;
             letter-spacing: 0.02em;
             color: #1A1D2E;
             margin-bottom: 8px;
-        }
-
-        .modal-desc {
-            font-size: 12.5px;
-            line-height: 1.55;
-            color: #64748B;
-            margin-bottom: 20px;
         }
 
         .modal-actions {
@@ -768,22 +461,6 @@
 
         .btn-modal-confirm:hover {
             background: #1A3C8A;
-        }
-
-        .btn-modal-danger {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            background: #D0021B;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .btn-modal-danger:hover {
-            background: #A80115;
         }
 
         .toast-container {
@@ -868,40 +545,6 @@
             line-height: 1;
             padding: 2px;
             flex-shrink: 0;
-        }
-
-        .btn-row-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            background: transparent;
-            cursor: pointer;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 6px;
-            margin-bottom: 4px;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .btn-row-action:hover {
-            background: #F8F9FF;
-        }
-
-        .btn-row-action.approve {
-            color: #1A7A3C;
-            border-color: rgba(26, 122, 60, 0.25);
-            background: rgba(26, 122, 60, 0.06);
-        }
-
-        .btn-row-action.reject {
-            color: #D0021B;
-            border-color: rgba(208, 2, 27, 0.25);
-            background: rgba(208, 2, 27, 0.06);
         }
 
         .form-modal-box {
@@ -1000,46 +643,9 @@
             }
         }
 
-        .detail-modal-box {
-            max-width: 680px;
-            width: 100%;
-        }
-
-        .detail-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .detail-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2D4B9E, #1A1D2E);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 13px;
-            flex-shrink: 0;
-        }
-
-        .detail-subtitle {
-            font-size: 12.5px;
-            color: #94A3B8;
-            font-weight: 500;
-        }
-
-        .detail-modal-body {
-            max-height: 68vh;
-            overflow-y: auto;
-            padding-top: 4px;
-        }
-
         .detail-section {
-            margin-bottom: 18px;
-            padding-bottom: 16px;
+            margin-bottom: 22px;
+            padding-bottom: 20px;
             border-bottom: 1px dashed #E2E8F0;
         }
 
@@ -1058,16 +664,11 @@
             color: #2D4B9E;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            margin-bottom: 10px;
-            margin-top: 20px;
+            margin-bottom: 12px;
         }
 
-        .detail-section-title svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .detail-form-grid {
+        .detail-form-grid,
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px 16px;
@@ -1105,20 +706,6 @@
             white-space: pre-line;
         }
 
-        .detail-field input,
-        .detail-field textarea {
-            border: 1px solid #E2E8F0;
-            background: #F8FAFC;
-            border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #1E293B;
-            font-family: inherit;
-            resize: none;
-            cursor: default;
-        }
-
         .detail-field a.detail-link {
             border: 1px solid #E2E8F0;
             background: #F8FAFC;
@@ -1135,18 +722,15 @@
             text-decoration: underline;
         }
 
-        .detail-empty-note {
-            font-size: 12px;
-            color: #94A3B8;
-            padding: 8px 0;
-        }
-
         @media (max-width: 640px) {
-            .detail-form-grid {
+
+            .detail-form-grid,
+            .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .detail-field.span-2 {
+            .detail-field.span-2,
+            .detail-field.span-4 {
                 grid-column: span 1;
             }
         }
@@ -1237,23 +821,6 @@
             text-decoration: underline;
         }
 
-        .category-block {
-            display: none;
-        }
-
-        .category-block.visible {
-            display: block;
-        }
-
-        .category-select-wrap {
-            margin-bottom: 14px;
-        }
-
-        .korban-modal-box {
-            max-width: 720px;
-            width: 100%;
-        }
-
         .korban-form-modal-box {
             max-width: 760px;
             width: 100%;
@@ -1269,6 +836,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .korban-list-item .kli-name {
@@ -1310,6 +878,18 @@
         .dynamic-form-section-title:first-child {
             margin-top: 0;
         }
+
+        .two-col-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .detail-section-title svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -1322,100 +902,129 @@
         @include('partials.topbar')
 
         <div id="page-content">
+
             <div class="page-hdr">
+                <a href="{{ route('lpi-kejadian.index') }}" class="back-link">
+                    <svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali ke Daftar LPI
+                </a>
                 <div class="page-hdr-top">
                     <div>
-                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                            <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Master Data · PT. Fokus Jasa Mitra</span>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+                            <span class="pg-eyebrow">Detail Kejadian · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">LOG LAPORAN <span>PENYELIDIKAN INSIDEN</span></div>
-                        <div class="pg-sub">Kelola data kejadian & data korban LPI.</div>
+                        <div class="pg-title" id="pgIdLpi">DETAIL <span>KEJADIAN LPI</span></div>
+                        <div class="pg-sub" id="pgOwnerSub">Memuat data...</div>
                     </div>
                     <div class="pg-actions">
-                        <button class="btn-primary" onclick="openKejadianModal()">
+                       
+                        <button class="btn-primary" onclick="openKorbanFormModal()">
                             <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Tambah Kejadian
+                            Tambah Korban
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="section-card" style="margin-bottom:14px;">
-                <div class="filter-bar">
-                    <div class="filter-search">
-                        <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="Cari ID LPI, owner, atau uraian..."
-                            oninput="onSearchInput()" />
-                    </div>
-                    <select id="filterTingkatRisiko" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Tingkat Risiko</option>
-                        <option value="LOW">LOW</option>
-                        <option value="MEDIUM">MEDIUM</option>
-                        <option value="HIGH">HIGH</option>
-                    </select>
-                    <select id="filterStatusPenyelesaian" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status Penyelesaian</option>
-                        <option value="OPEN">OPEN</option>
-                        <option value="CLOSE">CLOSE</option>
-                    </select>
-                    <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
-                </div>
-
-                <div class="data-summary" id="dataSummary">Memuat data...</div>
-
-                <div class="rtable-wrap">
-                    <table class="rtable">
-                        <thead>
-                            <tr>
-                                <th>ID LPI</th>
-                                <th>Tanggal / Jam Insiden</th>
-                                <th>Lokasi</th>
-                                <th>Tingkat Risiko</th>
-                                <th>Status</th>
-                                <th>Korban</th>
-                                <th style="text-align:center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <tr>
-                                <td colspan="7">
-                                    <div class="skeleton-bar" style="width:100%;height:40px;"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-bar">
-                    <div class="pagination-info">
-                        <span id="paginationText">—</span>
-                        <select id="perPageSelect" class="per-page-select" onchange="onPerPageChange()">
-                            <option value="10">10 / halaman</option>
-                            <option value="25">25 / halaman</option>
-                            <option value="50">50 / halaman</option>
-                        </select>
-                    </div>
-                    <div class="pagination-pages" id="paginationPages"></div>
+            <div id="detailLoadingState">
+                <div class="section-card" style="margin-bottom:14px;">
+                    <div class="skeleton-bar" style="width:100%;height:100px;"></div>
                 </div>
             </div>
+
+            <div id="detailContent" style="display:none;">
+
+                <!-- ══════ CARD DETAIL KEJADIAN ══════ -->
+                <div class="section-card" style="margin-bottom:14px;">
+
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Waktu & Lokasi
+                        </div>
+                        <div class="form-grid" id="detailWaktuGrid"></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Uraian & Evidence
+                        </div>
+                        <div class="form-grid" id="detailUraianGrid"></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 10v2m9-8a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Kerugian & PICA
+                        </div>
+                        <div class="form-grid" id="detailPicaGrid"></div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            Investigasi & Status
+                        </div>
+                        <div class="form-grid" id="detailInvestigasiGrid"></div>
+                    </div>
+
+                </div>
+
+                <!-- ══════ CARD DATA KORBAN ══════ -->
+                <div class="section-card">
+                    <div class="detail-section-title" style="margin-bottom:14px;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-8a4 4 0 110 8 4 4 0 010-8zm0 8a4 4 0 018 0v2H9v-2a4 4 0 018 0" />
+                        </svg>
+                        Data Korban
+                        <span class="badge-count" id="korbanCountBadge">0</span>
+                    </div>
+
+                    <div id="korbanListContainer">
+                        <div class="skeleton-bar" style="width:100%;height:60px;"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="detailErrorState" style="display:none;">
+                <div class="section-card">
+                    <div class="error-state">
+                        <div class="error-state-title">Gagal memuat data</div>
+                        <div class="error-state-sub" id="detailErrorMessage">Terjadi kesalahan.</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- ══════ MODAL FORM KEJADIAN ══════ -->
-    <div id="kejadianModalOverlay" class="modal-overlay" onclick="closeKejadianModalOutside(event)">
+    <!-- ══════ MODAL EDIT KEJADIAN ══════ -->
+    <div id="kejadianModalOverlay" class="modal-overlay" onclick="closeKejadianEditModalOutside(event)">
         <div class="modal-box form-modal-box" onclick="event.stopPropagation()">
             <div class="form-modal-header">
-                <div class="modal-title" id="kejadianModalTitle">Tambah Kejadian LPI</div>
-                <div class="pg-sub" style="margin:0;">Lengkapi data kejadian insiden.</div>
+                <div class="modal-title">Edit Kejadian LPI</div>
+                <div class="pg-sub" style="margin:0;">Perbarui data kejadian insiden.</div>
             </div>
 
             <div class="form-modal-body">
@@ -1461,27 +1070,27 @@
                 <div class="form-section-title">Evidence & Lampiran</div>
                 <div class="form-grid">
                     <div class="form-group"><label class="form-label">Evidence 1</label><input type="file"
-                            id="kEvidence_1" class="form-input" style="padding:8px 12px; height:auto;" /><a
+                            id="kEvidence_1" class="form-input" style="padding:8px 12px; height:auto;" />
                             href="#" id="kEvidence_1Current" class="file-current-link" target="_blank"
                             style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 2</label><input type="file"
-                            id="kEvidence_2" class="form-input" style="padding:8px 12px; height:auto;" /><a
+                            id="kEvidence_2" class="form-input" style="padding:8px 12px; height:auto;" />
                             href="#" id="kEvidence_2Current" class="file-current-link" target="_blank"
                             style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 3</label><input type="file"
-                            id="kEvidence_3" class="form-input" style="padding:8px 12px; height:auto;" /><a
+                            id="kEvidence_3" class="form-input" style="padding:8px 12px; height:auto;" />
                             href="#" id="kEvidence_3Current" class="file-current-link" target="_blank"
                             style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 4</label><input type="file"
-                            id="kEvidence_4" class="form-input" style="padding:8px 12px; height:auto;" /><a
+                            id="kEvidence_4" class="form-input" style="padding:8px 12px; height:auto;" />
                             href="#" id="kEvidence_4Current" class="file-current-link" target="_blank"
                             style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 5</label><input type="file"
-                            id="kEvidence_5" class="form-input" style="padding:8px 12px; height:auto;" /><a
+                            id="kEvidence_5" class="form-input" style="padding:8px 12px; height:auto;" />
                             href="#" id="kEvidence_5Current" class="file-current-link" target="_blank"
                             style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Lampiran Dokumen</label><input type="file"
-                            id="kLampiran_dokumen" class="form-input" style="padding:8px 12px; height:auto;" /><a
+                            id="kLampiran_dokumen" class="form-input" style="padding:8px 12px; height:auto;" />
                             href="#" id="kLampiran_dokumenCurrent" class="file-current-link" target="_blank"
                             style="display:none;">Lihat file ↗</a></div>
                 </div>
@@ -1531,82 +1140,13 @@
             </div>
 
             <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeKejadianModal()">Batal</button>
+                <button class="btn-modal-cancel" onclick="closeKejadianEditModal()">Batal</button>
                 <button class="btn-modal-confirm" id="btnSubmitKejadian" onclick="submitKejadian()">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- ══════ MODAL DETAIL KEJADIAN ══════ -->
-    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
-            <div class="detail-modal-header" style="display:flex;align-items:center;justify-content:space-between;">
-                <div>
-                    <div class="modal-title" id="detailIdLpiTitle" style="margin-bottom:2px;">-</div>
-                    <div class="detail-subtitle" id="detailOwnerSub">-</div>
-                </div>
-                <button class="toast-close" style="font-size:18px;" onclick="closeDetailModal()">✕</button>
-            </div>
-
-            <div class="detail-modal-body">
-                <div class="detail-section">
-                    <div class="detail-section-title">Waktu & Lokasi</div>
-                    <div class="form-grid" id="detailWaktuGrid"></div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-section-title">Uraian & Evidence</div>
-                    <div class="form-grid" id="detailUraianGrid"></div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-section-title">Kerugian & PICA</div>
-                    <div class="form-grid" id="detailPicaGrid"></div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-section-title">Investigasi & Status</div>
-                    <div class="form-grid" id="detailInvestigasiGrid"></div>
-                </div>
-            </div>
-
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-outline" onclick="openKorbanListModal(currentDetailKejadian)">Kelola Data
-                    Korban</button>
-                <button class="btn-modal-cancel" onclick="closeDetailModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL LIST KORBAN ══════ -->
-    <div class="modal-overlay" id="korbanListModalOverlay" onclick="closeKorbanListModalOutside(event)">
-        <div class="modal-box korban-modal-box" onclick="event.stopPropagation()">
-            <div class="detail-modal-header"
-                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                <div>
-                    <div class="modal-title" style="margin-bottom:2px;">Data Korban</div>
-                    <div class="detail-subtitle" id="korbanListSubtitle">-</div>
-                </div>
-                <button class="toast-close" style="font-size:18px;" onclick="closeKorbanListModal()">✕</button>
-            </div>
-
-            <div style="margin-bottom:12px;">
-                <button class="btn-primary" onclick="openKorbanFormModal()">
-                    <svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah Korban
-                </button>
-            </div>
-
-            <div id="korbanListContainer" style="max-height:55vh; overflow-y:auto;">
-                <div class="skeleton-bar" style="width:100%;height:60px;"></div>
-            </div>
-
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeKorbanListModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL FORM KORBAN (data-driven) ══════ -->
+    <!-- ══════ MODAL FORM KORBAN (data-driven, single level) ══════ -->
     <div class="modal-overlay" id="korbanFormModalOverlay" onclick="closeKorbanFormModalOutside(event)">
         <div class="modal-box korban-form-modal-box" onclick="event.stopPropagation()">
             <div class="form-modal-header">
@@ -1623,61 +1163,53 @@
         </div>
     </div>
 
-    <div id="toastContainer" class="toast-container"></div>
+    <!-- ══════ MODAL KONFIRMASI ══════ -->
     <div class="modal-overlay" id="confirmModalOverlay" onclick="closeConfirmModalOutside(event)">
         <div class="modal-box" style="max-width:430px;" onclick="event.stopPropagation()">
-
-            <div class="modal-title" id="confirmModalTitle">
-                Konfirmasi
+            <div class="modal-title" id="confirmModalTitle">Konfirmasi</div>
+            <div id="confirmModalMessage" style="margin-top:12px; color:#64748B; font-size:14px; line-height:1.7;">
             </div>
-
-            <div id="confirmModalMessage"
-                style="margin-top:12px;
-                   color:#64748B;
-                   font-size:14px;
-                   line-height:1.7;">
-            </div>
-
             <div class="modal-actions" style="margin-top:20px;">
-                <button class="btn-modal-cancel" onclick="closeConfirmModal()">
-                    Batal
-                </button>
-
-                <button class="btn-modal-confirm" id="confirmModalButton">
-                    Ya
-                </button>
+                <button class="btn-modal-cancel" onclick="closeConfirmModal()">Batal</button>
+                <button class="btn-modal-confirm" id="confirmModalButton">Ya</button>
             </div>
-
         </div>
     </div>
 
+    <!-- ══════ MODAL DETAIL KORBAN (read-only) ══════ -->
+    <div class="modal-overlay" id="korbanDetailModalOverlay" onclick="closeKorbanDetailModalOutside(event)">
+        <div class="modal-box korban-form-modal-box" onclick="event.stopPropagation()">
+            <div class="form-modal-header">
+                <div class="modal-title" id="korbanDetailTitle">Detail Data Korban</div>
+                <div class="pg-sub" style="margin:0;">Informasi lengkap korban & analisis penyebab insiden.</div>
+            </div>
+
+            <div class="form-modal-body" id="korbanDetailBody" style="max-height:65vh;"></div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closeKorbanDetailModal()">Tutup</button>
+                <button class="btn-modal-confirm" onclick="editFromKorbanDetail()">Edit Data</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
     <script>
-        const KEJADIAN_DATA_ENDPOINT = "{{ route('lpi-kejadian.data') }}";
-        const KEJADIAN_STORE_ENDPOINT = "{{ route('lpi-kejadian.store') }}";
+        const KEJADIAN_ID = {{ $id }};
         const KEJADIAN_BASE_ENDPOINT = "{{ url('/lpi-kejadian') }}";
+        const KEJADIAN_DETAIL_ENDPOINT = `${KEJADIAN_BASE_ENDPOINT}/${KEJADIAN_ID}/detail`;
         const KORBAN_BASE_ENDPOINT = "{{ url('/lpi-korban') }}";
         const CARI_KARYAWAN_ENDPOINT = "{{ route('lpi-korban.cari-karyawan') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
-        const state = {
-            search: '',
-            tingkat_risiko: '',
-            status_penyelesaian_lpi: '',
-            page: 1,
-            per_page: 10
-        };
+        let currentKejadian = null;
+        let currentEditKorbanId = null;
+        let activeKaryawanPickerTarget = null;
+        let karyawanPickerDebounce = null;
+        let confirmAction = null;
 
-        let searchDebounce = null,
-            soListLoaded = false,
-            tahunListLoaded = false,
-            currentEditId = null,
-            confirmAction = null,
-            currentEditKejadianId = null,
-            currentEditKorbanId = null,
-            currentDetailKejadian = null,
-            activeKaryawanPickerTarget = null,
-            karyawanPickerDebounce = null;
-
+        // ══════ UTIL ══════
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebar-overlay').classList.toggle('open');
@@ -1719,47 +1251,27 @@
         }
 
         function openConfirmModal(title, message, callback) {
-
             document.getElementById('confirmModalTitle').textContent = title;
-
             document.getElementById('confirmModalMessage').textContent = message;
-
             confirmAction = callback;
-
-            document.getElementById('confirmModalOverlay')
-                .classList.add('open');
-
+            document.getElementById('confirmModalOverlay').classList.add('open');
         }
 
         function closeConfirmModal() {
-
-            document.getElementById('confirmModalOverlay')
-                .classList.remove('open');
-
+            document.getElementById('confirmModalOverlay').classList.remove('open');
             confirmAction = null;
-
         }
 
         function closeConfirmModalOutside(e) {
-
-            if (e.target.id === 'confirmModalOverlay')
-                closeConfirmModal();
-
+            if (e.target.id === 'confirmModalOverlay') closeConfirmModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-
-            document
-                .getElementById('confirmModalButton')
-                .addEventListener('click', async () => {
-
-                    if (confirmAction)
-                        await confirmAction();
-
-                    closeConfirmModal();
-
-                });
-
+            document.getElementById('confirmModalButton').addEventListener('click', async () => {
+                if (confirmAction) await confirmAction();
+                closeConfirmModal();
+            });
+            loadDetail();
         });
 
         function autoFillHari() {
@@ -1769,269 +1281,36 @@
             document.getElementById('kHari_insiden').value = hariList[new Date(val).getDay()];
         }
 
-        // ══════ LIST KEJADIAN ══════
-        function onSearchInput() {
-            clearTimeout(searchDebounce);
-            searchDebounce = setTimeout(() => {
-                state.search = document.getElementById('searchInput').value.trim();
-                state.page = 1;
-                loadData();
-            }, 350);
-        }
-
-        function onFilterChange() {
-            state.tingkat_risiko = document.getElementById('filterTingkatRisiko').value;
-            state.status_penyelesaian_lpi = document.getElementById('filterStatusPenyelesaian').value;
-            state.page = 1;
-            loadData();
-        }
-
-        function onPerPageChange() {
-            state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
-            state.page = 1;
-            loadData();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterTingkatRisiko').value = '';
-            document.getElementById('filterStatusPenyelesaian').value = '';
-            Object.assign(state, {
-                search: '',
-                tingkat_risiko: '',
-                status_penyelesaian_lpi: '',
-                page: 1
-            });
-            loadData();
-        }
-
-        function goToPage(p) {
-            state.page = p;
-            loadData();
-            document.getElementById('page-content').scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        function renderTable(rows) {
-            const tbody = document.getElementById('tableBody');
-            if (!rows || rows.length === 0) {
-                tbody.innerHTML =
-                    `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
-                return;
-            }
-            tbody.innerHTML = rows.map(row => `
-                <tr>
-                    <td><div class="td-name-main">${escapeHtml(row.id_lpi)}</div><div class="td-name-sub">${escapeHtml(row.owner_user || '-')}</div></td>
-                    <td>${formatDate(row.tanggal_insiden)}<div class="td-name-sub">${escapeHtml(row.jam_insiden || '-')} · ${escapeHtml(row.jam_insiden_shift || '-')}</div></td>
-                    <td><div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.zona_lokasi_insiden || '-')}</div><div class="td-name-sub">${escapeHtml(row.detail_lokasi_insiden || '-')}</div></td>
-                    <td><span class="status-pill ${row.tingkat_risiko === 'HIGH' ? 'sp-red' : row.tingkat_risiko === 'MEDIUM' ? 'sp-amber' : 'sp-green'}">${escapeHtml(row.tingkat_risiko || '-')}</span></td>
-                    <td><span class="status-pill ${row.status_penyelesaian_lpi === 'CLOSE' ? 'sp-green' : 'sp-red'}">${row.status_penyelesaian_lpi}</span></td>
-                    <td><span class="badge-count">${row.korban_count ?? 0}</span></td>
-                    <td style="text-align:center; white-space:nowrap;">
-                        <a class="btn-outline" style="padding:5px 8px; text-decoration:none; display:inline-block;"
-                        href="{{ url('/lpi-kejadian') }}/${row.id}">Detail</a>                        
-                        <button class="btn-outline" style="padding:5px 8px;" onclick='openKejadianModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
-                        <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteKejadian(${row.id}, ${JSON.stringify(row.id_lpi)})">Hapus</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderPagination(meta) {
-            document.getElementById('paginationText').textContent = meta.total > 0 ?
-                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
-            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> data kejadian ditemukan`;
-            const container = document.getElementById('paginationPages');
-            const current = meta.current_page,
-                last = meta.last_page;
-            let pages = [1];
-            if (current > 3) pages.push('...');
-            for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) pages.push(p);
-            if (current < last - 2) pages.push('...');
-            if (last > 1) pages.push(last);
-            pages = [...new Set(pages)];
-            let html =
-                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
-            pages.forEach(p => {
-                html += p === '...' ? `<span class="page-ellipsis">…</span>` :
-                    `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-            });
-            html +=
-                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-            container.innerHTML = html;
-        }
-
-        async function loadData() {
-            const params = new URLSearchParams();
-            Object.entries(state).forEach(([k, v]) => {
-                if (v) params.set(k, v);
-            });
+        // ══════ LOAD DETAIL ══════
+        async function loadDetail() {
+            document.getElementById('detailLoadingState').style.display = 'block';
+            document.getElementById('detailContent').style.display = 'none';
+            document.getElementById('detailErrorState').style.display = 'none';
             try {
-                const res = await fetch(`${KEJADIAN_DATA_ENDPOINT}?${params.toString()}`, {
+                const res = await fetch(KEJADIAN_DETAIL_ENDPOINT, {
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
                 if (!res.ok) throw new Error((await res.json().catch(() => null))?.message || `Status ${res.status}`);
                 const json = await res.json();
-                renderTable(json.data);
-                renderPagination(json.meta);
+                currentKejadian = json.data;
+                renderDetail(currentKejadian);
+                renderKorbanList(currentKejadian.korban ?? []);
+                document.getElementById('detailLoadingState').style.display = 'none';
+                document.getElementById('detailContent').style.display = 'block';
             } catch (e) {
-                document.getElementById('tableBody').innerHTML =
-                    `<tr><td colspan="7"><div class="error-state">${escapeHtml(e.message)}</div></td></tr>`;
+                document.getElementById('detailLoadingState').style.display = 'none';
+                document.getElementById('detailErrorState').style.display = 'block';
+                document.getElementById('detailErrorMessage').textContent = e.message || 'Terjadi kesalahan.';
             }
         }
 
-        // ══════ MODAL FORM KEJADIAN ══════
-        const KEJADIAN_FILE_FIELDS = ['evidence_1', 'evidence_2', 'evidence_3', 'evidence_4', 'evidence_5',
-            'lampiran_dokumen'
-        ];
-        const KEJADIAN_TEXT_MAP = {
-            kId_lpi: 'id_lpi',
-            kOwner_user: 'owner_user',
-            kTanggal_insiden: 'tanggal_insiden',
-            kHari_insiden: 'hari_insiden',
-            kJam_insiden: 'jam_insiden',
-            kJam_insiden_shift: 'jam_insiden_shift',
-            kZona_lokasi_insiden: 'zona_lokasi_insiden',
-            kSub_lokasi_insiden: 'sub_lokasi_insiden',
-            kDetail_lokasi_insiden: 'detail_lokasi_insiden',
-            kUraian_kejadian: 'uraian_kejadian',
-            kNominal_kerugian_material: 'nominal_kerugian_material',
-            kTotal_cost_lost: 'total_cost_lost',
-            kPica_tindakan_perbaikan: 'pica_tindakan_perbaikan',
-            kPica_pic_bertanggung_jawab: 'pica_pic_bertanggung_jawab',
-            kPica_due_date: 'pica_due_date',
-            kTingkat_risiko: 'tingkat_risiko',
-            kHasil_investigasi_root_cause: 'hasil_investigasi_root_cause',
-            kStatus_penyelesaian_lpi: 'status_penyelesaian_lpi',
-            kStatus_pelaporan_lpi: 'status_pelaporan_lpi',
-        };
-
-        function setCurrentFileLink(id, url) {
-            const el = document.getElementById(id);
-            if (url) {
-                el.href = url;
-                el.style.display = 'inline-block';
-            } else {
-                el.style.display = 'none';
-            }
-        }
-
-        function openKejadianModal(row = null) {
-            currentEditKejadianId = row ? row.id : null;
-            document.getElementById('kejadianModalTitle').textContent = row ? 'Edit Kejadian LPI' : 'Tambah Kejadian LPI';
-
-            Object.entries(KEJADIAN_TEXT_MAP).forEach(([elId, field]) => {
-                document.getElementById(elId).value = row?.[field] ?? (field === 'status_penyelesaian_lpi' ?
-                    'OPEN' : '');
-            });
-
-            KEJADIAN_FILE_FIELDS.forEach(f => {
-                const inputId = 'k' + f.split('_').map((segment, index) => index === 0 ? segment.charAt(0)
-                    .toUpperCase() + segment.slice(1) : segment).join('_');
-                const input = document.getElementById(inputId);
-                if (input) {
-                    input.value = '';
-                }
-                setCurrentFileLink(inputId + 'Current', row?.[f + '_url']);
-            });
-
-            document.getElementById('kejadianModalOverlay').classList.add('open');
-        }
-
-        function closeKejadianModal() {
-            document.getElementById('kejadianModalOverlay').classList.remove('open');
-            currentEditKejadianId = null;
-        }
-
-        function closeKejadianModalOutside(e) {
-            if (e.target.id === 'kejadianModalOverlay') closeKejadianModal();
-        }
-
-        async function submitKejadian() {
-            const btn = document.getElementById('btnSubmitKejadian');
-            const idLpi = document.getElementById('kId_lpi').value.trim();
-            if (!idLpi) {
-                showToast('ID LPI wajib diisi.', 'error');
-                return;
-            }
-
-            btn.disabled = true;
-            const originalText = btn.textContent;
-            btn.textContent = 'Menyimpan...';
-
-            const formData = new FormData();
-            Object.entries(KEJADIAN_TEXT_MAP).forEach(([elId, field]) => {
-                formData.append(field, document.getElementById(elId).value || '');
-            });
-            KEJADIAN_FILE_FIELDS.forEach(f => {
-                const inputId = 'k' + f.replace(/(^|_)([a-z])/g, (_, p1, p2) => p2.toUpperCase());
-
-                console.log(f, inputId, document.getElementById(inputId));
-
-                const input = document.getElementById(inputId);
-
-                if (input && input.files.length > 0) {
-                    formData.append(f, input.files[0]);
-                }
-            });
-
-            if (currentEditKejadianId) formData.append('_method', 'PUT');
-            const url = currentEditKejadianId ? `${KEJADIAN_BASE_ENDPOINT}/${currentEditKejadianId}` :
-                KEJADIAN_STORE_ENDPOINT;
-
-            try {
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    },
-                    body: formData
-                });
-                const json = await res.json();
-                if (!res.ok) {
-                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
-                    throw new Error(firstError || json.message || `Status ${res.status}`);
-                }
-                closeKejadianModal();
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                showToast(e.message || 'Gagal menyimpan data.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        }
-
-        async function deleteKejadian(id, idLpi) {
-            if (!confirm(`Hapus kejadian "${idLpi}"? Seluruh data korban terkait juga akan terhapus.`)) return;
-            try {
-                const res = await fetch(`${KEJADIAN_BASE_ENDPOINT}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    }
-                });
-                const json = await res.json();
-                if (!res.ok) throw new Error(json.message);
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                showToast(e.message || 'Gagal menghapus data.', 'error');
-            }
-        }
-
-        // ══════ MODAL DETAIL KEJADIAN ══════
-        function openDetailModal(row) {
-            currentDetailKejadian = row;
-            document.getElementById('detailIdLpiTitle').textContent = row.id_lpi;
-            document.getElementById('detailOwnerSub').textContent = row.owner_user || '-';
+        function renderDetail(row) {
+            document.getElementById('pgIdLpi').innerHTML = `<span>${escapeHtml(row.id_lpi)}</span>`;
+            document.getElementById('pgOwnerSub').textContent = row.owner_user || '-';
+            document.getElementById('korbanCountBadge').textContent = row.korban_count ?? (row.korban ?
+                row.korban.length : 0);
 
             const waktu = [{
                     label: 'Tanggal Insiden',
@@ -2075,8 +1354,8 @@
                     '').join('') || '<div class="detail-value" style="color:#CBD5E1;">Belum ada evidence</div>';
 
             document.getElementById('detailUraianGrid').innerHTML = `
-                <div class="detail-field span-4"><label>Uraian Kejadian</label><div class="detail-value">${escapeHtml(row.uraian_kejadian || '-')}</div></div>
-                <div class="detail-field span-4"><label>Evidence & Lampiran</label>${evidenceLinks}</div>
+                <div class="detail-field span-2"><label>Uraian Kejadian</label><div class="detail-value">${escapeHtml(row.uraian_kejadian || '-')}</div></div>
+                <div class="detail-field span-2"><label>Evidence & Lampiran</label>${evidenceLinks}</div>
             `;
 
             document.getElementById('detailPicaGrid').innerHTML = `
@@ -2091,87 +1370,144 @@
                 <div class="detail-field"><label>Tingkat Risiko</label><div class="detail-value">${escapeHtml(row.tingkat_risiko || '-')}</div></div>
                 <div class="detail-field"><label>Status Penyelesaian LPI</label><div class="detail-value">${escapeHtml(row.status_penyelesaian_lpi || '-')}</div></div>
                 <div class="detail-field"><label>Status Pelaporan LPI</label><div class="detail-value">${escapeHtml(row.status_pelaporan_lpi || '-')}</div></div>
-                <div class="detail-field span-3"><label>Hasil Investigasi (Root Cause)</label><div class="detail-value">${escapeHtml(row.hasil_investigasi_root_cause || '-')}</div></div>
+                <div class="detail-field span-2"><label>Hasil Investigasi (Root Cause)</label><div class="detail-value">${escapeHtml(row.hasil_investigasi_root_cause || '-')}</div></div>
             `;
-
-            document.getElementById('detailModalOverlay').classList.add('open');
         }
 
-        function closeDetailModal() {
-            document.getElementById('detailModalOverlay').classList.remove('open');
-        }
-
-        function closeDetailModalOutside(e) {
-            if (e.target.id === 'detailModalOverlay') closeDetailModal();
-        }
-
-        // ══════ MODAL LIST KORBAN ══════
-        async function openKorbanListModal(kejadian) {
-            currentDetailKejadian = kejadian;
-            document.getElementById('korbanListSubtitle').textContent =
-                `${kejadian.id_lpi} — ${kejadian.owner_user || '-'}`;
-            document.getElementById('korbanListModalOverlay').classList.add('open');
-            await loadKorbanList();
-        }
-
-        function closeKorbanListModal() {
-            document.getElementById('korbanListModalOverlay').classList.remove('open');
-        }
-
-        function closeKorbanListModalOutside(e) {
-            if (e.target.id === 'korbanListModalOverlay') closeKorbanListModal();
-        }
-
-        async function loadKorbanList() {
+        function renderKorbanList(list) {
             const container = document.getElementById('korbanListContainer');
-            container.innerHTML = `<div class="skeleton-bar" style="width:100%;height:60px;"></div>`;
-            try {
-                const res = await fetch(`${KEJADIAN_BASE_ENDPOINT}/${currentDetailKejadian.id}/korban`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                const json = await res.json();
-                if (!json.data || json.data.length === 0) {
-                    container.innerHTML =
-                        `<div class="empty-state"><div class="empty-state-title">Belum ada data korban</div></div>`;
-                    return;
-                }
-                window.__lastKorbanList = json.data;
-                container.innerHTML = json.data.map(k => `
-                    <div class="korban-list-item">
-                        <div>
-                            <div class="kli-name">${escapeHtml(k.nama_korban || '-')}</div>
-                            <div class="kli-sub">${escapeHtml(k.badge_korban || '-')} · ${escapeHtml(k.jabatan || '-')} · ${escapeHtml(k.klasifikasi_insiden || '-')}</div>
-                        </div>
-                        <div style="display:flex; gap:6px;">
-                            <button class="btn-outline" style="padding:5px 8px;" onclick="openKorbanFormModal(${k.id})">Edit</button>
-                            <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteKorban(${k.id}, ${JSON.stringify(k.nama_korban || 'data ini')})">Hapus</button>
-                        </div>
+            if (!list || list.length === 0) {
+                container.innerHTML =
+                    `<div class="empty-state"><div class="empty-state-title">Belum ada data korban</div></div>`;
+                return;
+            }
+            window.__lastKorbanList = list;
+            container.innerHTML = list.map(k => `
+                <div class="korban-list-item">
+                    <div>
+                        <div class="kli-name">${escapeHtml(k.nama_korban || '-')}</div>
+                        <div class="kli-sub">${escapeHtml(k.badge_korban || '-')} · ${escapeHtml(k.jabatan || '-')} · ${escapeHtml(k.klasifikasi_insiden || '-')}</div>
                     </div>
-                `).join('');
-            } catch (e) {
-                container.innerHTML = `<div class="error-state">${escapeHtml(e.message)}</div>`;
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn-outline" style="padding:5px 8px;" onclick="openKorbanDetailModal(${k.id})">Detail</button>
+                        <button class="btn-outline" style="padding:5px 8px;" onclick="openKorbanFormModal(${k.id})">Edit</button>
+                        <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteKorban(${k.id}, ${JSON.stringify(k.nama_korban || 'data ini')})">Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ══════ MODAL EDIT KEJADIAN ══════
+        const KEJADIAN_FILE_FIELDS = ['evidence_1', 'evidence_2', 'evidence_3', 'evidence_4', 'evidence_5',
+            'lampiran_dokumen'
+        ];
+        const KEJADIAN_TEXT_MAP = {
+            kId_lpi: 'id_lpi',
+            kOwner_user: 'owner_user',
+            kTanggal_insiden: 'tanggal_insiden',
+            kHari_insiden: 'hari_insiden',
+            kJam_insiden: 'jam_insiden',
+            kJam_insiden_shift: 'jam_insiden_shift',
+            kZona_lokasi_insiden: 'zona_lokasi_insiden',
+            kSub_lokasi_insiden: 'sub_lokasi_insiden',
+            kDetail_lokasi_insiden: 'detail_lokasi_insiden',
+            kUraian_kejadian: 'uraian_kejadian',
+            kNominal_kerugian_material: 'nominal_kerugian_material',
+            kTotal_cost_lost: 'total_cost_lost',
+            kPica_tindakan_perbaikan: 'pica_tindakan_perbaikan',
+            kPica_pic_bertanggung_jawab: 'pica_pic_bertanggung_jawab',
+            kPica_due_date: 'pica_due_date',
+            kTingkat_risiko: 'tingkat_risiko',
+            kHasil_investigasi_root_cause: 'hasil_investigasi_root_cause',
+            kStatus_penyelesaian_lpi: 'status_penyelesaian_lpi',
+            kStatus_pelaporan_lpi: 'status_pelaporan_lpi',
+        };
+
+        function setCurrentFileLink(id, url) {
+            const el = document.getElementById(id);
+            if (url) {
+                el.href = url;
+                el.style.display = 'inline-block';
+            } else {
+                el.style.display = 'none';
             }
         }
 
-        async function deleteKorban(id, nama) {
-            if (!confirm(`Hapus data korban "${nama}"?`)) return;
+        function openKejadianEditModal() {
+            if (!currentKejadian) return;
+            const row = currentKejadian;
+
+            Object.entries(KEJADIAN_TEXT_MAP).forEach(([elId, field]) => {
+                document.getElementById(elId).value = row?.[field] ?? (field === 'status_penyelesaian_lpi' ?
+                    'OPEN' : '');
+            });
+
+            KEJADIAN_FILE_FIELDS.forEach(f => {
+                const inputId = 'k' + f.split('_').map((segment, index) => index === 0 ? segment.charAt(0)
+                    .toUpperCase() + segment.slice(1) : segment).join('_');
+                const input = document.getElementById(inputId);
+                if (input) input.value = '';
+                setCurrentFileLink(inputId + 'Current', row?.[f + '_url']);
+            });
+
+            document.getElementById('kejadianModalOverlay').classList.add('open');
+        }
+
+        function closeKejadianEditModal() {
+            document.getElementById('kejadianModalOverlay').classList.remove('open');
+        }
+
+        function closeKejadianEditModalOutside(e) {
+            if (e.target.id === 'kejadianModalOverlay') closeKejadianEditModal();
+        }
+
+        async function submitKejadian() {
+            const btn = document.getElementById('btnSubmitKejadian');
+            const idLpi = document.getElementById('kId_lpi').value.trim();
+            if (!idLpi) {
+                showToast('ID LPI wajib diisi.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = 'Menyimpan...';
+
+            const formData = new FormData();
+            Object.entries(KEJADIAN_TEXT_MAP).forEach(([elId, field]) => {
+                formData.append(field, document.getElementById(elId).value || '');
+            });
+            KEJADIAN_FILE_FIELDS.forEach(f => {
+                const inputId = 'k' + f.replace(/(^|_)([a-z])/g, (_, p1, p2) => p2.toUpperCase());
+                const input = document.getElementById(inputId);
+                if (input && input.files.length > 0) {
+                    formData.append(f, input.files[0]);
+                }
+            });
+            formData.append('_method', 'PUT');
+
             try {
-                const res = await fetch(`${KORBAN_BASE_ENDPOINT}/${id}`, {
-                    method: 'DELETE',
+                const res = await fetch(`${KEJADIAN_BASE_ENDPOINT}/${KEJADIAN_ID}`, {
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN
-                    }
+                    },
+                    body: formData
                 });
                 const json = await res.json();
-                if (!res.ok) throw new Error(json.message);
-                await loadKorbanList();
-                await loadData();
+                if (!res.ok) {
+                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
+                    throw new Error(firstError || json.message || `Status ${res.status}`);
+                }
+                closeKejadianEditModal();
+                await loadDetail();
                 showToast(json.message, 'success');
             } catch (e) {
-                showToast(e.message || 'Gagal menghapus data korban.', 'error');
+                showToast(e.message || 'Gagal menyimpan data.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
             }
         }
 
@@ -2595,7 +1931,6 @@
             if (target === 'korban') {
                 document.getElementById(fieldInputId('badge_korban')).value = t.badge;
                 document.getElementById(fieldInputId('nama_korban')).value = t.nama;
-                // auto-fill field terkait jika kosong
                 if (!document.getElementById(fieldInputId('unit_kerja')).value) document.getElementById(fieldInputId(
                     'unit_kerja')).value = t.unit_kerja;
                 if (!document.getElementById(fieldInputId('departemen')).value) document.getElementById(fieldInputId(
@@ -2659,8 +1994,17 @@
 
             document.getElementById(fieldInputId('badge_korban')).value = row?.badge_korban || '';
             document.getElementById(fieldInputId('nama_korban')).value = row?.nama_korban || '';
-            document.getElementById(fieldInputId('badge_saksi_karyawan_fjm')).value = row?.badge_saksi_karyawan_fjm || '';
-            document.getElementById(fieldInputId('nama_saksi_karyawan_fjm')).value = row?.nama_saksi_karyawan_fjm || '';
+            document.getElementById(fieldInputId('badge_saksi_karyawan_fjm')).value = row?.badge_saksi_karyawan_fjm ||
+                '';
+            document.getElementById(fieldInputId('nama_saksi_karyawan_fjm')).value = row?.nama_saksi_karyawan_fjm ||
+                '';
+
+            document.getElementById('korbanPickerWrap').style.display = 'block';
+            document.getElementById('korbanSelectedChip').style.display = 'none';
+            document.getElementById('korbanPickerInput').value = '';
+            document.getElementById('saksiPickerWrap').style.display = 'block';
+            document.getElementById('saksiSelectedChip').style.display = 'none';
+            document.getElementById('saksiPickerInput').value = '';
 
             if (row?.nama_korban) {
                 document.getElementById('korbanSelectedName').textContent = row.nama_korban;
@@ -2706,7 +2050,7 @@
 
             const url = currentEditKorbanId ?
                 `${KORBAN_BASE_ENDPOINT}/${currentEditKorbanId}` :
-                `${KEJADIAN_BASE_ENDPOINT}/${currentDetailKejadian.id}/korban`;
+                `${KEJADIAN_BASE_ENDPOINT}/${KEJADIAN_ID}/korban`;
             const method = currentEditKorbanId ? 'PUT' : 'POST';
 
             try {
@@ -2725,8 +2069,7 @@
                     throw new Error(firstError || json.message || `Status ${res.status}`);
                 }
                 closeKorbanFormModal();
-                await loadKorbanList();
-                await loadData(); // refresh korban_count di tabel utama
+                await loadDetail(); // refresh detail kejadian + list korban sekaligus
                 showToast(json.message, 'success');
             } catch (e) {
                 showToast(e.message || 'Gagal menyimpan data korban.', 'error');
@@ -2736,7 +2079,155 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        // ══════ MODAL DETAIL KORBAN (read-only) ══════
+        function detailRow(label, value, span) {
+            return `<div class="detail-field${span ? ' span-' + span : ''}"><label>${label}</label><div class="detail-value">${escapeHtml(value ?? '-') || '-'}</div></div>`;
+        }
+
+        function openKorbanDetailModal(korbanId) {
+            const row = (window.__lastKorbanList || []).find(k => k.id === korbanId);
+            if (!row) {
+                showToast('Data korban tidak ditemukan.', 'error');
+                return;
+            }
+            currentEditKorbanId = korbanId;
+            document.getElementById('korbanDetailTitle').textContent = row.nama_korban || 'Detail Data Korban';
+
+            const body = document.getElementById('korbanDetailBody');
+            body.innerHTML = `
+                <div class="dynamic-form-section-title">Klasifikasi & Saksi</div>
+                <div class="form-grid">
+                    ${detailRow('Klasifikasi Insiden', row.klasifikasi_insiden)}
+                    ${detailRow('Saksi Karyawan FJM', row.nama_saksi_karyawan_fjm ? `${row.nama_saksi_karyawan_fjm} (${row.badge_saksi_karyawan_fjm || '-'})` : '-')}
+                    ${detailRow('Nama Saksi Non-FJM', row.nama_saksi_karyawan_non_fjm)}
+                </div>
+
+                <div class="dynamic-form-section-title">Data Korban</div>
+                <div class="form-grid">
+                    ${detailRow('PT Asal Korban', row.pt_asal_korban)}
+                    ${detailRow('Nama Korban', row.nama_korban ? `${row.nama_korban} (${row.badge_korban || '-'})` : '-')}
+                    ${detailRow('Alamat', row.alamat, 2)}
+                    ${detailRow('Jenis Kelamin', row.jenis_kelamin)}
+                    ${detailRow('Usia', row.usia)}
+                    ${detailRow('Masa Kerja (tahun)', row.masa_kerja)}
+                    ${detailRow('Shift', row.shift)}
+                    ${detailRow('Departemen', row.departemen)}
+                    ${detailRow('Unit Kerja', row.unit_kerja)}
+                    ${detailRow('Jabatan', row.jabatan)}
+                    ${detailRow('Kode OK', row.kode_ok)}
+                    ${detailRow('Uraian Pekerjaan', row.uraian_pekerjaan, 2)}
+                </div>
+
+                <div class="dynamic-form-section-title">Jenis Insiden & Alat</div>
+                <div class="form-grid">
+                    ${detailRow('Jenis Insiden', row.jenis_insiden)}
+                    ${detailRow('Penjelasan Jenis Insiden', row.penjelasan_jenis_insiden, 2)}
+                    ${detailRow('Keterlibatan Alat', row.keterlibatan_alat)}
+                    ${detailRow('Keterangan Alat Lain-lain', row.keterangan_alat_lain)}
+                    ${detailRow('Nomor Alat', row.nomor_alat)}
+                    ${detailRow('Status Milik Alat/Unit', row.status_milik_alat_unit)}
+                </div>
+
+                <div class="dynamic-form-section-title">Analisis — Unsafe Action</div>
+                <div class="form-grid">
+                    ${detailRow('Tindakan Tidak Aman', row.tindakan_tidak_aman, 2)}
+                    ${detailRow('Sebab 1', row.ua_sebab_1)}
+                    ${detailRow('Sebab 2', row.ua_sebab_2)}
+                    ${detailRow('Sebab 3', row.ua_sebab_3)}
+                </div>
+
+                <div class="dynamic-form-section-title">Analisis — Unsafe Condition</div>
+                <div class="form-grid">
+                    ${detailRow('Kondisi Tidak Aman', row.kondisi_tidak_aman, 2)}
+                    ${detailRow('Sebab 1', row.uc_sebab_1)}
+                    ${detailRow('Sebab 2', row.uc_sebab_2)}
+                    ${detailRow('Sebab 3', row.uc_sebab_3)}
+                </div>
+
+                <div class="dynamic-form-section-title">Analisis — Faktor Pribadi</div>
+                <div class="form-grid">
+                    ${detailRow('Faktor Pribadi', row.faktor_pribadi, 2)}
+                    ${detailRow('Sebab 1', row.fp_sebab_1)}
+                    ${detailRow('Sebab 2', row.fp_sebab_2)}
+                    ${detailRow('Sebab 3', row.fp_sebab_3)}
+                </div>
+
+                <div class="dynamic-form-section-title">Analisis — Faktor Pekerjaan</div>
+                <div class="form-grid">
+                    ${detailRow('Faktor Pekerjaan', row.faktor_pekerjaan, 2)}
+                    ${detailRow('Sebab 1', row.fk_sebab_1)}
+                    ${detailRow('Sebab 2', row.fk_sebab_2)}
+                    ${detailRow('Sebab 3', row.fk_sebab_3)}
+                </div>
+
+                <div class="dynamic-form-section-title">Sistem Manajemen</div>
+                <div class="form-grid">
+                    ${detailRow('Nomor & Judul Prosedur', row.sistem_manajemen_terkait, 2)}
+                    ${detailRow('Deskripsi Kegagalan Sistem', row.deskripsi_kegagalan_sistem, 2)}
+                    ${detailRow('Penyebab Kegagalan Sistem', row.penyebab_kegagalan_sistem, 2)}
+                    ${detailRow('Sebab-sebab Teridentifikasi', row.sebab_sebab_teridentifikasi, 2)}
+                </div>
+
+                <div class="dynamic-form-section-title">Pengendalian Risiko</div>
+                <div class="form-grid">
+                    ${detailRow('Pengendalian Risiko', row.pengendalian_risiko, 2)}
+                    ${detailRow('Penjelasan Pengendalian Risiko', row.penjelasan_pengendalian_risiko, 2)}
+                </div>
+
+                <div class="dynamic-form-section-title">Cidera & Penanganan Medis</div>
+                <div class="form-grid">
+                    ${detailRow('Rincian Cidera', row.rincian_cidera)}
+                    ${detailRow('Persentase Luka Bakar (%)', row.persentase_luka_bakar)}
+                    ${detailRow('Keterangan Detail Cidera', row.keterangan_detail_cidera, 2)}
+                    ${detailRow('Kategori Penanganan Medis', row.kategori_penanganan_medis)}
+                    ${detailRow('Keterangan Penanganan Medis', row.keterangan_penanganan_medis, 2)}
+                    ${detailRow('Nama Dokter', row.nama_dokter)}
+                    ${detailRow('Total Hari Kerja Hilang', row.total_hari_kerja_hilang)}
+                    ${detailRow('Nominal Biaya Medis', formatRupiah(row.nominal_biaya_medis))}
+                    ${detailRow('Penjamin / Platform', row.penjamin_platform)}
+                </div>
+            `;
+
+            document.getElementById('korbanDetailModalOverlay').classList.add('open');
+        }
+
+        function closeKorbanDetailModal() {
+            document.getElementById('korbanDetailModalOverlay').classList.remove('open');
+        }
+
+        function closeKorbanDetailModalOutside(e) {
+            if (e.target.id === 'korbanDetailModalOverlay') closeKorbanDetailModal();
+        }
+
+        function editFromKorbanDetail() {
+            const id = currentEditKorbanId;
+            closeKorbanDetailModal();
+            openKorbanFormModal(id);
+        }
+
+        async function deleteKorban(id, nama) {
+            openConfirmModal(
+                'Hapus Data Korban',
+                `Apakah Anda yakin ingin menghapus data korban "${nama}"? Tindakan ini tidak dapat dibatalkan.`,
+                async () => {
+                    try {
+                        const res = await fetch(`${KORBAN_BASE_ENDPOINT}/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': CSRF_TOKEN
+                            }
+                        });
+                        const json = await res.json();
+                        if (!res.ok) throw new Error(json.message);
+                        await loadDetail();
+                        showToast(json.message, 'success');
+                    } catch (e) {
+                        showToast(e.message || 'Gagal menghapus data korban.', 'error');
+                    }
+                }
+            );
+        }
     </script>
 </body>
 

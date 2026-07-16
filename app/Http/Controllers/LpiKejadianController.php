@@ -153,6 +153,24 @@ class LpiKejadianController extends Controller
         return $base;
     }
 
+    public function show(LpiKejadian $lpiKejadian)
+    {
+        return view('lpi-kejadian.show', ['id' => $lpiKejadian->id]);
+    }
+
+    public function detail(LpiKejadian $lpiKejadian): JsonResponse
+    {
+        try {
+            $lpiKejadian->load('korban')->loadCount('korban');
+            $data = $this->transform($lpiKejadian);
+            $data['korban'] = $lpiKejadian->korban;
+            return response()->json(['data' => $data]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal memuat detail LPI kejadian: ' . $e->getMessage());
+            return response()->json(['message' => 'Gagal mengambil detail data.'], 500);
+        }
+    }
+
     private function validateData(Request $request, ?int $ignoreId = null): array
     {
         $rules = [
