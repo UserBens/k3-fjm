@@ -9,11 +9,13 @@ use App\Http\Controllers\DataRejectMonitoringController;
 use App\Http\Controllers\DataSafetyController;
 use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
+use App\Http\Controllers\HiradcController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\LogApdController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
 use App\Http\Controllers\LpiKorbanController;
+use App\Http\Controllers\MatriksApdJabatanController;
 use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
@@ -237,6 +239,24 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/items/{item}', [RabAnggaranController::class, 'updateItem'])->name('items.update');
         Route::delete('/items/{item}', [RabAnggaranController::class, 'destroyItem'])->name('items.destroy');
     });
+
+    // HIRADC
+    Route::prefix('hiradc')->name('hiradc.')->group(function () {
+        Route::get('/', [HiradcController::class, 'index'])->name('index');
+        Route::get('/data', [HiradcController::class, 'data'])->name('data');
+        Route::post('/', [HiradcController::class, 'store'])->name('store');
+        Route::put('/{hiradc}', [HiradcController::class, 'update'])->name('update');
+        Route::delete('/{hiradc}', [HiradcController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('matriks-apd-jabatan')->name('matriks-apd-jabatan.')->group(function () {
+        Route::get('/', [MatriksApdJabatanController::class, 'index'])->name('index');
+        Route::get('/data', [MatriksApdJabatanController::class, 'data'])->name('data');
+        Route::post('/', [MatriksApdJabatanController::class, 'store'])->name('store');
+        Route::put('/{matriksApdJabatan}', [MatriksApdJabatanController::class, 'update'])->name('update');
+        Route::delete('/{matriksApdJabatan}', [MatriksApdJabatanController::class, 'destroy'])->name('destroy');
+    });
+
 
 
     // MONITORING ALBER

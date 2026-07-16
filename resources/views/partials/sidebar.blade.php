@@ -669,7 +669,7 @@
                 request()->routeIs('master-stok-alkes.*') ||
                 request()->routeIs('penggunaan-alkes.*') ||
                 request()->routeIs('matriks-apd.*') ||
-                request()->routeIs('matriks-apd-hiradc.*') ||
+                request()->routeIs('matriks-apd-jabatan.*') ||
                 request()->routeIs('hiradc.*') ||
                 request()->routeIs('rab-anggaran.*');
         @endphp
@@ -718,15 +718,15 @@
             </a>
 
 
-            <a class="nav-link {{ request()->routeIs('matriks-apd.*') ? 'active' : '' }}" href="#">
+            {{-- <a class="nav-link {{ request()->routeIs('matriks-apd.*') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Matriks APD</span>
+            </a> --}}
+
+            <a class="nav-link {{ request()->routeIs('matriks-apd-jabatan.*') ? 'active' : '' }}" href="{{ route('matriks-apd-jabatan.index') }}">
+                <span class="nav-label">Matriks APD Jabatan</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('matriks-apd-hiradc.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks APD HIRADC</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('hiradc.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('hiradc.*') ? 'active' : '' }}" href="{{ route('hiradc.index') }}">
                 <span class="nav-label">HIRADC</span>
             </a>
 
