@@ -16,17 +16,17 @@ class AlatKesehatanPenggunaan extends Model
         'jumlah_digunakan' => 'integer',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relasi
-    |--------------------------------------------------------------------------
-    */
-
     public function alatKesehatan()
     {
-        return $this->belongsTo(
-            StokAlkes::class,
-            'stok_alkes_id' // BENAR
-        );
+        return $this->belongsTo(StokAlkes::class, 'stok_alkes_id');
+    }
+
+    public function scopeSearch($query, ?string $term)
+    {
+        if (!$term) return $query;
+        return $query->where(function ($q) use ($term) {
+            $q->where('nama_pengguna', 'ilike', "%{$term}%")
+                ->orWhere('id_karyawan', 'ilike', "%{$term}%");
+        });
     }
 }

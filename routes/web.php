@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AlatBeratController;
+use App\Http\Controllers\AlatKesehatanPenggunaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\DataRejectMonitoringController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\DataSafetyController;
 use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\JKARecordInsidenController;
+use App\Http\Controllers\LogApdController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
 use App\Http\Controllers\LpiKorbanController;
@@ -183,14 +185,37 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
         Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
     });
-  
-    // APD
+
+    // LOG APD
+    Route::prefix('log-apd')->name('log-apd.')->group(function () {
+        Route::get('/', [LogApdController::class, 'index'])->name('index');
+        Route::get('/data', [LogApdController::class, 'data'])->name('data');
+        Route::get('/apd-options', [LogApdController::class, 'apdOptions'])->name('apd-options');
+        Route::get('/cari-pegawai', [LogApdController::class, 'cariPegawai'])->name('cari-pegawai');
+        Route::post('/', [LogApdController::class, 'store'])->name('store');
+        Route::put('/{logApd}', [LogApdController::class, 'update'])->name('update');
+        Route::delete('/{logApd}', [LogApdController::class, 'destroy'])->name('destroy');
+    });
+
+    // ALKES
     Route::prefix('master-stok-alkes')->name('master-stok-alkes.')->group(function () {
         Route::get('/', [StokAlkesController::class, 'index'])->name('index');
         Route::get('/data', [StokAlkesController::class, 'data'])->name('data');
         Route::post('/', [StokAlkesController::class, 'store'])->name('store');
         Route::put('/{stokAlkes}', [StokAlkesController::class, 'update'])->name('update');
         Route::delete('/{stokAlkes}', [StokAlkesController::class, 'destroy'])->name('destroy');
+    });
+
+    // LOG ALKES
+    Route::prefix('penggunaan-alkes')->name('penggunaan-alkes.')->group(function () {
+        Route::get('/', [AlatKesehatanPenggunaController::class, 'index'])->name('index');
+        Route::get('/data', [AlatKesehatanPenggunaController::class, 'data'])->name('data');
+        Route::post('/', [AlatKesehatanPenggunaController::class, 'store'])->name('store');
+        Route::put('/{alatKesehatanPenggunaan}', [AlatKesehatanPenggunaController::class, 'update'])->name('update');
+        Route::delete('/{alatKesehatanPenggunaan}', [AlatKesehatanPenggunaController::class, 'destroy'])->name('destroy');
+        Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
+        Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
+        Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
     });
 
     // MONITORING ALBER

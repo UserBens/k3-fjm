@@ -666,6 +666,7 @@
                 request()->routeIs('dasboard-apd.*') ||
                 request()->routeIs('master-stok-apd.*') ||
                 request()->routeIs('master-stok-alkes.*') ||
+                request()->routeIs('penggunaan-alkes.*') ||
                 request()->routeIs('log-apd.*') ||
                 request()->routeIs('matriks-apd.*') ||
                 request()->routeIs('matriks-apd-hiradc.*') ||
@@ -704,14 +705,18 @@
                 href="{{ route('master-stok-apd.index') }}">
                 <span class="nav-label">Master Stok APD</span>
             </a>
+            <a class="nav-link {{ request()->routeIs('log-apd.*') ? 'active' : '' }}" href="{{ route('log-apd.index') }}">
+                <span class="nav-label">LOG APD</span>
+            </a>
 
             <a class="nav-link {{ request()->routeIs('master-stok-alkes.*') ? 'active' : '' }}" href="{{ route('master-stok-alkes.index') }}">
                 <span class="nav-label">Master Stok Alkes</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('log-apd.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">LOG APD</span>
+            <a class="nav-link {{ request()->routeIs('penggunaan-alkes.*') ? 'active' : '' }}" href="{{ route('penggunaan-alkes.index') }}">
+                <span class="nav-label">Log Penggunaan Alkes</span>
             </a>
+
 
             <a class="nav-link {{ request()->routeIs('matriks-apd.*') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Matriks APD</span>
