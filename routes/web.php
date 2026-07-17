@@ -11,6 +11,8 @@ use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\HiradcController;
 use App\Http\Controllers\JKARecordInsidenController;
+use App\Http\Controllers\LeadingDashboardController;
+use App\Http\Controllers\LeadingInputController;
 use App\Http\Controllers\LogApdController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
@@ -182,6 +184,21 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('dashboard-jka', [JKARecordInsidenController::class, 'indexDashboardJKA'])->name('dashboard-jka.index');
     Route::get('dashboard-leading', [JKARecordInsidenController::class, 'indexDashboardLeading'])->name('dashboard-leading.index');
 
+    // LEADING INPUT
+    Route::prefix('leading-input')->name('leading-input.')->group(function () {
+        Route::get('/', [LeadingInputController::class, 'index'])->name('index');
+        Route::get('/api', [LeadingInputController::class, 'api'])->name('api');
+        Route::post('/', [LeadingInputController::class, 'store'])->name('store');
+        Route::put('/{leadingInput}', [LeadingInputController::class, 'update'])->name('update');
+        Route::delete('/{leadingInput}', [LeadingInputController::class, 'destroy'])->name('destroy');
+    });
+
+    // Dashboard Leading
+    Route::get('/leading-dashboard', [LeadingDashboardController::class, 'index'])
+        ->name('leading-dashboard.index');
+    Route::get('/leading-dashboard/api', [LeadingDashboardController::class, 'api'])
+        ->name('leading-dashboard.api');
+
     // APD
     Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
         Route::get('/', [StokAPDController::class, 'index'])->name('index');
@@ -251,6 +268,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{hiradc}', [HiradcController::class, 'destroy'])->name('destroy');
     });
 
+    // MATRIKS APD JABATAN
     Route::prefix('matriks-apd-jabatan')->name('matriks-apd-jabatan.')->group(function () {
         Route::get('/', [MatriksApdJabatanController::class, 'index'])->name('index');
         Route::get('/data', [MatriksApdJabatanController::class, 'data'])->name('data');

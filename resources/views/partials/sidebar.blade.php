@@ -420,7 +420,8 @@
                 request()->routeIs('dashboard-insiden.*') ||
                 request()->routeIs('lpi-kejadian.*') ||
                 request()->routeIs('dashboard-jka.*') ||
-                request()->routeIs('dashboard-leading.*');
+                request()->routeIs('leading-dashboard.*') ||
+                request()->routeIs('leading-input.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
@@ -452,7 +453,7 @@
 
             <a class="nav-link {{ request()->routeIs('lpi-kejadian.*') ? 'active' : '' }}"
                 href="{{ route('lpi-kejadian.index') }}">
-                <span class="nav-label">LPI Kejadian</span>
+                <span class="nav-label">LPI Insiden</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}"
@@ -460,9 +461,14 @@
                 <span class="nav-label">Dashboard JKA</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('dashboard-leading.*') ? 'active' : '' }}"
-                href="{{ route('dashboard-leading.index') }}">
+            <a class="nav-link {{ request()->routeIs('leading-dashboard.*') ? 'active' : '' }}"
+                href="{{ route('leading-dashboard.index') }}">
                 <span class="nav-label">Dashboard Leading</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('leading-input.*') ? 'active' : '' }}"
+                href="{{ route('leading-input.index') }}">
+                <span class="nav-label">Leading Input</span>
             </a>
 
         </div>
@@ -705,15 +711,18 @@
                 href="{{ route('master-stok-apd.index') }}">
                 <span class="nav-label">Master Stok APD</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('log-apd.*') ? 'active' : '' }}" href="{{ route('log-apd.index') }}">
+            <a class="nav-link {{ request()->routeIs('log-apd.*') ? 'active' : '' }}"
+                href="{{ route('log-apd.index') }}">
                 <span class="nav-label">LOG APD</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('master-stok-alkes.*') ? 'active' : '' }}" href="{{ route('master-stok-alkes.index') }}">
+            <a class="nav-link {{ request()->routeIs('master-stok-alkes.*') ? 'active' : '' }}"
+                href="{{ route('master-stok-alkes.index') }}">
                 <span class="nav-label">Master Stok Alkes</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('penggunaan-alkes.*') ? 'active' : '' }}" href="{{ route('penggunaan-alkes.index') }}">
+            <a class="nav-link {{ request()->routeIs('penggunaan-alkes.*') ? 'active' : '' }}"
+                href="{{ route('penggunaan-alkes.index') }}">
                 <span class="nav-label">LOG ALKES</span>
             </a>
 
@@ -722,15 +731,18 @@
                 <span class="nav-label">Matriks APD</span>
             </a> --}}
 
-            <a class="nav-link {{ request()->routeIs('matriks-apd-jabatan.*') ? 'active' : '' }}" href="{{ route('matriks-apd-jabatan.index') }}">
+            <a class="nav-link {{ request()->routeIs('matriks-apd-jabatan.*') ? 'active' : '' }}"
+                href="{{ route('matriks-apd-jabatan.index') }}">
                 <span class="nav-label">Matriks APD Jabatan</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('hiradc.*') ? 'active' : '' }}" href="{{ route('hiradc.index') }}">
+            <a class="nav-link {{ request()->routeIs('hiradc.*') ? 'active' : '' }}"
+                href="{{ route('hiradc.index') }}">
                 <span class="nav-label">HIRADC</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('rab-anggaran.*') ? 'active' : '' }}" href="{{ route('rab-anggaran.index') }}">
+            <a class="nav-link {{ request()->routeIs('rab-anggaran.*') ? 'active' : '' }}"
+                href="{{ route('rab-anggaran.index') }}">
                 <span class="nav-label">RAB</span>
             </a>
 

@@ -1794,13 +1794,4 @@
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
-
-
-
-
-
-
-
-
-
 </html>
