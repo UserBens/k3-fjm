@@ -11,6 +11,7 @@ use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\HiradcController;
 use App\Http\Controllers\JKARecordInsidenController;
+use App\Http\Controllers\KodeOkReferensiController;
 use App\Http\Controllers\LeadingDashboardController;
 use App\Http\Controllers\LeadingInputController;
 use App\Http\Controllers\LogApdController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
 use App\Http\Controllers\RabAnggaranController;
+use App\Http\Controllers\ReferensiKodeOkController;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\StokAlkesController;
@@ -198,6 +200,17 @@ Route::middleware(['auth.custom'])->group(function () {
         ->name('leading-dashboard.index');
     Route::get('/leading-dashboard/api', [LeadingDashboardController::class, 'api'])
         ->name('leading-dashboard.api');
+
+
+    // REFRENSI KODE OK
+    Route::prefix('kode-ok-referensi')->name('kode-ok-referensi.')->group(function () {
+        Route::get('/', [KodeOkReferensiController::class, 'index'])->name('index');
+        Route::get('/data', [KodeOkReferensiController::class, 'data'])->name('data');
+        Route::get('/apd-options', [KodeOkReferensiController::class, 'apdOptions'])->name('apd-options');
+        Route::post('/', [KodeOkReferensiController::class, 'store'])->name('store');
+        Route::put('/{kodeOkReferensi}', [KodeOkReferensiController::class, 'update'])->name('update');
+        Route::delete('/{kodeOkReferensi}', [KodeOkReferensiController::class, 'destroy'])->name('destroy');
+    });
 
     // APD
     Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {

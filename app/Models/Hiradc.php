@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Hiradc extends Model
 {
     use HasFactory;
-    protected $table = 'hiradc';
+    protected $table = 'hiradcs';   // ← perbaiki jadi 'hiradcs' sesuai nama tabel asli
 
     protected $fillable = [
         'kode_ok',

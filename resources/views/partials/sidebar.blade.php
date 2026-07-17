@@ -670,6 +670,7 @@
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
             $assetsmanagementActive =
                 request()->routeIs('dasboard-apd.*') ||
+                request()->routeIs('kode-ok-referensi.*') ||
                 request()->routeIs('master-stok-apd.*') ||
                 request()->routeIs('log-apd.*') ||
                 request()->routeIs('master-stok-alkes.*') ||
@@ -705,6 +706,10 @@
 
             <a class="nav-link {{ request()->routeIs('dasboard-apd.*') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Dashboard APD</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('kode-ok-referensi.*') ? 'active' : '' }}" href="{{route('kode-ok-referensi.index')}}">
+                <span class="nav-label">Refrensi Kode OK</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}"
