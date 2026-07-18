@@ -86,6 +86,7 @@ class StokAlkesController extends Controller
             - $validated['digunakan']
             - $validated['rusak'];
 
+        $validated['kode_alkes'] = $this->generateKodeAlkes($validated['jenis_alat']);
         $alkes = StokAlkes::create($validated);
 
         return response()->json([
@@ -97,7 +98,10 @@ class StokAlkesController extends Controller
     public function update(Request $request, StokAlkes $stokAlke)
     {
         $validated = $this->validateData($request);
-
+        if ($stokAlke->jenis_alat != $validated['jenis_alat']) {
+            $validated['kode_alkes'] =
+                $this->generateKodeAlkes($validated['jenis_alat']);
+        }
         $validated['stok_tersedia'] =
             $validated['stok_awal']
             - $validated['digunakan']
@@ -125,6 +129,8 @@ class StokAlkesController extends Controller
     private function validateData(Request $request): array
     {
         return $request->validate([
+            'kode_alkes' => ['nullable', 'string', 'max:50', Rule::unique('stok_alkes', 'kode_alkes')
+                ->ignore($request->route('stokAlke'))],
 
             'jenis_alat' => ['required', 'string', 'max:255'],
 
@@ -158,6 +164,8 @@ class StokAlkesController extends Controller
 
             'jadwal_kalibrasi_berikut' => ['nullable', 'date'],
 
+            'tanggal_exp' => ['nullable', 'date'],
+
             'supplier' => ['nullable', 'string', 'max:255'],
 
             'harga_satuan' => ['nullable', 'numeric', 'min:0'],
@@ -184,5 +192,41 @@ class StokAlkesController extends Controller
                 ])
             ],
         ]);
+    }
+
+    private function generateKodeAlkes(string $jenisAlat): string
+    {
+        $map = [
+            'Glukometer'         => 'GL',
+            'Cholesterol Meter'  => 'CM',
+            'Asam Urat Meter'    => 'AU',
+            'Hb Meter'           => 'HB',
+            'Tensimeter'         => 'TM',
+            'Tensimeter Digital' => 'TD',
+            'Thermometer'        => 'TH',
+            'Nebulizer'          => 'NB',
+            'Pulse Oximeter'     => 'PO',
+            'ECG'                => 'EC',
+        ];
+
+        $prefix = $map[$jenisAlat]
+            ?? strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $jenisAlat), 0, 2));
+
+        $last = StokAlkes::where('kode_alkes', 'like', "ALK-NC-{$prefix}-%")
+            ->orderByDesc('kode_alkes')
+            ->first();
+
+        if ($last) {
+            $lastNumber = (int) substr($last->kode_alkes, -2);
+            $next = $lastNumber + 1;
+        } else {
+            $next = 1;
+        }
+
+        return sprintf(
+            'ALK-NC-%s-%02d',
+            $prefix,
+            $next
+        );
     }
 }

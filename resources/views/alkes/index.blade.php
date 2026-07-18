@@ -1221,6 +1221,16 @@
                 <div class="form-section-title">Data Umum</div>
                 <div class="form-grid">
                     <div class="form-group">
+                        <label class="form-label">Kode Alkes</label>
+                        <input
+                            type="text"
+                            id="fKodeAlkes"
+                            class="form-input"
+                            readonly
+                            placeholder="Otomatis dibuat">
+                    </div>
+
+                    <div class="form-group">
                         <label class="form-label">Jenis Alat</label>
                         <input type="text" id="fJenisAlat" class="form-input" placeholder="Tensimeter Digital" />
                     </div>
@@ -1299,6 +1309,13 @@
                         <label class="form-label">Masa Garansi</label>
                         <input type="date" id="fMasaGaransi" class="form-input" />
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Expired</label>
+                        <input
+                            type="date"
+                            id="fTanggalExp"
+                            class="form-input">
+                    </div>
                 </div>
 
                 <div class="form-section-title">Harga &amp; Pengadaan</div>
@@ -1371,6 +1388,10 @@
                         Data Umum
                     </div>
                     <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Kode Alkes</label>
+                            <input type="text" id="dKodeAlkes" readonly>
+                        </div>
                         <div class="detail-field"><label>Nomor Seri</label><input type="text" id="dNomorSeri"
                                 readonly></div>
                         <div class="detail-field"><label>Kategori</label><input type="text" id="dKategori"
@@ -1437,6 +1458,10 @@
                                 id="dTanggalKalibrasi" readonly></div>
                         <div class="detail-field"><label>Jadwal Kalibrasi Berikut</label><input type="text"
                                 id="dJadwalKalibrasiBerikut" readonly></div>
+                        <div class="detail-field">
+                            <label>Tanggal Expired</label>
+                            <input type="text" id="dTanggalExp" readonly>
+                        </div>
                         <div class="detail-field span-2"><label>Masa Garansi</label><input type="text"
                                 id="dMasaGaransi" readonly></div>
                     </div>
@@ -1668,6 +1693,9 @@
                             <div>
                                 <div class="td-name-main">${escapeHtml(row.jenis_alat)}</div>
                                 <div class="td-name-sub">
+                                    <strong>${escapeHtml(row.kode_alkes || '-')}</strong>
+                                </div>
+                                <div class="td-name-sub">
                                     <span style="font-weight:600; color:#475569;">${escapeHtml(row.nomor_seri || '-')}</span>
                                     · <span class="status-pill sp-blue" style="margin-left:2px;">${escapeHtml(row.kategori)}</span>
                                 </div>
@@ -1830,7 +1858,7 @@
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data Alkes' : 'Tambah Alkes';
             document.getElementById('formModalSub').textContent = row ? `Perbarui data untuk ${row.jenis_alat}` :
                 'Lengkapi data master & stok di bawah ini.';
-
+            document.getElementById('fKodeAlkes').value = row?.kode_alkes || '';
             document.getElementById('fJenisAlat').value = row?.jenis_alat || '';
             document.getElementById('fKategori').value = row?.kategori || 'Lainnya';
             document.getElementById('fMerk').value = row?.merk || '';
@@ -1846,6 +1874,10 @@
                 10) : '';
             document.getElementById('fJadwalKalibrasiBerikut').value = row?.jadwal_kalibrasi_berikut ? row
                 .jadwal_kalibrasi_berikut.substring(0, 10) : '';
+            document.getElementById('fTanggalExp').value =
+            row?.tanggal_exp
+                ? row.tanggal_exp.substring(0,10)
+                : '';
             document.getElementById('fMasaGaransi').value = row?.masa_garansi ? row.masa_garansi.substring(0, 10) : '';
             document.getElementById('fHargaSatuan').value = row?.harga_satuan ?? 0;
             document.getElementById('fSupplier').value = row?.supplier || '';
@@ -1872,6 +1904,7 @@
             btn.textContent = 'Menyimpan...';
 
             const payload = {
+                kode_alkes: document.getElementById('fKodeAlkes').value || null,
                 jenis_alat: document.getElementById('fJenisAlat').value.trim(),
                 kategori: document.getElementById('fKategori').value,
                 merk: document.getElementById('fMerk').value.trim() || null,
@@ -1885,6 +1918,7 @@
                 reorder_point: document.getElementById('fReorderPoint').value || 0,
                 tanggal_kalibrasi: document.getElementById('fTanggalKalibrasi').value || null,
                 jadwal_kalibrasi_berikut: document.getElementById('fJadwalKalibrasiBerikut').value || null,
+                tanggal_exp: document.getElementById('fTanggalExp').value || null,
                 masa_garansi: document.getElementById('fMasaGaransi').value || null,
                 harga_satuan: document.getElementById('fHargaSatuan').value || 0,
                 supplier: document.getElementById('fSupplier').value.trim() || null,
@@ -1927,6 +1961,7 @@
 
         // ══════ MODAL DETAIL ══════
         function openDetailModal(row) {
+            document.getElementById('dKodeAlkes').value = row.kode_alkes || '-';
             document.getElementById('detailAvatar').textContent = initials(row.jenis_alat);
             document.getElementById('detailJenisTitle').textContent = row.jenis_alat || '-';
             document.getElementById('detailNomorSeriSub').textContent = row.nomor_seri || '-';
@@ -1948,6 +1983,7 @@
 
             document.getElementById('dTanggalKalibrasi').value = formatDate(row.tanggal_kalibrasi);
             document.getElementById('dJadwalKalibrasiBerikut').value = formatDate(row.jadwal_kalibrasi_berikut);
+            document.getElementById('dTanggalExp').value = formatDate(row.tanggal_exp);
             document.getElementById('dMasaGaransi').value = formatDate(row.masa_garansi);
 
             document.getElementById('dHargaSatuan').value = formatRupiah(row.harga_satuan);

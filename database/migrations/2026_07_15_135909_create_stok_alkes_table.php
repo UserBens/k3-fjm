@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('stok_alkes', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_alkes')->nullable()->unique();
             $table->string('jenis_alat');
             $table->string('fungsi_pemeriksaan')->nullable();
 
@@ -41,6 +42,7 @@ return new class extends Migration
 
             $table->date('tanggal_kalibrasi')->nullable();
             $table->date('jadwal_kalibrasi_berikut')->nullable();
+            $table->date('tanggal_exp')->nullable();
 
             $table->string('supplier')->nullable();
 

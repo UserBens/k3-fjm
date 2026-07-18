@@ -676,6 +676,7 @@
                 request()->routeIs('log-apd.*') ||
                 request()->routeIs('master-stok-alkes.*') ||
                 request()->routeIs('penggunaan-alkes.*') ||
+                request()->routeIs('kartu-stok.*') ||
                 request()->routeIs('matriks-apd.*') ||
                 request()->routeIs('matriks-apd-jabatan.*') ||
                 request()->routeIs('hiradc.*') ||
@@ -735,11 +736,11 @@
                 href="{{ route('penggunaan-alkes.index') }}">
                 <span class="nav-label">LOG ALKES</span>
             </a>
-
-
-            {{-- <a class="nav-link {{ request()->routeIs('matriks-apd.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks APD</span>
-            </a> --}}
+           
+            <a class="nav-link {{ request()->routeIs('kartu-stok.*') ? 'active' : '' }}"
+                href="{{ route('kartu-stok.index') }}">
+                <span class="nav-label">Kartu Stok</span>
+            </a>
 
             <a class="nav-link {{ request()->routeIs('matriks-apd-jabatan.*') ? 'active' : '' }}"
                 href="{{ route('matriks-apd-jabatan.index') }}">

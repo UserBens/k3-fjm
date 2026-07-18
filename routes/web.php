@@ -11,6 +11,7 @@ use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
 use App\Http\Controllers\HiradcController;
 use App\Http\Controllers\JKARecordInsidenController;
+use App\Http\Controllers\KartuStokController;
 use App\Http\Controllers\KodeOkReferensiController;
 use App\Http\Controllers\LeadingDashboardController;
 use App\Http\Controllers\LeadingInputController;
@@ -252,6 +253,12 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
         Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
         Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
+    });
+
+    Route::prefix('kartu-stok')->name('kartu-stok.')->group(function () {
+        Route::get('/', [KartuStokController::class, 'index'])->name('index');
+        Route::get('/data', [KartuStokController::class, 'data'])->name('data');
+        Route::get('/export', [KartuStokController::class, 'export'])->name('export');
     });
 
     // SUPPLIER APD & ALKES
