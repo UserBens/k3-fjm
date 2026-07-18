@@ -38,12 +38,11 @@ return new class extends Migration
             $table->string('nama_pekerjaan');
             $table->string('jabatan_posisi');
 
-            foreach (self::APD_COLUMNS as $col) {
-                // WAJIB = ✅ | KONDISIONAL = ○ | TIDAK = -
+            // WAJIB = ✅ | KONDISIONAL = ○ | TIDAK = -
+            foreach (array_keys(\App\Models\MatriksApdJabatan::APD_COLUMNS) as $col) {
                 $table->enum($col, ['WAJIB', 'KONDISIONAL', 'TIDAK'])->default('TIDAK');
             }
 
-            // Kolom analisis risiko (bagian "terintegrasi HIRADC")
             $table->foreignId('hiradc_id')->nullable()->constrained('hiradcs')->nullOnDelete();
             $table->string('potensi_bahaya_aktivitas')->nullable();
             $table->string('jenis_bahaya')->nullable();
@@ -66,6 +65,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('matriks_apd_jabatan');
+        Schema::dropIfExists('matriks_apd_jabatans');
     }
 };

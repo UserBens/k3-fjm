@@ -1351,7 +1351,25 @@
             if (e.target.id === 'itemModalOverlay') closeItemModal();
         }
 
+        function validRiskScale(id, label) {
+            const el = document.getElementById(id);
+            const val = el.value;
+            if (val === '') return true; // nullable, boleh kosong
+            const num = parseInt(val, 10);
+            if (isNaN(num) || num < 1 || num > 5) {
+                showToast(`${label} harus berupa angka 1–5.`, 'error');
+                el.focus();
+                return false;
+            }
+            return true;
+        }
+
         async function submitItem() {
+            // validasi skala L/S sebelum kirim ke server
+            if (!validRiskScale('fLAwal', 'Kemungkinan Awal (L)')) return;
+            if (!validRiskScale('fSAwal', 'Keparahan Awal (S)')) return;
+            if (!validRiskScale('fLRes', 'Kemungkinan Residual (L)')) return;
+            if (!validRiskScale('fSRes', 'Keparahan Residual (S)')) return;
             const btn = document.getElementById('btnSubmit');
             const original = btn.textContent;
             btn.disabled = true;
@@ -1391,6 +1409,14 @@
                     },
                     body: JSON.stringify(payload)
                 });
+
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    const text = await res.text();
+                    console.error('Server tidak mengembalikan JSON:', text);
+                    throw new Error(`Server error (status ${res.status}). Cek storage/logs/laravel.log.`);
+                }
+
                 const json = await res.json();
                 if (!res.ok) {
                     const firstError = json.errors ? Object.values(json.errors)[0][0] : null;

@@ -30,6 +30,7 @@ use App\Http\Controllers\ReferensiKodeOkController;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\StokAlkesController;
+use App\Http\Controllers\SupplierApdController;
 use App\Http\Controllers\TenagaController;
 use Illuminate\Support\Facades\Route;
 
@@ -251,6 +252,15 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
         Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
         Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
+    });
+
+    // SUPPLIER APD & ALKES
+    Route::prefix('master-supplier-apd')->name('master-supplier-apd.')->group(function () {
+        Route::get('/', [SupplierApdController::class, 'index'])->name('index');
+        Route::get('/data', [SupplierApdController::class, 'data'])->name('data');
+        Route::post('/', [SupplierApdController::class, 'store'])->name('store');
+        Route::put('/{supplierApd}', [SupplierApdController::class, 'update'])->name('update');
+        Route::delete('/{supplierApd}', [SupplierApdController::class, 'destroy'])->name('destroy');
     });
 
     // RAB

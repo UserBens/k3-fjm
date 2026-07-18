@@ -1237,7 +1237,33 @@
             if (e.target.id === 'itemModalOverlay') closeItemModal();
         }
 
+        function validRiskScale(id, label, required = false) {
+            const el = document.getElementById(id);
+            const val = el.value;
+            if (val === '') {
+                if (required) {
+                    showToast(`${label} wajib diisi.`, 'error');
+                    el.focus();
+                    return false;
+                }
+                return true; // nullable, boleh kosong
+            }
+            const num = parseInt(val, 10);
+            if (isNaN(num) || num < 1 || num > 5) {
+                showToast(`${label} harus berupa angka 1–5.`, 'error');
+                el.focus();
+                return false;
+            }
+            return true;
+        }
+
         async function submitItem() {
+            // l_awal & s_awal wajib diisi (sesuai migration: unsignedTinyInteger tanpa nullable)
+            if (!validRiskScale('fLAwal', 'Kemungkinan Awal (L)', true)) return;
+            if (!validRiskScale('fSAwal', 'Keparahan Awal (S)', true)) return;
+            // l_sesudah & s_sesudah nullable
+            if (!validRiskScale('fLSesudah', 'Kemungkinan Sesudah (L)')) return;
+            if (!validRiskScale('fSSesudah', 'Keparahan Sesudah (S)')) return;
             const btn = document.getElementById('btnSubmit');
             const original = btn.textContent;
             btn.disabled = true;

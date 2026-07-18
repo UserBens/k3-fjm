@@ -671,6 +671,7 @@
             $assetsmanagementActive =
                 request()->routeIs('dasboard-apd.*') ||
                 request()->routeIs('kode-ok-referensi.*') ||
+                request()->routeIs('master-supplier-apd.*') ||
                 request()->routeIs('master-stok-apd.*') ||
                 request()->routeIs('log-apd.*') ||
                 request()->routeIs('master-stok-alkes.*') ||
@@ -710,6 +711,10 @@
 
             <a class="nav-link {{ request()->routeIs('kode-ok-referensi.*') ? 'active' : '' }}" href="{{route('kode-ok-referensi.index')}}">
                 <span class="nav-label">Refrensi Kode OK</span>
+            </a>
+           
+            <a class="nav-link {{ request()->routeIs('master-supplier-apd.*') ? 'active' : '' }}" href="{{route('master-supplier-apd.index')}}">
+                <span class="nav-label">Master Supplier APD & Alkes</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('master-stok-apd.*') ? 'active' : '' }}"
