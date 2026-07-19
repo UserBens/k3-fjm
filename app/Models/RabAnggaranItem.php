@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class RabAnggaranItem extends Model
 {
     use HasFactory;
-    protected $table = 'rab_anggaran_item';   // ← tambahkan baris ini juga
+    protected $table = 'rab_anggaran_item';
 
     protected $guarded = ['id'];
 
@@ -26,6 +26,9 @@ class RabAnggaranItem extends Model
     const PRIORITAS = ['TINGGI', 'SEDANG', 'RENDAH'];
     const KATEGORI_APD = ['WAJIB', 'KHUSUS'];
     const KATEGORI_ALKES = ['ALKES', 'CONSUMABLE'];
+
+    // Dasar perhitungan REKAP RAB PER PERIODE (Total Bulanan/Triwulan/Tahunan + Estimasi Setahun)
+    const PERIODE = ['BULANAN', 'TRIWULAN', 'TAHUNAN'];
 
     public function getTotalHargaAttribute(): float
     {

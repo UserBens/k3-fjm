@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Stok APD — PT. Fokus Jasa Mitra</title>
+    <title>DETAIL RAB — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -1232,6 +1232,7 @@
                                 <th style="width:32px;">No</th>
                                 <th>Kode OK</th>
                                 <th>Jabatan/Posisi</th>
+                                <th>Kode Item</th>
                                 <th>Jenis APD</th>
                                 <th>Kategori</th>
                                 <th>Merk/Type</th>
@@ -1243,6 +1244,7 @@
                                 <th>Satuan</th>
                                 <th>Harga Satuan</th>
                                 <th>Total Harga</th>
+                                <th>Periode Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>Prioritas</th>
                                 <th style="text-align:center;">Aksi</th>
@@ -1250,16 +1252,16 @@
                         </thead>
                         <tbody id="tableBodyApd">
                             <tr>
-                                <td colspan="17">
+                                <td colspan="19">
                                     <div class="skeleton-bar" style="width:100%;height:36px;"></div>
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr class="rab-subtotal-row">
-                                <td colspan="13" style="text-align:right;">SUBTOTAL A (APD)</td>
+                                <td colspan="14" style="text-align:right;">SUBTOTAL A (APD)</td>
                                 <td id="subtotalApd">Rp 0</td>
-                                <td colspan="3"></td>
+                                <td colspan="4"></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -1288,6 +1290,7 @@
                                 <th style="width:32px;">No</th>
                                 <th>Kode OK</th>
                                 <th>Jabatan/Posisi</th>
+                                <th>Kode Item</th>
                                 <th>Jenis Alat</th>
                                 <th>Kategori</th>
                                 <th>Merk/Type</th>
@@ -1299,6 +1302,7 @@
                                 <th>Satuan</th>
                                 <th>Harga Satuan</th>
                                 <th>Total Harga</th>
+                                <th>Periode Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>Prioritas</th>
                                 <th style="text-align:center;">Aksi</th>
@@ -1306,25 +1310,48 @@
                         </thead>
                         <tbody id="tableBodyAlkes">
                             <tr>
-                                <td colspan="17">
+                                <td colspan="19">
                                     <div class="skeleton-bar" style="width:100%;height:36px;"></div>
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr class="rab-subtotal-row">
-                                <td colspan="13" style="text-align:right;">SUBTOTAL B (ALKES)</td>
+                                <td colspan="14" style="text-align:right;">SUBTOTAL B (ALKES)</td>
                                 <td id="subtotalAlkes">Rp 0</td>
-                                <td colspan="3"></td>
+                                <td colspan="4"></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
 
+            <!-- ══════ REKAP RAB PER PERIODE ══════ -->
+            <div class="section-card" style="margin-bottom:14px;">
+                <div class="form-section-title" style="margin:0 0 10px;">Rekap RAB per Periode</div>
+                <div class="rab-rekap-grid">
+                    <div class="rab-rekap-box">
+                        <label>Total Pengajuan BULANAN</label>
+                        <span id="rekapBulanan">Rp 0</span>
+                    </div>
+                    <div class="rab-rekap-box">
+                        <label>Total Pengajuan TRIWULAN</label>
+                        <span id="rekapTriwulan">Rp 0</span>
+                    </div>
+                    <div class="rab-rekap-box">
+                        <label>Total Pengajuan TAHUNAN</label>
+                        <span id="rekapTahunan">Rp 0</span>
+                    </div>
+                    <div class="rab-rekap-box rab-rekap-highlight">
+                        <label>Estimasi Setahun (Bulanan×12 + Triwulan×4 + Tahunan)</label>
+                        <span id="rekapEstimasiSetahun">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- ══════ GRAND TOTAL ══════ -->
             <div class="section-card rab-grandtotal-bar" style="margin-bottom:14px;">
-                <span>GRAND TOTAL RAB APD &amp; ALKES TAHUN <span id="gtTahun">—</span></span>
+                <span>GRAND TOTAL RAB (SEMUA BARIS) TAHUN <span id="gtTahun">—</span></span>
                 <span id="grandTotal" class="rab-grandtotal-value">Rp 0</span>
             </div>
 
@@ -1420,6 +1447,11 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Kode Item</label>
+                        <input type="text" id="fItemKodeItem" class="form-input"
+                            placeholder="FJM-W-HS-01 / ALK-CS-GS-01" />
+                    </div>
+                    <div class="form-group">
                         <label class="form-label" id="itemNamaBarangLabel">Jenis APD</label>
                         <input type="text" id="fItemNamaBarang" class="form-input" placeholder="Helm Safety" />
                     </div>
@@ -1475,8 +1507,12 @@
                     </div>
                 </div>
 
-                <div class="form-section-title">Lainnya</div>
+                <div class="form-section-title">Periode &amp; Prioritas</div>
                 <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Periode Pengajuan</label>
+                        <select id="fItemPeriode" class="form-select"></select>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Prioritas</label>
                         <select id="fItemPrioritas" class="form-select"></select>
@@ -1569,6 +1605,51 @@
             color: #0F172A;
         }
 
+        .rab-rekap-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .rab-rekap-box {
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .rab-rekap-box label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            margin-bottom: 4px;
+        }
+
+        .rab-rekap-box span {
+            display: block;
+            font-size: 15px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .rab-rekap-box.rab-rekap-highlight {
+            border-color: #FDE68A;
+            background: #FFFBEB;
+        }
+
+        .rab-rekap-box.rab-rekap-highlight span {
+            color: #92400E;
+        }
+
+        @media (max-width: 900px) {
+            .rab-rekap-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .rab-grandtotal-bar {
             display: flex;
             align-items: center;
@@ -1607,6 +1688,17 @@
             background: #DCFCE7;
             color: #15803D;
         }
+
+        .periode-pill {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            background: rgba(45, 75, 158, 0.08);
+            color: #2D4B9E;
+        }
     </style>
 
     <script>
@@ -1622,6 +1714,7 @@
 
         const STATUS_OPTIONS = @json(\App\Models\RabAnggaran::STATUS);
         const PRIORITAS_OPTIONS = @json(\App\Models\RabAnggaranItem::PRIORITAS);
+        const PERIODE_OPTIONS = @json(\App\Models\RabAnggaranItem::PERIODE);
         const KATEGORI_APD = @json(\App\Models\RabAnggaranItem::KATEGORI_APD);
         const KATEGORI_ALKES = @json(\App\Models\RabAnggaranItem::KATEGORI_ALKES);
 
@@ -1704,7 +1797,7 @@
             }, 4000);
         }
 
-        // ══════ LOAD DETAIL (header + 2 tabel) ══════
+        // ══════ LOAD DETAIL (header + 2 tabel + rekap periode) ══════
         async function loadDetail() {
             try {
                 const res = await fetch(DETAIL_DATA_ENDPOINT, {
@@ -1723,9 +1816,19 @@
                 document.getElementById('subtotalAlkes').textContent = formatRupiah(json.header.subtotal_alkes);
                 document.getElementById('grandTotal').textContent = formatRupiah(json.header.grand_total);
                 document.getElementById('gtTahun').textContent = json.header.tahun_anggaran;
+
+                renderRekapPeriode(json.header.rekap_periode);
             } catch (e) {
                 showToast(e.message || 'Gagal memuat detail RAB.', 'error');
             }
+        }
+
+        function renderRekapPeriode(rekap) {
+            if (!rekap) return;
+            document.getElementById('rekapBulanan').textContent = formatRupiah(rekap.bulanan);
+            document.getElementById('rekapTriwulan').textContent = formatRupiah(rekap.triwulan);
+            document.getElementById('rekapTahunan').textContent = formatRupiah(rekap.tahunan);
+            document.getElementById('rekapEstimasiSetahun').textContent = formatRupiah(rekap.estimasi_setahun);
         }
 
         function renderHeader(h) {
@@ -1749,7 +1852,7 @@
 
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
-                    <tr><td colspan="17">
+                    <tr><td colspan="19">
                         <div class="empty-state">
                             <div class="empty-state-title">Belum ada item ${jenis === 'APD' ? 'APD' : 'Alat Kesehatan'}</div>
                             <div class="empty-state-sub">Klik "Tambah Item ${jenis === 'APD' ? 'APD' : 'Alkes'}" untuk menambahkan baris.</div>
@@ -1763,6 +1866,7 @@
                     <td>${idx + 1}</td>
                     <td>${escapeHtml(display(row.kode_ok))}</td>
                     <td>${escapeHtml(display(row.jabatan_posisi))}</td>
+                    <td>${escapeHtml(display(row.kode_item))}</td>
                     <td><b>${escapeHtml(row.nama_barang)}</b></td>
                     <td>${escapeHtml(display(row.kategori))}</td>
                     <td>${escapeHtml(display(row.merk_type))}</td>
@@ -1774,6 +1878,7 @@
                     <td>${escapeHtml(display(row.satuan))}</td>
                     <td>${formatRupiah(row.harga_satuan)}</td>
                     <td><b>${formatRupiah(row.total_harga)}</b></td>
+                    <td><span class="periode-pill">${escapeHtml(display(row.periode_pengajuan))}</span></td>
                     <td style="max-width:160px; white-space:normal;">${escapeHtml(display(row.keterangan))}</td>
                     <td><span class="prioritas-pill ${prioritasPillClass(row.prioritas)}">${escapeHtml(row.prioritas)}</span></td>
                     <td style="text-align:center; white-space:nowrap;">
@@ -1880,7 +1985,8 @@
                 const json = await res.json();
                 apdOptionsCache = json.data || [];
             } catch (e) {
-                /* diamkan, tetap bisa isi manual */ }
+                /* diamkan, tetap bisa isi manual */
+            }
         }
 
         async function loadAlkesOptions() {
@@ -1894,7 +2000,8 @@
                 const json = await res.json();
                 alkesOptionsCache = json.data || [];
             } catch (e) {
-                /* diamkan, tetap bisa isi manual */ }
+                /* diamkan, tetap bisa isi manual */
+            }
         }
 
         function populateItemMasterSelect() {
@@ -1921,6 +2028,7 @@
             if (!item) return;
 
             if (currentItemJenis === 'APD') {
+                document.getElementById('fItemKodeItem').value = item.kode_apd || '';
                 document.getElementById('fItemNamaBarang').value = item.jenis_apd || '';
                 document.getElementById('fItemKategori').value = item.kategori || 'WAJIB';
                 document.getElementById('fItemMerkType').value = item.merk_rekomendasi || '';
@@ -1928,6 +2036,7 @@
                 document.getElementById('fItemUkuran').value = item.ukuran_tersedia || '';
                 document.getElementById('fItemHargaSatuan').value = item.harga_satuan || 0;
             } else {
+                document.getElementById('fItemKodeItem').value = item.kode_alkes || '';
                 document.getElementById('fItemNamaBarang').value = item.jenis_alat || '';
                 document.getElementById('fItemKategori').value = item.kategori || 'ALKES';
                 document.getElementById('fItemMerkType').value = [item.merk, item.type].filter(Boolean).join(' ');
@@ -1949,6 +2058,12 @@
             const select = document.getElementById('fItemPrioritas');
             select.innerHTML = PRIORITAS_OPTIONS.map(v => `<option value="${v}">${v}</option>`).join('');
             select.value = selectedValue || 'SEDANG';
+        }
+
+        function populatePeriodeSelect(selectedValue) {
+            const select = document.getElementById('fItemPeriode');
+            select.innerHTML = PERIODE_OPTIONS.map(v => `<option value="${v}">${v}</option>`).join('');
+            select.value = selectedValue || 'TAHUNAN';
         }
 
         function recalcItemTotal() {
@@ -1988,6 +2103,7 @@
             document.getElementById('fItemJabatanPosisi').value = row?.jabatan_posisi || '';
             document.getElementById('fItemMasterId').value = jenis === 'APD' ? (row?.stok_apd_id || '') : (row
                 ?.stok_alkes_id || '');
+            document.getElementById('fItemKodeItem').value = row?.kode_item || '';
             document.getElementById('fItemNamaBarang').value = row?.nama_barang || '';
             populateKategoriSelect(jenis, row?.kategori);
             document.getElementById('fItemMerkType').value = row?.merk_type || '';
@@ -2000,6 +2116,7 @@
             document.getElementById('fItemHargaSatuan').value = row?.harga_satuan ?? 0;
             document.getElementById('fItemKeterangan').value = row?.keterangan || '';
             populatePrioritasSelect(row?.prioritas);
+            populatePeriodeSelect(row?.periode_pengajuan);
             recalcItemTotal();
 
             document.getElementById('itemModalOverlay').classList.add('open');
@@ -2028,6 +2145,7 @@
                 stok_alkes_id: currentItemJenis === 'ALKES' ? masterId : null,
                 kode_ok: document.getElementById('fItemKodeOk').value.trim() || null,
                 jabatan_posisi: document.getElementById('fItemJabatanPosisi').value.trim() || null,
+                kode_item: document.getElementById('fItemKodeItem').value.trim() || null,
                 nama_barang: document.getElementById('fItemNamaBarang').value.trim(),
                 kategori: document.getElementById('fItemKategori').value,
                 merk_type: document.getElementById('fItemMerkType').value.trim() || null,
@@ -2040,6 +2158,7 @@
                 harga_satuan: document.getElementById('fItemHargaSatuan').value || 0,
                 keterangan: document.getElementById('fItemKeterangan').value.trim() || null,
                 prioritas: document.getElementById('fItemPrioritas').value,
+                periode_pengajuan: document.getElementById('fItemPeriode').value,
             };
 
             const url = currentEditItemId ? `${ITEM_BASE_ENDPOINT}/${currentEditItemId}` : ITEM_STORE_ENDPOINT;

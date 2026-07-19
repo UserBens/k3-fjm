@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('rab_anggaran_id')->constrained('rab_anggaran')->cascadeOnDelete();
 
             $table->enum('jenis', ['APD', 'ALKES']);          // menentukan item masuk Tabel A atau Tabel B
+            $table->string('kode_item')->nullable();
 
             // Referensi opsional ke master — dipakai untuk autofill lewat picker
             $table->foreignId('stok_apd_id')->nullable()->constrained('stok_apd')->nullOnDelete();
@@ -39,6 +40,9 @@ return new class extends Migration
 
             $table->text('keterangan')->nullable();
             $table->enum('prioritas', ['TINGGI', 'SEDANG', 'RENDAH'])->default('SEDANG');
+            // Periode Pengajuan — dasar perhitungan rekap otomatis (BULANAN/TRIWULAN/TAHUNAN)
+            $table->enum('periode_pengajuan', ['BULANAN', 'TRIWULAN', 'TAHUNAN'])
+                ->default('TAHUNAN');
 
             $table->timestamps();
         });
