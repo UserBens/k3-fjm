@@ -26,6 +26,7 @@ use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
+use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\ReferensiKodeOkController;
 use App\Http\Controllers\SafetyOfficerController;
@@ -255,11 +256,19 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
     });
 
+    // KARTU STOK
     Route::prefix('kartu-stok')->name('kartu-stok.')->group(function () {
         Route::get('/', [KartuStokController::class, 'index'])->name('index');
         Route::get('/data', [KartuStokController::class, 'data'])->name('data');
         Route::get('/export', [KartuStokController::class, 'export'])->name('export');
     });
+
+    // PUSAT REMINDER
+    Route::get('/pusat-reminder', [PusatReminderController::class, 'index'])
+        ->name('pusat-reminder.index');
+
+    Route::get('/pusat-reminder/data', [PusatReminderController::class, 'data'])
+        ->name('pusat-reminder.data');
 
     // SUPPLIER APD & ALKES
     Route::prefix('master-supplier-apd')->name('master-supplier-apd.')->group(function () {

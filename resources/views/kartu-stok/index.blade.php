@@ -776,6 +776,84 @@
         .btn-row-action:hover {
             background: #F8F9FF;
         }
+
+        #topbar {
+            height: 52px;
+            background: #fff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+
+        .tb-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: #F8F9FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            color: #64748B;
+            font-size: 15px;
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 5px;
+            right: 6px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #D0021B;
+            border: 1.5px solid #fff;
+        }
+
+        .tb-user {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: #F8F9FF;
+        }
+
+        .tb-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #2D4B9E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .tb-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .tb-caret {
+            font-size: 11px;
+            color: #94A3B8;
+        }
+
+        .tb-divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.07);
+        }
     </style>
 </head>
 
@@ -812,14 +890,14 @@
                             </svg>
                             Export CSV
                         </a>
-                        <button class="btn-primary" onclick="loadData()">
+                        {{-- <button class="btn-primary" onclick="loadData()">
                             <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                             Muat Ulang
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>

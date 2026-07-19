@@ -23,6 +23,7 @@ class StokAlkes extends Model
         'tanggal_kalibrasi'          => 'date',
         'jadwal_kalibrasi_berikut'   => 'date',
         'masa_garansi'               => 'date',
+        'tanggal_exp'                => 'date',
     ];
 
     /*
@@ -34,6 +35,8 @@ class StokAlkes extends Model
     protected $appends = [
         'stok_tersedia',
         'status_stok',
+        'status_kalibrasi',
+        'status_kadaluarsa',
     ];
 
     public function getStokTersediaAttribute(): int
@@ -48,6 +51,62 @@ class StokAlkes extends Model
         return $this->stok_tersedia <= $this->reorder_point
             ? 'REORDER'
             : 'OK';
+    }
+
+    /**
+     * Status kalibrasi berdasarkan jadwal_kalibrasi_berikut.
+     * Meniru kolom W di sheet '06_Master_Alkes' (SEGERA / LEWAT / AMAN).
+     * Ambang "SEGERA" = sisa ≤ 30 hari.
+     * Return null kalau jadwal kalibrasi belum diisi (alat tidak butuh kalibrasi rutin).
+     */
+    public function getStatusKalibrasiAttribute(): ?string
+    {
+        if (!$this->jadwal_kalibrasi_berikut) {
+            return null;
+        }
+
+        $sisaHari = now()->startOfDay()->diffInDays(
+            $this->jadwal_kalibrasi_berikut->copy()->startOfDay(),
+            false
+        );
+
+        if ($sisaHari < 0) {
+            return 'LEWAT';
+        }
+
+        if ($sisaHari <= 30) {
+            return 'SEGERA';
+        }
+
+        return 'AMAN';
+    }
+
+    /**
+     * Status kadaluarsa berdasarkan tanggal_exp.
+     * Meniru kolom Z di sheet '06_Master_Alkes' (SEGERA / KADALUARSA / AMAN).
+     * Ambang "SEGERA" = sisa ≤ 30 hari.
+     * Return null kalau alat tidak punya tanggal exp (mis. alat non-consumable).
+     */
+    public function getStatusKadaluarsaAttribute(): ?string
+    {
+        if (!$this->tanggal_exp) {
+            return null;
+        }
+
+        $sisaHari = now()->startOfDay()->diffInDays(
+            $this->tanggal_exp->copy()->startOfDay(),
+            false
+        );
+
+        if ($sisaHari < 0) {
+            return 'KADALUARSA';
+        }
+
+        if ($sisaHari <= 30) {
+            return 'SEGERA';
+        }
+
+        return 'AMAN';
     }
 
     /*

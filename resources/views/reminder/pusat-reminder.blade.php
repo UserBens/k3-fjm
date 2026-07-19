@@ -1877,6 +1877,119 @@
             font-size: 12px;
             color: #94A3B8;
         }
+
+        .pr-header {
+            background: #1A1D2E;
+            border-radius: 12px;
+            padding: 14px 20px;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .pr-header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 0.04em;
+        }
+
+        .pr-header .sub1 {
+            font-size: 11px;
+            color: #B9C2E8;
+            margin-top: 4px;
+        }
+
+        .pr-kpi-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 900px) {
+            .pr-kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .pr-kpi-box {
+            border-radius: 10px;
+            padding: 14px 12px 10px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            border: 2px solid transparent;
+        }
+
+        .pr-kpi-box:hover {
+            transform: translateY(-2px);
+        }
+
+        .pr-kpi-box.active {
+            border-color: #fff;
+        }
+
+        .pr-kpi-box .val {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .pr-kpi-box .lbl {
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            margin-top: 6px;
+            opacity: 0.95;
+            text-align: center;
+        }
+
+        .pr-kpi-box.pr-aman {
+            background: #1A7A3C;
+        }
+
+        .pr-kpi-box.pr-warn {
+            background: #D97706;
+        }
+
+        .pr-section {
+            margin-bottom: 18px;
+        }
+
+        .pr-section-hdr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .pr-section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            letter-spacing: 0.03em;
+            color: #1A1D2E;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pr-section-count {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+
+        .pr-empty-row td {
+            text-align: center;
+            padding: 22px 12px;
+            color: #94A3B8;
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -1893,248 +2006,189 @@
 
         <div id="page-content">
 
-            <!-- HEADER -->
-            <div class="ld-header">
-                <h1>REFERENSI KODE OK &amp; PEMETAAN APD</h1>
-                <div class="sub1">PT. Fokus Jasa Mitra · Departemen K3 &amp; Operasional · Status pemetaan mengikuti
-                    data HIRADC</div>
-                <div class="sub2">Setiap Kode OK dipetakan ke APD Wajib/Khusus. Status "Didukung HIRADC" dihitung
-                    otomatis dari jumlah dokumen HIRADC terkait Kode OK tersebut.</div>
+            <div class="pr-header">
+                <h1>PUSAT REMINDER &amp; PERINGATAN</h1>
+                <div class="sub1">Otomatis: stok ≤ Reorder Point &middot; lifetime APD ≤ 30 hari &middot; kalibrasi
+                    &amp;
+                    kadaluarsa alkes jatuh tempo. Baris kosong = aman.</div>
             </div>
 
-            <!-- KPI CARDS -->
-            <div class="kok-kpi-row">
-                <div class="kpi-box kpi-total">
-                    <div class="val" id="kpiTotal">0</div>
-                    <div class="lbl">TOTAL KODE OK</div>
-                    <div class="lbl2">Referensi terdaftar</div>
+            <div class="pr-kpi-row" id="kpiRow">
+                <div class="pr-kpi-box" id="kpiBoxPengadaan" onclick="scrollToSection('secPengadaan')">
+                    <div class="val" id="valPengadaan">0</div>
+                    <div class="lbl">APD PERLU<br>PENGADAAN</div>
                 </div>
-                <div class="kpi-box kpi-tercapai">
-                    <div class="val" id="kpiDidukung">0</div>
-                    <div class="lbl">✅ DIDUKUNG HIRADC</div>
-                    <div class="lbl2">Sudah ada analisa risiko</div>
+                <div class="pr-kpi-box" id="kpiBoxLifetime" onclick="scrollToSection('secLifetime')">
+                    <div class="val" id="valLifetime">0</div>
+                    <div class="lbl">APD LIFETIME<br>≤30 HARI</div>
                 </div>
-                <div class="kpi-box kpi-dibawah">
-                    <div class="val" id="kpiBelum">0</div>
-                    <div class="lbl">⚠️ BELUM ADA HIRADC</div>
-                    <div class="lbl2">APD masih standar K3</div>
+                <div class="pr-kpi-box" id="kpiBoxStokKritis" onclick="scrollToSection('secStokKritis')">
+                    <div class="val" id="valStokKritis">0</div>
+                    <div class="lbl">ALKES STOK<br>KRITIS</div>
+                </div>
+                <div class="pr-kpi-box" id="kpiBoxKalibrasi" onclick="scrollToSection('secKalibrasi')">
+                    <div class="val" id="valKalibrasi">0</div>
+                    <div class="lbl">KALIBRASI<br>JATUH TEMPO</div>
+                </div>
+                <div class="pr-kpi-box" id="kpiBoxKadaluarsa" onclick="scrollToSection('secKadaluarsa')">
+                    <div class="val" id="valKadaluarsa">0</div>
+                    <div class="lbl">KADALUARSA<br>JATUH TEMPO</div>
                 </div>
             </div>
+
 
             <!-- FILTER + TABLE -->
-            <div class="section-card">
-                <div class="sc-header">
-                    <div>
-                        <div class="sc-title">Daftar Referensi Kode OK</div>
-                        <div class="sc-sub">Cari, filter, dan kelola pemetaan APD per Kode OK.</div>
+            <!-- ① APD PERLU PENGADAAN -->
+            <div class="pr-section" id="secPengadaan">
+                <div class="section-card">
+                    <div class="pr-section-hdr">
+                        <div class="pr-section-title">① APD Perlu Pengadaan <span class="pr-section-count">(Stok ≤
+                                Reorder
+                                Point)</span></div>
                     </div>
-                    <button class="btn-primary" onclick="openFormModal()">
-                        <svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Tambah Referensi
-                    </button>
-                </div>
-
-                <div class="filter-bar">
-                    <div class="filter-search">
-                        <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="Cari Kode OK, uraian pekerjaan, dept..."
-                            oninput="onSearchInput()" />
+                    <div class="rtable-wrap">
+                        <table class="rtable">
+                            <thead>
+                                <tr>
+                                    <th>Kode APD</th>
+                                    <th>Jenis APD</th>
+                                    <th>Stok Tersedia</th>
+                                    <th>Reorder Point</th>
+                                    <th>Saran Qty Pesan</th>
+                                    <th>EOQ</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyPengadaan">
+                                <tr class="pr-empty-row">
+                                    <td colspan="7">Memuat data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <select id="filterDept" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Dept/Unit Kerja</option>
-                    </select>
-                    <select id="filterKategori" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Kategori Pekerjaan</option>
-                    </select>
-                    <select id="filterStatusPemetaan" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status Pemetaan</option>
-                        <option value="DIDUKUNG">✅ Didukung HIRADC</option>
-                        <option value="BELUM">⚠️ Belum Ada HIRADC</option>
-                    </select>
-                    <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
-                </div>
-
-                <div class="data-summary" id="dataSummary">Memuat data...</div>
-
-                <div class="rtable-wrap">
-                    <table class="rtable kok-rtable">
-                        <thead>
-                            <tr>
-                                <th style="width:32px;">No</th>
-                                <th class="txt-left">Kode OK</th>
-                                <th class="txt-left">Uraian Pekerjaan</th>
-                                <th class="txt-left">Dept/Unit Kerja PIC</th>
-                                <th class="txt-left">Kategori Pekerjaan</th>
-                                <th class="txt-left">APD Wajib</th>
-                                <th class="txt-left">APD Khusus</th>
-                                <th>HIRADC Terkait</th>
-                                <th class="txt-left">Status Pemetaan APD</th>
-                                <th style="text-align:center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <tr class="loading-row">
-                                <td colspan="10">Memuat data…</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-bar">
-                    <div class="pagination-info">
-                        <span id="paginationText">—</span>
-                        <select id="perPageSelect" class="per-page-select" onchange="onPerPageChange()">
-                            <option value="10">10 / halaman</option>
-                            <option value="25">25 / halaman</option>
-                            <option value="50">50 / halaman</option>
-                        </select>
-                    </div>
-                    <div class="pagination-pages" id="paginationPages"></div>
                 </div>
             </div>
+
+            <!-- ② APD LIFETIME ≤30 HARI -->
+            <div class="pr-section" id="secLifetime">
+                <div class="section-card">
+                    <div class="pr-section-hdr">
+                        <div class="pr-section-title">② APD Lifetime ≤30 Hari</div>
+                    </div>
+                    <div class="rtable-wrap">
+                        <table class="rtable">
+                            <thead>
+                                <tr>
+                                    <th>Kode APD</th>
+                                    <th>Jenis APD</th>
+                                    <th>Terakhir Pengadaan</th>
+                                    <th>Masa Pakai</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyLifetime">
+                                <tr class="pr-empty-row">
+                                    <td colspan="5">Memuat data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ③ ALKES STOK KRITIS -->
+            <div class="pr-section" id="secStokKritis">
+                <div class="section-card">
+                    <div class="pr-section-hdr">
+                        <div class="pr-section-title">③ Alkes Stok Kritis <span class="pr-section-count">(Stok ≤ Reorder
+                                Point)</span></div>
+                    </div>
+                    <div class="rtable-wrap">
+                        <table class="rtable">
+                            <thead>
+                                <tr>
+                                    <th>Kode Alkes</th>
+                                    <th>Jenis Alat</th>
+                                    <th>Stok Tersedia</th>
+                                    <th>Reorder Point</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyStokKritis">
+                                <tr class="pr-empty-row">
+                                    <td colspan="5">Memuat data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- ④ KALIBRASI JATUH TEMPO -->
+            <div class="pr-section" id="secKalibrasi">
+                <div class="section-card">
+                    <div class="pr-section-hdr">
+                        <div class="pr-section-title">④ Kalibrasi Jatuh Tempo</div>
+                    </div>
+                    <div class="rtable-wrap">
+                        <table class="rtable">
+                            <thead>
+                                <tr>
+                                    <th>Kode Alkes</th>
+                                    <th>Jenis Alat</th>
+                                    <th>Tanggal Kalibrasi</th>
+                                    <th>Jadwal Kalibrasi Berikut</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyKalibrasi">
+                                <tr class="pr-empty-row">
+                                    <td colspan="5">Memuat data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ⑤ KADALUARSA JATUH TEMPO -->
+            <div class="pr-section" id="secKadaluarsa">
+                <div class="section-card">
+                    <div class="pr-section-hdr">
+                        <div class="pr-section-title">⑤ Kadaluarsa Jatuh Tempo</div>
+                    </div>
+                    <div class="rtable-wrap">
+                        <table class="rtable">
+                            <thead>
+                                <tr>
+                                    <th>Kode Alkes</th>
+                                    <th>Jenis Alat</th>
+                                    <th>Tanggal Exp</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyKadaluarsa">
+                                <tr class="pr-empty-row">
+                                    <td colspan="4">Memuat data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
 
         </div>
     </div>
 
-    <!-- ══════ MODAL TAMBAH / EDIT ══════ -->
-    <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
-        <div class="modal-box form-modal-box" onclick="event.stopPropagation()">
-            <div class="form-modal-header">
-                <div class="modal-title" id="formModalTitle">Tambah Referensi Kode OK</div>
-                <div class="detail-subtitle">Kolom "HIRADC Terkait" &amp; "Status Pemetaan APD" dihitung otomatis dari
-                    data HIRADC — tidak diisi manual.</div>
-            </div>
-
-            <div class="form-modal-body">
-                <div class="form-section-title">Identitas Pekerjaan</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Kode OK</label>
-                        <input type="text" id="fKodeOk" class="form-input" placeholder="1 / OK-001 / PCS01" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Dept / Unit Kerja PIC</label>
-                        <input type="text" id="fDept" class="form-input" placeholder="DEP. PRODUKSI I" />
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Uraian Pekerjaan</label>
-                        <textarea id="fUraian" class="form-textarea" rows="2" placeholder="JASA ADMINISTRASI PRODUKSI I A"></textarea>
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Kategori Pekerjaan</label>
-                        <input type="text" id="fKategori" class="form-input" placeholder="PRODUKSI / OPERATOR" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Pemetaan APD</div>
-                <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">APD Wajib</label>
-                        <div class="ms-dropdown" id="msWajibWrap">
-                            <button type="button" class="ms-dropdown-btn" onclick="toggleMsDropdown('msWajib')">
-                                <span id="msWajibLabel">Pilih APD Wajib...</span>
-                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div class="ms-dropdown-panel" id="msWajibPanel">
-                                <input type="text" class="ms-search" placeholder="Cari APD..."
-                                    oninput="filterMsOptions('msWajib', this.value)" />
-                                <div class="ms-options" id="msWajibOptions"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">APD Khusus</label>
-                        <div class="ms-dropdown" id="msKhususWrap">
-                            <button type="button" class="ms-dropdown-btn" onclick="toggleMsDropdown('msKhusus')">
-                                <span id="msKhususLabel">Pilih APD Khusus...</span>
-                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div class="ms-dropdown-panel" id="msKhususPanel">
-                                <input type="text" class="ms-search" placeholder="Cari APD..."
-                                    oninput="filterMsOptions('msKhusus', this.value)" />
-                                <div class="ms-options" id="msKhususOptions"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeFormModal()">Batal</button>
-                <button class="btn-modal-confirm" id="btnSubmitForm" onclick="submitForm()">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL HAPUS ══════ -->
-    <div id="deleteConfirmOverlay" class="modal-overlay" onclick="closeDeleteModalOutside(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-icon-wrap">
-                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </div>
-            <div class="modal-title">Hapus Referensi Kode OK?</div>
-            <div class="modal-desc" id="deleteModalDesc">Data ini akan dihapus permanen.</div>
-            <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
-                <button class="btn-modal-danger" onclick="confirmDelete()">Ya, Hapus</button>
-            </div>
-        </div>
-    </div>
 
     <div id="toastContainer" class="toast-container"></div>
 
     <script>
-        // ══════ CONFIG ══════
-        const DATA_ENDPOINT = "{{ route('kode-ok-referensi.data') }}";
-        const STORE_ENDPOINT = "{{ route('kode-ok-referensi.store') }}";
-        const APD_OPTIONS_ENDPOINT = "{{ route('kode-ok-referensi.apd-options') }}";
-        const BASE_ENDPOINT = "{{ url('/kode-ok-referensi') }}";
-        const CSRF_TOKEN = "{{ csrf_token() }}";
+        const REMINDER_DATA_ENDPOINT = "{{ route('pusat-reminder.data') }}";
 
-        const state = {
-            search: '',
-            dept_unit_kerja_pic: '',
-            kategori_pekerjaan: '',
-            status_pemetaan: '',
-            page: 1,
-            per_page: 10
-        };
-
-        let searchDebounce = null;
-        let filterOptionsLoaded = false;
-        let currentEditId = null;
-        let currentDeleteId = null;
-        let apdOptionsCache = [];
-
-        // set terpilih untuk masing-masing dropdown, key = stok_apd_id
-        let msSelected = {
-            msWajib: new Set(),
-            msKhusus: new Set()
-        };
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-overlay').classList.toggle('open');
-        }
-
-        function escapeHtml(str) {
+        function escapeHtmlPR(str) {
             const div = document.createElement('div');
             div.textContent = str ?? '';
             return div.innerHTML;
@@ -2144,395 +2198,111 @@
             return (value === null || value === undefined || value === '') ? fallback : value;
         }
 
-        // ══════ TOAST ══════
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-            const iconSvg = type === 'error' ?
-                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
-                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
-            toast.innerHTML = `
-                <div class="toast-icon">${iconSvg}</div>
-                <div class="toast-body">
-                    <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
-                    <div class="toast-msg">${escapeHtml(message)}</div>
-                </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">✕</button>`;
-            container.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.add('show'));
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 250);
-            }, 4000);
+        function statusPillClass(status) {
+            if (status === 'OK' || status === 'AMAN') return 'sp-green';
+            if (status === 'SEGERA') return 'sp-amber';
+            if (['REORDER', 'HABIS MASA', 'LEWAT', 'KADALUARSA'].includes(status)) return 'sp-red';
+            return 'sp-gray';
         }
 
-        // ══════ FILTER & LIST ══════
-        function onSearchInput() {
-            clearTimeout(searchDebounce);
-            searchDebounce = setTimeout(() => {
-                state.search = document.getElementById('searchInput').value.trim();
-                state.page = 1;
-                loadData();
-            }, 350);
+        function renderStatusPill(status) {
+            if (!status) return '<span class="td-name-sub">-</span>';
+            return `<span class="status-pill ${statusPillClass(status)}">${escapeHtmlPR(status)}</span>`;
         }
 
-        function onFilterChange() {
-            state.dept_unit_kerja_pic = document.getElementById('filterDept').value;
-            state.kategori_pekerjaan = document.getElementById('filterKategori').value;
-            state.status_pemetaan = document.getElementById('filterStatusPemetaan').value;
-            state.page = 1;
-            loadData();
-        }
-
-        function onPerPageChange() {
-            state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
-            state.page = 1;
-            loadData();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterDept').value = '';
-            document.getElementById('filterKategori').value = '';
-            document.getElementById('filterStatusPemetaan').value = '';
-            Object.assign(state, {
-                search: '',
-                dept_unit_kerja_pic: '',
-                kategori_pekerjaan: '',
-                status_pemetaan: '',
-                page: 1
-            });
-            loadData();
-        }
-
-        function goToPage(page) {
-            state.page = page;
-            loadData();
-            document.getElementById('page-content').scrollTo({
-                top: 0,
-                behavior: 'smooth'
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         }
 
-        function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
-            const build = (selectId, values) => {
-                const select = document.getElementById(selectId);
-                const current = select.value;
-                values.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    select.appendChild(opt);
-                });
-                select.value = current;
-            };
-            build('filterDept', options.dept_unit_kerja_pic || []);
-            build('filterKategori', options.kategori_pekerjaan || []);
-            filterOptionsLoaded = true;
-        }
-
-        function renderApdPills(list, isKhusus = false) {
-            if (!list || list.length === 0) {
-                return '<span class="td-name-sub">-</span>';
-            }
-            const shown = list.slice(0, 3);
-            const rest = list.length - shown.length;
-            const pills = shown.map(a =>
-                `<span class="apd-pill ${isKhusus ? 'khusus' : ''}">${escapeHtml(a.jenis_apd)}</span>`).join('');
-            const more = rest > 0 ? `<span class="apd-pill-more">+${rest} lainnya</span>` : '';
-            return `<div class="apd-pill-list">${pills}${more}</div>`;
-        }
-
-        function renderTable(rows) {
-            const tbody = document.getElementById('tableBody');
+        function renderRows(tbodyId, rows, colspan, rowBuilder) {
+            const tbody = document.getElementById(tbodyId);
             if (!rows || rows.length === 0) {
-                tbody.innerHTML = `<tr class="loading-row"><td colspan="10">Tidak ada data untuk filter ini.</td></tr>`;
+                tbody.innerHTML = `<tr class="pr-empty-row"><td colspan="${colspan}">Tidak ada data — aman.</td></tr>`;
                 return;
             }
+            tbody.innerHTML = rows.map(rowBuilder).join('');
+        }
 
-            tbody.innerHTML = rows.map((row, idx) => `
+        function setKpi(boxId, valId, count) {
+            document.getElementById(valId).textContent = count;
+            const box = document.getElementById(boxId);
+            box.classList.remove('pr-aman', 'pr-warn');
+            box.classList.add(count > 0 ? 'pr-warn' : 'pr-aman');
+        }
+
+        async function loadReminderData() {
+            try {
+                const res = await fetch(REMINDER_DATA_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!res.ok) throw new Error(`Status ${res.status}`);
+                const json = await res.json();
+
+                setKpi('kpiBoxPengadaan', 'valPengadaan', json.summary.apd_perlu_pengadaan);
+                setKpi('kpiBoxLifetime', 'valLifetime', json.summary.apd_lifetime_30);
+                setKpi('kpiBoxStokKritis', 'valStokKritis', json.summary.alkes_stok_kritis);
+                setKpi('kpiBoxKalibrasi', 'valKalibrasi', json.summary.kalibrasi_jatuh_tempo);
+                setKpi('kpiBoxKadaluarsa', 'valKadaluarsa', json.summary.kadaluarsa_jatuh_tempo);
+
+                renderRows('tbodyPengadaan', json.apd_perlu_pengadaan, 7, row => `
                 <tr>
-                    <td>${(state.page - 1) * state.per_page + idx + 1}</td>
-                    <td class="txt-left"><b>${escapeHtml(row.kode_ok)}</b></td>
-                    <td class="txt-left" style="max-width:220px; white-space:normal;">${escapeHtml(row.uraian_pekerjaan)}</td>
-                    <td class="txt-left">${escapeHtml(display(row.dept_unit_kerja_pic))}</td>
-                    <td class="txt-left">${escapeHtml(display(row.kategori_pekerjaan))}</td>
-                    <td class="txt-left">${renderApdPills(row.apd_wajib, false)}</td>
-                    <td class="txt-left">${renderApdPills(row.apd_khusus, true)}</td>
-                    <td><span class="hiradc-count-badge ${row.hiradc_terkait === 0 ? 'zero' : ''}">${row.hiradc_terkait}</span></td>
-                    <td class="txt-left">
-                        <span class="status-pill ${row.status_pemetaan_apd.key === 'DIDUKUNG' ? 'sp-green' : 'sp-amber'}">
-                            ${row.status_pemetaan_apd.icon} ${escapeHtml(row.status_pemetaan_apd.label)}
-                        </span>
-                    </td>
-                    <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-row-action" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
-                            <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                        </button>
-                        <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.kode_ok)}')">
-                            <svg style="width:14px;height:14px; color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+                    <td><b>${escapeHtmlPR(row.kode_apd)}</b></td>
+                    <td class="txt-left">${escapeHtmlPR(row.jenis_apd)}</td>
+                    <td>${row.stok_tersedia}</td>
+                    <td>${row.reorder_point}</td>
+                    <td>${row.saran_qty_pesan}</td>
+                    <td>${display(row.eoq)}</td>
+                    <td>${renderStatusPill(row.status)}</td>
+                </tr>`);
 
-        function renderPagination(meta) {
-            document.getElementById('paginationText').textContent =
-                meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
-            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> referensi Kode OK ditemukan`;
+                renderRows('tbodyLifetime', json.apd_lifetime_30, 5, row => `
+                <tr>
+                    <td><b>${escapeHtmlPR(row.kode_apd)}</b></td>
+                    <td class="txt-left">${escapeHtmlPR(row.jenis_apd)}</td>
+                    <td>${display(row.terakhir_pengadaan)}</td>
+                    <td>${display(row.masa_pakai)}</td>
+                    <td>${renderStatusPill(row.status)}</td>
+                </tr>`);
 
-            const container = document.getElementById('paginationPages');
-            const current = meta.current_page,
-                last = meta.last_page;
-            let pages = [1];
-            if (current > 3) pages.push('...');
-            for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) pages.push(p);
-            if (current < last - 2) pages.push('...');
-            if (last > 1) pages.push(last);
-            pages = [...new Set(pages)];
+                renderRows('tbodyStokKritis', json.alkes_stok_kritis, 5, row => `
+                <tr>
+                    <td><b>${escapeHtmlPR(row.kode_alkes)}</b></td>
+                    <td class="txt-left">${escapeHtmlPR(row.jenis_alat)}</td>
+                    <td>${row.stok_tersedia}</td>
+                    <td>${row.reorder_point}</td>
+                    <td>${renderStatusPill(row.status)}</td>
+                </tr>`);
 
-            let html =
-                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
-            pages.forEach(p => {
-                html += p === '...' ? `<span class="page-ellipsis">…</span>` :
-                    `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-            });
-            html +=
-                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-            container.innerHTML = html;
-        }
+                renderRows('tbodyKalibrasi', json.kalibrasi_jatuh_tempo, 5, row => `
+                <tr>
+                    <td><b>${escapeHtmlPR(row.kode_alkes)}</b></td>
+                    <td class="txt-left">${escapeHtmlPR(row.jenis_alat)}</td>
+                    <td>${display(row.tanggal_kalibrasi)}</td>
+                    <td>${display(row.jadwal_kalibrasi_berikut)}</td>
+                    <td>${renderStatusPill(row.status)}</td>
+                </tr>`);
 
-        async function loadData() {
-            const params = new URLSearchParams();
-            if (state.search) params.set('search', state.search);
-            if (state.dept_unit_kerja_pic) params.set('dept_unit_kerja_pic', state.dept_unit_kerja_pic);
-            if (state.kategori_pekerjaan) params.set('kategori_pekerjaan', state.kategori_pekerjaan);
-            if (state.status_pemetaan) params.set('status_pemetaan', state.status_pemetaan);
-            params.set('page', state.page);
-            params.set('per_page', state.per_page);
+                renderRows('tbodyKadaluarsa', json.kadaluarsa_jatuh_tempo, 4, row => `
+                <tr>
+                    <td><b>${escapeHtmlPR(row.kode_alkes)}</b></td>
+                    <td class="txt-left">${escapeHtmlPR(row.jenis_alat)}</td>
+                    <td>${display(row.tanggal_exp)}</td>
+                    <td>${renderStatusPill(row.status)}</td>
+                </tr>`);
 
-            try {
-                const res = await fetch(`${DATA_ENDPOINT}?${params.toString()}`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                if (!res.ok) throw new Error((await res.json().catch(() => null))?.message || `Status ${res.status}`);
-                const json = await res.json();
-
-                renderTable(json.data);
-                renderPagination(json.meta);
-                populateFilterOptions(json.filter_options);
-
-                document.getElementById('kpiTotal').textContent = json.kpi.total;
-                document.getElementById('kpiDidukung').textContent = json.kpi.didukung_hiradc;
-                document.getElementById('kpiBelum').textContent = json.kpi.belum_ada_hiradc;
             } catch (e) {
-                document.getElementById('tableBody').innerHTML =
-                    `<tr class="loading-row"><td colspan="10">${escapeHtml(e.message)}</td></tr>`;
+                console.error(e);
             }
         }
 
-        // ══════ CHECKLIST DROPDOWN (APD Wajib / APD Khusus) ══════
-        async function loadApdOptions() {
-            if (apdOptionsCache.length > 0) return;
-            try {
-                const res = await fetch(APD_OPTIONS_ENDPOINT, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                const json = await res.json();
-                apdOptionsCache = json.data || [];
-            } catch (e) {
-                /* diamkan */
-            }
-        }
-
-        function renderMsOptions(prefix, term = '') {
-            const container = document.getElementById(`${prefix}Options`);
-            const term_ = term.toLowerCase();
-            const list = apdOptionsCache.filter(a => a.jenis_apd.toLowerCase().includes(term_));
-
-            if (list.length === 0) {
-                container.innerHTML = `<div class="ms-option-empty">APD tidak ditemukan.</div>`;
-                return;
-            }
-
-            container.innerHTML = list.map(a => `
-                <label class="ms-option-row">
-                    <input type="checkbox" value="${a.id}" ${msSelected[prefix].has(a.id) ? 'checked' : ''}
-                        onchange="onMsCheckboxChange('${prefix}', ${a.id}, this.checked)" />
-                    <span>${escapeHtml(a.jenis_apd)} <span style="color:#94A3B8;">(${escapeHtml(a.kode_apd)})</span></span>
-                </label>
-            `).join('');
-        }
-
-        function filterMsOptions(prefix, term) {
-            renderMsOptions(prefix, term);
-        }
-
-        function onMsCheckboxChange(prefix, id, checked) {
-            if (checked) msSelected[prefix].add(id);
-            else msSelected[prefix].delete(id);
-            updateMsLabel(prefix);
-        }
-
-        function updateMsLabel(prefix) {
-            const label = document.getElementById(`${prefix}Label`);
-            const count = msSelected[prefix].size;
-            if (count === 0) {
-                label.textContent = prefix === 'msWajib' ? 'Pilih APD Wajib...' : 'Pilih APD Khusus...';
-                return;
-            }
-            const names = apdOptionsCache.filter(a => msSelected[prefix].has(a.id)).map(a => a.jenis_apd);
-            label.textContent = count <= 2 ? names.join(', ') : `${names.slice(0, 2).join(', ')} +${count - 2} lainnya`;
-        }
-
-        function toggleMsDropdown(prefix) {
-            const panel = document.getElementById(`${prefix}Panel`);
-            const isOpen = panel.classList.contains('open');
-            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
-            if (!isOpen) {
-                panel.classList.add('open');
-                renderMsOptions(prefix);
-                panel.querySelector('.ms-search').value = '';
-                panel.querySelector('.ms-search').focus();
-            }
-        }
-
-        document.addEventListener('click', (e) => {
-            document.querySelectorAll('.ms-dropdown').forEach(wrap => {
-                if (!wrap.contains(e.target)) {
-                    wrap.querySelector('.ms-dropdown-panel')?.classList.remove('open');
-                }
-            });
-        });
-
-        // ══════ MODAL TAMBAH / EDIT ══════
-        async function openFormModal(row = null) {
-            currentEditId = row ? row.id : null;
-            await loadApdOptions();
-
-            document.getElementById('formModalTitle').textContent = row ? 'Edit Referensi Kode OK' :
-                'Tambah Referensi Kode OK';
-
-            document.getElementById('fKodeOk').value = row?.kode_ok || '';
-            document.getElementById('fDept').value = row?.dept_unit_kerja_pic || '';
-            document.getElementById('fUraian').value = row?.uraian_pekerjaan || '';
-            document.getElementById('fKategori').value = row?.kategori_pekerjaan || '';
-
-            msSelected.msWajib = new Set((row?.apd_wajib || []).map(a => a.id));
-            msSelected.msKhusus = new Set((row?.apd_khusus || []).map(a => a.id));
-            updateMsLabel('msWajib');
-            updateMsLabel('msKhusus');
-            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
-
-            document.getElementById('formModalOverlay').classList.add('open');
-        }
-
-        function closeFormModal() {
-            document.getElementById('formModalOverlay').classList.remove('open');
-            currentEditId = null;
-        }
-
-        function closeFormModalOutside(event) {
-            if (event.target.id === 'formModalOverlay') closeFormModal();
-        }
-
-        async function submitForm() {
-            const btn = document.getElementById('btnSubmitForm');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Menyimpan...';
-
-            const payload = {
-                kode_ok: document.getElementById('fKodeOk').value.trim(),
-                dept_unit_kerja_pic: document.getElementById('fDept').value.trim() || null,
-                uraian_pekerjaan: document.getElementById('fUraian').value.trim(),
-                kategori_pekerjaan: document.getElementById('fKategori').value.trim() || null,
-                apd_wajib_ids: Array.from(msSelected.msWajib),
-                apd_khusus_ids: Array.from(msSelected.msKhusus),
-            };
-
-            const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-            const method = currentEditId ? 'PUT' : 'POST';
-
-            try {
-                const res = await fetch(url, {
-                    method,
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    },
-                    body: JSON.stringify(payload),
-                });
-                const json = await res.json();
-                if (!res.ok) {
-                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
-                    throw new Error(firstError || json.message || `Status ${res.status}`);
-                }
-                closeFormModal();
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                showToast(e.message || 'Gagal menyimpan data.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        }
-
-        // ══════ MODAL HAPUS ══════
-        function openDeleteModal(id, kodeOk) {
-            currentDeleteId = id;
-            document.getElementById('deleteModalDesc').textContent =
-                `Referensi Kode OK "${kodeOk}" akan dihapus permanen. Lanjutkan?`;
-            document.getElementById('deleteConfirmOverlay').classList.add('open');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteConfirmOverlay').classList.remove('open');
-            currentDeleteId = null;
-        }
-
-        function closeDeleteModalOutside(event) {
-            if (event.target.id === 'deleteConfirmOverlay') closeDeleteModal();
-        }
-
-        async function confirmDelete() {
-            if (!currentDeleteId) return;
-            try {
-                const res = await fetch(`${BASE_ENDPOINT}/${currentDeleteId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    },
-                });
-                const json = await res.json();
-                if (!res.ok) throw new Error(json.message || `Status ${res.status}`);
-                closeDeleteModal();
-                await loadData();
-                showToast(json.message, 'success');
-            } catch (e) {
-                closeDeleteModal();
-                showToast(e.message || 'Gagal menghapus data.', 'error');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadData);
+        document.addEventListener('DOMContentLoaded', loadReminderData);
     </script>
+
 </body>
 
 </html>
