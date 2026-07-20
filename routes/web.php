@@ -20,6 +20,7 @@ use App\Http\Controllers\LogApdController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
 use App\Http\Controllers\LpiKorbanController;
+use App\Http\Controllers\ManajemenApdPegawaiController;
 use App\Http\Controllers\MatriksApdJabatanController;
 use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
@@ -229,6 +230,13 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::post('/', [StokAPDController::class, 'store'])->name('store');
         Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
         Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
+    });
+
+    // PEMETAAN APD TENAGA KERJA
+    Route::prefix('pemetaan-apd')->name('pemetaan-apd.')->group(function () {
+        Route::get('/', [ManajemenApdPegawaiController::class, 'index'])->name('index');
+        Route::get('/data', [ManajemenApdPegawaiController::class, 'data'])->name('data');
+        Route::get('/{id}', [ManajemenApdPegawaiController::class, 'show'])->name('show');
     });
 
     // LOG APD
