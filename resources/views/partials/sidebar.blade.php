@@ -333,6 +333,7 @@
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
                 request()->routeIs('data-unsafe.*') ||
+                request()->routeIs('toolbox-meeting.*') ||
                 request()->routeIs('data-reject-monitoring.*') ||
                 request()->routeIs('monitoring-so.*') ||
                 request()->routeIs('dashboard-individu.*') ||
@@ -377,6 +378,11 @@
             <a class="nav-link {{ request()->routeIs('data-unsafe.*') ? 'active' : '' }}"
                 href="{{ route('data-unsafe.index') }}">
                 <span class="nav-label">Data UA/UC</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('toolbox-meeting.*') ? 'active' : '' }}"
+                href="{{ route('tbm.index') }}">
+                <span class="nav-label">ToolBox Meeting</span>
             </a>
             <a class="nav-link {{ request()->routeIs('data-reject-monitoring.*') ? 'active' : '' }}"
                 href="{{ route('data-reject-monitoring.index') }}">
@@ -708,15 +714,18 @@
 
         <div id="assetsmanagementDropdown" class="dropdown-menu {{ $assetsmanagementActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dashboard-apd-alkes.*') ? 'active' : '' }}" href="{{route('dashboard-apd-alkes.index')}}">
+            <a class="nav-link {{ request()->routeIs('dashboard-apd-alkes.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-apd-alkes.index') }}">
                 <span class="nav-label">Dashboard APD</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('kode-ok-referensi.*') ? 'active' : '' }}" href="{{route('kode-ok-referensi.index')}}">
+            <a class="nav-link {{ request()->routeIs('kode-ok-referensi.*') ? 'active' : '' }}"
+                href="{{ route('kode-ok-referensi.index') }}">
                 <span class="nav-label">Refrensi Kode OK</span>
             </a>
-           
-            <a class="nav-link {{ request()->routeIs('master-supplier-apd.*') ? 'active' : '' }}" href="{{route('master-supplier-apd.index')}}">
+
+            <a class="nav-link {{ request()->routeIs('master-supplier-apd.*') ? 'active' : '' }}"
+                href="{{ route('master-supplier-apd.index') }}">
                 <span class="nav-label">Master Supplier APD & Alkes</span>
             </a>
 
@@ -738,7 +747,7 @@
                 href="{{ route('penggunaan-alkes.index') }}">
                 <span class="nav-label">LOG ALKES</span>
             </a>
-           
+
             <a class="nav-link {{ request()->routeIs('kartu-stok.*') ? 'active' : '' }}"
                 href="{{ route('kartu-stok.index') }}">
                 <span class="nav-label">Kartu Stok</span>
@@ -748,7 +757,7 @@
                 href="{{ route('pemetaan-apd.index') }}">
                 <span class="nav-label">Pemetaan APD</span>
             </a>
-            
+
             <a class="nav-link {{ request()->routeIs('pusat-reminder.*') ? 'active' : '' }}"
                 href="{{ route('pusat-reminder.index') }}">
                 <span class="nav-label">Pusat Reminder</span>

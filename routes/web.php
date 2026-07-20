@@ -36,6 +36,7 @@ use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\StokAlkesController;
 use App\Http\Controllers\SupplierApdController;
 use App\Http\Controllers\TenagaController;
+use App\Http\Controllers\ToolboxMeetingController;
 use Illuminate\Support\Facades\Route;
 
 // ══════ LOGIN (tidak perlu auth) ══════
@@ -119,6 +120,14 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::put('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'update'])->name('data-unsafe.update');
     Route::delete('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'destroy'])->name('data-unsafe.destroy');
     Route::get('/data-unsafe/cari-so', [DataUnsafeController::class, 'cariSafetyOfficer'])->name('data-unsafe.cari-so');
+
+    // TBM
+    Route::get('/toolbox-meeting', [ToolboxMeetingController::class, 'index'])->name('tbm.index');
+    Route::get('/toolbox-meeting/data', [ToolboxMeetingController::class, 'data'])->name('tbm.data');
+    Route::post('/toolbox-meeting', [ToolboxMeetingController::class, 'store'])->name('tbm.store');
+    Route::put('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'update'])->name('tbm.update');
+    Route::delete('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'destroy'])->name('tbm.destroy');
+    Route::get('/toolbox-meeting/cari-so', [ToolboxMeetingController::class, 'cariSafetyOfficer'])->name('tbm.cari-so');
 
     // Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
     Route::get('/data-reject-monitoring', [DataRejectMonitoringController::class, 'index'])->name('data-reject-monitoring.index');
