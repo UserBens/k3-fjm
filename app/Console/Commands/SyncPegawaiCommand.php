@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Kualifikasi;
 use App\Models\LokasiKerja;
 use App\Models\Pegawai;
 use App\Models\PengawasIntraUser;
@@ -57,6 +58,12 @@ class SyncPegawaiCommand extends Command
             return Command::FAILURE;
         }
 
+        // ── STEP 1d: Sync Master Kualifikasi ──
+        if (!$this->syncKualifikasi()) {
+            $this->error('Sinkronisasi dibatalkan karena gagal sync kualifikasi.');
+            return Command::FAILURE;
+        }
+
         // ── STEP 2: Sync Pegawai ──
         $pegawaiResult = $this->syncPegawai();
         if ($pegawaiResult !== Command::SUCCESS) {
@@ -81,6 +88,8 @@ class SyncPegawaiCommand extends Command
             // sengaja TIDAK return FAILURE di sini — kegagalan tagging Safety Officer
             // tidak perlu membatalkan sync pegawai/pengawas yang sudah berhasil.
         }
+
+
 
         $this->info('Semua sinkronisasi (unit kerja, pegawai, pengawas, pengawas pekerjaan) selesai!');
         return Command::SUCCESS;
@@ -190,6 +199,7 @@ class SyncPegawaiCommand extends Command
                         'jabatan' => $item['jabatan'] ?? $item['posisi'] ?? null,
                         'unit_kerjaid' => $item['unit_kerjaid'] ?? null,
                         'lokasi_kerjaid' => $item['lokasi_kerjaid'] ?? null,
+                        'kualifikasiid' => $item['kualifikasiid'] ?? null,   // ← TAMBAHKAN BARIS INI
                         'is_active' => $item['is_active'] ?? true,
 
                         'tempat_lahir' => $item['tempat_lahir'] ?? null,
@@ -438,6 +448,59 @@ class SyncPegawaiCommand extends Command
             return true;
         } catch (\Exception $e) {
             $this->error('Terjadi kesalahan saat menetapkan Safety Officer: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    protected function syncKualifikasi(): bool
+    {
+        $this->info('Memulai sinkronisasi data kualifikasi dari API...');
+
+        // Ganti dengan endpoint API kualifikasi yang sesuai di ERP Anda,
+        // atau pindahkan ke config('services.kualifikasi.url') seperti unit kerja/pengawas.
+        $apiUrl = config('services.kualifikasi.url');
+        $apiKey = config('services.kualifikasi.key');
+
+        try {
+            $response = Http::withHeaders([
+                'X-API-KEY' => $apiKey,
+            ])->timeout(30)->get($apiUrl);
+
+            if (!$response->successful()) {
+                $this->error('Gagal mengambil data kualifikasi. Status: ' . $response->status() . ' - ' . $response->body());
+                return false;
+            }
+
+            $json = $response->json();
+            $items = $json['data'] ?? $json;
+
+            if (!is_array($items)) {
+                $this->error('Format data respons API kualifikasi tidak dikenali.');
+                return false;
+            }
+
+            $count = 0;
+            foreach ($items as $item) {
+                $idApi = $item['id'] ?? null;
+                if (!$idApi) {
+                    continue;
+                }
+
+                Kualifikasi::updateOrCreate(
+                    ['id_api' => $idApi],
+                    [
+                        'nama_kualifikasi' => $item['nama_kualifikasi'] ?? null,
+                        'kode_kualifikasi' => $item['kode_kualifikasi'] ?? null,
+                        'is_active' => $item['is_active'] ?? true,
+                    ]
+                );
+                $count++;
+            }
+
+            $this->info("Sinkronisasi kualifikasi berhasil! {$count} data diperbarui/ditambahkan.");
+            return true;
+        } catch (\Exception $e) {
+            $this->error('Terjadi kesalahan saat sinkronisasi kualifikasi: ' . $e->getMessage());
             return false;
         }
     }

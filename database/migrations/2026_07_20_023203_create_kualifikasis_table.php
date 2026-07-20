@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('log_apds', function (Blueprint $table) {
+        Schema::create('kualifikasis', function (Blueprint $table) {
             $table->id();
+            $table->string('id_api')->unique()->nullable();
+            $table->string('nama_kualifikasi', 255)->nullable();
+            $table->string('kode_kualifikasi', 50)->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('log_apds');
+        Schema::dropIfExists('kualifikasis');
     }
 };

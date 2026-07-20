@@ -1252,6 +1252,10 @@
                         <option value="">Semua Jenis Kelamin</option>
                     </select>
 
+                    <select id="filterKualifikasi" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Kualifikasi</option>
+                    </select>
+
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
@@ -1266,6 +1270,7 @@
                                 {{-- <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th> --}}
                                 <th class="px-6 py-3 text-left">Unit Kerja</th>
                                 <th class="px-6 py-3 text-left">Lokasi & Subkon</th>
+                                <th class="px-6 py-3 text-left">Kualifikasi</th>
                                 <th class="px-6 py-3 text-left">Data OK</th>
                                 <th class="px-6 py-3 text-left">Pengawas</th> <!-- BARU -->
                                 <th class="px-6 py-3 text-left">Status KIB</th>
@@ -1468,6 +1473,10 @@
                             <label>Bagian</label>
                             <input type="text" id="detailInputBagian" readonly>
                         </div>
+                        <div class="detail-field">
+                            <label>Kualifikasi</label>
+                            <input type="text" id="detailInputKualifikasi" readonly>
+                        </div>
                     </div>
                 </div>
 
@@ -1601,6 +1610,8 @@
             status: '',
             departemen: '',
             jenis_kelamin: '',
+            kualifikasi: '',
+
             page: 1,
             per_page: 10,
         };
@@ -1658,6 +1669,8 @@
             state.status = document.getElementById('filterStatus').value;
             state.departemen = document.getElementById('filterDepartemen').value;
             state.jenis_kelamin = document.getElementById('filterJenisKelamin').value;
+            state.kualifikasi = document.getElementById('filterKualifikasi').value;
+
             state.page = 1;
             loadData();
         }
@@ -1673,10 +1686,13 @@
             document.getElementById('filterStatus').value = '';
             document.getElementById('filterDepartemen').value = '';
             document.getElementById('filterJenisKelamin').value = '';
+            document.getElementById('filterKualifikasi').value = '';
+
             state.search = '';
             state.status = '';
             state.departemen = '';
             state.jenis_kelamin = '';
+            state.kualifikasi = '';
             state.page = 1;
             loadData();
         }
@@ -1713,6 +1729,8 @@
             build('filterStatus', options.status || []);
             build('filterDepartemen', options.departemen || [], true); // BARU: pakai object
             build('filterJenisKelamin', options.jenis_kelamin || []);
+            build('filterKualifikasi', options.kualifikasi || [], true);
+
         }
 
         function sisaHariBadge(sisaHari) {
@@ -1778,8 +1796,12 @@
                         <div style="font-weight:600; color:#0f172a; font-size:13px;">${escapeHtml(row.nama_lokasi)}</div>
                         <div class="td-name-sub" style="color: #0284c7; font-weight: 500;">Subkon: ${escapeHtml(row.nama_subkon)}</div>
                     </td>
-            
-                   <td>
+
+                    <td>
+                        <span class="status-pill sp-blue">${escapeHtml(row.nama_kualifikasi)}</span>
+                    </td>
+                   
+                    <td>
                         <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
                             Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
                         </div>
@@ -1790,11 +1812,11 @@
 
                      <td>
                         ${row.nama_pengawas === '-' ? `
-                                         <span class="status-pill sp-gray">-</span>
-                                            ` : `
-                                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
-                                        <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
-                                          `}
+                                                                     <span class="status-pill sp-gray">-</span>
+                                                                        ` : `
+                                                                    <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
+                                                                    <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
+                                                                      `}
                     </td>
 
                     <td>
@@ -1919,6 +1941,8 @@
             if (state.status) params.set('status', state.status);
             if (state.departemen) params.set('departemen', state.departemen);
             if (state.jenis_kelamin) params.set('jenis_kelamin', state.jenis_kelamin);
+            if (state.kualifikasi) params.set('kualifikasi', state.kualifikasi);
+
             params.set('page', state.page);
             params.set('per_page', state.per_page);
 
@@ -2128,6 +2152,7 @@
                 row.nama_pengawas !== '-' ? `${row.nama_pengawas} (${row.badge_pengawas})` : '-';
             document.getElementById('detailInputLokasiKerja').value = row.nama_lokasi;
             document.getElementById('detailInputSubkon').value = row.nama_subkon;
+            document.getElementById('detailInputKualifikasi').value = row.nama_kualifikasi || '-';
             // BARU - Logika untuk menampilkan Gambar KIB
             const imgKib = document.getElementById('detailImageKib');
             const imgEmpty = document.getElementById('detailImageKibEmpty');

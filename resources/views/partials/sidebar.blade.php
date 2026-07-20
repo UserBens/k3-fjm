@@ -669,7 +669,7 @@
         @php
             // Sesuaikan nama route ini dengan yang ada di web.php Anda
             $assetsmanagementActive =
-                request()->routeIs('dasboard-apd.*') ||
+                request()->routeIs('dashboard-apd-alkes.*') ||
                 request()->routeIs('kode-ok-referensi.*') ||
                 request()->routeIs('master-supplier-apd.*') ||
                 request()->routeIs('master-stok-apd.*') ||
@@ -707,7 +707,7 @@
 
         <div id="assetsmanagementDropdown" class="dropdown-menu {{ $assetsmanagementActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dasboard-apd.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dashboard-apd-alkes.*') ? 'active' : '' }}" href="{{route('dashboard-apd-alkes.index')}}">
                 <span class="nav-label">Dashboard APD</span>
             </a>
 
@@ -763,9 +763,9 @@
                 <span class="nav-label">RAB</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
+            {{-- <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Lembar Folowup</span>
-            </a>
+            </a> --}}
 
         </div>
     </div>

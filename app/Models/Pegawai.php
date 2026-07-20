@@ -37,4 +37,9 @@ class Pegawai extends Model
     {
         return $this->hasMany(SafetyOfficerPegawai::class, 'badge_safety_officer', 'badge');
     }
+
+    public function kualifikasi()
+    {
+        return $this->belongsTo(Kualifikasi::class, 'kualifikasiid', 'id_api');
+    }
 }

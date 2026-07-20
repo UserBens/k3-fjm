@@ -59,4 +59,9 @@ return [
         'url' => env('USER_LOGIN_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/user'),
         'key' => env('PEGAWAI_API_KEY'), // reuse key yang sama
     ],
+
+    'kualifikasi' => [
+        'url' => env('KUALIFIKASI_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/kualifikasi'),
+        'key' => env('KUALIFIKASI_API_KEY', env('PEGAWAI_API_KEY')),
+    ],
 ];

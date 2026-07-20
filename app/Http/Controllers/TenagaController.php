@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kualifikasi;
 use App\Models\Pegawai;
 use App\Models\UnitKerja;
 use Carbon\Carbon;
@@ -36,7 +37,7 @@ class TenagaController extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas', 'lokasiKerja', 'subkon'])
+            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas', 'lokasiKerja', 'subkon', 'kualifikasi'])
                 ->where('is_active', true); // BARU — wajib hanya pegawai aktif, tidak bisa dioverride
 
             if ($search = trim((string) $request->query('search', ''))) {
@@ -44,6 +45,11 @@ class TenagaController extends Controller
                     $q->where('nama', 'ilike', "%{$search}%")
                         ->orWhere('badge', 'like', "%{$search}%");
                 });
+            }
+
+            // 2. Filter berdasarkan kualifikasi (tambahkan di antara filter departemen & jenis_kelamin)
+            if ($kualifikasi = $request->query('kualifikasi')) {
+                $query->where('kualifikasiid', $kualifikasi);
             }
 
             if ($departemen = $request->query('departemen')) {
@@ -65,6 +71,12 @@ class TenagaController extends Controller
                     ->map(fn($u) => ['value' => $u->id_api, 'label' => $u->nama_unit_kerja])
                     ->values(),
                 'jenis_kelamin' => Pegawai::where('is_active', true)->whereNotNull('jenis_kelamin')->distinct()->pluck('jenis_kelamin')->sort()->values(),
+                // BARU
+                'kualifikasi' => Kualifikasi::whereIn('id_api', Pegawai::where('is_active', true)->whereNotNull('kualifikasiid')->distinct()->pluck('kualifikasiid'))
+                    ->orderBy('nama_kualifikasi')
+                    ->get(['id_api', 'nama_kualifikasi'])
+                    ->map(fn($k) => ['value' => $k->id_api, 'label' => $k->nama_kualifikasi])
+                    ->values(),
             ];
 
             $perPage = (int) $request->query('per_page', 10);
@@ -113,6 +125,8 @@ class TenagaController extends Controller
                     'gambar_kib_url' => $item->gambar_kib ? asset('storage/' . $item->gambar_kib) : null,
                     'nama_lokasi' => $item->lokasiKerja->nama_lokasi ?? '-',
                     'nama_subkon' => $item->subkon->nama_subkon ?? '-',
+                    'nama_kualifikasi' => $item->kualifikasi->nama_kualifikasi ?? '-',   // ← TAMBAHAN
+
                 ];
             });
 

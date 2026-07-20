@@ -3,6 +3,7 @@
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\AlatKesehatanPenggunaController;
+use App\Http\Controllers\DashboardApdAlkesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\DataRejectMonitoringController;
@@ -214,6 +215,12 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/{kodeOkReferensi}', [KodeOkReferensiController::class, 'update'])->name('update');
         Route::delete('/{kodeOkReferensi}', [KodeOkReferensiController::class, 'destroy'])->name('destroy');
     });
+
+    Route::get('/dashboard-apd-alkes', [DashboardApdAlkesController::class, 'index'])
+        ->name('dashboard-apd-alkes.index');
+
+    Route::get('/dashboard-apd-alkes/data', [DashboardApdAlkesController::class, 'data'])
+        ->name('dashboard-apd-alkes.data');
 
     // APD
     Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
