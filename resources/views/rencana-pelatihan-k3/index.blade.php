@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>ToolBox Meeting — PT. Fokus Jasa Mitra</title>
+    <title>Rencana Pelatihan K3 — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -1228,94 +1228,175 @@
 
             <div class="page-hdr">
                 <div class="page-hdr-top">
+
                     <div>
+
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Data KPI Keselamatan & Kesehatan Kerja · PT. Fokus Jasa
-                                Mitra</span>
+
+                            <span class="pg-eyebrow">
+                                Data Master K3 · PT. Fokus Jasa Mitra
+                            </span>
                         </div>
-                        <div class="pg-title">REKAP <span>TOOLBOX MEETING</span></div>
-                        <div class="pg-sub">Kelola data Safety Briefing / Toolbox Meeting (TBM) per Safety Officer.
+
+                        <div class="pg-title">
+                            RENCANA <span>IMPLEMENTASI PELATIHAN K3</span>
                         </div>
+
+                        <div class="pg-sub">
+                            Kelola seluruh rencana implementasi pelatihan K3 tahunan berdasarkan prioritas,
+                            peserta, anggaran, jadwal pelaksanaan serta status implementasi.
+                        </div>
+
                     </div>
+
                     <div class="pg-actions">
+
                         <button class="btn-primary" onclick="openCreateModal()">
+
                             <svg style="width:12px;height:12px" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
+
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4.5v15m7.5-7.5h-15" />
+
                             </svg>
-                            Tambah TBM
+
+                            Tambah Pelatihan
+
                         </button>
+
                     </div>
+
                 </div>
             </div>
 
             <div class="section-card">
                 <div class="filter-bar">
+
                     <div class="filter-search">
-                        <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Cari nama SO, area, atau unit kerja..."
-                            oninput="onSearchInput()" />
+
+                        <input type="text" id="searchInput" placeholder="Cari topik pelatihan..."
+                            oninput="onSearchInput()">
+
                     </div>
 
-                    <select id="filterAreaKerja" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Area Kerja</option>
+                    <select id="filterPrioritas" class="filter-select" onchange="onFilterChange()">
+
+                        <option value="">Semua Prioritas</option>
+                        <option>Tinggi</option>
+                        <option>Sedang</option>
+                        <option>Rendah</option>
+
                     </select>
 
-                    <select id="filterUnitKerja" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Unit Kerja</option>
+                    <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
+
+                        <option value="">Semua Status</option>
+
+                        <option>Dijadwalkan</option>
+                        <option>Terlaksana</option>
+                        <option>Tertunda</option>
+
                     </select>
 
-                    <input type="date" id="filterTanggalMulai" class="filter-date" onchange="onFilterChange()"
-                        title="Dari tanggal" />
-                    <input type="date" id="filterTanggalSelesai" class="filter-date" onchange="onFilterChange()"
-                        title="Sampai tanggal" />
+                    <select id="filterBulan" class="filter-select" onchange="onFilterChange()">
 
-                    <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
+                        <option value="">Semua Bulan</option>
+
+                        <option value="1">Januari</option>
+                        <option value="2">Februari</option>
+                        <option value="3">Maret</option>
+                        <option value="4">April</option>
+                        <option value="5">Mei</option>
+                        <option value="6">Juni</option>
+                        <option value="7">Juli</option>
+                        <option value="8">Agustus</option>
+                        <option value="9">September</option>
+                        <option value="10">Oktober</option>
+                        <option value="11">November</option>
+                        <option value="12">Desember</option>
+
+                    </select>
+
+                    <button class="btn-outline" onclick="resetFilters()">
+
+                        Reset Filter
+
+                    </button>
+
                 </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data toolbox meeting...</div>
+                <div class="data-summary" id="dataSummary">
+                    <strong>Total Pelatihan :</strong>
+                    <span id="totalPelatihan">0</span>
+
+                    &nbsp; | &nbsp;
+
+                    <strong>Terlaksana :</strong>
+                    <span id="totalTerlaksana">0</span>
+
+                    &nbsp; | &nbsp;
+
+                    <strong>Dijadwalkan :</strong>
+                    <span id="totalJadwal">0</span>
+
+                    &nbsp; | &nbsp;
+
+                    <strong>Total Anggaran :</strong>
+
+                    <span id="totalAnggaran">
+
+                        Rp 0
+
+                    </span>
+
+                </div>
+
 
                 <div class="rtable-wrap">
+
                     <table class="rtable">
+
                         <thead>
+
                             <tr>
-                                <th>Tanggal</th>
-                                <th>Safety Officer</th>
-                                <th>Area Kerja</th>
-                                <th>Unit Kerja</th>
-                                <th>Dokumentasi</th>
+
+                                <th>No</th>
+
+                                <th>Topik Pelatihan</th>
+
+                                <th>Prioritas</th>
+
+                                <th>Peserta</th>
+
+                                <th>Durasi</th>
+
+                                <th>Anggaran</th>
+
+                                <th>Bulan</th>
+
+                                <th>Status</th>
+
                                 <th>Aksi</th>
+
                             </tr>
+
                         </thead>
+
                         <tbody id="tableBody">
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:160px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:100px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:120px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:60px;"></div>
-                                </td>
-                            </tr>
+
                         </tbody>
+
                     </table>
+
                 </div>
 
                 <div class="pagination-bar">
@@ -1332,180 +1413,284 @@
             </div>
 
             <!-- ══════ MODAL TAMBAH / EDIT TBM ══════ -->
-            <div class="modal-backdrop" id="tbmModal">
-                <div class="modal-box">
-                    <div class="modal-hdr">
-                        <div class="modal-title" id="modalTitle">TAMBAH TBM</div>
-                    </div>
+            <div class="modal-backdrop" id="tbmModal" onclick="closeFormModalOutside(event)">
+                <div class="modal-box" onclick="event.stopPropagation()">
+                    <div class="modal-box">
+                        <div class="modal-hdr">
+                            <div class="modal-title" id="modalTitle">TAMBAH TBM</div>
+                        </div>
 
-                    <form id="tbmForm" onsubmit="submitForm(event)">
-                        <input type="hidden" id="tbmId" value="" />
+                        <form id="tbmForm" enctype="multipart/form-data" onsubmit="submitForm(event)"> <input
+                                type="hidden" id="tbmId" value="" />
+                            <div id="formErrorBox"
+                                style="
+                                        display:none;
+                                        margin-bottom:15px;
+                                        padding:10px 14px;
+                                        border-radius:8px;
+                                        background:#FEF2F2;
+                                        color:#DC2626;
+                                        font-size:13px;
+                                        font-weight:600;
+                                ">
+                            </div>
+                            <div class="form-grid-2">
 
-                        <div class="form-grid-2">
+                                <div class="form-group">
+
+                                    <label class="form-label">
+
+                                        Topik Pelatihan
+
+                                    </label>
+
+                                    <input class="form-input" id="fTopik">
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+
+                                        Prioritas
+
+                                    </label>
+
+                                    <select class="form-select" id="fPrioritas">
+
+                                        <option>Tinggi</option>
+                                        <option>Sedang</option>
+                                        <option>Rendah</option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-grid-2">
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+
+                                        Jumlah Peserta
+
+                                    </label>
+
+                                    <input type="number" class="form-input" id="fPeserta">
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+
+                                        Durasi (Jam)
+
+                                    </label>
+
+                                    <input type="number" class="form-input" id="fDurasi">
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-grid-2">
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+
+                                        Estimasi Anggaran
+
+                                    </label>
+
+                                    <input type="number" class="form-input" id="fAnggaran">
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+
+                                        Bulan Pelaksanaan
+
+                                    </label>
+
+                                    <select id="fBulan" class="form-select">
+
+                                        <option value="1">Januari</option>
+
+                                        ...
+
+                                        <option value="12">Desember</option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
                             <div class="form-group">
-                                <label class="form-label">Tanggal</label>
-                                <input type="date" class="form-input" id="fTanggal" required />
-                            </div>
-                            <div class="form-group" style="position:relative;">
-                                <label class="form-label">Safety Officer</label>
-                                <input type="text" class="form-input" id="fNamaSo"
-                                    placeholder="Cari nama / badge SO..." autocomplete="off"
-                                    oninput="onSoSearch()" />
-                                <input type="hidden" id="fBadgeSo" value="" />
-                                <div class="so-dropdown" id="soDropdown"></div>
-                            </div>
-                        </div>
 
-                        <div class="form-grid-2">
+                                <label class="form-label">
+
+                                    Status
+
+                                </label>
+
+                                <select id="fStatus" class="form-select">
+
+                                    <option>Dijadwalkan</option>
+
+                                    <option>Terlaksana</option>
+
+                                    <option>Tertunda</option>
+
+                                </select>
+
+                            </div>
+
                             <div class="form-group">
-                                <label class="form-label">Area Kerja</label>
-                                <input type="text" class="form-input" id="fAreaKerja"
-                                    placeholder="mis. PABRIK III B" required />
+
+                                <label class="form-label">
+
+                                    Keterangan
+
+                                </label>
+
+                                <textarea id="fKeterangan" class="form-textarea" rows="4"></textarea>
+
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Unit Kerja</label>
-                                <input type="text" class="form-input" id="fUnitKerja"
-                                    placeholder="mis. PURIFIKASI GYPSUM II" required />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Foto TBM</label>
-                            <input type="file" class="form-input file-input" id="fFotoTbm" accept="image/*" />
-                            <div class="current-file" id="currentFotoTbm"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Foto Daftar Hadir</label>
-                            <input type="file" class="form-input file-input" id="fFotoDaftarHadir"
-                                accept="image/*,.pdf" />
-                            <div class="current-file" id="currentFotoDaftarHadir"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Dokumen Laporan Kegiatan</label>
-                            <input type="file" class="form-input file-input" id="fDokumenLaporan"
-                                accept=".pdf,.doc,.docx,image/*" />
-                            <div class="current-file" id="currentDokumenLaporan"></div>
-                        </div>
-
-                        <div id="formErrorBox" class="form-error" style="display:none;"></div>
+                        </form>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn-outline" onclick="closeModal()">Batal</button>
-                            <button type="submit" class="btn-primary" id="submitBtn">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
 
-            <!-- ══════ MODAL DETAIL TBM ══════ -->
-            <div class="confirm-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-                <div class="confirm-box detail-box" onclick="event.stopPropagation()">
-                    <div class="detail-hdr">
-                        <div class="detail-hdr-left">
-                            <div class="detail-avatar" id="detailAvatar">--</div>
-                            <div>
-                                <div class="confirm-title" id="detailNamaTitle" style="margin-bottom:2px;">-</div>
-                                <div class="detail-subtitle" id="detailBadgeSub">-</div>
+                            <button type="button" class="btn-outline" onclick="closeModal()">
+
+                                Batal
+
+                            </button>
+
+                            <button type="submit" id="submitBtn" form="tbmForm" class="btn-primary">
+
+                                Simpan
+
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════ MODAL DETAIL TBM ══════ -->
+                <div class="confirm-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
+                    <div class="confirm-box detail-box" onclick="event.stopPropagation()">
+                        <div class="detail-hdr">
+                            <div class="detail-hdr-left">
+                                <div class="detail-avatar" id="detailAvatar">--</div>
+                                <div>
+                                    <div class="confirm-title" id="detailNamaTitle" style="margin-bottom:2px;">-
+                                    </div>
+                                    <div class="detail-subtitle" id="detailBadgeSub">-</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="detail-body">
-                        <div class="detail-section">
-                            <div class="detail-section-title">Data Umum</div>
-                            <div class="detail-grid" id="detailUmumGrid"></div>
+                        <div class="detail-body">
+                            <div class="detail-section">
+                                <div class="detail-section-title">Data Umum</div>
+                                <div class="detail-grid" id="detailUmumGrid"></div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-section-title">Dokumentasi</div>
+                                <div class="detail-grid" id="detailDokumenGrid"></div>
+                            </div>
                         </div>
-                        <div class="detail-section">
-                            <div class="detail-section-title">Dokumentasi</div>
-                            <div class="detail-grid" id="detailDokumenGrid"></div>
-                        </div>
-                    </div>
 
-                    <div class="detail-footer">
-                        <button class="btn-confirm-cancel" onclick="closeDetailModal()">Tutup</button>
-                        <button class="btn-modal-confirm-edit" onclick="editFromDetail()"
-                            style="padding:8px 16px;border-radius:8px;border:none;background:#2D4B9E;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">Edit
-                            Data</button>
+                        <div class="detail-footer">
+                            <button class="btn-confirm-cancel" onclick="closeDetailModal()">Tutup</button>
+                            <button class="btn-modal-confirm-edit" onclick="editFromDetail()"
+                                style="padding:8px 16px;border-radius:8px;border:none;background:#2D4B9E;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">Edit
+                                Data</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ══════ MODAL KONFIRMASI HAPUS ══════ -->
-            <div class="confirm-overlay" id="confirmDeleteOverlay" onclick="closeDeleteConfirmOutside(event)">
-                <div class="confirm-box" onclick="event.stopPropagation()">
-                    <div class="confirm-icon-wrap">
-                        <svg style="width:20px;height:20px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>
-                    </div>
-                    <div class="confirm-title">Hapus Data Toolbox Meeting?</div>
-                    <div class="confirm-desc" id="confirmDeleteDesc">Tindakan ini tidak dapat dibatalkan. Semua
-                        dokumen (foto & laporan) yang terlampir juga akan ikut dihapus.</div>
-                    <div class="confirm-actions">
-                        <button class="btn-confirm-cancel" onclick="closeDeleteConfirm()">Batal</button>
-                        <button class="btn-confirm-danger" id="btnConfirmDelete" onclick="confirmDelete()">Ya,
-                            Hapus</button>
+                <!-- ══════ MODAL KONFIRMASI HAPUS ══════ -->
+                <div class="confirm-overlay" id="confirmDeleteOverlay" onclick="closeDeleteConfirmOutside(event)">
+                    <div class="confirm-box" onclick="event.stopPropagation()">
+                        <div class="confirm-icon-wrap">
+                            <svg style="width:20px;height:20px" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </div>
+                        <div class="confirm-title">Hapus Data Toolbox Meeting?</div>
+                        <div class="confirm-desc" id="confirmDeleteDesc">Tindakan ini tidak dapat dibatalkan. Semua
+                            dokumen (foto & laporan) yang terlampir juga akan ikut dihapus.</div>
+                        <div class="confirm-actions">
+                            <button class="btn-confirm-cancel" onclick="closeDeleteConfirm()">Batal</button>
+                            <button class="btn-confirm-danger" id="btnConfirmDelete" onclick="confirmDelete()">Ya,
+                                Hapus</button>
+                        </div>
                     </div>
                 </div>
+
+                <div id="toastContainer" class="toast-container"></div>
+
             </div>
-
-            <div id="toastContainer" class="toast-container"></div>
-
         </div>
-    </div>
 
-    <script>
-        const API_ENDPOINT = "{{ route('tbm.data') }}";
-        const STORE_ENDPOINT = "{{ route('tbm.store') }}";
-        const CARI_SO_ENDPOINT = "{{ route('tbm.cari-so') }}";
-        const CSRF_TOKEN = "{{ csrf_token() }}";
+        <script>
+            const API_ENDPOINT = "{{ route('tbm.data') }}";
+            const STORE_ENDPOINT = "{{ route('tbm.store') }}";
+            const CARI_SO_ENDPOINT = "{{ route('tbm.cari-so') }}";
+            const CSRF_TOKEN = "{{ csrf_token() }}";
 
-        const state = {
-            search: '',
-            area_kerja: '',
-            unit_kerja: '',
-            tanggal_mulai: '',
-            tanggal_selesai: '',
-            page: 1,
-            per_page: 10,
-        };
+            const state = {
+                search: '',
+                area_kerja: '',
+                unit_kerja: '',
+                tanggal_mulai: '',
+                tanggal_selesai: '',
+                page: 1,
+                per_page: 10,
+            };
 
-        let searchDebounce = null;
-        let soSearchDebounce = null;
-        let filterOptionsLoaded = false;
+            let searchDebounce = null;
+            let soSearchDebounce = null;
+            let filterOptionsLoaded = false;
 
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str ?? '';
-            return div.innerHTML;
-        }
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str ?? '';
+                return div.innerHTML;
+            }
 
-        function initials(name) {
-            if (!name || name === '-') return '—';
-            const parts = name.trim().split(/\s+/);
-            return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
-        }
+            function initials(name) {
+                if (!name || name === '-') return '—';
+                const parts = name.trim().split(/\s+/);
+                return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
+            }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            });
-        }
+            function formatDate(dateStr) {
+                if (!dateStr) return '-';
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                return d.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-            toast.innerHTML = `
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+                toast.innerHTML = `
             <div class="toast-icon">${type === 'error' ? '✕' : '✓'}</div>
             <div class="toast-body">
                 <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
@@ -1513,229 +1698,229 @@
             </div>
             <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
         `;
-            container.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.add('show'));
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 250);
-            }, 4000);
-        }
+                container.appendChild(toast);
+                requestAnimationFrame(() => toast.classList.add('show'));
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 250);
+                }, 4000);
+            }
 
-        function onSearchInput() {
-            clearTimeout(searchDebounce);
-            searchDebounce = setTimeout(() => {
-                state.search = document.getElementById('searchInput').value.trim();
+            function onSearchInput() {
+                clearTimeout(searchDebounce);
+                searchDebounce = setTimeout(() => {
+                    state.search = document.getElementById('searchInput').value.trim();
+                    state.page = 1;
+                    loadData();
+                }, 350);
+            }
+
+            function onFilterChange() {
+                state.area_kerja = document.getElementById('filterAreaKerja').value;
+                state.unit_kerja = document.getElementById('filterUnitKerja').value;
+                state.tanggal_mulai = document.getElementById('filterTanggalMulai').value;
+                state.tanggal_selesai = document.getElementById('filterTanggalSelesai').value;
                 state.page = 1;
                 loadData();
-            }, 350);
-        }
+            }
 
-        function onFilterChange() {
-            state.area_kerja = document.getElementById('filterAreaKerja').value;
-            state.unit_kerja = document.getElementById('filterUnitKerja').value;
-            state.tanggal_mulai = document.getElementById('filterTanggalMulai').value;
-            state.tanggal_selesai = document.getElementById('filterTanggalSelesai').value;
-            state.page = 1;
-            loadData();
-        }
+            function onPerPageChange() {
+                state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
+                state.page = 1;
+                loadData();
+            }
 
-        function onPerPageChange() {
-            state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
-            state.page = 1;
-            loadData();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterAreaKerja').value = '';
-            document.getElementById('filterUnitKerja').value = '';
-            document.getElementById('filterTanggalMulai').value = '';
-            document.getElementById('filterTanggalSelesai').value = '';
-            Object.assign(state, {
-                search: '',
-                area_kerja: '',
-                unit_kerja: '',
-                tanggal_mulai: '',
-                tanggal_selesai: '',
-                page: 1
-            });
-            loadData();
-        }
-
-        function goToPage(page) {
-            state.page = page;
-            loadData();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
-            const build = (selectId, values) => {
-                const select = document.getElementById(selectId);
-                const current = select.value;
-                values.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    select.appendChild(opt);
+            function resetFilters() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('filterAreaKerja').value = '';
+                document.getElementById('filterUnitKerja').value = '';
+                document.getElementById('filterTanggalMulai').value = '';
+                document.getElementById('filterTanggalSelesai').value = '';
+                Object.assign(state, {
+                    search: '',
+                    area_kerja: '',
+                    unit_kerja: '',
+                    tanggal_mulai: '',
+                    tanggal_selesai: '',
+                    page: 1
                 });
-                select.value = current;
-            };
-            build('filterAreaKerja', options.area_kerja || []);
-            build('filterUnitKerja', options.unit_kerja || []);
-            filterOptionsLoaded = true;
-        }
-
-        function isImageUrl(url) {
-            return /\.(jpe?g|png|gif|webp)(\?.*)?$/i.test(url || '');
-        }
-
-        function docChip(url, label, iconPath) {
-            if (!url) {
-                return `<span class="doc-chip disabled" title="Tidak ada ${label}">${iconPath}</span>`;
+                loadData();
             }
-            if (isImageUrl(url)) {
-                return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}"><img class="thumb-cell" src="${escapeHtml(url)}" alt="${label}" /></a>`;
+
+            function goToPage(page) {
+                state.page = page;
+                loadData();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
-            return `<a class="doc-chip" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}">${iconPath}</a>`;
-        }
 
-        // ══════ MODAL DETAIL ══════
-        let detailCurrentRow = null;
-
-        function buildDetailValue(value) {
-            const filled = value && value !== '-';
-            return `<div class="detail-value${filled ? '' : ' empty'}">${escapeHtml(filled ? value : 'Belum diisi')}</div>`;
-        }
-
-        function buildDetailFile(url, label) {
-            if (!url) {
-                return `<div class="detail-value empty">Belum ada ${label.toLowerCase()}</div>`;
+            function populateFilterOptions(options) {
+                if (filterOptionsLoaded || !options) return;
+                const build = (selectId, values) => {
+                    const select = document.getElementById(selectId);
+                    const current = select.value;
+                    values.forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val;
+                        opt.textContent = val;
+                        select.appendChild(opt);
+                    });
+                    select.value = current;
+                };
+                build('filterAreaKerja', options.area_kerja || []);
+                build('filterUnitKerja', options.unit_kerja || []);
+                filterOptionsLoaded = true;
             }
-            const thumb = isImageUrl(url) ? `<img src="${escapeHtml(url)}" alt="${label}" />` : '';
-            return `<a class="detail-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${thumb}<span>Buka ${label} ↗</span></a>`;
-        }
 
-        function openDetailModal(row) {
-            detailCurrentRow = row;
-            document.getElementById('detailAvatar').textContent = initials(row.nama_so);
-            document.getElementById('detailNamaTitle').textContent = row.nama_so && row.nama_so !== '-' ? row.nama_so :
-                'Belum ada Safety Officer';
-            document.getElementById('detailBadgeSub').textContent = row.badge_so && row.badge_so !== '-' ? row.badge_so :
-                '-';
+            function isImageUrl(url) {
+                return /\.(jpe?g|png|gif|webp)(\?.*)?$/i.test(url || '');
+            }
 
-            document.getElementById('detailUmumGrid').innerHTML = `
+            function docChip(url, label, iconPath) {
+                if (!url) {
+                    return `<span class="doc-chip disabled" title="Tidak ada ${label}">${iconPath}</span>`;
+                }
+                if (isImageUrl(url)) {
+                    return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}"><img class="thumb-cell" src="${escapeHtml(url)}" alt="${label}" /></a>`;
+                }
+                return `<a class="doc-chip" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${label}">${iconPath}</a>`;
+            }
+
+            // ══════ MODAL DETAIL ══════
+            let detailCurrentRow = null;
+
+            function buildDetailValue(value) {
+                const filled = value && value !== '-';
+                return `<div class="detail-value${filled ? '' : ' empty'}">${escapeHtml(filled ? value : 'Belum diisi')}</div>`;
+            }
+
+            function buildDetailFile(url, label) {
+                if (!url) {
+                    return `<div class="detail-value empty">Belum ada ${label.toLowerCase()}</div>`;
+                }
+                const thumb = isImageUrl(url) ? `<img src="${escapeHtml(url)}" alt="${label}" />` : '';
+                return `<a class="detail-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${thumb}<span>Buka ${label} ↗</span></a>`;
+            }
+
+            function openDetailModal(row) {
+                detailCurrentRow = row;
+                document.getElementById('detailAvatar').textContent = initials(row.nama_so);
+                document.getElementById('detailNamaTitle').textContent = row.nama_so && row.nama_so !== '-' ? row.nama_so :
+                    'Belum ada Safety Officer';
+                document.getElementById('detailBadgeSub').textContent = row.badge_so && row.badge_so !== '-' ? row.badge_so :
+                    '-';
+
+                document.getElementById('detailUmumGrid').innerHTML = `
             <div class="detail-field"><label>Tanggal</label>${buildDetailValue(formatDate(row.tanggal))}</div>
             <div class="detail-field"><label>Safety Officer</label>${buildDetailValue(row.nama_so)}</div>
             <div class="detail-field"><label>Area Kerja</label>${buildDetailValue(row.area_kerja)}</div>
             <div class="detail-field"><label>Unit Kerja</label>${buildDetailValue(row.unit_kerja)}</div>
         `;
 
-            document.getElementById('detailDokumenGrid').innerHTML = `
+                document.getElementById('detailDokumenGrid').innerHTML = `
             <div class="detail-field"><label>Foto TBM</label>${buildDetailFile(row.foto_tbm, 'Foto TBM')}</div>
             <div class="detail-field"><label>Foto Daftar Hadir</label>${buildDetailFile(row.foto_daftar_hadir, 'Daftar Hadir')}</div>
             <div class="detail-field span-2"><label>Dokumen Laporan Kegiatan</label>${buildDetailFile(row.dokumen_laporan_kegiatan, 'Dokumen Laporan')}</div>
         `;
 
-            document.getElementById('detailModalOverlay').classList.add('open');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModalOverlay').classList.remove('open');
-            detailCurrentRow = null;
-        }
-
-        function closeFormModalOutside(e) {
-            // Sesuaikan ID dengan id div overlay modal Anda di HTML
-            if (e.target.id === 'formModalOverlay' || e.target.id === 'tbmModal') {
-                closeModal();
+                document.getElementById('detailModalOverlay').classList.add('open');
             }
-        }
 
-        function closeDetailModalOutside(e) {
-            if (e.target.id === 'detailModalOverlay') {
+            function closeDetailModal() {
+                document.getElementById('detailModalOverlay').classList.remove('open');
+                detailCurrentRow = null;
+            }
+
+            function closeFormModalOutside(e) {
+                // Sesuaikan ID dengan id div overlay modal Anda di HTML
+                if (e.target.id === 'formModalOverlay' || e.target.id === 'tbmModal') {
+                    closeModal();
+                }
+            }
+
+            function closeDetailModalOutside(e) {
+                if (e.target.id === 'detailModalOverlay') {
+                    closeDetailModal();
+                }
+            }
+
+            function editFromDetail() {
+                if (!detailCurrentRow) return;
+                const row = detailCurrentRow;
                 closeDetailModal();
-            }
-        }
-
-        function editFromDetail() {
-            if (!detailCurrentRow) return;
-            const row = detailCurrentRow;
-            closeDetailModal();
-            openEditModal(row);
-        }
-
-        // ══════ MODAL KONFIRMASI HAPUS ══════
-        let pendingDeleteId = null;
-
-        function openDeleteConfirm(id, label) {
-            pendingDeleteId = id;
-            document.getElementById('confirmDeleteDesc').textContent =
-                `Data TBM untuk "${label}" akan dihapus permanen beserta seluruh dokumen (foto & laporan) yang terlampir. Tindakan ini tidak dapat dibatalkan.`;
-            document.getElementById('confirmDeleteOverlay').classList.add('open');
-        }
-
-        function closeDeleteConfirm() {
-            document.getElementById('confirmDeleteOverlay').classList.remove('open');
-            pendingDeleteId = null;
-        }
-
-        function closeDeleteConfirmOutside(e) {
-            if (e.target.id === 'confirmDeleteOverlay') closeDeleteConfirm();
-        }
-
-        async function confirmDelete() {
-            if (!pendingDeleteId) return;
-            const btn = document.getElementById('btnConfirmDelete');
-            const id = pendingDeleteId;
-
-            btn.disabled = true;
-            btn.textContent = 'Menghapus...';
-
-            try {
-                const res = await fetch(`${STORE_ENDPOINT}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    },
-                });
-                const json = await res.json();
-                if (!res.ok) throw new Error(json.message || 'Gagal menghapus data.');
-
-                closeDeleteConfirm();
-                showToast(json.message || 'Data toolbox meeting berhasil dihapus.', 'success');
-                loadData();
-            } catch (err) {
-                showToast(err.message || 'Gagal menghapus data.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Ya, Hapus';
-            }
-        }
-
-        function renderTable(rows) {
-            const tbody = document.getElementById('tableBody');
-
-            if (!rows || rows.length === 0) {
-                // Menggunakan gaya empty state yang lebih ringkas dari script referensi (disesuaikan dengan 6 kolom)
-                tbody.innerHTML =
-                    `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
-                return;
+                openEditModal(row);
             }
 
-            // Icon tetap dipertahankan karena dibutuhkan oleh fungsi docChip() Anda
-            const camIcon =
-                '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.174C2.999 7.58 2.25 8.507 2.25 9.574v9.176c0 1.24 1.01 2.25 2.25 2.25h15c1.24 0 2.25-1.01 2.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.174 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>';
-            const listIcon =
-                '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 8.25h16.5M3.75 5.25h16.5" /></svg>';
-            const docIcon =
-                '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-1.519-2.394a2.98 2.98 0 01-1.106.235c-1.03 0-1.984-.397-2.708-1.043m3.814.808l1.519 2.394m-5.333-3.202a2.98 2.98 0 001.106.235" /></svg>';
+            // ══════ MODAL KONFIRMASI HAPUS ══════
+            let pendingDeleteId = null;
 
-            tbody.innerHTML = rows.map(row => `
+            function openDeleteConfirm(id, label) {
+                pendingDeleteId = id;
+                document.getElementById('confirmDeleteDesc').textContent =
+                    `Data TBM untuk "${label}" akan dihapus permanen beserta seluruh dokumen (foto & laporan) yang terlampir. Tindakan ini tidak dapat dibatalkan.`;
+                document.getElementById('confirmDeleteOverlay').classList.add('open');
+            }
+
+            function closeDeleteConfirm() {
+                document.getElementById('confirmDeleteOverlay').classList.remove('open');
+                pendingDeleteId = null;
+            }
+
+            function closeDeleteConfirmOutside(e) {
+                if (e.target.id === 'confirmDeleteOverlay') closeDeleteConfirm();
+            }
+
+            async function confirmDelete() {
+                if (!pendingDeleteId) return;
+                const btn = document.getElementById('btnConfirmDelete');
+                const id = pendingDeleteId;
+
+                btn.disabled = true;
+                btn.textContent = 'Menghapus...';
+
+                try {
+                    const res = await fetch(`${STORE_ENDPOINT}/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': CSRF_TOKEN
+                        },
+                    });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.message || 'Gagal menghapus data.');
+
+                    closeDeleteConfirm();
+                    showToast(json.message || 'Data toolbox meeting berhasil dihapus.', 'success');
+                    loadData();
+                } catch (err) {
+                    showToast(err.message || 'Gagal menghapus data.', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Ya, Hapus';
+                }
+            }
+
+            function renderTable(rows) {
+                const tbody = document.getElementById('tableBody');
+
+                if (!rows || rows.length === 0) {
+                    // Menggunakan gaya empty state yang lebih ringkas dari script referensi (disesuaikan dengan 6 kolom)
+                    tbody.innerHTML =
+                        `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
+                    return;
+                }
+
+                // Icon tetap dipertahankan karena dibutuhkan oleh fungsi docChip() Anda
+                const camIcon =
+                    '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.174C2.999 7.58 2.25 8.507 2.25 9.574v9.176c0 1.24 1.01 2.25 2.25 2.25h15c1.24 0 2.25-1.01 2.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.174 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>';
+                const listIcon =
+                    '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 8.25h16.5M3.75 5.25h16.5" /></svg>';
+                const docIcon =
+                    '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-1.519-2.394a2.98 2.98 0 01-1.106.235c-1.03 0-1.984-.397-2.708-1.043m3.814.808l1.519 2.394m-5.333-3.202a2.98 2.98 0 001.106.235" /></svg>';
+
+                tbody.innerHTML = rows.map(row => `
                 <tr>
                     <td style="white-space:nowrap;">${formatDate(row.tanggal)}</td>
                     <td><div class="td-name-cell"><div class="td-avatar">${escapeHtml(initials(row.nama_so))}</div><div><div class="td-name-main">${escapeHtml(row.nama_so || '-')}</div><div class="td-name-sub">${escapeHtml(row.badge_so || '-')}</div></div></div></td>
@@ -1755,10 +1940,10 @@
                     </td>
                 </tr>
             `).join('');
-        }
+            }
 
-        function renderError(message) {
-            document.getElementById('tableBody').innerHTML = `
+            function renderError(message) {
+                document.getElementById('tableBody').innerHTML = `
             <tr>
                 <td colspan="6">
                     <div class="error-state">
@@ -1770,264 +1955,281 @@
                     </div>
                 </td>
             </tr>`;
-            document.getElementById('paginationText').textContent = '—';
-            document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data toolbox meeting.';
-        }
+                document.getElementById('paginationText').textContent = '—';
+                document.getElementById('paginationPages').innerHTML = '';
+                document.getElementById('dataSummary').textContent = 'Gagal memuat data toolbox meeting.';
+            }
 
-        function renderPagination(meta) {
-            document.getElementById('paginationText').textContent =
-                meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
+            function renderPagination(meta) {
+                document.getElementById('paginationText').textContent =
+                    meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
 
-            document.getElementById('dataSummary').innerHTML =
-                `<strong>${meta.total}</strong> data toolbox meeting ditemukan`;
+                document.getElementById('dataSummary').innerHTML =
+                    `<strong>${meta.total}</strong> data toolbox meeting ditemukan`;
 
-            const container = document.getElementById('paginationPages');
-            const current = meta.current_page;
-            const last = meta.last_page;
+                const container = document.getElementById('paginationPages');
+                const current = meta.current_page;
+                const last = meta.last_page;
 
-            let pages = [];
-            const addPage = p => pages.push(p);
-            const addEllipsis = () => pages.push('...');
+                let pages = [];
+                const addPage = p => pages.push(p);
+                const addEllipsis = () => pages.push('...');
 
-            addPage(1);
-            if (current > 3) addEllipsis();
-            for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
-            if (current < last - 2) addEllipsis();
-            if (last > 1) addPage(last);
-            pages = [...new Set(pages)];
+                addPage(1);
+                if (current > 3) addEllipsis();
+                for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
+                if (current < last - 2) addEllipsis();
+                if (last > 1) addPage(last);
+                pages = [...new Set(pages)];
 
-            let html =
-                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
-            pages.forEach(p => {
-                html += p === '...' ?
-                    `<span class="page-ellipsis">…</span>` :
-                    `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-            });
-            html +=
-                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-
-            container.innerHTML = html;
-        }
-
-        async function loadData() {
-            const params = new URLSearchParams();
-            if (state.search) params.set('search', state.search);
-            if (state.area_kerja) params.set('area_kerja', state.area_kerja);
-            if (state.unit_kerja) params.set('unit_kerja', state.unit_kerja);
-            if (state.tanggal_mulai) params.set('tanggal_mulai', state.tanggal_mulai);
-            if (state.tanggal_selesai) params.set('tanggal_selesai', state.tanggal_selesai);
-            params.set('page', state.page);
-            params.set('per_page', state.per_page);
-
-            try {
-                const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                let html =
+                    `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
+                pages.forEach(p => {
+                    html += p === '...' ?
+                        `<span class="page-ellipsis">…</span>` :
+                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
                 });
-                if (!res.ok) {
-                    const errJson = await res.json().catch(() => null);
-                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
-                }
-                const json = await res.json();
-                renderTable(json.data);
-                renderPagination(json.meta);
-                populateFilterOptions(json.filter_options);
-            } catch (e) {
-                renderError(e.message || 'Terjadi kesalahan tak terduga.');
+                html +=
+                    `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
+
+                container.innerHTML = html;
             }
-        }
 
-        // ══════ MODAL TAMBAH / EDIT ══════
-        function renderCurrentFile(containerId, url, label) {
-            const el = document.getElementById(containerId);
-            if (!url) {
-                el.classList.remove('show');
-                el.innerHTML = '';
-                return;
-            }
-            el.classList.add('show');
-            el.innerHTML = isImageUrl(url) ?
-                `<img src="${escapeHtml(url)}" alt="${label}" /><span>File saat ini — pilih file baru untuk mengganti</span>` :
-                `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">Lihat ${label} saat ini</a><span>— pilih file baru untuk mengganti</span>`;
-        }
+            async function loadData() {
+                const params = new URLSearchParams();
+                if (state.search) params.set('search', state.search);
+                if (state.area_kerja) params.set('area_kerja', state.area_kerja);
+                if (state.unit_kerja) params.set('unit_kerja', state.unit_kerja);
+                if (state.tanggal_mulai) params.set('tanggal_mulai', state.tanggal_mulai);
+                if (state.tanggal_selesai) params.set('tanggal_selesai', state.tanggal_selesai);
+                params.set('page', state.page);
+                params.set('per_page', state.per_page);
 
-        function openCreateModal() {
-            document.getElementById('modalTitle').textContent = 'TAMBAH TBM';
-            document.getElementById('tbmForm').reset();
-            document.getElementById('tbmId').value = '';
-            document.getElementById('fBadgeSo').value = '';
-            ['currentFotoTbm', 'currentFotoDaftarHadir', 'currentDokumenLaporan'].forEach(id => renderCurrentFile(id,
-                null));
-            document.getElementById('formErrorBox').style.display = 'none';
-            document.getElementById('tbmModal').classList.add('open');
-        }
-
-        function openEditModal(row) {
-            document.getElementById('modalTitle').textContent = 'EDIT TBM';
-            document.getElementById('tbmForm').reset();
-            document.getElementById('tbmId').value = row.id;
-            document.getElementById('fTanggal').value = row.tanggal || '';
-            document.getElementById('fNamaSo').value = row.nama_so && row.nama_so !== '-' ? row.nama_so : '';
-            document.getElementById('fBadgeSo').value = row.badge_so && row.badge_so !== '-' ? row.badge_so : '';
-            document.getElementById('fAreaKerja').value = row.area_kerja && row.area_kerja !== '-' ? row.area_kerja : '';
-            document.getElementById('fUnitKerja').value = row.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja : '';
-            renderCurrentFile('currentFotoTbm', row.foto_tbm, 'foto TBM');
-            renderCurrentFile('currentFotoDaftarHadir', row.foto_daftar_hadir, 'foto daftar hadir');
-            renderCurrentFile('currentDokumenLaporan', row.dokumen_laporan_kegiatan, 'dokumen laporan');
-            document.getElementById('formErrorBox').style.display = 'none';
-            document.getElementById('tbmModal').classList.add('open');
-        }
-
-        function closeModal() {
-            document.getElementById('tbmModal').classList.remove('open');
-            document.getElementById('soDropdown').classList.remove('open');
-        }
-
-        function onSoSearch() {
-            document.getElementById('fBadgeSo').value = '';
-            clearTimeout(soSearchDebounce);
-            const term = document.getElementById('fNamaSo').value.trim();
-            soSearchDebounce = setTimeout(async () => {
-                const dropdown = document.getElementById('soDropdown');
                 try {
-                    const res = await fetch(`${CARI_SO_ENDPOINT}?search=${encodeURIComponent(term)}`, {
+                    const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
                         headers: {
                             'Accept': 'application/json'
                         }
                     });
+                    if (!res.ok) {
+                        const errJson = await res.json().catch(() => null);
+                        throw new Error(errJson?.message || `Server merespons status ${res.status}`);
+                    }
                     const json = await res.json();
-                    const results = json.data || [];
-                    if (results.length === 0) {
-                        dropdown.innerHTML =
-                            `<div class="so-option" style="color:#94A3B8;">Tidak ada Safety Officer ditemukan</div>`;
-                    } else {
-                        dropdown.innerHTML = results.map(so => `
+                    renderTable(json.data);
+                    renderPagination(json.meta);
+                    populateFilterOptions(json.filter_options);
+                } catch (e) {
+                    renderError(e.message || 'Terjadi kesalahan tak terduga.');
+                }
+            }
+
+            // ══════ MODAL TAMBAH / EDIT ══════
+            function renderCurrentFile(containerId, url, label) {
+                const el = document.getElementById(containerId);
+                if (!url) {
+                    el.classList.remove('show');
+                    el.innerHTML = '';
+                    return;
+                }
+                el.classList.add('show');
+                el.innerHTML = isImageUrl(url) ?
+                    `<img src="${escapeHtml(url)}" alt="${label}" /><span>File saat ini — pilih file baru untuk mengganti</span>` :
+                    `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">Lihat ${label} saat ini</a><span>— pilih file baru untuk mengganti</span>`;
+            }
+
+            function openCreateModal() {
+                document.getElementById('modalTitle').textContent = 'TAMBAH TBM';
+                document.getElementById('tbmForm').reset();
+                document.getElementById('tbmId').value = '';
+                document.getElementById('fBadgeSo').value = '';
+                ['currentFotoTbm', 'currentFotoDaftarHadir', 'currentDokumenLaporan'].forEach(id => renderCurrentFile(id,
+                    null));
+                document.getElementById('formErrorBox').style.display = 'none';
+                document.getElementById('tbmModal').classList.add('open');
+            }
+
+            function openEditModal(row) {
+                document.getElementById('modalTitle').textContent = 'EDIT TBM';
+                document.getElementById('tbmForm').reset();
+                document.getElementById('tbmId').value = row.id;
+                document.getElementById('fTanggal').value = row.tanggal || '';
+                document.getElementById('fNamaSo').value = row.nama_so && row.nama_so !== '-' ? row.nama_so : '';
+                document.getElementById('fBadgeSo').value = row.badge_so && row.badge_so !== '-' ? row.badge_so : '';
+                document.getElementById('fAreaKerja').value = row.area_kerja && row.area_kerja !== '-' ? row.area_kerja : '';
+                document.getElementById('fUnitKerja').value = row.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja : '';
+                renderCurrentFile('currentFotoTbm', row.foto_tbm, 'foto TBM');
+                renderCurrentFile('currentFotoDaftarHadir', row.foto_daftar_hadir, 'foto daftar hadir');
+                renderCurrentFile('currentDokumenLaporan', row.dokumen_laporan_kegiatan, 'dokumen laporan');
+                document.getElementById('formErrorBox').style.display = 'none';
+                document.getElementById('tbmModal').classList.add('open');
+            }
+
+            function closeModal() {
+                document.getElementById('tbmModal').classList.remove('open');
+                document.getElementById('soDropdown').classList.remove('open');
+            }
+
+            function onSoSearch() {
+                document.getElementById('fBadgeSo').value = '';
+                clearTimeout(soSearchDebounce);
+                const term = document.getElementById('fNamaSo').value.trim();
+                soSearchDebounce = setTimeout(async () => {
+                    const dropdown = document.getElementById('soDropdown');
+                    try {
+                        const res = await fetch(`${CARI_SO_ENDPOINT}?search=${encodeURIComponent(term)}`, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const json = await res.json();
+                        const results = json.data || [];
+                        if (results.length === 0) {
+                            dropdown.innerHTML =
+                                `<div class="so-option" style="color:#94A3B8;">Tidak ada Safety Officer ditemukan</div>`;
+                        } else {
+                            dropdown.innerHTML = results.map(so => `
                         <div class="so-option" onclick='selectSo(${JSON.stringify(so)})'>
                             <div>${escapeHtml(so.nama)}</div>
                             <div class="so-option-badge">${escapeHtml(so.badge)}</div>
                         </div>
                     `).join('');
+                        }
+                        dropdown.classList.add('open');
+                    } catch (e) {
+                        dropdown.classList.remove('open');
                     }
-                    dropdown.classList.add('open');
-                } catch (e) {
-                    dropdown.classList.remove('open');
-                }
-            }, 300);
-        }
-
-        function selectSo(so) {
-            document.getElementById('fNamaSo').value = so.nama;
-            document.getElementById('fBadgeSo').value = so.badge;
-            document.getElementById('soDropdown').classList.remove('open');
-        }
-
-        document.addEventListener('click', (e) => {
-            // Menutup Modal Form (Tambah/Edit)
-            if (e.target.id === 'tbmModal' || e.target.id === 'formModalOverlay') {
-                closeModal();
+                }, 300);
             }
 
-            // Menutup Modal Detail
-            if (e.target.id === 'detailModalOverlay') {
-                closeDetailModal();
+            function selectSo(so) {
+                document.getElementById('fNamaSo').value = so.nama;
+                document.getElementById('fBadgeSo').value = so.badge;
+                document.getElementById('soDropdown').classList.remove('open');
             }
 
-            // Menutup Modal Konfirmasi Hapus
-            if (e.target.id === 'confirmDeleteOverlay') {
-                closeDeleteConfirm();
-            }
-
-            // (Kode Anda yang sudah ada untuk menutup dropdown)
-            if (!e.target.closest('.form-group')) {
-                document.getElementById('soDropdown')?.classList.remove('open');
-            }
-        });
-
-        async function submitForm(e) {
-            e.preventDefault();
-            const id = document.getElementById('tbmId').value;
-
-            const formData = new FormData();
-            formData.append('tanggal', document.getElementById('fTanggal').value);
-            formData.append('badge_so', document.getElementById('fBadgeSo').value || '');
-            formData.append('nama_so', document.getElementById('fNamaSo').value || '');
-            formData.append('area_kerja', document.getElementById('fAreaKerja').value);
-            formData.append('unit_kerja', document.getElementById('fUnitKerja').value);
-
-            const fotoTbm = document.getElementById('fFotoTbm').files[0];
-            if (fotoTbm) formData.append('foto_tbm', fotoTbm);
-
-            const fotoHadir = document.getElementById('fFotoDaftarHadir').files[0];
-            if (fotoHadir) formData.append('foto_daftar_hadir', fotoHadir);
-
-            const dokLaporan = document.getElementById('fDokumenLaporan').files[0];
-            if (dokLaporan) formData.append('dokumen_laporan_kegiatan', dokLaporan);
-
-            // Laravel tidak bisa membaca file dari request PUT native, jadi form
-            // dikirim sebagai POST dengan method spoofing saat mode edit.
-            if (id) formData.append('_method', 'PUT');
-
-            const url = id ? `${STORE_ENDPOINT}/${id}` : STORE_ENDPOINT;
-            const submitBtn = document.getElementById('submitBtn');
-            const errorBox = document.getElementById('formErrorBox');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Menyimpan...';
-            errorBox.style.display = 'none';
-
-            try {
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN,
-                    },
-                    body: formData,
-                });
-
-                const json = await res.json();
-
-                if (!res.ok) {
-                    const msg = json.errors ?
-                        Object.values(json.errors).flat().join(' ') :
-                        (json.message || 'Gagal menyimpan data.');
-                    throw new Error(msg);
+            document.addEventListener('click', (e) => {
+                // Menutup Modal Form (Tambah/Edit)
+                if (e.target.id === 'tbmModal' || e.target.id === 'formModalOverlay') {
+                    closeModal();
                 }
 
-                closeModal();
-                loadData();
-            } catch (err) {
-                errorBox.textContent = err.message;
-                errorBox.style.display = 'block';
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Simpan';
+                // Menutup Modal Detail
+                if (e.target.id === 'detailModalOverlay') {
+                    closeDetailModal();
+                }
+
+                // Menutup Modal Konfirmasi Hapus
+                if (e.target.id === 'confirmDeleteOverlay') {
+                    closeDeleteConfirm();
+                }
+
+                // (Kode Anda yang sudah ada untuk menutup dropdown)
+                if (!e.target.closest('.form-group')) {
+                    document.getElementById('soDropdown')?.classList.remove('open');
+                }
+            });
+
+            async function submitForm(e) {
+                e.preventDefault();
+                const id = document.getElementById('tbmId').value;
+
+                const formData = new FormData();
+                formData.append(
+                    'topik',
+                    document.getElementById('fTopik').value);
+
+                formData.append(
+                    'prioritas',
+                    document.getElementById('fPrioritas').value);
+
+                formData.append(
+                    'peserta',
+                    document.getElementById('fPeserta').value);
+
+                formData.append(
+                    'durasi',
+                    document.getElementById('fDurasi').value);
+
+                formData.append(
+                    'anggaran',
+                    document.getElementById('fAnggaran').value);
+
+                formData.append(
+                    'bulan',
+                    document.getElementById('fBulan').value);
+
+                formData.append(
+                    'status',
+                    document.getElementById('fStatus').value);
+
+                formData.append(
+                    'keterangan',
+                    document.getElementById('fKeterangan').value);
+
+                // Laravel tidak bisa membaca file dari request PUT native, jadi form
+                // dikirim sebagai POST dengan method spoofing saat mode edit.
+                if (id) formData.append('_method', 'PUT');
+
+                const url = id ? `${STORE_ENDPOINT}/${id}` : STORE_ENDPOINT;
+                const submitBtn = document.getElementById('submitBtn');
+                const errorBox = document.getElementById('formErrorBox');
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Menyimpan...';
+                errorBox.style.display = 'none';
+
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': CSRF_TOKEN,
+                        },
+                        body: formData,
+                    });
+
+                    const json = await res.json();
+
+                    if (!res.ok) {
+                        const msg = json.errors ?
+                            Object.values(json.errors).flat().join(' ') :
+                            (json.message || 'Gagal menyimpan data.');
+                        throw new Error(msg);
+                    }
+
+                    closeModal();
+                    loadData();
+                } catch (err) {
+                    errorBox.textContent = err.message;
+                    errorBox.style.display = 'block';
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Simpan';
+                }
             }
-        }
 
-        async function deleteRow(id) {
-            if (!confirm('Hapus data toolbox meeting ini? Tindakan ini tidak dapat dibatalkan.')) return;
+            async function deleteRow(id) {
+                if (!confirm('Hapus data toolbox meeting ini? Tindakan ini tidak dapat dibatalkan.')) return;
 
-            try {
-                const res = await fetch(`${STORE_ENDPOINT}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    },
-                });
-                const json = await res.json();
-                if (!res.ok) throw new Error(json.message || 'Gagal menghapus data.');
-                loadData();
-            } catch (err) {
-                alert(err.message);
+                try {
+                    const res = await fetch(`${STORE_ENDPOINT}/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': CSRF_TOKEN
+                        },
+                    });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.message || 'Gagal menghapus data.');
+                    loadData();
+                } catch (err) {
+                    alert(err.message);
+                }
             }
-        }
 
-        document.addEventListener('DOMContentLoaded', loadData);
-    </script>
+            document.addEventListener('DOMContentLoaded', loadData);
+        </script>
 
 
 </body>

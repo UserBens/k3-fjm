@@ -31,6 +31,7 @@ use App\Http\Controllers\PengawasController;
 use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\ReferensiKodeOkController;
+use App\Http\Controllers\RencanaPelatihanK3Controller;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
 use App\Http\Controllers\StokAlkesController;
@@ -122,7 +123,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/data-unsafe/cari-so', [DataUnsafeController::class, 'cariSafetyOfficer'])->name('data-unsafe.cari-so');
 
     // TBM
-    Route::get('/toolbox-meeting', [ToolboxMeetingController::class, 'index'])->name('tbm.index');
+    Route::get('/toolbox-meeting', [ToolboxMeetingController::class, 'index'])->name('toolbox-meeting.index');
     Route::get('/toolbox-meeting/data', [ToolboxMeetingController::class, 'data'])->name('tbm.data');
     Route::post('/toolbox-meeting', [ToolboxMeetingController::class, 'store'])->name('tbm.store');
     Route::put('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'update'])->name('tbm.update');
@@ -208,6 +209,22 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/{leadingInput}', [LeadingInputController::class, 'update'])->name('update');
         Route::delete('/{leadingInput}', [LeadingInputController::class, 'destroy'])->name('destroy');
     });
+
+    // RENCANA PELATIHAN K3
+    Route::get('/rencana-pelatihan-k3', [RencanaPelatihanK3Controller::class, 'index'])
+        ->name('rencana-pelatihan-k3.index');
+
+    Route::get('/rencana-pelatihan-k3/data', [RencanaPelatihanK3Controller::class, 'data'])
+        ->name('rencana-pelatihan-k3.data');
+
+    Route::post('/rencana-pelatihan-k3', [RencanaPelatihanK3Controller::class, 'store'])
+        ->name('rencana-pelatihan-k3.store');
+
+    Route::put('/rencana-pelatihan-k3/{rencanaPelatihanK3}', [RencanaPelatihanK3Controller::class, 'update'])
+        ->name('rencana-pelatihan-k3.update');
+
+    Route::delete('/rencana-pelatihan-k3/{rencanaPelatihanK3}', [RencanaPelatihanK3Controller::class, 'destroy'])
+        ->name('rencana-pelatihan-k3.destroy');
 
     // Dashboard Leading
     Route::get('/leading-dashboard', [LeadingDashboardController::class, 'index'])
