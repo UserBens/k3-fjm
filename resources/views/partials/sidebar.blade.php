@@ -359,7 +359,7 @@
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dashboard-monitoring-kpi.*') ? 'active' : '' }}" href="#">
+            <a class="nav-link {{ request()->routeIs('dashboard-monitoring-kpi.*') ? 'active' : '' }}" href="{{route('dashboard-monitoring-kpi.index')}}">
                 <span class="nav-label">Dashboard Monitoring KPI</span>
             </a>
 
@@ -426,6 +426,7 @@
                 request()->routeIs('dashboard-jka.*') ||
                 request()->routeIs('leading-dashboard.*') ||
                 request()->routeIs('leading-input.*');
+                request()->routeIs('master-jadwal-shift.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
@@ -472,6 +473,11 @@
             <a class="nav-link {{ request()->routeIs('leading-input.*') ? 'active' : '' }}"
                 href="{{ route('leading-input.index') }}">
                 <span class="nav-label">Leading Input</span>
+            </a>
+           
+            <a class="nav-link {{ request()->routeIs('master-jadwal-shift.*') ? 'active' : '' }}"
+                href="{{ route('master-jadwal-shift.index') }}">
+                <span class="nav-label">Master Jadwal Shift</span>
             </a>
 
         </div>

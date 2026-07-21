@@ -5,6 +5,7 @@ use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\AlatKesehatanPenggunaController;
 use App\Http\Controllers\DashboardApdAlkesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardKpiController;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\DataRejectMonitoringController;
 use App\Http\Controllers\DataSafetyController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
 use App\Http\Controllers\LpiKorbanController;
 use App\Http\Controllers\ManajemenApdPegawaiController;
+use App\Http\Controllers\MasterJadwalShiftController;
 use App\Http\Controllers\MatriksApdJabatanController;
 use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
@@ -92,6 +94,37 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 
     // KPI
+    // DASHBOARD MONITORING KPI
+    Route::get('dashboard-monitoring-kpi', [DashboardKpiController::class, 'index'])
+        ->name('dashboard-monitoring-kpi.index');
+
+    // Route API/AJAX untuk kebutuhan Dashboard KPI
+    Route::prefix('dashboard-monitoring-kpi')->group(function () {
+        Route::get('/filters', [DashboardKpiController::class, 'filters'])
+            ->name('dashboard-kpi.filters');
+
+        Route::get('/petugas-data', [DashboardKpiController::class, 'petugasData'])
+            ->name('dashboard-kpi.petugas-data');
+
+        Route::get('/tim-summary', [DashboardKpiController::class, 'timSummary'])
+            ->name('dashboard-kpi.tim-summary');
+    });
+
+    // HALAMAN MANAJEMEN MASTER JADWAL SHIFT
+    Route::get('master-jadwal-shift', [MasterJadwalShiftController::class, 'index'])
+        ->name('master-jadwal-shift.index');
+
+    Route::prefix('master-jadwal-shift')->name('master-jadwal-shift.')->group(function () {
+        Route::get('/data', [MasterJadwalShiftController::class, 'data'])->name('data');
+        Route::post('/', [MasterJadwalShiftController::class, 'store'])->name('store');
+        Route::put('/{masterJadwalShift}', [MasterJadwalShiftController::class, 'update'])->name('update');
+        Route::delete('/{masterJadwalShift}', [MasterJadwalShiftController::class, 'destroy'])->name('destroy');
+
+        // import & template
+        Route::post('/import', [MasterJadwalShiftController::class, 'import'])->name('import');
+        Route::get('/template', [MasterJadwalShiftController::class, 'downloadTemplate'])->name('template');
+    });
+
     Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
 
     // DATA MEDIS
