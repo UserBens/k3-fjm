@@ -211,20 +211,15 @@ Route::middleware(['auth.custom'])->group(function () {
     });
 
     // RENCANA PELATIHAN K3
-    Route::get('/rencana-pelatihan-k3', [RencanaPelatihanK3Controller::class, 'index'])
-        ->name('rencana-pelatihan-k3.index');
-
-    Route::get('/rencana-pelatihan-k3/data', [RencanaPelatihanK3Controller::class, 'data'])
-        ->name('rencana-pelatihan-k3.data');
-
-    Route::post('/rencana-pelatihan-k3', [RencanaPelatihanK3Controller::class, 'store'])
-        ->name('rencana-pelatihan-k3.store');
-
-    Route::put('/rencana-pelatihan-k3/{rencanaPelatihanK3}', [RencanaPelatihanK3Controller::class, 'update'])
-        ->name('rencana-pelatihan-k3.update');
-
-    Route::delete('/rencana-pelatihan-k3/{rencanaPelatihanK3}', [RencanaPelatihanK3Controller::class, 'destroy'])
-        ->name('rencana-pelatihan-k3.destroy');
+    Route::prefix('rencana-pelatihan-k3')
+        ->name('rencana-pelatihan-k3.')
+        ->group(function () {
+            Route::get('/', [RencanaPelatihanK3Controller::class, 'index'])->name('index');
+            Route::get('/data', [RencanaPelatihanK3Controller::class, 'data'])->name('data');
+            Route::post('/', [RencanaPelatihanK3Controller::class, 'store'])->name('store');
+            Route::put('/{rencanaPelatihanK3}', [RencanaPelatihanK3Controller::class, 'update'])->name('update');
+            Route::delete('/{rencanaPelatihanK3}', [RencanaPelatihanK3Controller::class, 'destroy'])->name('destroy');
+        });
 
     // Dashboard Leading
     Route::get('/leading-dashboard', [LeadingDashboardController::class, 'index'])

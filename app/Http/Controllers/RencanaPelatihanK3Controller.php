@@ -17,124 +17,104 @@ class RencanaPelatihanK3Controller extends Controller
     {
         $query = RencanaPelatihanK3::query();
 
-        $query->search($request->search);
-
-        if ($request->filled('prioritas')) {
-            $query->where('prioritas', $request->prioritas);
+        if ($search = $request->get('search')) {
+            $query->where('topik_pelatihan', 'ilike', "%{$search}%");
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if ($prioritas = $request->get('prioritas')) {
+            $query->where('prioritas', $prioritas);
         }
 
-        if ($request->filled('bulan')) {
-            $query->where('bulan', $request->bulan);
+        if ($tahun = $request->get('tahun')) {
+            $query->where('tahun', $tahun);
         }
 
-        $perPage = $request->per_page ?? 10;
+        // Filter: tampilkan hanya rencana yang punya jadwal (status apapun) di periode tsb
+        if ($periode = $request->get('periode')) {
+            if (in_array($periode, RencanaPelatihanK3::PERIODE, true)) {
+                $query->whereNotNull("jadwal->{$periode}");
+            }
+        }
 
-        $rows = $query
-            ->orderBy('bulan')
-            ->paginate($perPage);
+        $perPage = (int) $request->get('per_page', 10);
+        $perPage = $perPage > 0 ? $perPage : 10;
+
+        $paginator = $query->orderBy('id')->paginate($perPage)->appends($request->query());
+
+        // Total anggaran mengikuti filter yang aktif (bukan cuma halaman berjalan)
+        $totalAnggaran = (clone $query)->sum('anggaran_estimasi');
 
         return response()->json([
-            'data' => $rows->getCollection()->map(fn($x) => $this->transform($x)),
+            'data' => $paginator->items(),
             'meta' => [
-                'current_page' => $rows->currentPage(),
-                'last_page' => $rows->lastPage(),
-                'total' => $rows->total(),
-                'from' => $rows->firstItem(),
-                'to' => $rows->lastItem()
-            ]
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'total' => $paginator->total(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+                'total_anggaran' => (float) $totalAnggaran,
+            ],
+            'filter_options' => [
+                'tahun' => RencanaPelatihanK3::query()
+                    ->select('tahun')
+                    ->distinct()
+                    ->orderByDesc('tahun')
+                    ->pluck('tahun'),
+            ],
         ]);
     }
 
     public function store(Request $request)
     {
-        $validator = $this->validator($request);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Data belum valid.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $item = RencanaPelatihanK3::create(
-            $validator->validated()
-        );
+        $validated = $this->validateData($request);
+        $item = RencanaPelatihanK3::create($validated);
 
         return response()->json([
-            'message' => 'Data berhasil ditambahkan.',
-            'data' => $this->transform($item)
+            'message' => 'Rencana pelatihan berhasil disimpan.',
+            'data' => $item,
         ]);
     }
 
-    public function update(Request $request, RencanaPelatihanK3 $rencana)
+    public function update(Request $request, RencanaPelatihanK3 $rencanaPelatihanK3)
     {
-        $validator = $this->validator($request);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $rencana->update(
-            $validator->validated()
-        );
+        $validated = $this->validateData($request);
+        $rencanaPelatihanK3->update($validated);
 
         return response()->json([
-            'message' => 'Berhasil diupdate',
-            'data' => $this->transform($rencana)
+            'message' => 'Rencana pelatihan berhasil diperbarui.',
+            'data' => $rencanaPelatihanK3,
         ]);
     }
 
-    public function destroy(RencanaPelatihanK3 $rencana)
+    public function destroy(RencanaPelatihanK3 $rencanaPelatihanK3)
     {
-        $rencana->delete();
+        $rencanaPelatihanK3->delete();
 
         return response()->json([
-            'message' => 'Data berhasil dihapus.'
+            'message' => 'Rencana pelatihan berhasil dihapus.',
         ]);
     }
 
-    private function validator(Request $request)
+    private function validateData(Request $request): array
     {
-        return Validator::make($request->all(), [
-            'topik' => 'required|string|max:200',
+        $validated = Validator::make($request->all(), [
+            'tahun' => 'required|integer|min:2000|max:2100',
+            'topik_pelatihan' => 'required|string|max:255',
             'prioritas' => 'required|in:Tinggi,Sedang,Rendah',
-            'peserta' => 'required|integer|min:1',
-            'durasi' => 'required|integer|min:1',
-            'anggaran' => 'required|numeric|min:0',
-            'bulan' => 'required|integer|min:1|max:12',
-            'status' => 'required|in:Dijadwalkan,Terlaksana,Tertunda',
-            'keterangan' => 'nullable|string'
-        ]);
-    }
+            'peserta_estimasi' => 'nullable|string|max:100',
+            'durasi_jam' => 'nullable|integer|min:0',
+            'anggaran_estimasi' => 'nullable|numeric|min:0',
+            'keterangan' => 'nullable|string',
+        ])->validate();
 
-    private function transform(RencanaPelatihanK3 $item)
-    {
-        return [
+        // Normalisasi jadwal: hanya terima 9 key periode yang valid, sisanya null
+        $jadwal = [];
+        foreach (RencanaPelatihanK3::PERIODE as $p) {
+            $val = $request->input("jadwal.$p");
+            $jadwal[$p] = in_array($val, array_keys(RencanaPelatihanK3::STATUS_LABEL), true) ? $val : null;
+        }
+        $validated['jadwal'] = $jadwal;
 
-            'id' => $item->id,
-
-            'topik' => $item->topik,
-
-            'prioritas' => $item->prioritas,
-
-            'peserta' => $item->peserta,
-
-            'durasi' => $item->durasi,
-
-            'anggaran' => $item->anggaran,
-
-            'bulan' => $item->bulan,
-
-            'status' => $item->status,
-
-            'keterangan' => $item->keterangan
-
-        ];
+        return $validated;
     }
 }

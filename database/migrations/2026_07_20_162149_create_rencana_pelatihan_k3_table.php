@@ -13,30 +13,21 @@ return new class extends Migration
     {
         Schema::create('rencana_pelatihan_k3', function (Blueprint $table) {
             $table->id();
-            $table->string('topik');
+            $table->unsignedInteger('tahun')->default(date('Y'));
+            $table->string('topik_pelatihan');
+            $table->enum('prioritas', ['Tinggi', 'Sedang', 'Rendah'])->default('Sedang');
+            $table->string('peserta_estimasi')->nullable(); // free text: "50 org", "Semua Baru", "Semua"
+            $table->unsignedInteger('durasi_jam')->nullable();
+            $table->decimal('anggaran_estimasi', 15, 2)->default(0);
 
-            $table->enum('prioritas', [
-                'Tinggi',
-                'Sedang',
-                'Rendah'
-            ]);
-
-            $table->integer('peserta');
-
-            $table->integer('durasi');
-
-            $table->decimal('anggaran', 15, 2);
-
-            $table->tinyInteger('bulan');
-
-            $table->enum('status', [
-                'Dijadwalkan',
-                'Terlaksana',
-                'Tertunda'
-            ])->default('Dijadwalkan');
+            // Jadwal per periode: jan, feb, mar, apr, mei, jun, jul, ags, sep_des
+            // Tiap key bernilai null | 'terlaksana' | 'dijadwalkan' | 'tertunda'
+            $table->json('jadwal')->nullable();
 
             $table->text('keterangan')->nullable();
             $table->timestamps();
+
+            $table->index(['tahun', 'prioritas']);
         });
     }
 
