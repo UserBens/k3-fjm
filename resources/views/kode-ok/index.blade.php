@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Kode OK — PT. Fokus Jasa Mitra</title>
+    <title>Master Data Kode OK — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -53,7 +53,6 @@
             border-radius: 4px;
         }
 
-        /* CONTENT */
         #main-content {
             flex: 1;
             display: flex;
@@ -68,7 +67,6 @@
             padding: 20px 20px 28px;
         }
 
-        /* PAGE HEADER */
         .page-hdr {
             margin-bottom: 16px;
         }
@@ -191,7 +189,6 @@
             min-width: 0;
         }
 
-        /* ══════ FILTER BAR ══════ */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -242,7 +239,7 @@
             font-weight: 600;
             color: #1A1D2E;
             cursor: pointer;
-            min-width: 170px;
+            min-width: 150px;
             appearance: none;
             -webkit-appearance: none;
         }
@@ -268,7 +265,6 @@
             color: #1A1D2E;
         }
 
-        /* ══════ TABLE ══════ */
         .rtable-wrap {
             width: 100%;
             overflow-x: auto;
@@ -276,7 +272,7 @@
 
         .rtable {
             width: 100%;
-            min-width: 760px;
+            min-width: 860px;
             border-collapse: collapse;
         }
 
@@ -297,7 +293,7 @@
             color: #1A1D2E;
             padding: 10px 8px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-            vertical-align: middle;
+            vertical-align: top;
         }
 
         .rtable tr:last-child td {
@@ -306,12 +302,6 @@
 
         .rtable tr:hover td {
             background: #F8F9FF;
-        }
-
-        .td-name-sub {
-            font-size: 10.5px;
-            color: #94A3B8;
-            font-weight: 600;
         }
 
         .status-pill {
@@ -330,11 +320,6 @@
             color: #1A7A3C;
         }
 
-        .sp-amber {
-            background: rgba(217, 119, 6, 0.09);
-            color: #D97706;
-        }
-
         .sp-red {
             background: rgba(208, 2, 27, 0.08);
             color: #D0021B;
@@ -345,9 +330,28 @@
             color: #2D4B9E;
         }
 
+        .sp-amber {
+            background: rgba(217, 119, 6, 0.09);
+            color: #D97706;
+        }
+
         .sp-gray {
             background: rgba(100, 116, 139, 0.09);
             color: #64748B;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 220px;
+        }
+
+        .badge-more {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+            padding: 2px 6px;
         }
 
         .empty-state,
@@ -400,7 +404,6 @@
             }
         }
 
-        /* ══════ PAGINATION ══════ */
         .pagination-bar {
             display: flex;
             align-items: center;
@@ -479,7 +482,6 @@
             padding: 0 2px;
         }
 
-        /* ══════ RESPONSIVE ══════ */
         @media (max-width: 640px) {
             #page-content {
                 padding: 14px 14px 22px;
@@ -509,7 +511,6 @@
             }
         }
 
-        /* ══════ MODAL KONFIRMASI ══════ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -521,6 +522,7 @@
             justify-content: center;
             opacity: 0;
             transition: opacity 0.2s ease;
+            padding: 16px;
         }
 
         .modal-overlay.open {
@@ -608,7 +610,6 @@
             background: #1A3C8A;
         }
 
-        /* ══════ LOADING SCREEN ══════ */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -674,7 +675,6 @@
             }
         }
 
-        /* ══════ TOAST ══════ */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -759,7 +759,7 @@
             flex-shrink: 0;
         }
 
-        .btn-edit-kok {
+        .btn-row-action {
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -775,16 +775,25 @@
             white-space: nowrap;
         }
 
-        .btn-edit-kok:hover {
+        .btn-row-action:hover {
             background: rgba(45, 75, 158, 0.14);
         }
 
-        /* ══════ MODAL FORM KODE OK (Add / Edit) ══════ */
+        .btn-row-action.danger {
+            border-color: rgba(208, 2, 27, 0.2);
+            background: rgba(208, 2, 27, 0.06);
+            color: #D0021B;
+        }
+
+        .btn-row-action.danger:hover {
+            background: rgba(208, 2, 27, 0.12);
+        }
+
         .form-modal-box {
             background: #fff;
             border-radius: 16px;
             padding: 24px;
-            width: 460px;
+            width: 440px;
             max-width: calc(100vw - 32px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
             transform: scale(0.94) translateY(8px);
@@ -880,18 +889,166 @@
             margin-top: 4px;
         }
 
-        .form-row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* ══════ MODAL DETAIL KODE OK (scrollable) ══════ */
+        .detail-modal-box {
+            background: #fff;
+            border-radius: 16px;
+            width: 640px;
+            max-width: calc(100vw - 32px);
+            max-height: calc(100vh - 48px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.96) translateY(8px);
+            transition: transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-overlay.open .detail-modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .detail-modal-header {
+            padding: 20px 24px 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
             gap: 12px;
+            flex-shrink: 0;
         }
 
-        @media (max-width: 480px) {
-            .form-row-2 {
-                grid-template-columns: 1fr;
-            }
+        .detail-modal-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
         }
 
+        .detail-modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            line-height: 1;
+        }
+
+        .detail-modal-close {
+            background: #F8F9FF;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            color: #64748B;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-modal-close:hover {
+            background: #F0F4FF;
+        }
+
+        .detail-summary-row {
+            display: flex;
+            gap: 20px;
+            padding: 14px 24px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .detail-summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .detail-summary-label {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #94A3B8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .detail-summary-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1A1D2E;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        .detail-tags-block {
+            padding: 12px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            flex-shrink: 0;
+        }
+
+        .detail-tags-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94A3B8;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .detail-tags-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .detail-pegawai-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 24px 20px;
+        }
+
+        .detail-pegawai-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .detail-pegawai-table thead th {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #94A3B8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 10px 6px 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 1;
+        }
+
+        .detail-pegawai-table td {
+            font-size: 12px;
+            color: #1A1D2E;
+            padding: 9px 6px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .detail-pegawai-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .detail-pegawai-table .td-badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #2D4B9E;
+        }
+
+        /* TOPBAR */
         #topbar {
             height: 52px;
             background: #fff;
@@ -974,16 +1131,13 @@
 
 <body class="flex h-screen overflow-hidden">
 
-    <!-- ══════ SIDEBAR ══════ -->
     @include('partials.sidebar')
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- ══════ MAIN ══════ -->
     <div id="main-content">
 
         @include('partials.topbar')
 
-        <!-- PAGE CONTENT -->
         <div id="page-content">
 
             <!-- PAGE HEADER -->
@@ -994,8 +1148,9 @@
                             <span class="pulse-dot"></span>
                             <span class="pg-eyebrow">Database Kode OK · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">DATA <span>KODE OK</span></div>
-                        <div class="pg-sub">Cari, filter, sinkronkan, dan kelola data Kode OK (Order Kerja).</div>
+                        <div class="pg-title">MASTER <span>KODE OK</span></div>
+                        <div class="pg-sub">Kode OK, pegawai, unit kerja, dan kualifikasi yang tergabung di dalamnya.
+                        </div>
                     </div>
                     <div class="pg-actions">
                         <button class="btn-primary btn-sync" id="btnSync" onclick="syncData()">
@@ -1027,18 +1182,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput"
-                            placeholder="Cari berdasarkan kode OK atau uraian pekerjaan..." oninput="onSearchInput()" />
+                        <input type="text" id="searchInput" placeholder="Cari kode OK atau uraian..."
+                            oninput="onSearchInput()" />
                     </div>
 
                     <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
                         <option value="">Semua Status</option>
                         <option value="1">Aktif</option>
                         <option value="0">Nonaktif</option>
-                    </select>
-
-                    <select id="filterUnitKerja" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Unit Kerja</option>
                     </select>
 
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
@@ -1051,46 +1202,37 @@
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th class="px-6 py-3 text-left">Kode OK</th>
-                                <th class="px-6 py-3 text-left">Uraian Pekerjaan</th>
-                                <th class="px-6 py-3 text-left">Unit Kerja</th>
-                                <th class="px-6 py-3 text-left">Status</th>
-                                <th class="px-6 py-3 text-center">Action</th>
+                                <th>Kode OK</th>
+                                <th>Uraian</th>
+                                <th>Jml Pegawai</th>
+                                <th>Unit Kerja</th>
+                                <th>Kualifikasi</th>
+                                <th>Status</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
                             <tr class="skeleton-row">
                                 <td>
+                                    <div class="skeleton-bar" style="width:40px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:180px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:40px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:120px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton-bar" style="width:120px;"></div>
+                                </td>
+                                <td>
                                     <div class="skeleton-bar" style="width:60px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:220px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:150px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:70px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
-                                </td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton-bar" style="width:60px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:200px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:140px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:70px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
+                                    <div class="skeleton-bar" style="width:100px;margin:auto;"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1114,7 +1256,7 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL KONFIRMASI SYNC ══════ -->
+    <!-- MODAL KONFIRMASI SYNC -->
     <div id="syncConfirmOverlay" class="modal-overlay" onclick="closeSyncModalOutside(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="modal-icon-wrap">
@@ -1125,8 +1267,8 @@
             </div>
             <div class="modal-title">Sinkronkan Data Kode OK?</div>
             <div class="modal-desc">
-                Sistem akan menarik ulang data Kode OK langsung dari sumber API. Proses ini bisa
-                memakan waktu beberapa saat dan akan memperbarui data yang tersimpan secara lokal.
+                Sistem akan menarik ulang data pegawai dari API dan menambahkan kode OK baru yang belum ada
+                ke master. Uraian kode OK yang sudah Anda edit manual tidak akan tertimpa.
             </div>
             <div class="modal-actions">
                 <button class="btn-modal-cancel" onclick="closeSyncModal()">Batal</button>
@@ -1135,7 +1277,7 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL KONFIRMASI HAPUS ══════ -->
+    <!-- MODAL KONFIRMASI HAPUS -->
     <div id="deleteConfirmOverlay" class="modal-overlay" onclick="closeDeleteModalOutside(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="modal-icon-wrap" style="background:rgba(208,2,27,0.09); color:#D0021B;">
@@ -1146,7 +1288,7 @@
             </div>
             <div class="modal-title">Hapus Kode OK Ini?</div>
             <div class="modal-desc" id="deleteConfirmDesc">
-                Data yang sudah dihapus tidak dapat dikembalikan. Pastikan kode OK ini sudah tidak digunakan.
+                Data yang sudah dihapus tidak dapat dikembalikan.
             </div>
             <div class="modal-actions">
                 <button class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
@@ -1156,7 +1298,7 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL FORM KODE OK (Add / Edit) ══════ -->
+    <!-- MODAL FORM TAMBAH / EDIT -->
     <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
         <div class="form-modal-box" onclick="event.stopPropagation()">
             <div class="form-modal-header">
@@ -1164,30 +1306,23 @@
                 <div class="form-modal-title" id="formModalTitle">Kode OK Baru</div>
             </div>
 
-            <div class="form-row-2">
-                <div class="form-group">
-                    <label class="form-label">Kode OK</label>
-                    <input type="number" id="inputKodeOk" class="form-input" placeholder="Contoh: 13" />
-                    <div class="form-hint" id="kodeOkHint">Kosongkan untuk menggunakan nomor urut berikutnya.</div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select id="inputStatus" class="form-select">
-                        <option value="1">Aktif</option>
-                        <option value="0">Nonaktif</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label">Kode OK</label>
+                <input type="text" id="inputKodeOk" class="form-input" placeholder="Kosongkan untuk otomatis" />
+                <div class="form-hint" id="kodeOkHint">Kosongkan untuk menggunakan nomor urut berikutnya.</div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Unit Kerja</label>
-                <input type="text" id="inputUnitKerja" class="form-input"
-                    placeholder="Contoh: Perencanaan &amp; Pengendalian Produksi" />
+                <label class="form-label">Uraian Kode OK</label>
+                <textarea id="inputUraianKodeOk" class="form-textarea" placeholder="Contoh: Jasa Kebersihan Area Produksi"></textarea>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Uraian Pekerjaan</label>
-                <textarea id="inputUraianPekerjaan" class="form-textarea" placeholder="Contoh: Jasa Administrasi Produksi I A"></textarea>
+                <label class="form-label">Status</label>
+                <select id="inputStatus" class="form-select">
+                    <option value="1">Aktif</option>
+                    <option value="0">Nonaktif</option>
+                </select>
             </div>
 
             <div class="modal-actions" style="margin-top:6px;">
@@ -1197,10 +1332,65 @@
         </div>
     </div>
 
-    <!-- ══════ TOAST NOTIFIKASI ══════ -->
+    <!-- MODAL DETAIL KODE OK (scrollable) -->
+    <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
+        <div class="detail-modal-box" onclick="event.stopPropagation()">
+            <div class="detail-modal-header">
+                <div>
+                    <div class="detail-modal-eyebrow" id="detailEyebrow">Detail Kode OK</div>
+                    <div class="detail-modal-title" id="detailTitle">#—</div>
+                </div>
+                <button class="detail-modal-close" onclick="closeDetailModal()">
+                    <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="detail-summary-row">
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Jumlah Pegawai</span>
+                    <span class="detail-summary-value" id="detailJumlahPegawai">0</span>
+                </div>
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Unit Kerja</span>
+                    <span class="detail-summary-value" id="detailJumlahUnitKerja">0</span>
+                </div>
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Kualifikasi</span>
+                    <span class="detail-summary-value" id="detailJumlahKualifikasi">0</span>
+                </div>
+            </div>
+
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">Unit Kerja Terlibat</div>
+                <div class="detail-tags-wrap" id="detailUnitKerjaTags"></div>
+            </div>
+
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">Kualifikasi Terlibat</div>
+                <div class="detail-tags-wrap" id="detailKualifikasiTags"></div>
+            </div>
+
+            <div class="detail-pegawai-body">
+                <table class="detail-pegawai-table">
+                    <thead>
+                        <tr>
+                            <th>Badge</th>
+                            <th>Nama Pegawai</th>
+                            <th>Unit Kerja</th>
+                            <th>Kualifikasi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailPegawaiBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- ══════ LOADING SCREEN OVERLAY ══════ -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-box">
             <div class="loading-spinner"></div>
@@ -1209,10 +1399,7 @@
         </div>
     </div>
 
-    {{-- RENDER DATA DI TABEL --}}
     <script>
-        // ══════ CONFIG ══════
-        // Sesuaikan nama route ini dengan yang didaftarkan di routes/web.php
         const API_ENDPOINT = "{{ route('kode-ok.api') }}";
         const SYNC_ENDPOINT = "{{ route('kode-ok.sync') }}";
         const STORE_ENDPOINT = "{{ route('kode-ok.store') }}";
@@ -1223,16 +1410,14 @@
         const state = {
             search: '',
             status: '',
-            unit_kerja: '',
-
             page: 1,
-            per_page: 10,
+            per_page: 10
         };
-
         let searchDebounce = null;
-        let filterOptionsLoaded = false;
-        let currentEditId = null; // null = mode tambah, angka = mode edit
+        let currentEditId = null;
         let deleteTargetId = null;
+        let deleteTargetKode = null;
+        let lastLoadedRows = [];
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1256,8 +1441,6 @@
 
         function onFilterChange() {
             state.status = document.getElementById('filterStatus').value;
-            state.unit_kerja = document.getElementById('filterUnitKerja').value;
-
             state.page = 1;
             loadData();
         }
@@ -1271,11 +1454,8 @@
         function resetFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('filterStatus').value = '';
-            document.getElementById('filterUnitKerja').value = '';
-
             state.search = '';
             state.status = '';
-            state.unit_kerja = '';
             state.page = 1;
             loadData();
         }
@@ -1289,40 +1469,36 @@
             });
         }
 
-        function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
-
-            const build = (selectId, values) => {
-                const select = document.getElementById(selectId);
-                const current = select.value;
-                values.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    select.appendChild(opt);
-                });
-                select.value = current;
-            };
-
-            build('filterUnitKerja', options.unit_kerja || []);
-
-            filterOptionsLoaded = true;
-        }
-
         function statusPill(status) {
-            const isActive = parseInt(status, 10) === 1;
-            return isActive ?
+            return status ?
                 `<span class="status-pill sp-green">Aktif</span>` :
                 `<span class="status-pill sp-red">Nonaktif</span>`;
         }
 
+        function renderBadgeList(list, colorClass, max = 3) {
+            if (!list || list.length === 0) {
+                return `<span style="font-size:11px;color:#CBD5E1;">—</span>`;
+            }
+            const shown = list.slice(0, max);
+            let html = `<div class="badge-list">`;
+            shown.forEach(item => {
+                html += `<span class="status-pill ${colorClass}">${escapeHtml(item)}</span>`;
+            });
+            if (list.length > max) {
+                html += `<span class="badge-more">+${list.length - max} lagi</span>`;
+            }
+            html += `</div>`;
+            return html;
+        }
+
         function renderTable(rows) {
+            lastLoadedRows = rows || [];
             const tbody = document.getElementById('tableBody');
 
             if (!rows || rows.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="5">
+                    <td colspan="7">
                         <div class="empty-state">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1338,38 +1514,18 @@
 
             tbody.innerHTML = rows.map(row => `
                 <tr>
-                    <td>
-                        <span class="status-pill sp-blue" style="font-size:11px;">#${escapeHtml(row.kode_ok)}</span>
+                    <td><span class="status-pill sp-blue" style="font-size:11px;">#${escapeHtml(row.kode_ok)}</span></td>
+                    <td style="max-width:220px;">
+                        <div style="font-weight:600; color:#1e293b; font-size:12.5px; line-height:1.4;">${escapeHtml(row.uraian_kode_ok || '-')}</div>
                     </td>
-
-                    <td style="max-width:320px;">
-                        <div style="font-weight:600; color:#1e293b; font-size:12.5px; line-height:1.4;">${escapeHtml(row.uraian_pekerjaan)}</div>
-                    </td>
-
-                    <td>
-                        <div style="font-weight:600; color:#334155; font-size:12.5px;">${escapeHtml(row.unit_kerja)}</div>
-                    </td>
-
-                    <td>
-                        ${statusPill(row.status)}
-                    </td>
-
+                    <td style="font-weight:700;">${row.jumlah_pegawai}</td>
+                    <td>${renderBadgeList(row.unit_kerja_list, 'sp-blue')}</td>
+                    <td>${renderBadgeList(row.kualifikasi_list, 'sp-amber')}</td>
+                    <td>${statusPill(row.status)}</td>
                     <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-edit-kok" onclick='openEditModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>
-                            <svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Edit
-                        </button>
-                        <button class="btn-edit-kok" style="border-color:rgba(208,2,27,0.2); background:rgba(208,2,27,0.06); color:#D0021B; margin-left:6px;"
-                            onclick="openDeleteModal(${row.id}, ${JSON.stringify(row.kode_ok)})">
-                            <svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9.5 3h5a1 1 0 011 1v3h-7V4a1 1 0 011-1z" />
-                            </svg>
-                            Hapus
-                        </button>
+                        <button class="btn-row-action" onclick="openDetailModal(${row.id})">Detail</button>
+                        <button class="btn-row-action" style="margin-left:6px;" onclick='openEditModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
+                        <button class="btn-row-action danger" style="margin-left:6px;" onclick="openDeleteModal(${row.id}, ${JSON.stringify(row.kode_ok)}, ${row.jumlah_pegawai})">Hapus</button>
                     </td>
                 </tr>
             `).join('');
@@ -1378,7 +1534,7 @@
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
         <tr>
-            <td colspan="5">
+            <td colspan="7">
                 <div class="error-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1396,12 +1552,8 @@
 
         function renderPagination(meta) {
             document.getElementById('paginationText').textContent =
-                meta.total > 0 ?
-                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` :
-                'Tidak ada data';
-
-            document.getElementById('dataSummary').innerHTML =
-                `<strong>${meta.total}</strong> kode OK ditemukan`;
+                meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
+            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> kode OK ditemukan`;
 
             const container = document.getElementById('paginationPages');
             const current = meta.current_page;
@@ -1416,22 +1568,17 @@
             for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
             if (current < last - 2) addEllipsis();
             if (last > 1) addPage(last);
-
             pages = [...new Set(pages)];
 
             let html =
                 `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
             pages.forEach(p => {
-                if (p === '...') {
-                    html += `<span class="page-ellipsis">…</span>`;
-                } else {
-                    html +=
-                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-                }
+                html += p === '...' ?
+                    `<span class="page-ellipsis">…</span>` :
+                    `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
             });
             html +=
                 `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-
             container.innerHTML = html;
         }
 
@@ -1439,8 +1586,6 @@
             const params = new URLSearchParams();
             if (state.search) params.set('search', state.search);
             if (state.status !== '') params.set('status', state.status);
-            if (state.unit_kerja) params.set('unit_kerja', state.unit_kerja);
-
             params.set('page', state.page);
             params.set('per_page', state.per_page);
 
@@ -1448,18 +1593,15 @@
                 const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
                     headers: {
                         'Accept': 'application/json'
-                    },
+                    }
                 });
-
                 if (!res.ok) {
                     const errJson = await res.json().catch(() => null);
                     throw new Error(errJson?.message || `Server merespons status ${res.status}`);
                 }
-
                 const json = await res.json();
                 renderTable(json.data);
                 renderPagination(json.meta);
-                populateFilterOptions(json.filter_options);
             } catch (e) {
                 renderError(e.message || 'Terjadi kesalahan tak terduga.');
             }
@@ -1469,16 +1611,13 @@
     </script>
 
     <script>
-        // ══════ TOAST ══════
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-
             const iconSvg = type === 'error' ?
                 '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
                 '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
-
             toast.innerHTML = `
                 <div class="toast-icon">${iconSvg}</div>
                 <div class="toast-body">
@@ -1487,17 +1626,15 @@
                 </div>
                 <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
             `;
-
             container.appendChild(toast);
             requestAnimationFrame(() => toast.classList.add('show'));
-
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 250);
             }, 4000);
         }
 
-        // ══════ SYNC ══════
+        // SYNC
         function syncData() {
             document.getElementById('syncConfirmOverlay').classList.add('open');
         }
@@ -1507,15 +1644,11 @@
         }
 
         function closeSyncModalOutside(event) {
-            if (event.target.id === 'syncConfirmOverlay') {
-                closeSyncModal();
-            }
+            if (event.target.id === 'syncConfirmOverlay') closeSyncModal();
         }
-
         async function confirmSync() {
             closeSyncModal();
             document.getElementById('loadingOverlay').classList.add('open');
-
             try {
                 const res = await fetch(SYNC_ENDPOINT, {
                     method: 'POST',
@@ -1525,27 +1658,18 @@
                         'X-CSRF-TOKEN': CSRF_TOKEN
                     }
                 });
-
                 const json = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                }
-
-                filterOptionsLoaded = false;
-                document.getElementById('filterUnitKerja').innerHTML = '<option value="">Semua Unit Kerja</option>';
+                if (!res.ok) throw new Error(json.message || `Server merespons dengan status ${res.status}`);
                 await loadData();
-
                 document.getElementById('loadingOverlay').classList.remove('open');
                 showToast(json.message || 'Data kode OK berhasil disinkronkan.', 'success');
-
             } catch (e) {
                 document.getElementById('loadingOverlay').classList.remove('open');
                 showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
             }
         }
 
-        // ══════ FORM TAMBAH / EDIT ══════
+        // FORM TAMBAH / EDIT
         function openAddModal() {
             currentEditId = null;
             document.getElementById('formModalEyebrow').textContent = 'Tambah Data';
@@ -1553,8 +1677,7 @@
             document.getElementById('inputKodeOk').value = '';
             document.getElementById('inputKodeOk').disabled = false;
             document.getElementById('kodeOkHint').textContent = 'Kosongkan untuk menggunakan nomor urut berikutnya.';
-            document.getElementById('inputUnitKerja').value = '';
-            document.getElementById('inputUraianPekerjaan').value = '';
+            document.getElementById('inputUraianKodeOk').value = '';
             document.getElementById('inputStatus').value = '1';
             document.getElementById('formModalOverlay').classList.add('open');
         }
@@ -1566,9 +1689,8 @@
             document.getElementById('inputKodeOk').value = row.kode_ok;
             document.getElementById('inputKodeOk').disabled = true;
             document.getElementById('kodeOkHint').textContent = 'Kode OK tidak dapat diubah setelah dibuat.';
-            document.getElementById('inputUnitKerja').value = row.unit_kerja || '';
-            document.getElementById('inputUraianPekerjaan').value = row.uraian_pekerjaan || '';
-            document.getElementById('inputStatus').value = String(row.status);
+            document.getElementById('inputUraianKodeOk').value = row.uraian_kode_ok || '';
+            document.getElementById('inputStatus').value = row.status ? '1' : '0';
             document.getElementById('formModalOverlay').classList.add('open');
         }
 
@@ -1578,9 +1700,7 @@
         }
 
         function closeFormModalOutside(event) {
-            if (event.target.id === 'formModalOverlay') {
-                closeFormModal();
-            }
+            if (event.target.id === 'formModalOverlay') closeFormModal();
         }
 
         async function submitForm() {
@@ -1589,13 +1709,12 @@
 
             const payload = {
                 kode_ok: document.getElementById('inputKodeOk').value.trim() || null,
-                unit_kerja: document.getElementById('inputUnitKerja').value.trim(),
-                uraian_pekerjaan: document.getElementById('inputUraianPekerjaan').value.trim(),
+                uraian_kode_ok: document.getElementById('inputUraianKodeOk').value.trim(),
                 status: parseInt(document.getElementById('inputStatus').value, 10),
             };
 
-            if (!payload.unit_kerja || !payload.uraian_pekerjaan) {
-                showToast('Unit kerja dan uraian pekerjaan wajib diisi.', 'error');
+            if (!payload.uraian_kode_ok) {
+                showToast('Uraian kode OK wajib diisi.', 'error');
                 return;
             }
 
@@ -1615,19 +1734,15 @@
                     },
                     body: JSON.stringify(payload)
                 });
-
                 const json = await res.json();
-
                 if (!res.ok) {
                     const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
                     throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
                 }
-
                 closeFormModal();
                 await loadData();
                 showToast(json.message || (isEdit ? 'Kode OK berhasil diperbarui.' :
                     'Kode OK baru berhasil ditambahkan.'), 'success');
-
             } catch (e) {
                 showToast(e.message || 'Terjadi kesalahan saat menyimpan data.', 'error');
             } finally {
@@ -1636,11 +1751,15 @@
             }
         }
 
-        // ══════ HAPUS ══════
-        function openDeleteModal(id, kodeOk) {
+        // HAPUS
+        function openDeleteModal(id, kodeOk, jumlahPegawai) {
             deleteTargetId = id;
+            deleteTargetKode = kodeOk;
+            const extraWarning = jumlahPegawai > 0 ?
+                ` Kode OK ini masih dipakai oleh ${jumlahPegawai} pegawai — sebaiknya nonaktifkan saja lewat Edit, bukan dihapus.` :
+                '';
             document.getElementById('deleteConfirmDesc').textContent =
-                `Kode OK #${kodeOk} akan dihapus permanen dan tidak dapat dikembalikan. Pastikan kode OK ini sudah tidak digunakan.`;
+                `Kode OK #${kodeOk} akan dihapus permanen dan tidak dapat dikembalikan.${extraWarning}`;
             document.getElementById('deleteConfirmOverlay').classList.add('open');
         }
 
@@ -1650,14 +1769,10 @@
         }
 
         function closeDeleteModalOutside(event) {
-            if (event.target.id === 'deleteConfirmOverlay') {
-                closeDeleteModal();
-            }
+            if (event.target.id === 'deleteConfirmOverlay') closeDeleteModal();
         }
-
         async function confirmDelete() {
             if (!deleteTargetId) return;
-
             try {
                 const res = await fetch(`${DELETE_ENDPOINT_BASE}/${deleteTargetId}`, {
                     method: 'DELETE',
@@ -1666,21 +1781,60 @@
                         'X-CSRF-TOKEN': CSRF_TOKEN
                     }
                 });
-
                 const json = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                }
-
+                if (!res.ok) throw new Error(json.message || `Server merespons dengan status ${res.status}`);
                 closeDeleteModal();
                 await loadData();
                 showToast(json.message || 'Kode OK berhasil dihapus.', 'success');
-
             } catch (e) {
                 closeDeleteModal();
                 showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
             }
+        }
+
+        // DETAIL (scrollable table)
+        function openDetailModal(id) {
+            const row = lastLoadedRows.find(r => r.id === id);
+            if (!row) return;
+
+            document.getElementById('detailEyebrow').textContent = row.uraian_kode_ok || 'Detail Kode OK';
+            document.getElementById('detailTitle').textContent = `Kode OK #${row.kode_ok}`;
+            document.getElementById('detailJumlahPegawai').textContent = row.jumlah_pegawai;
+            document.getElementById('detailJumlahUnitKerja').textContent = (row.unit_kerja_list || []).length;
+            document.getElementById('detailJumlahKualifikasi').textContent = (row.kualifikasi_list || []).length;
+
+            const unitTagsWrap = document.getElementById('detailUnitKerjaTags');
+            unitTagsWrap.innerHTML = (row.unit_kerja_list || []).length ?
+                row.unit_kerja_list.map(u => `<span class="status-pill sp-blue">${escapeHtml(u)}</span>`).join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada data unit kerja.</span>`;
+
+            const qualTagsWrap = document.getElementById('detailKualifikasiTags');
+            qualTagsWrap.innerHTML = (row.kualifikasi_list || []).length ?
+                row.kualifikasi_list.map(k => `<span class="status-pill sp-amber">${escapeHtml(k)}</span>`).join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada data kualifikasi.</span>`;
+
+            const pegawaiBody = document.getElementById('detailPegawaiBody');
+            const list = row.pegawai_list || [];
+            pegawaiBody.innerHTML = list.length ? list.map(p => `
+                <tr>
+                    <td class="td-badge">${escapeHtml(p.badge)}</td>
+                    <td>${escapeHtml(p.nama)}</td>
+                    <td>${escapeHtml(p.unit_kerja)}</td>
+                    <td>${escapeHtml(p.kualifikasi)}</td>
+                </tr>
+            `).join('') : `
+                <tr><td colspan="4" style="text-align:center;color:#94A3B8;padding:24px 0;">Belum ada pegawai di kode OK ini.</td></tr>
+            `;
+
+            document.getElementById('detailModalOverlay').classList.add('open');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModalOverlay').classList.remove('open');
+        }
+
+        function closeDetailModalOutside(event) {
+            if (event.target.id === 'detailModalOverlay') closeDetailModal();
         }
     </script>
 </body>

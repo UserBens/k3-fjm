@@ -69,13 +69,22 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
 
     // MASTER KODE OK
-    Route::prefix('kode-ok')->group(function () {
-        Route::get('/', [KodeOkController::class, 'index'])->name('kode-ok.index');
-        Route::get('/data', [KodeOkController::class, 'api'])->name('kode-ok.api');
-        Route::post('/sync', [KodeOkController::class, 'sync'])->name('kode-ok.sync');
-        Route::post('/', [KodeOkController::class, 'store'])->name('kode-ok.store');
-        Route::put('/{id}', [KodeOkController::class, 'update']);
-        Route::delete('/{id}', [KodeOkController::class, 'destroy']);
+    // Route::prefix('kode-ok')->group(function () {
+    //     Route::get('/', [KodeOkController::class, 'index'])->name('kode-ok.index');
+    //     Route::get('/data', [KodeOkController::class, 'api'])->name('kode-ok.api');
+    //     Route::post('/sync', [KodeOkController::class, 'sync'])->name('kode-ok.sync');
+    //     Route::post('/', [KodeOkController::class, 'store'])->name('kode-ok.store');
+    //     Route::put('/{id}', [KodeOkController::class, 'update']);
+    //     Route::delete('/{id}', [KodeOkController::class, 'destroy']);
+    // });
+
+    Route::prefix('kode-ok')->name('kode-ok.')->group(function () {
+        Route::get('/', [KodeOkController::class, 'index'])->name('index');
+        Route::get('/data', [KodeOkController::class, 'apiIndex'])->name('api');
+        Route::post('/sync', [KodeOkController::class, 'sync'])->name('sync');
+        Route::post('/', [KodeOkController::class, 'store'])->name('store');
+        Route::put('/{kodeOk}', [KodeOkController::class, 'update'])->name('update');
+        Route::delete('/{kodeOk}', [KodeOkController::class, 'destroy'])->name('destroy');
     });
 
     Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');

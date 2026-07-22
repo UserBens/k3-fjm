@@ -42,4 +42,9 @@ class Pegawai extends Model
     {
         return $this->belongsTo(Kualifikasi::class, 'kualifikasiid', 'id_api');
     }
+
+    public function kodeOk()
+    {
+        return $this->belongsTo(KodeOk::class, 'kode_ok', 'kode_ok');
+    }
 }

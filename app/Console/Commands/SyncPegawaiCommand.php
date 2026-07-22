@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\KodeOk;
 use App\Models\Kualifikasi;
 use App\Models\LokasiKerja;
 use App\Models\Pegawai;
@@ -37,6 +38,7 @@ class SyncPegawaiCommand extends Command
     ];
     protected $signature = 'sync:pegawai';
     protected $description = 'Sinkronisasi data master pegawai (beserta unit kerja) dari API ERP ke database lokal K3';
+    protected array $kodeOkCollector = []; // ← TAMBAHAN: kode_ok => uraian_kode_ok
 
     public function handle()
     {
@@ -89,7 +91,15 @@ class SyncPegawaiCommand extends Command
             // tidak perlu membatalkan sync pegawai/pengawas yang sudah berhasil.
         }
 
+        $pegawaiResult = $this->syncPegawai();
+        if ($pegawaiResult !== Command::SUCCESS) {
+            $this->error('Sinkronisasi dihentikan karena gagal sync pegawai.');
+            return $pegawaiResult;
+        }
 
+        // ── STEP 2b: Sync Master Kode OK (dari data yang barusan dikumpulkan) ──
+        $this->syncKodeOk($this->kodeOkCollector);
+        $this->syncKodeOkRelasi(); // ← TAMBAHAN
 
         $this->info('Semua sinkronisasi (unit kerja, pegawai, pengawas, pengawas pekerjaan) selesai!');
         return Command::SUCCESS;
@@ -187,6 +197,11 @@ class SyncPegawaiCommand extends Command
 
                 if (!$idApi && !$nik) {
                     continue;
+                }
+
+                // ← TAMBAHAN: kumpulkan kode OK
+                if (!empty($item['kode_ok'])) {
+                    $this->kodeOkCollector[$item['kode_ok']] = $item['uraian_kode_ok'] ?? null;
                 }
 
                 Pegawai::updateOrCreate(
@@ -503,5 +518,70 @@ class SyncPegawaiCommand extends Command
             $this->error('Terjadi kesalahan saat sinkronisasi kualifikasi: ' . $e->getMessage());
             return false;
         }
+    }
+
+    protected function syncKodeOk(array $kodeOkList): bool
+    {
+        $this->info('Memulai sinkronisasi master Kode OK...');
+
+        $count = 0;
+        foreach ($kodeOkList as $kode => $uraian) {
+            if ($kode === null || $kode === '') {
+                continue;
+            }
+
+            $existing = KodeOk::where('kode_ok', $kode)->first();
+
+            if ($existing) {
+                if (!$existing->is_manual) {
+                    $existing->update([
+                        'uraian_kode_ok' => $uraian ?: $existing->uraian_kode_ok,
+                        'last_sync' => Carbon::now(),
+                    ]);
+                } else {
+                    $existing->update(['last_sync' => Carbon::now()]);
+                }
+            } else {
+                KodeOk::create([
+                    'kode_ok' => $kode,
+                    'uraian_kode_ok' => $uraian,
+                    'is_active' => true,
+                    'is_manual' => false,
+                    'last_sync' => Carbon::now(),
+                ]);
+            }
+            $count++;
+        }
+
+        $this->info("Sinkronisasi master Kode OK selesai! {$count} kode OK diperiksa.");
+        return true;
+    }
+
+    protected function syncKodeOkRelasi(): bool
+    {
+        $this->info('Menyinkronkan relasi pegawai/unit kerja/kualifikasi per Kode OK...');
+
+        $kodeOkList = KodeOk::all();
+
+        foreach ($kodeOkList as $kodeOk) {
+            $pegawaiList = Pegawai::where('kode_ok', $kodeOk->kode_ok)
+                ->where('is_active', 1)
+                ->get();
+
+            $pegawaiIds = $pegawaiList->pluck('id');
+
+            $unitKerjaIds = UnitKerja::whereIn('id_api', $pegawaiList->pluck('unit_kerjaid')->filter()->unique())
+                ->pluck('id');
+
+            $kualifikasiIds = Kualifikasi::whereIn('id_api', $pegawaiList->pluck('kualifikasiid')->filter()->unique())
+                ->pluck('id');
+
+            $kodeOk->pegawaiRelasi()->sync($pegawaiIds);
+            $kodeOk->unitKerjaRelasi()->sync($unitKerjaIds);
+            $kodeOk->kualifikasiRelasi()->sync($kualifikasiIds);
+        }
+
+        $this->info('Relasi Kode OK selesai disinkronkan ke database.');
+        return true;
     }
 }

@@ -8,22 +8,33 @@ use Illuminate\Database\Eloquent\Model;
 
 class KodeOk extends Model
 {
-    use HasFactory;
-
-    protected $table = 'kode_oks';
-
-    protected $fillable = [
-        'kode_ok',
-        'pengawas',
-        'unit_kerja',
-        'uraian_pekerjaan',
-        'status',
-        'synced_at',
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
-        'kode_ok'   => 'integer',
-        'status'    => 'boolean',
-        'synced_at' => 'datetime',
+        'is_active' => 'boolean',
+        'is_manual' => 'boolean',
+        'last_sync' => 'datetime',
     ];
+
+    // relasi ke pegawai berdasarkan kolom kode_ok (bukan FK id, karena pegawai
+    // menyimpan kode_ok sebagai string langsung dari API)
+    public function pegawai()
+    {
+        return $this->hasMany(Pegawai::class, 'kode_ok', 'kode_ok');
+    }
+
+    public function pegawaiRelasi()
+    {
+        return $this->belongsToMany(Pegawai::class, 'kode_ok_pegawai')->withTimestamps();
+    }
+
+    public function unitKerjaRelasi()
+    {
+        return $this->belongsToMany(UnitKerja::class, 'kode_ok_unit_kerja')->withTimestamps();
+    }
+
+    public function kualifikasiRelasi()
+    {
+        return $this->belongsToMany(Kualifikasi::class, 'kode_ok_kualifikasi')->withTimestamps();
+    }
 }

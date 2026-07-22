@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\KodeOk;
+use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -13,217 +15,135 @@ use Throwable;
 
 class KodeOkController extends Controller
 {
-    /**
-     * Tampilkan halaman manajemen Kode OK.
-     */
     public function index()
     {
         return view('kode-ok.index');
     }
 
-    /**
-     * Endpoint JSON: list Kode OK dengan search, filter, dan pagination.
-     * Dikonsumsi oleh JS di kode-ok.index (API_ENDPOINT).
-     */
-    public function api(Request $request): JsonResponse
+    public function apiIndex(Request $request)
     {
-        $query = KodeOk::query();
+        $query = KodeOk::query()->with([
+            'pegawaiRelasi.unitKerja',
+            'pegawaiRelasi.kualifikasi',
+            'unitKerjaRelasi',
+            'kualifikasiRelasi',
+        ]);
 
-        // ── Search (kode OK atau uraian pekerjaan) ──
-        if ($search = $request->query('search')) {
+        if ($request->filled('search')) {
+            $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('uraian_pekerjaan', 'ilike', "%{$search}%")
-                    ->orWhere('unit_kerja', 'ilike', "%{$search}%")
-                    ->orWhereRaw('CAST(kode_ok AS TEXT) ILIKE ?', ["%{$search}%"]);
+                $q->where('kode_ok', 'like', "%{$search}%")
+                    ->orWhere('uraian_kode_ok', 'like', "%{$search}%");
             });
         }
 
-        // ── Filter status ──
-        if ($request->query('status') !== null && $request->query('status') !== '') {
-            $query->where('status', (bool) $request->query('status'));
+        if ($request->filled('status')) {
+            $query->where('is_active', (bool) $request->status);
         }
 
-        // ── Filter unit kerja ──
-        if ($unitKerja = $request->query('unit_kerja')) {
-            $query->where('unit_kerja', $unitKerja);
-        }
+        $perPage = (int) $request->get('per_page', 10);
+        $paginated = $query
+            ->orderByRaw('LENGTH(kode_ok) asc')
+            ->orderBy('kode_ok', 'asc')
+            ->paginate($perPage);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $perPage = $perPage > 0 ? min($perPage, 100) : 10;
+        $data = $paginated->getCollection()->map(fn(KodeOk $kodeOk) => $this->transform($kodeOk));
 
-        $paginator = $query->latest()->paginate($perPage);
-        
         return response()->json([
-            'data' => $paginator->items(),
+            'data' => $data,
             'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page'    => $paginator->lastPage(),
-                'total'        => $paginator->total(),
-                'from'         => $paginator->firstItem(),
-                'to'           => $paginator->lastItem(),
-            ],
-            'filter_options' => [
-                'unit_kerja' => KodeOk::query()
-                    ->whereNotNull('unit_kerja')
-                    ->distinct()
-                    ->orderBy('unit_kerja')
-                    ->pluck('unit_kerja'),
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'total' => $paginated->total(),
+                'from' => $paginated->firstItem(),
+                'to' => $paginated->lastItem(),
             ],
         ]);
     }
 
-    /**
-     * Sinkronisasi data Kode OK dari sumber API eksternal (SIFO).
-     * Upsert berdasarkan kode_ok: data baru ditambahkan, data lama diperbarui.
-     */
-    public function sync(Request $request): JsonResponse
+    protected function transform(KodeOk $kodeOk): array
     {
-        $apiUrl = config('services.kode_ok.url');
-        $apiKey = config('services.kode_ok.key');
-
-        if (! $apiUrl) {
-            return response()->json([
-                'message' => 'URL sumber data Kode OK belum dikonfigurasi (services.kode_ok.url).',
-            ], 500);
-        }
-
-        try {
-            $response = Http::withHeaders([
-                'X-API-KEY' => $apiKey,
-            ])->timeout(30)->get($apiUrl);
-
-            if (! $response->successful()) {
-                return response()->json([
-                    'message' => "Gagal mengambil data dari sumber API (status {$response->status()}).",
-                ], 502);
-            }
-
-            $items = $response->json('data') ?? $response->json();
-
-            if (! is_array($items)) {
-                return response()->json([
-                    'message' => 'Format respons dari sumber API tidak sesuai yang diharapkan.',
-                ], 502);
-            }
-
-            $created = 0;
-            $updated = 0;
-            $now = now();
-
-            foreach ($items as $item) {
-                if (! isset($item['kode_ok'])) {
-                    continue;
-                }
-
-                $record = KodeOk::updateOrCreate(
-                    ['kode_ok' => $item['kode_ok']],
-                    [
-                        'pengawas'         => $item['pengawas'] ?? null,
-                        'unit_kerja'       => $item['unit_kerja'] ?? null,
-                        'uraian_pekerjaan' => $item['uraian_pekerjaan'] ?? null,
-                        'status'           => $item['status'] ?? true,
-                        'synced_at'        => $now,
-                    ]
-                );
-
-                $record->wasRecentlyCreated ? $created++ : $updated++;
-            }
-
-            return response()->json([
-                'message' => "Sinkronisasi selesai. {$created} data baru, {$updated} data diperbarui.",
-                'created' => $created,
-                'updated' => $updated,
-            ]);
-        } catch (Throwable $e) {
-            Log::error('Gagal sync Kode OK: ' . $e->getMessage());
-
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menghubungi sumber API. Coba lagi beberapa saat.',
-            ], 500);
-        }
+        return [
+            'id' => $kodeOk->id,
+            'kode_ok' => $kodeOk->kode_ok,
+            'uraian_kode_ok' => $kodeOk->uraian_kode_ok,
+            'status' => $kodeOk->is_active,
+            'is_manual' => $kodeOk->is_manual,
+            'jumlah_pegawai' => $kodeOk->pegawaiRelasi->count(),
+            'unit_kerja_list' => $kodeOk->unitKerjaRelasi->pluck('nama_unit_kerja')->values(),
+            'kualifikasi_list' => $kodeOk->kualifikasiRelasi->pluck('nama_kualifikasi')->values(),
+            'pegawai_list' => $kodeOk->pegawaiRelasi->map(fn($p) => [
+                'badge' => $p->badge,
+                'nama' => $p->nama,
+                'unit_kerja' => $p->unitKerja->nama_unit_kerja ?? '-',
+                'kualifikasi' => $p->kualifikasi->nama_kualifikasi ?? '-',
+            ])->values(),
+        ];
     }
 
-    /**
-     * Tambah data Kode OK baru secara manual.
-     */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'kode_ok'          => ['nullable', 'integer', 'min:1', 'unique:kode_oks,kode_ok'],
-            'unit_kerja'       => ['required', 'string', 'max:255'],
-            'uraian_pekerjaan' => ['required', 'string'],
-            'status'           => ['nullable', 'boolean'],
+        $validated = $request->validate([
+            'kode_ok' => 'nullable|string|max:20|unique:kode_oks,kode_ok',
+            'uraian_kode_ok' => 'required|string|max:255',
+            'status' => 'required|boolean',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Data yang dikirim tidak valid.',
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
+        $kodeOkValue = $validated['kode_ok'] ?? (string) ((int) (KodeOk::max('kode_ok') ?? 0) + 1);
 
-        $data = $validator->validated();
-
-        // Kode OK kosong → pakai nomor urut berikutnya
-        $data['kode_ok'] = $data['kode_ok'] ?? ((int) KodeOk::max('kode_ok') + 1);
-        $data['status'] = $data['status'] ?? true;
-
-        $kodeOk = KodeOk::create($data);
+        $kodeOk = KodeOk::create([
+            'kode_ok' => $kodeOkValue,
+            'uraian_kode_ok' => $validated['uraian_kode_ok'],
+            'is_active' => $validated['status'],
+            'is_manual' => true,
+        ]);
 
         return response()->json([
             'message' => "Kode OK #{$kodeOk->kode_ok} berhasil ditambahkan.",
-            'data'    => $kodeOk,
-        ], 201);
+            'data' => $this->transform($kodeOk),
+        ]);
     }
 
-    /**
-     * Update data Kode OK yang sudah ada. Kode OK sendiri tidak bisa diubah.
-     */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, KodeOk $kodeOk)
     {
-        $kodeOk = KodeOk::find($id);
-
-        if (! $kodeOk) {
-            return response()->json(['message' => 'Data Kode OK tidak ditemukan.'], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'unit_kerja'       => ['required', 'string', 'max:255'],
-            'uraian_pekerjaan' => ['required', 'string'],
-            'status'           => ['nullable', 'boolean'],
+        $validated = $request->validate([
+            'uraian_kode_ok' => 'required|string|max:255',
+            'status' => 'required|boolean',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Data yang dikirim tidak valid.',
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
-
-        $kodeOk->update($validator->validated());
+        $kodeOk->update([
+            'uraian_kode_ok' => $validated['uraian_kode_ok'],
+            'is_active' => $validated['status'],
+            'is_manual' => true, // sekali diedit manual, sync tidak akan menimpa lagi
+        ]);
 
         return response()->json([
             'message' => "Kode OK #{$kodeOk->kode_ok} berhasil diperbarui.",
-            'data'    => $kodeOk,
+            'data' => $this->transform($kodeOk),
         ]);
     }
 
-    /**
-     * Hapus data Kode OK.
-     */
-    public function destroy(int $id): JsonResponse
+    public function destroy(KodeOk $kodeOk)
     {
-        $kodeOk = KodeOk::find($id);
-
-        if (! $kodeOk) {
-            return response()->json(['message' => 'Data Kode OK tidak ditemukan.'], 404);
+        if (Pegawai::where('kode_ok', $kodeOk->kode_ok)->exists()) {
+            return response()->json([
+                'message' => 'Kode OK ini masih dipakai oleh pegawai aktif, tidak bisa dihapus.',
+            ], 422);
         }
 
-        $kodeOkNumber = $kodeOk->kode_ok;
         $kodeOk->delete();
 
+        return response()->json(['message' => 'Kode OK berhasil dihapus.']);
+    }
+
+    public function sync()
+    {
+        Artisan::call('sync:pegawai');
+        $output = Artisan::output();
+
         return response()->json([
-            'message' => "Kode OK #{$kodeOkNumber} berhasil dihapus.",
+            'message' => 'Data Kode OK berhasil disinkronkan dari API pegawai.',
+            'log' => $output,
         ]);
     }
 }
