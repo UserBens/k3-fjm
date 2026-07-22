@@ -2,187 +2,149 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MasterJadwalShiftTemplateExport;
 use App\Imports\MasterJadwalShiftImport;
 use App\Models\MasterJadwalShift;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MasterJadwalShiftController extends Controller
 {
-    /**
-     * Halaman utama manajemen master jadwal shift.
-     */
-    public function index(Request $request)
+    public function index()
     {
-        return view('master-jadwal-shift.index');
+        $tahunSekarang = now()->year;
+
+        // NOTE: EXTRACT(YEAR FROM ...) adalah sintaks PostgreSQL.
+        // Jika project ini jalan di SQL Server, ganti dengan: DB::raw('YEAR(tanggal) as tahun')
+        $tahunList = MasterJadwalShift::select(DB::raw('DISTINCT EXTRACT(YEAR FROM tanggal)::int as tahun'))
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
+
+        if (!$tahunList->contains($tahunSekarang)) {
+            $tahunList = $tahunList->push($tahunSekarang)->sortByDesc(fn($t) => $t)->values();
+        }
+
+        return view('master-jadwal-shift.index', compact('tahunList'));
     }
 
-    /**
-     * Data table (AJAX/JSON) dengan filter bulan & tahun, dipakai oleh halaman index.
-     */
-    public function data(Request $request)
+    public function data(Request $request): JsonResponse
     {
-        $query = MasterJadwalShift::query()
-            ->bulan($request->input('bulan'))
-            ->tahun($request->input('tahun'))
-            ->orderBy('tanggal');
+        $query = MasterJadwalShift::query();
+
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tanggal', (int) $request->input('bulan'));
+        }
+
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal', (int) $request->input('tahun'));
+        }
 
         if ($request->filled('cari_tanggal')) {
             $query->whereDate('tanggal', $request->input('cari_tanggal'));
         }
 
-        $perPage = (int) $request->input('per_page', 31);
-        $data = $query->paginate($perPage);
+        $paginated = $query->orderBy('tanggal')->paginate(15)->withQueryString();
 
-        return response()->json($data);
+        return response()->json($paginated);
     }
 
-    /**
-     * Simpan satu baris jadwal baru (form tambah manual).
-     */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $validated = $this->validateRow($request);
+        $validated = $this->validateData($request);
 
-        $exists = MasterJadwalShift::where('tanggal', $validated['tanggal'])->exists();
-        if ($exists) {
-            return response()->json([
-                'message' => 'Tanggal tersebut sudah memiliki jadwal. Silakan edit data yang ada.',
-            ], 422);
-        }
-
-        $validated['created_by'] = auth()->id();
-        $validated['updated_by'] = auth()->id();
-
-        $row = MasterJadwalShift::create($validated);
+        $jadwal = MasterJadwalShift::create($validated);
 
         return response()->json([
-            'message' => 'Jadwal berhasil ditambahkan.',
-            'data' => $row,
+            'message' => 'Jadwal shift berhasil ditambahkan.',
+            'data'    => $jadwal,
         ], 201);
     }
 
-    /**
-     * Update satu baris jadwal (form edit).
-     */
-    public function update(Request $request, MasterJadwalShift $masterJadwalShift)
+    public function update(Request $request, MasterJadwalShift $masterJadwalShift): JsonResponse
     {
-        $validated = $this->validateRow($request, $masterJadwalShift->id);
-        $validated['updated_by'] = auth()->id();
+        $validated = $this->validateData($request, $masterJadwalShift->id);
 
         $masterJadwalShift->update($validated);
 
         return response()->json([
-            'message' => 'Jadwal berhasil diperbarui.',
-            'data' => $masterJadwalShift->fresh(),
+            'message' => 'Jadwal shift berhasil diperbarui.',
+            'data'    => $masterJadwalShift,
         ]);
     }
 
-    /**
-     * Hapus satu baris jadwal.
-     */
-    public function destroy(MasterJadwalShift $masterJadwalShift)
+    public function destroy(MasterJadwalShift $masterJadwalShift): JsonResponse
     {
         $masterJadwalShift->delete();
 
-        return response()->json(['message' => 'Jadwal berhasil dihapus.']);
+        return response()->json([
+            'message' => 'Jadwal shift berhasil dihapus.',
+        ]);
     }
 
-    /**
-     * Import massal dari file Excel (.xlsx/.xls) atau CSV.
-     * Data di-upsert berdasarkan tanggal sehingga aman diimport ulang.
-     */
-    public function import(Request $request)
+    public function import(Request $request): JsonResponse
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
-        ], [
-            'file.required' => 'File Excel wajib diunggah.',
-            'file.mimes'    => 'Format file harus berupa .xlsx, .xls, atau .csv.',
-            'file.max'      => 'Ukuran file maksimal 2 MB.',
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
         ]);
 
         $import = new MasterJadwalShiftImport();
 
         try {
             Excel::import($import, $request->file('file'));
-
-            // Jika terdapat error pada beberapa baris, kirim status 207 (Multi-Status / Sukses Sebagian)
-            if (!empty($import->errors)) {
-                return response()->json([
-                    'message' => "Import selesai dengan catatan. Dibuat: {$import->totalDibuat}, Diperbarui: {$import->totalDiperbarui}.",
-                    'errors'  => $import->errors
-                ], 207);
-            }
-
+        } catch (\Throwable $e) {
             return response()->json([
-                'message' => "Import berhasil! Data baru: {$import->totalDibuat}, Diperbarui: {$import->totalDiperbarui}."
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Gagal membaca file Excel. Pastikan format kolom sesuai template.'
+                'message' => 'Gagal membaca file. Pastikan format file sesuai template.',
             ], 422);
         }
-    }
 
-    /**
-     * Download Template Excel
-     */
-    public function template()
-    {
-        // Mengunduh file template contoh dari folder storage/app/templates/
-        $path = storage_path('app/public/template_import_jadwal.xlsx');
-
-        if (!file_exists($path)) {
-            return response()->json(['message' => 'File template belum tersedia.'], 404);
+        if ($import->successCount === 0 && !empty($import->errors)) {
+            return response()->json([
+                'message' => 'Import gagal, tidak ada data yang berhasil disimpan.',
+                'errors'  => $import->errors,
+            ], 422);
         }
 
-        return response()->download($path);
+        if (!empty($import->errors)) {
+            return response()->json([
+                'message' => "{$import->successCount} baris berhasil diimport, " . count($import->errors) . ' baris dilewati.',
+                'errors'  => $import->errors,
+            ], 207);
+        }
+
+        return response()->json([
+            'message' => "{$import->successCount} baris jadwal berhasil diimport.",
+        ]);
     }
 
-    private function validateRow(Request $request, ?int $ignoreId = null): array
+    public function downloadTemplate(): RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $shiftRule = 'nullable|in:M,S,P,O';
+        return Excel::download(new MasterJadwalShiftTemplateExport(), 'template-master-jadwal-shift.xlsx');
+    }
 
+    protected function validateData(Request $request, ?int $ignoreId = null): array
+    {
         return $request->validate([
             'tanggal' => [
                 'required',
                 'date',
-                $ignoreId
-                    ? \Illuminate\Validation\Rule::unique('master_jadwal_shifts', 'tanggal')->ignore($ignoreId)
-                    : \Illuminate\Validation\Rule::unique('master_jadwal_shifts', 'tanggal'),
+                Rule::unique('master_jadwal_shifts', 'tanggal')->ignore($ignoreId),
             ],
-            'shift_a' => $shiftRule,
-            'jam_a'   => 'nullable|integer|min:0|max:24',
-            'shift_b' => $shiftRule,
-            'jam_b'   => 'nullable|integer|min:0|max:24',
-            'shift_c' => $shiftRule,
-            'jam_c'   => 'nullable|integer|min:0|max:24',
-            'shift_d' => $shiftRule,
-            'jam_d'   => 'nullable|integer|min:0|max:24',
-            'jam_nd'  => 'nullable|integer|min:0|max:24',
-            'keterangan' => 'nullable|string|max:255',
+            'shift_a'     => 'nullable|in:P,S,M,O',
+            'jam_a'       => 'nullable|integer|min:0|max:24',
+            'shift_b'     => 'nullable|in:P,S,M,O',
+            'jam_b'       => 'nullable|integer|min:0|max:24',
+            'shift_c'     => 'nullable|in:P,S,M,O',
+            'jam_c'       => 'nullable|integer|min:0|max:24',
+            'shift_d'     => 'nullable|in:P,S,M,O',
+            'jam_d'       => 'nullable|integer|min:0|max:24',
+            'jam_nd'      => 'nullable|integer|min:0|max:24',
+            'keterangan'  => 'nullable|string|max:255',
+        ], [
+            'tanggal.unique' => 'Tanggal tersebut sudah memiliki jadwal. Silakan edit data yang ada.',
         ]);
     }
-
-    // private function tahunTersedia(): array
-    // {
-    //     $tahun = MasterJadwalShift::selectRaw('DISTINCT YEAR(tanggal) as tahun')
-    //         ->orderByDesc('tahun')
-    //         ->pluck('tahun')
-    //         ->toArray();
-
-    //     // selalu sertakan tahun berjalan & tahun depan walau belum ada datanya
-    //     $sekarang = (int) date('Y');
-    //     foreach ([$sekarang, $sekarang + 1] as $y) {
-    //         if (!in_array($y, $tahun)) {
-    //             $tahun[] = $y;
-    //         }
-    //     }
-    //     rsort($tahun);
-
-    //     return $tahun;
-    // }
 }

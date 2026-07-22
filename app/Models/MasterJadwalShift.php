@@ -9,36 +9,33 @@ class MasterJadwalShift extends Model
 {
     use HasFactory;
 
-    protected $guarded = [
-        'id'
+    protected $table = 'master_jadwal_shifts';
+
+    protected $fillable = [
+        'tanggal',
+        'shift_a',
+        'jam_a',
+        'shift_b',
+        'jam_b',
+        'shift_c',
+        'jam_c',
+        'shift_d',
+        'jam_d',
+        'jam_nd',
+        'keterangan',
     ];
 
     protected $casts = [
-        'tanggal'   => 'date:Y-m-d',
-        'jam_kerja' => 'integer',
-        'jam_nd'    => 'integer',
+        'tanggal' => 'date:Y-m-d',
+        'jam_a'   => 'integer',
+        'jam_b'   => 'integer',
+        'jam_c'   => 'integer',
+        'jam_d'   => 'integer',
+        'jam_nd'  => 'integer',
     ];
 
-    // Accessor untuk mendapatkan nama shift lengkap
-    public function getNamaShiftAttribute(): string
-    {
-        return match (strtoupper($this->kode_shift)) {
-            'P'     => 'Pagi',
-            'S'     => 'Sore',
-            'M'     => 'Malam',
-            'O'     => 'Off / Libur',
-            default => $this->kode_shift,
-        };
-    }
-
-    // Scope Query Helpers
-    public function scopeRegu($query, string $regu)
-    {
-        return $query->where('regu', strtoupper($regu));
-    }
-
-    public function scopeTanggal($query, $tanggal)
-    {
-        return $query->whereDate('tanggal', $tanggal);
-    }
+    /**
+     * Kode shift yang valid.
+     */
+    public const SHIFT_CODES = ['P', 'S', 'M', 'O'];
 }

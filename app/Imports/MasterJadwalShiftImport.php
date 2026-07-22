@@ -3,97 +3,119 @@
 namespace App\Imports;
 
 use App\Models\MasterJadwalShift;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Carbon\Carbon;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class MasterJadwalShiftImport implements ToCollection, WithHeadingRow
+/**
+ * Import Master Jadwal Shift dari file .xlsx/.xls/.csv.
+ *
+ * Header wajib (case-insensitive, otomatis di-snake_case-kan oleh WithHeadingRow):
+ * TANGGAL, SHIFT_A, JAM_A, SHIFT_B, JAM_B, SHIFT_C, JAM_C, SHIFT_D, JAM_D, JAM_ND
+ *
+ * Baris dengan tanggal yang sudah ada di database akan di-upsert (update),
+ * baris dengan data tidak valid akan dilewati dan dicatat di $errors.
+ */
+class MasterJadwalShiftImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
 {
-    // Properti untuk menampung statistik & error
-    public int $totalDibuat = 0;
-    public int $totalDiperbarui = 0;
+    public int $successCount = 0;
+
+    /** @var string[] */
     public array $errors = [];
 
-    /**
-     * Memproses setiap baris dari file Excel
-     */
-    public function collection(Collection $rows)
+    protected const SHIFT_CODES = ['P', 'S', 'M', 'O'];
+    protected const SHIFT_KOLOM = ['shift_a', 'shift_b', 'shift_c', 'shift_d'];
+    protected const JAM_KOLOM   = ['jam_a', 'jam_b', 'jam_c', 'jam_d', 'jam_nd'];
+
+    public function collection(Collection $rows): void
     {
         foreach ($rows as $index => $row) {
-            // Abaikan baris jika kolom tanggal kosong
-            if (empty($row['tanggal'])) {
+            // +1 karena heading row, +1 karena index dimulai dari 0
+            $baris = $index + 2;
+
+            $tanggalRaw = trim((string) ($row['tanggal'] ?? ''));
+            if ($tanggalRaw === '') {
+                $this->errors[] = "Baris {$baris}: kolom TANGGAL kosong, baris dilewati.";
                 continue;
             }
 
-            try {
-                // 1. Konversi Format Tanggal Excel / String ke Format Database (Y-m-d)
-                $tanggal = $this->parseTanggal($row['tanggal']);
-
-                // 2. Pemetaan Data Regu A, B, C, D dari Kolom Excel
-                $regus = [
-                    'A' => ['shift' => $row['shift_a'] ?? null, 'jam' => $row['jam_a'] ?? 0],
-                    'B' => ['shift' => $row['shift_b'] ?? null, 'jam' => $row['jam_b'] ?? 0],
-                    'C' => ['shift' => $row['shift_c'] ?? null, 'jam' => $row['jam_c'] ?? 0],
-                    'D' => ['shift' => $row['shift_d'] ?? null, 'jam' => $row['jam_d'] ?? 0],
-                ];
-
-                $jamNd = $row['jam_nd'] ?? 0;
-
-                // 3. Simpan/Update Data per Regu ke Database
-                foreach ($regus as $regu => $data) {
-                    if (empty($data['shift'])) {
-                        continue;
-                    }
-
-                    $shift = strtoupper(trim($data['shift']));
-                    // Jam Night Differential (ND) hanya diisi untuk shift Malam ('M')
-                    $nd = ($shift === 'M') ? $jamNd : 0;
-
-                    $existing = MasterJadwalShift::where('tanggal', $tanggal)
-                        ->where('regu', $regu)
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update([
-                            'kode_shift' => $shift,
-                            'jam_kerja'  => $data['jam'],
-                            'jam_nd'     => $nd
-                        ]);
-                        $this->totalDiperbarui++;
-                    } else {
-                        MasterJadwalShift::create([
-                            'tanggal'    => $tanggal,
-                            'regu'       => $regu,
-                            'kode_shift' => $shift,
-                            'jam_kerja'  => $data['jam'],
-                            'jam_nd'     => $nd
-                        ]);
-                        $this->totalDibuat++;
-                    }
-                }
-            } catch (\Exception $e) {
-                // Catat error jika baris gagal diproses (Baris +2 karena header ada di baris 1)
-                $barisKe = $index + 2; 
-                $this->errors[] = "Baris {$barisKe}: " . $e->getMessage();
+            $tanggal = $this->parseTanggal($tanggalRaw);
+            if (!$tanggal) {
+                $this->errors[] = "Baris {$baris}: format tanggal '{$tanggalRaw}' tidak valid (gunakan dd/mm/yyyy), baris dilewati.";
+                continue;
             }
+
+            $data = [];
+            $shiftInvalid = [];
+
+            foreach (self::SHIFT_KOLOM as $kolom) {
+                $original = $row[$kolom] ?? null;
+                $normal = $this->normalizeShift($original);
+
+                if ($original !== null && trim((string) $original) !== '' && $normal === null) {
+                    $shiftInvalid[] = strtoupper($kolom) . " ('{$original}')";
+                }
+
+                $data[$kolom] = $normal;
+            }
+
+            if (!empty($shiftInvalid)) {
+                $this->errors[] = "Baris {$baris} ({$tanggalRaw}): nilai shift tidak valid pada " . implode(', ', $shiftInvalid) . ' — harus P/S/M/O, baris dilewati.';
+                continue;
+            }
+
+            foreach (self::JAM_KOLOM as $kolom) {
+                $data[$kolom] = $this->normalizeJam($row[$kolom] ?? 0);
+            }
+
+            MasterJadwalShift::updateOrCreate(
+                ['tanggal' => $tanggal->toDateString()],
+                $data
+            );
+
+            $this->successCount++;
         }
     }
 
-    /**
-     * Helper Parser Tanggal (Menangani Serial Number Excel & String dd/mm/yyyy)
-     */
-    private function parseTanggal($val): string
+    protected function parseTanggal(string $value): ?Carbon
     {
-        if (is_numeric($val)) {
-            return Date::excelToDateTimeObject($val)->format('Y-m-d');
-        }
+        $value = str_replace('-', '/', trim($value));
 
         try {
-            return Carbon::createFromFormat('d/m/Y', trim($val))->format('Y-m-d');
-        } catch (\Exception $e) {
-            return Carbon::parse($val)->format('Y-m-d');
+            if (preg_match('#^\d{1,2}/\d{1,2}/\d{4}$#', $value)) {
+                return Carbon::createFromFormat('d/m/Y', $value)->startOfDay();
+            }
+
+            // fallback: dukung tanggal Excel numeric/format lain
+            return Carbon::parse($value)->startOfDay();
+        } catch (\Throwable) {
+            return null;
         }
+    }
+
+    protected function normalizeShift(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $v = strtoupper(trim((string) $value));
+
+        if ($v === '') {
+            return null;
+        }
+
+        return in_array($v, self::SHIFT_CODES, true) ? $v : null;
+    }
+
+    protected function normalizeJam(mixed $value): int
+    {
+        if ($value === null || trim((string) $value) === '') {
+            return 0;
+        }
+
+        return max(0, min(24, (int) $value));
     }
 }
