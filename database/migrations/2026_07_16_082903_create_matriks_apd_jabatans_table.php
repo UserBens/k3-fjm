@@ -47,16 +47,17 @@ return new class extends Migration
             $table->string('potensi_bahaya_aktivitas')->nullable();
             $table->string('jenis_bahaya')->nullable();
             $table->text('konsekuensi_dampak')->nullable();
-            $table->unsignedTinyInteger('l_awal')->nullable();
-            $table->unsignedTinyInteger('s_awal')->nullable();
+            // $table->unsignedTinyInteger('l_awal')->nullable();
+            // $table->unsignedTinyInteger('s_awal')->nullable();
             $table->text('pengendalian_eksisting')->nullable();
             $table->text('pengendalian_tambahan')->nullable();
-            $table->unsignedTinyInteger('l_res')->nullable();
-            $table->unsignedTinyInteger('s_res')->nullable();
+            // $table->unsignedTinyInteger('l_res')->nullable();
+            // $table->unsignedTinyInteger('s_res')->nullable();
 
             $table->string('pic')->nullable();
-            $table->enum('status', ['Open', 'Close'])->default('Open');
-
+            // $table->enum('status', ['Open', 'Close'])->default('Open');
+            $table->enum('tingkat_risiko_awal', ['RENDAH', 'SEDANG', 'TINGGI', 'EKSTRIM'])->nullable();
+            $table->enum('tingkat_risiko_residual', ['RENDAH', 'SEDANG', 'TINGGI', 'EKSTRIM'])->nullable();
             $table->timestamps();
         });
     }

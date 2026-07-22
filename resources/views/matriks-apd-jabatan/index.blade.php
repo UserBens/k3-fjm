@@ -902,11 +902,6 @@
                         <input type="text" id="fSearch" placeholder="Cari kode OK, nama pekerjaan, jabatan..."
                             oninput="onFilterChange()" />
                     </div>
-                    <select id="fStatus" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status</option>
-                        <option value="Open">Open</option>
-                        <option value="Close">Close</option>
-                    </select>
                     <button class="btn-outline" onclick="resetFilter()">Reset</button>
                 </div>
 
@@ -926,7 +921,6 @@
                                 <th>APD Wajib</th>
                                 <th class="risk-col" style="display:none;">Risiko Awal</th>
                                 <th class="risk-col" style="display:none;">Risiko Residual</th>
-                                <th>Status</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
@@ -981,36 +975,59 @@
 
                 <div class="form-section-title">Analisis Risiko (Terintegrasi HIRADC) — opsional</div>
                 <div class="form-grid">
-                    <div class="form-group span-2"><label class="form-label">Potensi Bahaya / Aktivitas</label><input
-                            type="text" id="fPotensiBahaya" class="form-input"
-                            placeholder="Terangkat beban berat → manual handling" /></div>
-                    <div class="form-group"><label class="form-label">Jenis Bahaya</label><input type="text"
-                            id="fJenisBahaya" class="form-input" placeholder="Bahaya Ergonomi" /></div>
-                    <div class="form-group"><label class="form-label">Konsekuensi/Dampak</label><input type="text"
-                            id="fKonsekuensi" class="form-input" placeholder="Nyeri punggung/MSDs" /></div>
-                    <div class="form-group"><label class="form-label">Kemungkinan Awal (L)</label><input
-                            type="number" min="1" max="5" id="fLAwal" class="form-input"
-                            oninput="recalcRisk()" /></div>
-                    <div class="form-group"><label class="form-label">Keparahan Awal (S)</label><input type="number"
-                            min="1" max="5" id="fSAwal" class="form-input"
-                            oninput="recalcRisk()" /></div>
-                    <div class="form-group span-2"><label class="form-label">Tingkat Risiko Awal</label>
-                        <div id="previewAwal" class="risk-badge-preview sp-gray">—</div>
+                    <div class="form-group span-2">
+                        <label class="form-label">Potensi Bahaya / Aktivitas</label>
+                        <input type="text" id="fPotensiBahaya" class="form-input"
+                            placeholder="Terangkat beban berat → manual handling" />
                     </div>
-                    <div class="form-group span-2"><label class="form-label">Pengendalian Eksisting</label>
+                    <div class="form-group">
+                        <label class="form-label">Jenis Bahaya</label>
+                        <input type="text" id="fJenisBahaya" class="form-input" placeholder="Bahaya Ergonomi" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Konsekuensi/Dampak</label>
+                        <input type="text" id="fKonsekuensi" class="form-input"
+                            placeholder="Nyeri punggung/MSDs" />
+                    </div>
+                    <div class="form-group span-2">
+                        <label class="form-label">Tingkat Risiko Awal</label>
+                        <select id="fTingkatRisikoAwal" class="form-select"
+                            onchange="updateRiskPreview('fTingkatRisikoAwal','previewAwal')">
+                            <option value="">— Pilih Tingkat Risiko —</option>
+                            <option value="RENDAH">Rendah</option>
+                            <option value="SEDANG">Sedang</option>
+                            <option value="TINGGI">Tinggi</option>
+                            <option value="EKSTRIM">Ekstrim</option>
+                        </select>
+                        <div id="previewAwal" class="risk-badge-preview sp-gray" style="margin-top:8px;">—</div>
+                    </div>
+                    <div class="form-group span-2">
+                        <label class="form-label">Pengendalian Eksisting</label>
                         <textarea id="fPengendalianEksisting" class="form-textarea" rows="2"></textarea>
                     </div>
-                    <div class="form-group span-2"><label class="form-label">Pengendalian Tambahan</label>
+                    <div class="form-group span-2">
+                        <label class="form-label">Pengendalian Tambahan</label>
                         <textarea id="fPengendalianTambahan" class="form-textarea" rows="2"></textarea>
                     </div>
-                    <div class="form-group"><label class="form-label">Kemungkinan Residual (L)</label><input
-                            type="number" min="1" max="5" id="fLRes" class="form-input"
-                            oninput="recalcRisk()" /></div>
-                    <div class="form-group"><label class="form-label">Keparahan Residual (S)</label><input
-                            type="number" min="1" max="5" id="fSRes" class="form-input"
-                            oninput="recalcRisk()" /></div>
-                    <div class="form-group span-2"><label class="form-label">Tingkat Risiko Residual</label>
-                        <div id="previewRes" class="risk-badge-preview sp-gray">—</div>
+                    <div class="form-group span-2">
+                        <label class="form-label">Tingkat Risiko Residual</label>
+                        <select id="fTingkatRisikoResidual" class="form-select"
+                            onchange="updateRiskPreview('fTingkatRisikoResidual','previewRes')">
+                            <option value="">— Pilih Tingkat Risiko —</option>
+                            <option value="RENDAH">Rendah</option>
+                            <option value="SEDANG">Sedang</option>
+                            <option value="TINGGI">Tinggi</option>
+                            <option value="EKSTRIM">Ekstrim</option>
+                        </select>
+                        <div id="previewRes" class="risk-badge-preview sp-gray" style="margin-top:8px;">—</div>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Lainnya</div>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label class="form-label">PIC</label>
+                        <input type="text" id="fPic" class="form-input" placeholder="HSE Dept" />
                     </div>
                 </div>
 
@@ -1018,12 +1035,6 @@
                 <div class="form-grid">
                     <div class="form-group"><label class="form-label">PIC</label><input type="text"
                             id="fPic" class="form-input" placeholder="HSE Dept" /></div>
-                    <div class="form-group"><label class="form-label">Status</label>
-                        <select id="fStatusForm" class="form-select">
-                            <option value="Open">Open</option>
-                            <option value="Close">Close</option>
-                        </select>
-                    </div>
                 </div>
             </div>
             <div class="modal-actions" style="margin-top:16px;">
@@ -1058,7 +1069,46 @@
         const STORE_ENDPOINT = "{{ route('matriks-apd-jabatan.store') }}";
         const BASE_ENDPOINT = "{{ url('/matriks-apd-jabatan') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
+        const RISK_LEVELS = {
+            RENDAH: {
+                cls: 'sp-green',
+                emoji: '✅',
+                label: 'RENDAH'
+            },
+            SEDANG: {
+                cls: 'sp-amber',
+                emoji: '⚠️',
+                label: 'SEDANG'
+            },
+            TINGGI: {
+                cls: 'sp-red',
+                emoji: '🔴',
+                label: 'TINGGI'
+            },
+            EKSTRIM: {
+                cls: 'sp-red',
+                emoji: '🚨',
+                label: 'EKSTRIM'
+            },
+        };
 
+        function riskBadge(value) {
+            const r = RISK_LEVELS[value];
+            if (!r) return '<span class="status-pill sp-gray">—</span>';
+            return `<span class="status-pill ${r.cls}">${r.emoji} ${r.label}</span>`;
+        }
+
+        function riskBadgePreview(value) {
+            const r = RISK_LEVELS[value];
+            if (!r) return '<div class="risk-badge-preview sp-gray">—</div>';
+            return `<div class="risk-badge-preview ${r.cls}">${r.emoji} ${r.label}</div>`;
+        }
+
+        function updateRiskPreview(selectId, previewId) {
+            const value = document.getElementById(selectId).value;
+            document.getElementById(previewId).outerHTML =
+                riskBadgePreview(value).replace('<div', `<div id="${previewId}"`);
+        }
         // Samakan urutan & label persis dgn MatriksApdJabatan::APD_COLUMNS di Model
         const APD_COLUMNS = {
             helm_safety: 'Helm Safety',
@@ -1177,18 +1227,14 @@
 
         function resetFilter() {
             document.getElementById('fSearch').value = '';
-            document.getElementById('fStatus').value = '';
             onFilterChange();
         }
 
         function applyFilter() {
             const search = document.getElementById('fSearch').value.toLowerCase().trim();
-            const status = document.getElementById('fStatus').value;
             filteredData = allData.filter(row => {
-                const matchSearch = !search || [row.kode_ok, row.nama_pekerjaan, row.jabatan_posisi].join(' ')
+                return !search || [row.kode_ok, row.nama_pekerjaan, row.jabatan_posisi].join(' ')
                     .toLowerCase().includes(search);
-                const matchStatus = !status || row.status === status;
-                return matchSearch && matchStatus;
             });
             render();
         }
@@ -1224,9 +1270,8 @@
                             <div class="td-name-sub">${escapeHtml(row.nama_pekerjaan)}</div>
                         </td>
                         <td style="max-width:220px;white-space:normal;">${apdWajibSummary(row.apd)}</td>
-                        <td class="risk-col" style="display:${showRiskCols?'':'none'};">${riskBadge(row.risiko_awal)}</td>
-                        <td class="risk-col" style="display:${showRiskCols?'':'none'};">${riskBadge(row.risiko_residual)}</td>
-                        <td><span class="status-pill ${statusPillClass(row.status)}">${escapeHtml(row.status)}</span></td>
+                        <td class="risk-col" style="display:${showRiskCols?'':'none'};">${riskBadge(row.tingkat_risiko_awal)}</td>
+                        <td class="risk-col" style="display:${showRiskCols?'':'none'};">${riskBadge(row.tingkat_risiko_residual)}</td>
                         <td style="text-align:center;white-space:nowrap;">
                             <button class="btn-row-action" onclick='openItemModal(${JSON.stringify(row).replace(/'/g,"&#39;")})'>
                                 <svg style="width:14px;height:14px;color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -1329,15 +1374,14 @@
             document.getElementById('fPotensiBahaya').value = row?.potensi_bahaya_aktivitas || '';
             document.getElementById('fJenisBahaya').value = row?.jenis_bahaya || '';
             document.getElementById('fKonsekuensi').value = row?.konsekuensi_dampak || '';
-            document.getElementById('fLAwal').value = row?.l_awal || '';
-            document.getElementById('fSAwal').value = row?.s_awal || '';
+            document.getElementById('fTingkatRisikoAwal').value = row?.tingkat_risiko_awal || '';
             document.getElementById('fPengendalianEksisting').value = row?.pengendalian_eksisting || '';
             document.getElementById('fPengendalianTambahan').value = row?.pengendalian_tambahan || '';
-            document.getElementById('fLRes').value = row?.l_res || '';
-            document.getElementById('fSRes').value = row?.s_res || '';
+            document.getElementById('fTingkatRisikoResidual').value = row?.tingkat_risiko_residual || '';
             document.getElementById('fPic').value = row?.pic || '';
-            document.getElementById('fStatusForm').value = row?.status || 'Open';
-            recalcRisk();
+
+            updateRiskPreview('fTingkatRisikoAwal', 'previewAwal');
+            updateRiskPreview('fTingkatRisikoResidual', 'previewRes');
 
             document.getElementById('itemModalOverlay').classList.add('open');
         }
@@ -1365,11 +1409,6 @@
         }
 
         async function submitItem() {
-            // validasi skala L/S sebelum kirim ke server
-            if (!validRiskScale('fLAwal', 'Kemungkinan Awal (L)')) return;
-            if (!validRiskScale('fSAwal', 'Keparahan Awal (S)')) return;
-            if (!validRiskScale('fLRes', 'Kemungkinan Residual (L)')) return;
-            if (!validRiskScale('fSRes', 'Keparahan Residual (S)')) return;
             const btn = document.getElementById('btnSubmit');
             const original = btn.textContent;
             btn.disabled = true;
@@ -1386,14 +1425,11 @@
                 potensi_bahaya_aktivitas: document.getElementById('fPotensiBahaya').value.trim() || null,
                 jenis_bahaya: document.getElementById('fJenisBahaya').value.trim() || null,
                 konsekuensi_dampak: document.getElementById('fKonsekuensi').value.trim() || null,
-                l_awal: document.getElementById('fLAwal').value || null,
-                s_awal: document.getElementById('fSAwal').value || null,
+                tingkat_risiko_awal: document.getElementById('fTingkatRisikoAwal').value || null,
                 pengendalian_eksisting: document.getElementById('fPengendalianEksisting').value.trim() || null,
                 pengendalian_tambahan: document.getElementById('fPengendalianTambahan').value.trim() || null,
-                l_res: document.getElementById('fLRes').value || null,
-                s_res: document.getElementById('fSRes').value || null,
+                tingkat_risiko_residual: document.getElementById('fTingkatRisikoResidual').value || null,
                 pic: document.getElementById('fPic').value.trim() || null,
-                status: document.getElementById('fStatusForm').value,
             };
 
             const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;

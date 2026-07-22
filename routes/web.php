@@ -14,6 +14,7 @@ use App\Http\Controllers\DcuController;
 use App\Http\Controllers\HiradcController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\KartuStokController;
+use App\Http\Controllers\KodeOkController;
 use App\Http\Controllers\KodeOkReferensiController;
 use App\Http\Controllers\LeadingDashboardController;
 use App\Http\Controllers\LeadingInputController;
@@ -66,6 +67,16 @@ Route::middleware(['auth.custom'])->group(function () {
 
     Route::get('/memo-kib', [MemoKibController::class, 'index'])->name('memo-kib.index');
     Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
+
+    // MASTER KODE OK
+    Route::prefix('kode-ok')->group(function () {
+        Route::get('/', [KodeOkController::class, 'index'])->name('kode-ok.index');
+        Route::get('/data', [KodeOkController::class, 'api'])->name('kode-ok.api');
+        Route::post('/sync', [KodeOkController::class, 'sync'])->name('kode-ok.sync');
+        Route::post('/', [KodeOkController::class, 'store'])->name('kode-ok.store');
+        Route::put('/{id}', [KodeOkController::class, 'update']);
+        Route::delete('/{id}', [KodeOkController::class, 'destroy']);
+    });
 
     Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
     Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
@@ -212,7 +223,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
     Route::get('rekap-medis', [MonitoringkpiController::class, 'indexRekapMedis'])->name('rekap-medis.index');
 
-    // JKA % RECORD INSIDEN
+    // JKA & RECORD INSIDEN
     Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
 
     // LPI KEJADIAN

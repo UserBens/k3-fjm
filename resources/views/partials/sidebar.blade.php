@@ -272,8 +272,8 @@
             $datatenagaActive =
                 request()->routeIs('tenaga.*') ||
                 request()->routeIs('memo-kib.*') ||
-                request()->routeIs('safety-officer.*') ||
-                request()->routeIs('pengawas.*');
+                request()->routeIs('pengawas.*') ||
+                request()->routeIs('kode-ok.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
@@ -313,6 +313,11 @@
             <a class="nav-link {{ request()->routeIs('safety-officer.*') ? 'active' : '' }}"
                 href="{{ route('safety-officer.index') }}">
                 <span class="nav-label">Data Safety Officer</span>
+            </a>
+          
+            <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
+                href="{{ route('kode-ok.index') }}">
+                <span class="nav-label">Master Kode OK</span>
             </a>
 
         </div>

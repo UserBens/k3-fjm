@@ -32,7 +32,7 @@ class MatriksApdJabatan extends Model
 
     public const APD_STATUS = ['WAJIB', 'KONDISIONAL', 'TIDAK'];
 
-    public const STATUS = ['Open', 'Close'];
+    public const TINGKAT_RISIKO = ['RENDAH', 'SEDANG', 'TINGGI', 'EKSTRIM'];
 
     protected $guarded = ['id'];
 
@@ -47,15 +47,5 @@ class MatriksApdJabatan extends Model
             ->keys()
             ->filter(fn($col) => $this->{$col} === 'WAJIB')
             ->count();
-    }
-
-    public function getRisikoAwalAttribute(): ?array
-    {
-        return Hiradc::tingkatRisiko($this->l_awal, $this->s_awal);
-    }
-
-    public function getRisikoResidualAttribute(): ?array
-    {
-        return Hiradc::tingkatRisiko($this->l_res, $this->s_res);
     }
 }

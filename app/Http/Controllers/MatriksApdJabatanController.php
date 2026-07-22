@@ -34,16 +34,11 @@ class MatriksApdJabatanController extends Controller
                     'potensi_bahaya_aktivitas' => $m->potensi_bahaya_aktivitas,
                     'jenis_bahaya' => $m->jenis_bahaya,
                     'konsekuensi_dampak' => $m->konsekuensi_dampak,
-                    'l_awal' => $m->l_awal,
-                    's_awal' => $m->s_awal,
-                    'risiko_awal' => $m->risiko_awal,
+                    'tingkat_risiko_awal' => $m->tingkat_risiko_awal,
                     'pengendalian_eksisting' => $m->pengendalian_eksisting,
                     'pengendalian_tambahan' => $m->pengendalian_tambahan,
-                    'l_res' => $m->l_res,
-                    's_res' => $m->s_res,
-                    'risiko_residual' => $m->risiko_residual,
+                    'tingkat_risiko_residual' => $m->tingkat_risiko_residual,
                     'pic' => $m->pic,
-                    'status' => $m->status,
                 ];
             });
 
@@ -168,14 +163,11 @@ class MatriksApdJabatanController extends Controller
             'potensi_bahaya_aktivitas' => 'nullable|string|max:150',
             'jenis_bahaya' => 'nullable|string|max:100',
             'konsekuensi_dampak' => 'nullable|string',
-            'l_awal' => 'nullable|integer|min:1|max:5',
-            's_awal' => 'nullable|integer|min:1|max:5',
+            'tingkat_risiko_awal' => 'nullable|in:RENDAH,SEDANG,TINGGI,EKSTRIM',
             'pengendalian_eksisting' => 'nullable|string',
             'pengendalian_tambahan' => 'nullable|string',
-            'l_res' => 'nullable|integer|min:1|max:5',
-            's_res' => 'nullable|integer|min:1|max:5',
+            'tingkat_risiko_residual' => 'nullable|in:RENDAH,SEDANG,TINGGI,EKSTRIM',
             'pic' => 'nullable|string|max:100',
-            'status' => 'required|in:Open,Close',
         ]));
     }
 }

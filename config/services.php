@@ -64,4 +64,9 @@ return [
         'url' => env('KUALIFIKASI_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/kualifikasi'),
         'key' => env('KUALIFIKASI_API_KEY', env('PEGAWAI_API_KEY')),
     ],
+
+    'kode_ok' => [
+        'url' => env('KODE_OK_API_URL', 'https://mobile.fokusjasamitra.com/api/erp/api/kode-ok'),
+        'key' => env('KODE_OK_API_KEY', env('PEGAWAI_API_KEY')),
+    ],
 ];
