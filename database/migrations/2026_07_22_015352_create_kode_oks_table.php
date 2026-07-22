@@ -13,13 +13,17 @@ return new class extends Migration
     {
         Schema::create('kode_oks', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_ok')->unique();
-            $table->string('uraian_kode_ok')->nullable();
-            $table->boolean('is_active')->default(true);
-            // true = dibuat/di-edit manual oleh user lewat halaman, false = murni hasil sync
-            $table->boolean('is_manual')->default(false);
-            $table->timestamp('last_sync')->nullable();
+            $table->string('kode_ok');
+            $table->string('pengawas')->nullable();
+            $table->string('unit_kerja')->nullable();
+            $table->text('uraian_pekerjaan')->nullable();
+            $table->boolean('status')->default(true)->comment('1 = aktif, 0 = nonaktif');
+            $table->timestamp('synced_at')->nullable()->comment('Waktu terakhir data ini ditarik dari sumber sync');
             $table->timestamps();
+
+            $table->index('unit_kerja');
+            $table->index('pengawas');
+            $table->index('status');
         });
     }
 

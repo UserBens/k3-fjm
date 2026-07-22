@@ -31,6 +31,7 @@ use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawasController;
+use App\Http\Controllers\PermintaanPembelianController;
 use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\ReferensiKodeOkController;
@@ -397,7 +398,14 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{matriksApdJabatan}', [MatriksApdJabatanController::class, 'destroy'])->name('destroy');
     });
 
-
+    // PERMINTAAN PEMBELIAN
+    Route::prefix('permintaan-pembelian')->name('permintaan-pembelian.')->group(function () {
+        Route::get('/', [PermintaanPembelianController::class, 'index'])->name('index');
+        Route::get('/data', [PermintaanPembelianController::class, 'data'])->name('data');
+        Route::post('/', [PermintaanPembelianController::class, 'store'])->name('store');
+        Route::put('/{item}', [PermintaanPembelianController::class, 'update'])->name('update');
+        Route::delete('/{item}', [PermintaanPembelianController::class, 'destroy'])->name('destroy');
+    });
 
     // MONITORING ALBER
     Route::get('alber', [AlatBeratController::class, 'index'])->name('alber.index');

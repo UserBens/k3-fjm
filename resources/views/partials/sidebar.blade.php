@@ -688,6 +688,7 @@
                 request()->routeIs('master-stok-alkes.*') ||
                 request()->routeIs('penggunaan-alkes.*') ||
                 request()->routeIs('kartu-stok.*') ||
+                request()->routeIs('permintaan-pembelian.*') ||
                 request()->routeIs('pemetaan-apd.*') ||
                 request()->routeIs('pusat-reminder.*') ||
                 request()->routeIs('matriks-apd.*') ||
@@ -755,6 +756,11 @@
             <a class="nav-link {{ request()->routeIs('kartu-stok.*') ? 'active' : '' }}"
                 href="{{ route('kartu-stok.index') }}">
                 <span class="nav-label">Kartu Stok</span>
+            </a>
+           
+            <a class="nav-link {{ request()->routeIs('permintaan-pembelian.*') ? 'active' : '' }}"
+                href="{{ route('permintaan-pembelian.index') }}">
+                <span class="nav-label">Permintaan Pembelian</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('pemetaan-apd.*') ? 'active' : '' }}"
