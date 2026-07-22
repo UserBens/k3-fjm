@@ -564,6 +564,12 @@ class SyncPegawaiCommand extends Command
         $kodeOkList = KodeOk::all();
 
         foreach ($kodeOkList as $kodeOk) {
+            // Kode OK yang relasinya sudah diatur manual lewat halaman
+            // tidak boleh ditimpa ulang oleh hasil sync otomatis.
+            if ($kodeOk->is_manual) {
+                continue;
+            }
+
             $pegawaiList = Pegawai::where('kode_ok', $kodeOk->kode_ok)
                 ->where('is_active', 1)
                 ->get();

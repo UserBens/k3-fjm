@@ -12,19 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kode_oks', function (Blueprint $table) {
-            // $table->id();
-            // $table->unsignedInteger('kode_ok')->unique()->comment('Nomor/kode OK dari sumber SIFO');
-            // $table->string('pengawas')->nullable();
-            // $table->string('unit_kerja')->nullable();
-            // $table->text('uraian_pekerjaan')->nullable();
-            // $table->boolean('status')->default(true)->comment('1 = aktif, 0 = nonaktif');
-            // $table->timestamp('synced_at')->nullable()->comment('Waktu terakhir data ini ditarik dari sumber sync');
-            // $table->timestamps();
-
-            // $table->index('unit_kerja');
-            // $table->index('pengawas');
-            // $table->index('status');
-
             $table->id();
             $table->string('kode_ok')->unique();
             $table->string('uraian_kode_ok')->nullable();
