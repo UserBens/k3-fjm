@@ -5,36 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Hiradc extends Model
 {
     use HasFactory;
-    protected $table = 'hiradcs';   // ← perbaiki jadi 'hiradcs' sesuai nama tabel asli
+
+    protected $table = 'hiradcs';
 
     protected $fillable = [
-        'kode_ok',
-        'area_lokasi',
-        'aktivitas_pekerjaan',
+        'no_hiradc',
+        'judul_pekerjaan',
+        'kategori_pekerjaan',
         'potensi_bahaya',
-        'jenis_bahaya',
         'konsekuensi_dampak',
         'l_awal',
         's_awal',
-        'pengendalian_ada',
         'apd_wajib',
-        'pengendalian_tambahan',
+        'apd_khusus',
+        'pengendalian_utama',
         'l_sesudah',
         's_sesudah',
         'pic',
         'status',
+        'dokumen',
+        'dokumen_hiradc',
     ];
 
     public const STATUS = ['Open', 'Close'];
 
-    /**
-     * Hitung tingkat risiko berdasar Matriks Risiko FJM:
-     * 1-4 RENDAH | 5-12 SEDANG | 15-25 TINGGI | >25 EKSTRIM
-     */
     public static function tingkatRisiko(?int $l, ?int $s): ?array
     {
         if (is_null($l) || is_null($s)) {
@@ -58,6 +57,11 @@ class Hiradc extends Model
     public function getRisikoSesudahAttribute(): ?array
     {
         return self::tingkatRisiko($this->l_sesudah, $this->s_sesudah);
+    }
+
+    public function getDokumenUrlAttribute(): ?string
+    {
+        return $this->dokumen ? Storage::disk('public')->url($this->dokumen) : null;
     }
 
     public function matriksApd()

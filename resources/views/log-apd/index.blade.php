@@ -1151,6 +1151,165 @@
             font-weight: 700;
             margin: 0 4px 4px 0;
         }
+
+        .picker-wrap {
+            position: relative;
+        }
+
+        .picker-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            z-index: 20;
+        }
+
+        .picker-dropdown.open {
+            display: block;
+        }
+
+        .picker-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .picker-item:hover {
+            background: #F0F4FF;
+        }
+
+        .picker-item-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .picker-selected-chip {
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            background: #F0F4FF;
+            font-size: 12px;
+        }
+
+        .picker-selected-chip .chip-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-selected-chip .chip-sub {
+            font-size: 10.5px;
+            color: #64748B;
+        }
+
+        .picker-clear-btn {
+            background: none;
+            border: none;
+            color: #D0021B;
+            cursor: pointer;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        /* ══════ Checklist dropdown multi-select (APD Wajib / Khusus) ══════ */
+        .ms-dropdown {
+            position: relative;
+        }
+
+        .ms-dropdown-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12.5px;
+            color: #1A1D2E;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .ms-dropdown-btn:hover {
+            border-color: #94A3B8;
+        }
+
+        .ms-dropdown-panel {
+            display: none;
+            position: absolute;
+            z-index: 40;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 260px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .ms-dropdown-panel.open {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ms-search {
+            border: none;
+            border-bottom: 1px solid #E2E8F0;
+            padding: 9px 12px;
+            font-size: 12.5px;
+            outline: none;
+            width: 100%;
+        }
+
+        .ms-options {
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .ms-option-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            font-size: 12.5px;
+            color: #1A1D2E;
+            cursor: pointer;
+        }
+
+        .ms-option-row:hover {
+            background: #F8FAFC;
+        }
+
+        .ms-option-row input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .ms-option-empty {
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+        }
     </style>
 </head>
 
@@ -1327,7 +1486,22 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Kode OK</label>
-                        <input type="text" id="fKodeOk" class="form-input" placeholder="PCS 01" />
+                        <div class="ms-dropdown" id="kodeOkWrap">
+                            <button type="button" class="ms-dropdown-btn" onclick="toggleKodeOkDropdown()">
+                                <span id="kodeOkLabel">Pilih Kode OK...</span>
+                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="ms-dropdown-panel" id="kodeOkPanel">
+                                <input type="text" class="ms-search" placeholder="Cari Kode OK..."
+                                    oninput="filterKodeOkOptions(this.value)" />
+                                <div class="ms-options" id="kodeOkOptionsList"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fKodeOk" />
                     </div>
                 </div>
 
@@ -1599,6 +1773,7 @@
         const APD_OPTIONS_ENDPOINT = "{{ route('log-apd.apd-options') }}";
         const CARI_PEGAWAI_ENDPOINT = "{{ route('log-apd.cari-pegawai') }}";
         const BASE_ENDPOINT = "{{ url('/log-apd') }}";
+        const KODE_OK_OPTIONS_ENDPOINT = "{{ route('log-apd.kode-ok-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const JENIS_TRANSAKSI_OPTIONS = @json(\App\Models\LogApd::JENIS_TRANSAKSI);
@@ -1907,6 +2082,72 @@
             }
         }
 
+        let kodeOkOptionsCache = [];
+
+        async function loadKodeOkOptions() {
+            if (kodeOkOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(KODE_OK_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                kodeOkOptionsCache = json.data || [];
+            } catch (e) {
+                // Diamkan — field tetap bisa dikosongkan tanpa master data
+            }
+        }
+
+        function renderKodeOkOptions(term = '') {
+            const container = document.getElementById('kodeOkOptionsList');
+            const term_ = term.toLowerCase();
+            const list = kodeOkOptionsCache.filter(k =>
+                k.kode_ok.toLowerCase().includes(term_) ||
+                (k.unit_kerja || '').toLowerCase().includes(term_)
+            );
+
+            container.innerHTML = list.length === 0 ?
+                `<div class="ms-option-empty">Kode OK tidak ditemukan.</div>` :
+                list.map(k => `
+            <label class="ms-option-row">
+                <input type="radio" name="kodeOkRadio" value="${k.id}"
+                    onchange='selectKodeOk(${JSON.stringify(k).replace(/'/g, "&#39;")})' />
+                <span>${escapeHtml(k.kode_ok)} <span style="color:#94A3B8;">(${escapeHtml(k.unit_kerja || '-')})</span></span>
+            </label>
+        `).join('');
+        }
+
+        function filterKodeOkOptions(term) {
+            renderKodeOkOptions(term);
+        }
+
+        function selectKodeOk(k) {
+            document.getElementById('fKodeOk').value = k.kode_ok;
+            document.getElementById('kodeOkLabel').textContent = k.kode_ok;
+            document.getElementById('kodeOkPanel').classList.remove('open');
+        }
+
+        function toggleKodeOkDropdown() {
+            const panel = document.getElementById('kodeOkPanel');
+            const isOpen = panel.classList.contains('open');
+            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
+            if (!isOpen) {
+                panel.classList.add('open');
+                renderKodeOkOptions();
+                const search = panel.querySelector('.ms-search');
+                search.value = '';
+                search.focus();
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('kodeOkWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('kodeOkPanel')?.classList.remove('open');
+            }
+        });
+
         // ══════ TOAST ══════
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
@@ -2087,6 +2328,7 @@
 
             populateJenisTransaksiSelect();
             await loadApdOptions();
+            await loadKodeOkOptions();
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Log APD' : 'Tambah Log APD';
             document.getElementById('formModalSub').textContent = row ?
@@ -2124,6 +2366,9 @@
             document.getElementById('fKondisiApdLama').value = row?.kondisi_apd_lama || '';
             document.getElementById('fAlasanPenggantian').value = row?.alasan_penggantian || '';
             document.getElementById('fKeterangan').value = row?.keterangan || '';
+            document.getElementById('fKodeOk').value = row?.kode_ok || '';
+            document.getElementById('kodeOkLabel').textContent = row?.kode_ok || 'Pilih Kode OK...';
+            document.getElementById('kodeOkPanel').classList.remove('open');
 
             document.getElementById('formModalOverlay').classList.add('open');
         }

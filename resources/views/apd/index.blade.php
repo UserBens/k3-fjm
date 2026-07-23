@@ -1151,6 +1151,162 @@
             font-weight: 700;
             margin: 0 4px 4px 0;
         }
+
+        .multi-picker {
+            position: relative;
+        }
+
+        .picker-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 6px;
+            max-height: 96px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .picker-chips:empty {
+            display: none;
+            margin-bottom: 0;
+        }
+
+        .picker-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #EFF3FB;
+            color: #2D4B9E;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .picker-chip button {
+            background: none;
+            border: none;
+            color: #2D4B9E;
+            cursor: pointer;
+            font-size: 10px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .picker-dropdown {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            max-height: 260px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .picker-dropdown.open {
+            display: flex;
+        }
+
+
+        .picker-options {
+            overflow-y: auto;
+            padding: 6px;
+        }
+
+
+        .picker-dropdown-footer {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-top: 1px solid #E2E8F0;
+            background: #F8FAFC;
+        }
+
+        .picker-selected-count {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+
+        .picker-done-btn {
+            border: none;
+            background: #2D4B9E;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .picker-done-btn:hover {
+            background: #1A3C8A;
+        }
+
+        .picker-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            margin-bottom: 2px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .picker-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .picker-option:hover {
+            background: #F8FAFC;
+        }
+
+        .picker-option.checked {
+            background: #EFF6FF;
+            color: #2D4B9E;
+            font-weight: 700;
+        }
+
+        .picker-option-check {
+            width: 16px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 16px;
+            border-radius: 4px;
+            border: 1.5px solid #CBD5E1;
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .picker-option.checked .picker-option-check {
+            background: #2D4B9E;
+            border-color: #2D4B9E;
+        }
+
+        .picker-option span:last-child {
+            overflow-wrap: anywhere;
+        }
+
+        .picker-empty {
+            padding: 16px 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+        }
     </style>
 </head>
 
@@ -1326,12 +1482,21 @@
                 </div>
                 <!-- ═══ SECTION KODE OK — DI SINI TEMPATNYA, BUKAN DI MODAL DETAIL ═══ -->
                 <div class="form-section-title">Kode OK (Order Kerja)</div>
-                <div id="kodeOkList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:4px;"></div>
-                <button type="button" class="btn-outline" style="margin-top:2px;" onclick="addKodeOkRow()">
-                    + Tambah Kode OK
-                </button>
+                <div class="multi-picker" data-picker="kodeOk">
+                    <div class="picker-chips" id="chips-kodeOk"></div>
+                    <input type="text" class="form-input" placeholder="Cari kode OK..."
+                        oninput="pickerSearchKodeOk(this.value)" onfocus="pickerOpenKodeOk()" autocomplete="off" />
+                    <div class="picker-dropdown" id="dropdown-kodeOk">
+                        <div class="picker-options" id="options-kodeOk"></div>
+                        <div class="picker-dropdown-footer">
+                            <span class="picker-selected-count" id="count-kodeOk">0 dipilih</span>
+                            <button type="button" class="picker-done-btn"
+                                onclick="pickerCloseKodeOk()">Selesai</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="detail-subtitle" style="margin-top:6px; margin-bottom:4px;">
-                    Satu APD boleh punya lebih dari satu Kode OK, contoh: 999
+                    Satu APD boleh punya lebih dari satu Kode OK.
                 </div>
                 <!-- ═══════════════════════════════════════════════════════════ -->
 
@@ -1595,6 +1760,7 @@
         const DATA_ENDPOINT = "{{ route('master-stok-apd.data') }}";
         const STORE_ENDPOINT = "{{ route('master-stok-apd.store') }}";
         const BASE_ENDPOINT = "{{ url('/master-stok-apd') }}";
+        const KODE_OK_OPTIONS_ENDPOINT = "{{ route('master-stok-apd.kode-ok-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1935,37 +2101,108 @@
             }, 4000);
         }
 
-        function kodeOkRowHtml(value = '') {
-            return `
-            <div class="kode-ok-row">
-                <input type="text" class="form-input kode-ok-input" placeholder="Contoh: 999" value="${escapeHtml(value)}" />
-                <button type="button" class="btn-remove-kode-ok" onclick="this.parentElement.remove()">
-                    <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>`;
-        }
+        const pickerKodeOk = {
+            all: [],
+            selected: new Map()
+        }; // key = kode_ok (string)
+        let kodeOkOptionsLoaded = false;
 
-        function addKodeOkRow(value = '') {
-            document.getElementById('kodeOkList').insertAdjacentHTML('beforeend', kodeOkRowHtml(value));
-        }
-
-        function renderKodeOkRows(kodeOkArray) {
-            const container = document.getElementById('kodeOkList');
-            container.innerHTML = '';
-            if (kodeOkArray && kodeOkArray.length > 0) {
-                kodeOkArray.forEach(k => addKodeOkRow(k));
-            } else {
-                addKodeOkRow(); // minimal 1 baris kosong biar gampang mulai isi
+        async function ensureKodeOkOptionsLoaded() {
+            if (kodeOkOptionsLoaded) return;
+            try {
+                const res = await fetch(KODE_OK_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                pickerKodeOk.all = json.data || [];
+                kodeOkOptionsLoaded = true;
+            } catch (e) {
+                showToast('Gagal memuat data Kode OK.', 'error');
             }
         }
 
-        function collectKodeOkValues() {
-            return Array.from(document.querySelectorAll('#kodeOkList .kode-ok-input'))
-                .map(el => el.value.trim())
-                .filter(v => v !== '');
+        function kodeOkLabel(item) {
+            return item.uraian_kerja ? `${item.kode_ok} — ${item.uraian_kerja}` : item.kode_ok;
         }
+
+        function renderKodeOkChips() {
+            const wrap = document.getElementById('chips-kodeOk');
+            const items = Array.from(pickerKodeOk.selected.values());
+            wrap.innerHTML = items.map(item => `
+        <span class="picker-chip">
+            ${escapeHtml(item.kode_ok)}
+            <button type="button" onclick="kodeOkToggle('${item.kode_ok}')">✕</button>
+        </span>
+    `).join('');
+        }
+
+        function renderKodeOkDropdown(keyword = '') {
+            const optionsWrap = document.getElementById('options-kodeOk');
+            const kw = keyword.trim().toLowerCase();
+            const list = pickerKodeOk.all.filter(item => kodeOkLabel(item).toLowerCase().includes(kw));
+
+            optionsWrap.innerHTML = list.length === 0 ?
+                `<div class="picker-empty">Kode OK tidak ditemukan.</div>` :
+                list.slice(0, 50).map(item => {
+                    const checked = pickerKodeOk.selected.has(item.kode_ok);
+                    return `
+                <div class="picker-option ${checked ? 'checked' : ''}" onclick="kodeOkToggle('${item.kode_ok}')">
+                    <span class="picker-option-check">${checked ? '✓' : ''}</span>
+                    <span>${escapeHtml(kodeOkLabel(item))}</span>
+                </div>`;
+                }).join('');
+
+            document.getElementById('count-kodeOk').textContent = `${pickerKodeOk.selected.size} dipilih`;
+        }
+
+        function kodeOkToggle(kode) {
+            const item = pickerKodeOk.all.find(i => i.kode_ok === kode);
+            if (!item) return;
+            if (pickerKodeOk.selected.has(kode)) pickerKodeOk.selected.delete(kode);
+            else pickerKodeOk.selected.set(kode, item);
+            renderKodeOkChips();
+            renderKodeOkDropdown();
+        }
+
+        function resetKodeOkPicker() {
+            pickerKodeOk.selected = new Map();
+            document.getElementById('chips-kodeOk').innerHTML = '';
+            document.getElementById('dropdown-kodeOk').classList.remove('open');
+        }
+
+        function setKodeOkSelected(kodeArray) {
+            const items = (kodeArray || []).map(k =>
+                pickerKodeOk.all.find(i => i.kode_ok === k) || {
+                    kode_ok: k,
+                    uraian_kerja: null
+                }
+            );
+            pickerKodeOk.selected = new Map(items.map(i => [i.kode_ok, i]));
+            renderKodeOkChips();
+        }
+
+        function pickerOpenKodeOk() {
+            renderKodeOkDropdown();
+            document.getElementById('dropdown-kodeOk').classList.add('open');
+        }
+
+        function pickerCloseKodeOk() {
+            document.getElementById('dropdown-kodeOk').classList.remove('open');
+        }
+
+        function pickerSearchKodeOk(keyword) {
+            renderKodeOkDropdown(keyword);
+            document.getElementById('dropdown-kodeOk').classList.add('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdown-kodeOk');
+            if (!dropdown.classList.contains('open')) return;
+            const wrap = document.querySelector('[data-picker="kodeOk"]');
+            if (wrap && !wrap.contains(e.target)) pickerCloseKodeOk();
+        });
 
         function onGambarApdChange(event) {
             const file = event.target.files[0];
@@ -2004,7 +2241,7 @@
         }
 
         // ══════ MODAL TAMBAH / EDIT ══════
-        function openFormModal(row = null) {
+        async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data APD' : 'Tambah APD';
@@ -2013,9 +2250,7 @@
                 'Lengkapi data master & stok di bawah ini.';
 
             document.getElementById('fKodeApd').value = row?.kode_apd || '';
-            document.getElementById('fKodeApd').placeholder = row ?
-                '' :
-                'Otomatis digenerate setelah disimpan';
+            document.getElementById('fKodeApd').placeholder = row ? '' : 'Otomatis digenerate setelah disimpan';
             document.getElementById('fJenisApd').value = row?.jenis_apd || '';
             document.getElementById('fKategori').value = row?.kategori || 'WAJIB';
             document.getElementById('fMerk').value = row?.merk_rekomendasi || '';
@@ -2034,11 +2269,13 @@
                 .substring(0, 10) : '';
             document.getElementById('fKeterangan').value = row?.keterangan || '';
 
-            renderKodeOkRows(row?.kode_ok || []);
             resetGambarApdPreview(row?.gambar_apd_url || null);
-            renderKodeOkRows(row?.kode_ok || []);
-            document.getElementById('formModalOverlay').classList.add('open');
 
+            resetKodeOkPicker();
+            await ensureKodeOkOptionsLoaded();
+            setKodeOkSelected(row?.kode_ok || []);
+
+            document.getElementById('formModalOverlay').classList.add('open');
         }
 
         function closeFormModal() {
@@ -2074,7 +2311,7 @@
             formData.append('terakhir_pengadaan', document.getElementById('fTerakhirPengadaan').value || '');
             formData.append('keterangan', document.getElementById('fKeterangan').value.trim());
 
-            collectKodeOkValues().forEach(k => formData.append('kode_ok[]', k));
+            Array.from(pickerKodeOk.selected.keys()).forEach(k => formData.append('kode_ok[]', k));
 
             const gambarFile = document.getElementById('fGambarApd').files[0];
             if (gambarFile) {

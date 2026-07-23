@@ -1877,6 +1877,28 @@
             font-size: 12px;
             color: #94A3B8;
         }
+
+
+        .sc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sc-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .sc-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            margin-top: 1px;
+        }
     </style>
 </head>
 
@@ -2423,6 +2445,7 @@
             kodeOkSelected = k;
             document.getElementById('fKodeOk').value = k.kode_ok;
             document.getElementById('fDept').value = k.unit_kerja || '';
+            document.getElementById('fUraian').value = k.uraian_kerja || ''; // tambahkan ini
             document.getElementById('kodeOkLabel').textContent = k.kode_ok;
             document.getElementById('kodeOkPanel').classList.remove('open');
         }

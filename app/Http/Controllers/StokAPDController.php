@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KodeOk;
 use App\Models\StokAPD;
 use Illuminate\Validation\Rule;
 
@@ -71,6 +72,16 @@ class StokAPDController extends Controller
         ]);
     }
 
+    public function kodeOkOptions()
+    {
+        $items = KodeOk::query()
+            ->select('id', 'kode_ok', 'uraian_kerja')
+            ->where('status', true)
+            ->orderBy('kode_ok')
+            ->get();
+
+        return response()->json(['data' => $items]);
+    }
 
     /**
      * Simpan APD baru.

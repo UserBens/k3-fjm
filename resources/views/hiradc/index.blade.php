@@ -863,6 +863,7 @@
                                 <th>Risiko Sesudah</th>
                                 <th>PIC</th>
                                 <th>Status</th>
+                                <th>Dokumen</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
@@ -902,24 +903,16 @@
             <div class="form-modal-body">
                 <div class="form-section-title">Identifikasi Bahaya</div>
                 <div class="form-grid">
-                    <div class="form-group"><label class="form-label">Kode OK (opsional)</label><input type="text"
-                            id="fKodeOk" class="form-input" placeholder="OK-001" /></div>
-                    <div class="form-group"><label class="form-label">Area/Lokasi</label><input type="text"
-                            id="fAreaLokasi" class="form-input" placeholder="Area Ketinggian" /></div>
-                    <div class="form-group span-2"><label class="form-label">Aktivitas Pekerjaan</label><input
-                            type="text" id="fAktivitas" class="form-input"
-                            placeholder="Pekerjaan di ketinggian &gt;1,8m" /></div>
-                    <div class="form-group"><label class="form-label">Potensi Bahaya</label><input type="text"
-                            id="fPotensiBahaya" class="form-input" placeholder="Jatuh dari ketinggian" /></div>
-                    <div class="form-group"><label class="form-label">Jenis Bahaya</label>
-                        <select id="fJenisBahaya" class="form-select">
-                            <option>Bahaya Fisik</option>
-                            <option>Bahaya Kimia</option>
-                            <option>Bahaya Listrik</option>
-                            <option>Bahaya Ergonomi</option>
-                            <option>Bahaya Biologi</option>
-                            <option>Bahaya Fisik+Kimia</option>
-                        </select>
+                    <div class="form-group"><label class="form-label">No. HIRADC</label><input type="text"
+                            id="fNoHiradc" class="form-input" placeholder="01-00" /></div>
+                    <div class="form-group"><label class="form-label">Kategori Pekerjaan</label><input type="text"
+                            id="fKategoriPekerjaan" class="form-input" placeholder="GUDANG / PENGANTONGAN" /></div>
+                    <div class="form-group span-2"><label class="form-label">Judul Pekerjaan / Area</label><input
+                            type="text" id="fJudulPekerjaan" class="form-input"
+                            placeholder="Housekeeping Pergudangan dan Pengantongan" /></div>
+                    <div class="form-group span-2"><label class="form-label">Potensi Bahaya</label>
+                        <textarea id="fPotensiBahaya" class="form-textarea" rows="2"
+                            placeholder="Terpeleset, Tersandung, Jatuh dari ketinggian, Terjatuh"></textarea>
                     </div>
                     <div class="form-group span-2"><label class="form-label">Konsekuensi/Dampak</label>
                         <textarea id="fKonsekuensi" class="form-textarea" rows="2" placeholder="Cedera serius / fatal"></textarea>
@@ -937,20 +930,20 @@
                     <div class="form-group span-2"><label class="form-label">Tingkat Risiko Awal</label>
                         <div id="previewAwal" class="risk-badge-preview sp-gray">—</div>
                     </div>
-                    <div class="form-group span-2"><label class="form-label">Pengendalian yang Ada</label>
-                        <textarea id="fPengendalianAda" class="form-textarea" rows="2" placeholder="Rambu peringatan, safety net"></textarea>
-                    </div>
-                    <div class="form-group span-2"><label class="form-label">APD Wajib</label>
+                    <div class="form-group span-2"><label class="form-label">APD Wajib (Matriks)</label>
                         <textarea id="fApdWajib" class="form-textarea" rows="2"
-                            placeholder="Full Body Harness, Helm Safety, Sepatu Safety"></textarea>
+                            placeholder="Helm Safety, Sepatu Safety, Rompi Hi-Vis, Sarung Tangan"></textarea>
+                    </div>
+                    <div class="form-group span-2"><label class="form-label">APD Khusus</label>
+                        <textarea id="fApdKhusus" class="form-textarea" rows="2" placeholder="Pelampung, Full Body Harness"></textarea>
                     </div>
                 </div>
 
-                <div class="form-section-title">Pengendalian Tambahan & Risiko Residual</div>
+                <div class="form-section-title">Pengendalian & Risiko Residual</div>
                 <div class="form-grid">
-                    <div class="form-group span-2"><label class="form-label">Pengendalian Tambahan</label>
-                        <textarea id="fPengendalianTambahan" class="form-textarea" rows="2"
-                            placeholder="Training WAJIB + Ijin Kerja Khusus"></textarea>
+                    <div class="form-group span-2"><label class="form-label">Pengendalian Utama</label>
+                        <textarea id="fPengendalianUtama" class="form-textarea" rows="2"
+                            placeholder="Safety line, SBNP, safety briefing, patroli cuaca"></textarea>
                     </div>
                     <div class="form-group"><label class="form-label">Kemungkinan Sesudah (L)</label><input
                             type="number" min="1" max="5" id="fLSesudah" class="form-input"
@@ -972,6 +965,11 @@
                             <option value="Open">Open</option>
                             <option value="Close">Close</option>
                         </select>
+                    </div>
+                    <div class="form-group span-2">
+                        <label class="form-label">Dokumen HIRADC (PDF)</label>
+                        <input type="file" id="fDokumen" class="form-input" accept="application/pdf" />
+                        <div id="dokumenExisting" style="font-size:12px;color:#94A3B8;margin-top:4px;"></div>
                     </div>
                 </div>
             </div>
@@ -1099,9 +1097,10 @@
             const status = document.getElementById('fStatus').value;
 
             filteredData = allData.filter(row => {
-                const matchSearch = !search || [row.area_lokasi, row.aktivitas_pekerjaan, row.potensi_bahaya, row
-                    .kode_ok
-                ].join(' ').toLowerCase().includes(search);
+                const matchSearch = !search || [row.no_hiradc, row.judul_pekerjaan, row.kategori_pekerjaan, row
+                        .potensi_bahaya
+                    ]
+                    .join(' ').toLowerCase().includes(search);
                 const matchTingkat = !tingkat || (row.risiko_awal && row.risiko_awal.label === tingkat);
                 const matchStatus = !status || row.status === status;
                 return matchSearch && matchTingkat && matchStatus;
@@ -1121,29 +1120,35 @@
             const tbody = document.getElementById('tableBody');
             if (pageRows.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="10"><div class="empty-state"><div class="empty-state-title">Belum ada data</div><div class="empty-state-sub">Klik "Tambah HIRADC" atau ubah filter pencarian.</div></div></td></tr>`;
+                    `<tr><td colspan="11"><div class="empty-state"><div class="empty-state-title">Belum ada data</div><div class="empty-state-sub">Klik "Tambah HIRADC" atau ubah filter pencarian.</div></div></td></tr>`;
             } else {
                 tbody.innerHTML = pageRows.map((row, idx) => `
                     <tr>
                         <td>${start+idx+1}</td>
-                        <td>${escapeHtml(row.area_lokasi)}</td>
-                        <td style="max-width:200px;white-space:normal;">${escapeHtml(row.aktivitas_pekerjaan)}</td>
-                        <td>${escapeHtml(row.potensi_bahaya)}</td>
-                        <td>${escapeHtml(display(row.jenis_bahaya))}</td>
+                        <td>${escapeHtml(display(row.no_hiradc))}</td>
+                        <td style="max-width:220px;white-space:normal;">${escapeHtml(row.judul_pekerjaan)}</td>
+                        <td>${escapeHtml(row.kategori_pekerjaan)}</td>
+                        <td style="max-width:220px;white-space:normal;">${escapeHtml(row.potensi_bahaya)}</td>
                         <td>${riskBadge(row.risiko_awal)}</td>
                         <td>${riskBadge(row.risiko_sesudah)}</td>
                         <td>${escapeHtml(display(row.pic))}</td>
                         <td><span class="status-pill ${statusPillClass(row.status)}">${escapeHtml(row.status)}</span></td>
+                        <td>
+                            ${row.dokumen_url
+                                ? `<a href="${escapeHtml(row.dokumen_url)}" target="_blank" class="btn-outline" style="padding:2px 8px;font-size:11px;">Buka PDF</a>`
+                                : '-'}
+                        </td>
                         <td style="text-align:center;white-space:nowrap;">
                             <button class="btn-row-action" onclick='openItemModal(${JSON.stringify(row).replace(/'/g,"&#39;")})'>
                                 <svg style="width:14px;height:14px;color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </button>
-                            <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.aktivitas_pekerjaan)}')">
+                            <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.judul_pekerjaan)}')">
                                 <svg style="width:14px;height:14px;color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                         </td>
                     </tr>
                 `).join('');
+
             }
             renderPagination(totalPages);
         }
@@ -1205,28 +1210,33 @@
         function openItemModal(row = null) {
             currentEditId = row ? row.id : null;
             document.getElementById('itemModalTitle').textContent = row ? 'Edit Data HIRADC' : 'Tambah Data HIRADC';
-            document.getElementById('itemModalSub').textContent = row ? `Perbarui data "${row.aktivitas_pekerjaan}"` :
+            document.getElementById('itemModalSub').textContent = row ? `Perbarui data "${row.judul_pekerjaan}"` :
                 'Lengkapi identifikasi bahaya dan penilaian risiko.';
 
-            document.getElementById('fKodeOk').value = row?.kode_ok || '';
-            document.getElementById('fAreaLokasi').value = row?.area_lokasi || '';
-            document.getElementById('fAktivitas').value = row?.aktivitas_pekerjaan || '';
+            document.getElementById('fNoHiradc').value = row?.no_hiradc || '';
+            document.getElementById('fJudulPekerjaan').value = row?.judul_pekerjaan || '';
+            document.getElementById('fKategoriPekerjaan').value = row?.kategori_pekerjaan || '';
             document.getElementById('fPotensiBahaya').value = row?.potensi_bahaya || '';
-            document.getElementById('fJenisBahaya').value = row?.jenis_bahaya || 'Bahaya Fisik';
             document.getElementById('fKonsekuensi').value = row?.konsekuensi_dampak || '';
             document.getElementById('fLAwal').value = row?.l_awal || '';
             document.getElementById('fSAwal').value = row?.s_awal || '';
-            document.getElementById('fPengendalianAda').value = row?.pengendalian_ada || '';
             document.getElementById('fApdWajib').value = row?.apd_wajib || '';
-            document.getElementById('fPengendalianTambahan').value = row?.pengendalian_tambahan || '';
+            document.getElementById('fApdKhusus').value = row?.apd_khusus || '';
+            document.getElementById('fPengendalianUtama').value = row?.pengendalian_utama || '';
             document.getElementById('fLSesudah').value = row?.l_sesudah || '';
             document.getElementById('fSSesudah').value = row?.s_sesudah || '';
             document.getElementById('fPic').value = row?.pic || '';
             document.getElementById('fStatusForm').value = row?.status || 'Open';
-            recalcRisk();
 
+            document.getElementById('fDokumen').value = '';
+            document.getElementById('dokumenExisting').textContent = row?.dokumen_hiradc ?
+                `File saat ini: ${row.dokumen_hiradc} (biarkan kosong jika tidak ingin ganti)` :
+                '';
+
+            recalcRisk();
             document.getElementById('itemModalOverlay').classList.add('open');
         }
+
 
         function closeItemModal() {
             document.getElementById('itemModalOverlay').classList.remove('open');
@@ -1258,47 +1268,51 @@
         }
 
         async function submitItem() {
-            // l_awal & s_awal wajib diisi (sesuai migration: unsignedTinyInteger tanpa nullable)
             if (!validRiskScale('fLAwal', 'Kemungkinan Awal (L)', true)) return;
             if (!validRiskScale('fSAwal', 'Keparahan Awal (S)', true)) return;
-            // l_sesudah & s_sesudah nullable
             if (!validRiskScale('fLSesudah', 'Kemungkinan Sesudah (L)')) return;
             if (!validRiskScale('fSSesudah', 'Keparahan Sesudah (S)')) return;
+
             const btn = document.getElementById('btnSubmit');
             const original = btn.textContent;
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const payload = {
-                kode_ok: document.getElementById('fKodeOk').value.trim() || null,
-                area_lokasi: document.getElementById('fAreaLokasi').value.trim(),
-                aktivitas_pekerjaan: document.getElementById('fAktivitas').value.trim(),
-                potensi_bahaya: document.getElementById('fPotensiBahaya').value.trim(),
-                jenis_bahaya: document.getElementById('fJenisBahaya').value,
-                konsekuensi_dampak: document.getElementById('fKonsekuensi').value.trim() || null,
-                l_awal: document.getElementById('fLAwal').value,
-                s_awal: document.getElementById('fSAwal').value,
-                pengendalian_ada: document.getElementById('fPengendalianAda').value.trim() || null,
-                apd_wajib: document.getElementById('fApdWajib').value.trim() || null,
-                pengendalian_tambahan: document.getElementById('fPengendalianTambahan').value.trim() || null,
-                l_sesudah: document.getElementById('fLSesudah').value || null,
-                s_sesudah: document.getElementById('fSSesudah').value || null,
-                pic: document.getElementById('fPic').value.trim() || null,
-                status: document.getElementById('fStatusForm').value,
-            };
+            const formData = new FormData();
+            formData.append('no_hiradc', document.getElementById('fNoHiradc').value.trim());
+            formData.append('judul_pekerjaan', document.getElementById('fJudulPekerjaan').value.trim());
+            formData.append('kategori_pekerjaan', document.getElementById('fKategoriPekerjaan').value.trim());
+            formData.append('potensi_bahaya', document.getElementById('fPotensiBahaya').value.trim());
+            formData.append('konsekuensi_dampak', document.getElementById('fKonsekuensi').value.trim());
+            formData.append('l_awal', document.getElementById('fLAwal').value);
+            formData.append('s_awal', document.getElementById('fSAwal').value);
+            formData.append('apd_wajib', document.getElementById('fApdWajib').value.trim());
+            formData.append('apd_khusus', document.getElementById('fApdKhusus').value.trim());
+            formData.append('pengendalian_utama', document.getElementById('fPengendalianUtama').value.trim());
+            formData.append('l_sesudah', document.getElementById('fLSesudah').value);
+            formData.append('s_sesudah', document.getElementById('fSSesudah').value);
+            formData.append('pic', document.getElementById('fPic').value.trim());
+            formData.append('status', document.getElementById('fStatusForm').value);
+
+            const dokumenFile = document.getElementById('fDokumen').files[0];
+            if (dokumenFile) {
+                formData.append('dokumen', dokumenFile);
+            }
 
             const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-            const method = currentEditId ? 'PUT' : 'POST';
+            if (currentEditId) {
+                formData.append('_method', 'PUT'); // spoof method, tetap kirim via POST
+            }
 
             try {
                 const res = await fetch(url, {
-                    method,
+                    method: 'POST', // selalu POST, method PUT dispoof lewat _method
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN
+                        // JANGAN set Content-Type manual, biar browser set boundary multipart otomatis
                     },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
                 const json = await res.json();
                 if (!res.ok) {

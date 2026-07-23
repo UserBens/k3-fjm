@@ -274,7 +274,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/leading-dashboard/api', [LeadingDashboardController::class, 'api'])
         ->name('leading-dashboard.api');
 
-
+    // KODE OK REFRENSI
     Route::prefix('kode-ok-referensi')->name('kode-ok-referensi.')->group(function () {
         Route::get('/', [KodeOkReferensiController::class, 'index'])->name('index');
         Route::get('/data', [KodeOkReferensiController::class, 'data'])->name('data');
@@ -295,6 +295,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
         Route::get('/', [StokAPDController::class, 'index'])->name('index');
         Route::get('/data', [StokAPDController::class, 'data'])->name('data');
+        Route::get('/kode-ok-options', [StokAPDController::class, 'kodeOkOptions'])->name('kode-ok-options'); // baru
         Route::post('/', [StokAPDController::class, 'store'])->name('store');
         Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
         Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
@@ -312,6 +313,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/', [LogApdController::class, 'index'])->name('index');
         Route::get('/data', [LogApdController::class, 'data'])->name('data');
         Route::get('/apd-options', [LogApdController::class, 'apdOptions'])->name('apd-options');
+        Route::get('/kode-ok-options', [LogApdController::class, 'kodeOkOptions'])->name('kode-ok-options'); // baru
         Route::get('/cari-pegawai', [LogApdController::class, 'cariPegawai'])->name('cari-pegawai');
         Route::post('/', [LogApdController::class, 'store'])->name('store');
         Route::put('/{logApd}', [LogApdController::class, 'update'])->name('update');

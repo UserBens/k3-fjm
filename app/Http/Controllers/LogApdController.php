@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KodeOk;
 use App\Models\LogApd;
 use App\Models\StokAPD;
 use App\Models\Pegawai;
@@ -67,6 +68,23 @@ class LogApdController extends Controller
                     ->pluck('unit_kerja'),
             ],
         ]);
+    }
+
+    public function kodeOkOptions()
+    {
+        $items = KodeOk::query()
+            ->select('id', 'kode_ok')
+            ->with('unitKerjaRelasi:id,nama_unit_kerja')
+            ->where('status', true)
+            ->orderBy('kode_ok')
+            ->get()
+            ->map(fn($k) => [
+                'id'         => $k->id,
+                'kode_ok'    => $k->kode_ok,
+                'unit_kerja' => $k->unitKerjaRelasi->pluck('nama_unit_kerja')->join(', '),
+            ]);
+
+        return response()->json(['data' => $items]);
     }
 
     // Dipakai dropdown "Jenis APD" di modal form supaya bisa autofill kode_apd / merk / ukuran

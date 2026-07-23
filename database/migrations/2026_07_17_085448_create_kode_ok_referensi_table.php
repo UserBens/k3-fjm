@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('kode_ok')->unique();
             $table->text('uraian_pekerjaan');
-            $table->string('dept_unit_kerja_pic')->nullable();
             $table->string('kategori_pekerjaan')->nullable();
             $table->timestamps();
 
-            $table->index(['dept_unit_kerja_pic']);
+            $table->text('dept_unit_kerja_pic')->nullable();
             $table->index(['kategori_pekerjaan']);
         });
     }
