@@ -23,6 +23,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
 use App\Http\Controllers\LpiKorbanController;
 use App\Http\Controllers\ManajemenApdPegawaiController;
+use App\Http\Controllers\MasterHariLiburController;
 use App\Http\Controllers\MasterJadwalShiftController;
 use App\Http\Controllers\MatriksApdJabatanController;
 use App\Http\Controllers\MemoKibController;
@@ -137,6 +138,23 @@ Route::middleware(['auth.custom'])->group(function () {
         // import & template
         Route::post('/import', [MasterJadwalShiftController::class, 'import'])->name('import');
         Route::get('/template', [MasterJadwalShiftController::class, 'downloadTemplate'])->name('template');
+    });
+
+    // MASTER HARI LIBUR
+    Route::get('master-hari-libur', [MasterHariLiburController::class, 'index'])
+        ->name('master-hari-libur.index');
+
+    Route::prefix('master-hari-libur')->name('master-hari-libur.')->group(function () {
+        Route::get('/data', [MasterHariLiburController::class, 'data'])->name('data');
+        Route::get('/tahun', [MasterHariLiburController::class, 'tahunList'])->name('tahun');
+
+        Route::post('/', [MasterHariLiburController::class, 'store'])->name('store');
+        Route::put('/{masterHariLibur}', [MasterHariLiburController::class, 'update'])->name('update');
+        Route::delete('/{masterHariLibur}', [MasterHariLiburController::class, 'destroy'])->name('destroy');
+
+        // import & template
+        Route::post('/import', [MasterHariLiburController::class, 'import'])->name('import');
+        Route::get('/template', [MasterHariLiburController::class, 'downloadTemplate'])->name('template');
     });
 
     Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
@@ -296,6 +314,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/', [StokAPDController::class, 'index'])->name('index');
         Route::get('/data', [StokAPDController::class, 'data'])->name('data');
         Route::get('/kode-ok-options', [StokAPDController::class, 'kodeOkOptions'])->name('kode-ok-options'); // baru
+        Route::get('/supplier-options', [StokAPDController::class, 'supplierOptions'])->name('supplier-options');
         Route::post('/', [StokAPDController::class, 'store'])->name('store');
         Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
         Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');

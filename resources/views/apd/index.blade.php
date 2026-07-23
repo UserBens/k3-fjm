@@ -1554,8 +1554,16 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Supplier</label>
-                        <input type="text" id="fSupplier" class="form-input"
-                            placeholder="PT. Sumber Jaya Safety" />
+                        <div class="multi-picker" data-picker="supplier">
+                            <div class="picker-chips" id="chips-supplier"></div>
+                            <input type="text" class="form-input" id="supplierSearchInput"
+                                placeholder="Cari supplier..." oninput="pickerSearchSupplier(this.value)"
+                                onfocus="pickerOpenSupplier()" autocomplete="off" />
+                            <div class="picker-dropdown" id="dropdown-supplier">
+                                <div class="picker-options" id="options-supplier"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fSupplier" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Masa Pakai</label>
@@ -1761,6 +1769,7 @@
         const STORE_ENDPOINT = "{{ route('master-stok-apd.store') }}";
         const BASE_ENDPOINT = "{{ url('/master-stok-apd') }}";
         const KODE_OK_OPTIONS_ENDPOINT = "{{ route('master-stok-apd.kode-ok-options') }}";
+        const SUPPLIER_OPTIONS_ENDPOINT = "{{ route('master-stok-apd.supplier-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1772,11 +1781,17 @@
             per_page: 10,
         };
 
+        const pickerSupplier = {
+            all: [],
+            selected: null
+        };
+
         let searchDebounce = null;
         let filterOptionsLoaded = false;
         let currentEditId = null;
         let currentDeleteId = null;
         let currentDeleteName = '';
+        let supplierOptionsLoaded = false;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -2073,6 +2088,106 @@
             }
         }
 
+        async function ensureSupplierOptionsLoaded() {
+            if (supplierOptionsLoaded) return;
+            try {
+                const res = await fetch(SUPPLIER_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                pickerSupplier.all = json.data || [];
+                supplierOptionsLoaded = true;
+            } catch (e) {
+                showToast('Gagal memuat daftar supplier.', 'error');
+            }
+        }
+
+        function supplierLabel(item) {
+            return item.wilayah ? `${item.nama_supplier} — ${item.wilayah}` : item.nama_supplier;
+        }
+
+        function renderSupplierChip() {
+            const wrap = document.getElementById('chips-supplier');
+            if (!pickerSupplier.selected) {
+                wrap.innerHTML = '';
+                document.getElementById('fSupplier').value = '';
+                return;
+            }
+            const item = pickerSupplier.selected;
+            wrap.innerHTML = `
+        <span class="picker-chip">
+            ${escapeHtml(item.nama_supplier)}
+            <button type="button" onclick="supplierClear()">✕</button>
+        </span>`;
+            document.getElementById('fSupplier').value = item.nama_supplier;
+        }
+
+        function renderSupplierDropdown(keyword = '') {
+            const optionsWrap = document.getElementById('options-supplier');
+            const kw = keyword.trim().toLowerCase();
+            const list = pickerSupplier.all.filter(item => supplierLabel(item).toLowerCase().includes(kw));
+
+            optionsWrap.innerHTML = list.length === 0 ?
+                `<div class="picker-empty">Supplier tidak ditemukan.</div>` :
+                list.slice(0, 50).map(item => {
+                    const checked = pickerSupplier.selected?.nama_supplier === item.nama_supplier;
+                    const safeName = item.nama_supplier.replace(/'/g, "\\'");
+                    return `
+                <div class="picker-option ${checked ? 'checked' : ''}" onclick="supplierSelect('${safeName}')">
+                    <span class="picker-option-check">${checked ? '✓' : ''}</span>
+                    <span>${escapeHtml(supplierLabel(item))}</span>
+                </div>`;
+                }).join('');
+        }
+
+        function supplierSelect(nama) {
+            const item = pickerSupplier.all.find(i => i.nama_supplier === nama);
+            if (!item) return;
+            pickerSupplier.selected = item;
+            renderSupplierChip();
+            pickerCloseSupplier();
+            document.getElementById('supplierSearchInput').value = '';
+        }
+
+        function supplierClear() {
+            pickerSupplier.selected = null;
+            renderSupplierChip();
+        }
+
+        function resetSupplierPicker(existingName = null) {
+            pickerSupplier.selected = existingName ?
+                (pickerSupplier.all.find(i => i.nama_supplier === existingName) || {
+                    nama_supplier: existingName
+                }) :
+                null;
+            renderSupplierChip();
+            document.getElementById('dropdown-supplier').classList.remove('open');
+            document.getElementById('supplierSearchInput').value = '';
+        }
+
+        function pickerOpenSupplier() {
+            renderSupplierDropdown();
+            document.getElementById('dropdown-supplier').classList.add('open');
+        }
+
+        function pickerCloseSupplier() {
+            document.getElementById('dropdown-supplier').classList.remove('open');
+        }
+
+        function pickerSearchSupplier(keyword) {
+            renderSupplierDropdown(keyword);
+            document.getElementById('dropdown-supplier').classList.add('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdown-supplier');
+            if (!dropdown.classList.contains('open')) return;
+            const wrap = document.querySelector('[data-picker="supplier"]');
+            if (wrap && !wrap.contains(e.target)) pickerCloseSupplier();
+        });
+
         // ══════ TOAST ══════
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
@@ -2274,7 +2389,8 @@
             resetKodeOkPicker();
             await ensureKodeOkOptionsLoaded();
             setKodeOkSelected(row?.kode_ok || []);
-
+            await ensureSupplierOptionsLoaded();
+            resetSupplierPicker(row?.supplier || null);
             document.getElementById('formModalOverlay').classList.add('open');
         }
 

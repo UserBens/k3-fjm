@@ -702,6 +702,7 @@
             border-radius: 8px;
             font-size: 12px;
             font-weight: 700;
+            margin-top: 15px;
         }
 
         .apd-grid {

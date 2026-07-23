@@ -272,6 +272,7 @@
             $datatenagaActive =
                 request()->routeIs('tenaga.*') ||
                 request()->routeIs('memo-kib.*') ||
+                request()->routeIs('safety-officer.*') ||
                 request()->routeIs('pengawas.*') ||
                 request()->routeIs('kode-ok.*');
         @endphp
@@ -334,7 +335,7 @@
                 request()->routeIs('data-safety.*') ||
                 request()->routeIs('data-unsafe.*') ||
                 request()->routeIs('toolbox-meeting.*') ||
-                request()->routeIs('data-reject-monitoring.*') ||
+                // request()->routeIs('data-reject-monitoring.*') ||
                 request()->routeIs('monitoring-so.*') ||
                 request()->routeIs('dashboard-individu.*') ||
                 request()->routeIs('monitoring-pengawas.*') ||
@@ -387,10 +388,10 @@
                 href="{{ route('toolbox-meeting.index') }}">
                 <span class="nav-label">ToolBox Meeting</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('data-reject-monitoring.*') ? 'active' : '' }}"
+            {{-- <a class="nav-link {{ request()->routeIs('data-reject-monitoring.*') ? 'active' : '' }}"
                 href="{{ route('data-reject-monitoring.index') }}">
                 <span class="nav-label">Monitoring Dokumen Reject</span>
-            </a>
+            </a> --}}
             <a class="nav-link {{ request()->routeIs('monitoring-laporan-so.*') ? 'active' : '' }}"
                 href="{{ route('monitoring-laporan-so.index') }}">
                 <span class="nav-label">Monitoring SO</span>
@@ -430,8 +431,9 @@
                 request()->routeIs('lpi-kejadian.*') ||
                 request()->routeIs('dashboard-jka.*') ||
                 request()->routeIs('leading-dashboard.*') ||
-                request()->routeIs('leading-input.*');
-                request()->routeIs('master-jadwal-shift.*');
+                request()->routeIs('leading-input.*') ||
+                request()->routeIs('master-jadwal-shift.*') ||
+                request()->routeIs('master-hari-libur.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
@@ -483,6 +485,11 @@
             <a class="nav-link {{ request()->routeIs('master-jadwal-shift.*') ? 'active' : '' }}"
                 href="{{ route('master-jadwal-shift.index') }}">
                 <span class="nav-label">Master Jadwal Shift</span>
+            </a>
+            
+            <a class="nav-link {{ request()->routeIs('master-hari-libur.*') ? 'active' : '' }}"
+                href="{{ route('master-hari-libur.index') }}">
+                <span class="nav-label">Master Hari Libur</span>
             </a>
 
         </div>

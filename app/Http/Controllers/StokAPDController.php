@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KodeOk;
 use App\Models\StokAPD;
+use App\Models\Supplierapd;
 use Illuminate\Validation\Rule;
 
 use Illuminate\Http\Request;
@@ -70,6 +71,17 @@ class StokAPDController extends Controller
                     ->pluck('supplier'),
             ],
         ]);
+    }
+
+    public function supplierOptions()
+    {
+        $items = Supplierapd::query()
+            ->select('id', 'nama_supplier', 'kategori_produk', 'wilayah')
+            ->where('status', 'Aktif')
+            ->orderBy('nama_supplier')
+            ->get();
+
+        return response()->json(['data' => $items]);
     }
 
     public function kodeOkOptions()
