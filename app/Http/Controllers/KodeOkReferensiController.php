@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hiradc;
+use App\Models\KodeOk;
 use App\Models\KodeOkReferensi;
 use App\Models\StokAPD;
 use Illuminate\Http\Request;
@@ -69,6 +70,25 @@ class KodeOkReferensiController extends Controller
                 'belum_ada_hiradc' => KodeOkReferensi::query()->whereNotIn('kode_ok', $hiradcCounts->keys())->count(),
             ],
         ]);
+    }
+
+    public function kodeOkOptions()
+    {
+        $items = KodeOk::query()
+            ->select('id', 'kode_ok', 'pengawas', 'status')
+            ->with('unitKerjas:id,nama_unit_kerja') // sesuaikan nama kolom di tabel unit_kerjas
+            ->where('status', true)
+            ->orderBy('kode_ok')
+            ->get()
+            ->map(fn($k) => [
+                'id'         => $k->id,
+                'kode_ok'    => $k->kode_ok,
+                // 'pengawas'   => $k->pengawas,
+                // gabungkan semua unit kerja jadi satu string, karena 1 kode OK bisa punya banyak unit kerja
+                'unit_kerja' => $k->unitKerjas->pluck('nama_unit_kerja')->join(', '),
+            ]);
+
+        return response()->json(['data' => $items]);
     }
 
     // Dipakai checklist dropdown "APD Wajib" & "APD Khusus" di modal form

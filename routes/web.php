@@ -76,6 +76,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/options', [KodeOkController::class, 'options'])->name('options'); // ← BARU
         Route::post('/sync', [KodeOkController::class, 'sync'])->name('sync');
         Route::post('/', [KodeOkController::class, 'store'])->name('store');
+        Route::get('/{kodeOk}', [KodeOkController::class, 'show'])->name('show');
         Route::put('/{kodeOk}', [KodeOkController::class, 'update'])->name('update');
         Route::delete('/{kodeOk}', [KodeOkController::class, 'destroy'])->name('destroy');
     });
@@ -274,11 +275,11 @@ Route::middleware(['auth.custom'])->group(function () {
         ->name('leading-dashboard.api');
 
 
-    // REFRENSI KODE OK
     Route::prefix('kode-ok-referensi')->name('kode-ok-referensi.')->group(function () {
         Route::get('/', [KodeOkReferensiController::class, 'index'])->name('index');
         Route::get('/data', [KodeOkReferensiController::class, 'data'])->name('data');
         Route::get('/apd-options', [KodeOkReferensiController::class, 'apdOptions'])->name('apd-options');
+        Route::get('/kode-ok-options', [KodeOkReferensiController::class, 'kodeOkOptions'])->name('kode-ok-options');
         Route::post('/', [KodeOkReferensiController::class, 'store'])->name('store');
         Route::put('/{kodeOkReferensi}', [KodeOkReferensiController::class, 'update'])->name('update');
         Route::delete('/{kodeOkReferensi}', [KodeOkReferensiController::class, 'destroy'])->name('destroy');

@@ -47,4 +47,11 @@ class Pegawai extends Model
     {
         return $this->belongsTo(KodeOk::class, 'kode_ok', 'kode_ok');
     }
+
+    // Safety Officer yang membina pegawai ini (kebalikan dari tenagaBinaanSafety)
+    public function safetyOfficerBinaan()
+    {
+        return $this->hasOne(SafetyOfficerPegawai::class, 'pegawai_id', 'id_api')
+            ->latestOfMany(); // ambil assignment terbaru kalau ada lebih dari satu baris
+    }
 }

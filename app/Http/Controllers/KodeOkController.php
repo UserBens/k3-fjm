@@ -35,12 +35,12 @@ class KodeOkController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('kode_ok', 'like', "%{$search}%")
-                    ->orWhere('uraian_kode_ok', 'like', "%{$search}%");
+                    ->orWhere('uraian_kerja', 'like', "%{$search}%");
             });
         }
 
         if ($request->filled('status')) {
-            $query->where('is_active', (bool) $request->status);
+            $query->where('status', (bool) $request->status);
         }
 
         $perPage = (int) $request->get('per_page', 10);
@@ -86,8 +86,8 @@ class KodeOkController extends Controller
         return [
             'id' => $kodeOk->id,
             'kode_ok' => $kodeOk->kode_ok,
-            'uraian_kode_ok' => $kodeOk->uraian_kode_ok,
-            'status' => $kodeOk->is_active,
+            'uraian_kerja' => $kodeOk->uraian_kerja,
+            'status' => $kodeOk->status,
             'is_manual' => $kodeOk->is_manual,
             'jumlah_pegawai' => $kodeOk->pegawaiRelasi->count(),
 
@@ -112,6 +112,7 @@ class KodeOkController extends Controller
     {
         $validated = $request->validate([
             'kode_ok' => 'nullable|string|max:20|unique:kode_oks,kode_ok',
+            'uraian_kerja' => 'nullable|string|max:1000',
             'status' => 'required|boolean',
             'pegawai_ids' => 'nullable|array',
             'pegawai_ids.*' => 'exists:pegawais,id',
@@ -122,10 +123,10 @@ class KodeOkController extends Controller
         ]);
 
         $kodeOkValue = $validated['kode_ok'] ?? (string) ((int) (KodeOk::max('kode_ok') ?? 0) + 1);
-
         $kodeOk = KodeOk::create([
             'kode_ok' => $kodeOkValue,
-            'is_active' => $validated['status'],
+            'uraian_kerja' => $validated['uraian_kerja'] ?? null,
+            'status' => $validated['status'],
             'is_manual' => true,
         ]);
 
@@ -144,6 +145,7 @@ class KodeOkController extends Controller
     public function update(Request $request, KodeOk $kodeOk)
     {
         $validated = $request->validate([
+            'uraian_kerja' => 'nullable|string|max:1000',
             'status' => 'required|boolean',
             'pegawai_ids' => 'nullable|array',
             'pegawai_ids.*' => 'exists:pegawais,id',
@@ -154,8 +156,9 @@ class KodeOkController extends Controller
         ]);
 
         $kodeOk->update([
-            'is_active' => $validated['status'],
-            'is_manual' => true, // relasi sudah diatur manual, tidak boleh ditimpa sync
+            'uraian_kerja' => $validated['uraian_kerja'] ?? null,
+            'status' => $validated['status'],
+            'is_manual' => true,
         ]);
 
         $kodeOk->pegawaiRelasi()->sync($validated['pegawai_ids'] ?? []);
@@ -169,7 +172,7 @@ class KodeOkController extends Controller
             'data' => $this->transform($kodeOk),
         ]);
     }
-    
+
     public function destroy(KodeOk $kodeOk)
     {
         if (Pegawai::where('kode_ok', $kodeOk->kode_ok)->exists()) {

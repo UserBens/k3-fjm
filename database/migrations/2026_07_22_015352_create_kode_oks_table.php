@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('kode_oks', function (Blueprint $table) {
             $table->id();
             $table->string('kode_ok');
+            $table->text('uraian_kerja')->nullable();
             $table->string('pengawas')->nullable();
             $table->string('unit_kerja')->nullable();
-            $table->text('uraian_pekerjaan')->nullable();
+            // $table->text('uraian_pekerjaan')->nullable();
             $table->boolean('status')->default(true)->comment('1 = aktif, 0 = nonaktif');
             $table->timestamp('synced_at')->nullable()->comment('Waktu terakhir data ini ditarik dari sumber sync');
             $table->timestamps();

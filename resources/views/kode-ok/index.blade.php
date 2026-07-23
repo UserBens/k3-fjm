@@ -1471,7 +1471,7 @@
     </div>
 
     <!-- MODAL FORM TAMBAH / EDIT -->
-    <<div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
+    <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
         <div class="form-modal-box" onclick="event.stopPropagation()">
             <div class="form-modal-header">
                 <div class="form-modal-eyebrow" id="formModalEyebrow">Tambah Data</div>
@@ -1484,6 +1484,12 @@
                     <input type="text" id="inputKodeOk" class="form-input"
                         placeholder="Kosongkan untuk otomatis" />
                     <div class="form-hint" id="kodeOkHint">Kosongkan untuk menggunakan nomor urut berikutnya.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Uraian Kerja</label>
+                    <input type="text" id="inputUraianKerja" class="form-input"
+                        placeholder="Kosongkan untuk otomatis" />
                 </div>
 
                 <div class="form-group">
@@ -1555,175 +1561,174 @@
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 
-        <!-- MODAL DETAIL KODE OK (scrollable) -->
-        <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
-            <div class="detail-modal-box" onclick="event.stopPropagation()">
-                <div class="detail-modal-header">
-                    <div>
-                        <div class="detail-modal-eyebrow" id="detailEyebrow">Detail Kode OK</div>
-                        <div class="detail-modal-title" id="detailTitle">#—</div>
-                    </div>
-                    <button class="detail-modal-close" onclick="closeDetailModal()">
-                        <svg style="width:14px;height:14px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+    <!-- MODAL DETAIL KODE OK (scrollable) -->
+    <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
+        <div class="detail-modal-box" onclick="event.stopPropagation()">
+            <div class="detail-modal-header">
+                <div>
+                    <div class="detail-modal-eyebrow" id="detailEyebrow">Detail Kode OK</div>
+                    <div class="detail-modal-title" id="detailTitle">#—</div>
                 </div>
+                <button class="detail-modal-close" onclick="closeDetailModal()">
+                    <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
-                <div class="detail-summary-row">
-                    <div class="detail-summary-item">
-                        <span class="detail-summary-label">Jumlah Pegawai</span>
-                        <span class="detail-summary-value" id="detailJumlahPegawai">0</span>
-                    </div>
-                    <div class="detail-summary-item">
-                        <span class="detail-summary-label">Unit Kerja</span>
-                        <span class="detail-summary-value" id="detailJumlahUnitKerja">0</span>
-                    </div>
-                    <div class="detail-summary-item">
-                        <span class="detail-summary-label">Kualifikasi</span>
-                        <span class="detail-summary-value" id="detailJumlahKualifikasi">0</span>
-                    </div>
+            <div class="detail-summary-row">
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Jumlah Pegawai</span>
+                    <span class="detail-summary-value" id="detailJumlahPegawai">0</span>
                 </div>
-
-                <div class="detail-tags-block">
-                    <div class="detail-tags-label">Unit Kerja Terlibat</div>
-                    <div class="detail-tags-wrap" id="detailUnitKerjaTags"></div>
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Unit Kerja</span>
+                    <span class="detail-summary-value" id="detailJumlahUnitKerja">0</span>
                 </div>
-
-                <div class="detail-tags-block">
-                    <div class="detail-tags-label">Kualifikasi Terlibat</div>
-                    <div class="detail-tags-wrap" id="detailKualifikasiTags"></div>
-                </div>
-
-                <div class="detail-pegawai-body">
-                    <table class="detail-pegawai-table">
-                        <thead>
-                            <tr>
-                                <th>Badge</th>
-                                <th>Nama Pegawai</th>
-                                <th>Unit Kerja</th>
-                                <th>Kualifikasi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detailPegawaiBody"></tbody>
-                    </table>
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Kualifikasi</span>
+                    <span class="detail-summary-value" id="detailJumlahKualifikasi">0</span>
                 </div>
             </div>
-        </div>
 
-        <div id="toastContainer" class="toast-container"></div>
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">Unit Kerja Terlibat</div>
+                <div class="detail-tags-wrap" id="detailUnitKerjaTags"></div>
+            </div>
 
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-box">
-                <div class="loading-spinner"></div>
-                <div class="loading-text">Menyinkronkan Data Kode OK</div>
-                <div class="loading-sub">Mohon tunggu, sedang mengambil data terbaru dari sumber API...</div>
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">Kualifikasi Terlibat</div>
+                <div class="detail-tags-wrap" id="detailKualifikasiTags"></div>
+            </div>
+
+            <div class="detail-pegawai-body">
+                <table class="detail-pegawai-table">
+                    <thead>
+                        <tr>
+                            <th>Badge</th>
+                            <th>Nama Pegawai</th>
+                            <th>Unit Kerja</th>
+                            <th>Kualifikasi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailPegawaiBody"></tbody>
+                </table>
             </div>
         </div>
+    </div>
 
-        <script>
-            const API_ENDPOINT = "{{ route('kode-ok.api') }}";
-            const SYNC_ENDPOINT = "{{ route('kode-ok.sync') }}";
-            const STORE_ENDPOINT = "{{ route('kode-ok.store') }}";
-            const UPDATE_ENDPOINT_BASE = "{{ url('/kode-ok') }}";
-            const DELETE_ENDPOINT_BASE = "{{ url('/kode-ok') }}";
-            const OPTIONS_ENDPOINT = "{{ route('kode-ok.options') }}";
-            const CSRF_TOKEN = "{{ csrf_token() }}";
+    <div id="toastContainer" class="toast-container"></div>
 
-            const state = {
-                search: '',
-                status: '',
-                page: 1,
-                per_page: 10
-            };
-            let searchDebounce = null;
-            let currentEditId = null;
-            let deleteTargetId = null;
-            let deleteTargetKode = null;
-            let lastLoadedRows = [];
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-box">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Menyinkronkan Data Kode OK</div>
+            <div class="loading-sub">Mohon tunggu, sedang mengambil data terbaru dari sumber API...</div>
+        </div>
+    </div>
 
-            function toggleSidebar() {
-                document.getElementById('sidebar').classList.toggle('open');
-                document.getElementById('sidebar-overlay').classList.toggle('open');
-            }
+    <script>
+        const API_ENDPOINT = "{{ route('kode-ok.api') }}";
+        const SYNC_ENDPOINT = "{{ route('kode-ok.sync') }}";
+        const STORE_ENDPOINT = "{{ route('kode-ok.store') }}";
+        const UPDATE_ENDPOINT_BASE = "{{ url('/kode-ok') }}";
+        const DELETE_ENDPOINT_BASE = "{{ url('/kode-ok') }}";
+        const OPTIONS_ENDPOINT = "{{ route('kode-ok.options') }}";
+        const CSRF_TOKEN = "{{ csrf_token() }}";
 
-            function escapeHtml(str) {
-                const div = document.createElement('div');
-                div.textContent = str ?? '';
-                return div.innerHTML;
-            }
+        const state = {
+            search: '',
+            status: '',
+            page: 1,
+            per_page: 10
+        };
+        let searchDebounce = null;
+        let currentEditId = null;
+        let deleteTargetId = null;
+        let deleteTargetKode = null;
+        let lastLoadedRows = [];
 
-            function onSearchInput() {
-                clearTimeout(searchDebounce);
-                searchDebounce = setTimeout(() => {
-                    state.search = document.getElementById('searchInput').value.trim();
-                    state.page = 1;
-                    loadData();
-                }, 350);
-            }
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('open');
+        }
 
-            function onFilterChange() {
-                state.status = document.getElementById('filterStatus').value;
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str ?? '';
+            return div.innerHTML;
+        }
+
+        function onSearchInput() {
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => {
+                state.search = document.getElementById('searchInput').value.trim();
                 state.page = 1;
                 loadData();
+            }, 350);
+        }
+
+        function onFilterChange() {
+            state.status = document.getElementById('filterStatus').value;
+            state.page = 1;
+            loadData();
+        }
+
+        function onPerPageChange() {
+            state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
+            state.page = 1;
+            loadData();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterStatus').value = '';
+            state.search = '';
+            state.status = '';
+            state.page = 1;
+            loadData();
+        }
+
+        function goToPage(page) {
+            state.page = page;
+            loadData();
+            document.getElementById('page-content').scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function statusPill(status) {
+            return status ?
+                `<span class="status-pill sp-green">Aktif</span>` :
+                `<span class="status-pill sp-red">Nonaktif</span>`;
+        }
+
+        function renderBadgeList(list, colorClass, max = 3) {
+            if (!list || list.length === 0) {
+                return `<span style="font-size:11px;color:#CBD5E1;">—</span>`;
             }
-
-            function onPerPageChange() {
-                state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
-                state.page = 1;
-                loadData();
+            const shown = list.slice(0, max);
+            let html = `<div class="badge-list">`;
+            shown.forEach(item => {
+                html += `<span class="status-pill ${colorClass}">${escapeHtml(item)}</span>`;
+            });
+            if (list.length > max) {
+                html += `<span class="badge-more">+${list.length - max} lagi</span>`;
             }
+            html += `</div>`;
+            return html;
+        }
 
-            function resetFilters() {
-                document.getElementById('searchInput').value = '';
-                document.getElementById('filterStatus').value = '';
-                state.search = '';
-                state.status = '';
-                state.page = 1;
-                loadData();
-            }
+        function renderTable(rows) {
+            lastLoadedRows = rows || [];
+            const tbody = document.getElementById('tableBody');
 
-            function goToPage(page) {
-                state.page = page;
-                loadData();
-                document.getElementById('page-content').scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            }
-
-            function statusPill(status) {
-                return status ?
-                    `<span class="status-pill sp-green">Aktif</span>` :
-                    `<span class="status-pill sp-red">Nonaktif</span>`;
-            }
-
-            function renderBadgeList(list, colorClass, max = 3) {
-                if (!list || list.length === 0) {
-                    return `<span style="font-size:11px;color:#CBD5E1;">—</span>`;
-                }
-                const shown = list.slice(0, max);
-                let html = `<div class="badge-list">`;
-                shown.forEach(item => {
-                    html += `<span class="status-pill ${colorClass}">${escapeHtml(item)}</span>`;
-                });
-                if (list.length > max) {
-                    html += `<span class="badge-more">+${list.length - max} lagi</span>`;
-                }
-                html += `</div>`;
-                return html;
-            }
-
-            function renderTable(rows) {
-                lastLoadedRows = rows || [];
-                const tbody = document.getElementById('tableBody');
-
-                if (!rows || rows.length === 0) {
-                    tbody.innerHTML = `
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = `
                 <tr>
                     <td colspan="7">
                         <div class="empty-state">
@@ -1736,14 +1741,14 @@
                         </div>
                     </td>
                 </tr>`;
-                    return;
-                }
+                return;
+            }
 
-                tbody.innerHTML = rows.map(row => `
+            tbody.innerHTML = rows.map(row => `
                 <tr>
                     <td><span class="status-pill sp-blue" style="font-size:11px;">#${escapeHtml(row.kode_ok)}</span></td>
                     <td style="max-width:220px;">
-                        <div style="font-weight:600; color:#1e293b; font-size:12.5px; line-height:1.4;">${escapeHtml(row.uraian_kode_ok || '-')}</div>
+                        <div style="font-weight:600; color:#1e293b; font-size:12.5px; line-height:1.4;">${escapeHtml(row.uraian_kerja || '-')}</div>
                     </td>
                     <td style="font-weight:700;">${row.jumlah_pegawai}</td>
                     <td>${renderBadgeList(row.unit_kerja_list, 'sp-blue')}</td>
@@ -1756,10 +1761,10 @@
                     </td>
                 </tr>
             `).join('');
-            }
+        }
 
-            function renderError(message) {
-                document.getElementById('tableBody').innerHTML = `
+        function renderError(message) {
+            document.getElementById('tableBody').innerHTML = `
         <tr>
             <td colspan="7">
                 <div class="error-state">
@@ -1772,80 +1777,80 @@
                 </div>
             </td>
         </tr>`;
-                document.getElementById('paginationText').textContent = '—';
-                document.getElementById('paginationPages').innerHTML = '';
-                document.getElementById('dataSummary').textContent = 'Gagal memuat data kode OK.';
-            }
+            document.getElementById('paginationText').textContent = '—';
+            document.getElementById('paginationPages').innerHTML = '';
+            document.getElementById('dataSummary').textContent = 'Gagal memuat data kode OK.';
+        }
 
-            function renderPagination(meta) {
-                document.getElementById('paginationText').textContent =
-                    meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
-                document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> kode OK ditemukan`;
+        function renderPagination(meta) {
+            document.getElementById('paginationText').textContent =
+                meta.total > 0 ? `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
+            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> kode OK ditemukan`;
 
-                const container = document.getElementById('paginationPages');
-                const current = meta.current_page;
-                const last = meta.last_page;
+            const container = document.getElementById('paginationPages');
+            const current = meta.current_page;
+            const last = meta.last_page;
 
-                let pages = [];
-                const addPage = p => pages.push(p);
-                const addEllipsis = () => pages.push('...');
+            let pages = [];
+            const addPage = p => pages.push(p);
+            const addEllipsis = () => pages.push('...');
 
-                addPage(1);
-                if (current > 3) addEllipsis();
-                for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
-                if (current < last - 2) addEllipsis();
-                if (last > 1) addPage(last);
-                pages = [...new Set(pages)];
+            addPage(1);
+            if (current > 3) addEllipsis();
+            for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
+            if (current < last - 2) addEllipsis();
+            if (last > 1) addPage(last);
+            pages = [...new Set(pages)];
 
-                let html =
-                    `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
-                pages.forEach(p => {
-                    html += p === '...' ?
-                        `<span class="page-ellipsis">…</span>` :
-                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-                });
-                html +=
-                    `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-                container.innerHTML = html;
-            }
+            let html =
+                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
+            pages.forEach(p => {
+                html += p === '...' ?
+                    `<span class="page-ellipsis">…</span>` :
+                    `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+            });
+            html +=
+                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
+            container.innerHTML = html;
+        }
 
-            async function loadData() {
-                const params = new URLSearchParams();
-                if (state.search) params.set('search', state.search);
-                if (state.status !== '') params.set('status', state.status);
-                params.set('page', state.page);
-                params.set('per_page', state.per_page);
+        async function loadData() {
+            const params = new URLSearchParams();
+            if (state.search) params.set('search', state.search);
+            if (state.status !== '') params.set('status', state.status);
+            params.set('page', state.page);
+            params.set('per_page', state.per_page);
 
-                try {
-                    const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-                    if (!res.ok) {
-                        const errJson = await res.json().catch(() => null);
-                        throw new Error(errJson?.message || `Server merespons status ${res.status}`);
+            try {
+                const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
+                    headers: {
+                        'Accept': 'application/json'
                     }
-                    const json = await res.json();
-                    renderTable(json.data);
-                    renderPagination(json.meta);
-                } catch (e) {
-                    renderError(e.message || 'Terjadi kesalahan tak terduga.');
+                });
+                if (!res.ok) {
+                    const errJson = await res.json().catch(() => null);
+                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
                 }
+                const json = await res.json();
+                renderTable(json.data);
+                renderPagination(json.meta);
+            } catch (e) {
+                renderError(e.message || 'Terjadi kesalahan tak terduga.');
             }
+        }
 
-            document.addEventListener('DOMContentLoaded', loadData);
-        </script>
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
 
-        <script>
-            function showToast(message, type = 'success') {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-                const iconSvg = type === 'error' ?
-                    '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
-                    '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
-                toast.innerHTML = `
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+            const iconSvg = type === 'error' ?
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
+                '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+            toast.innerHTML = `
                 <div class="toast-icon">${iconSvg}</div>
                 <div class="toast-body">
                     <div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div>
@@ -1853,348 +1858,352 @@
                 </div>
                 <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
             `;
-                container.appendChild(toast);
-                requestAnimationFrame(() => toast.classList.add('show'));
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 250);
-                }, 4000);
-            }
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 250);
+            }, 4000);
+        }
 
-            // SYNC
-            function syncData() {
-                document.getElementById('syncConfirmOverlay').classList.add('open');
-            }
+        // SYNC
+        function syncData() {
+            document.getElementById('syncConfirmOverlay').classList.add('open');
+        }
 
-            function closeSyncModal() {
-                document.getElementById('syncConfirmOverlay').classList.remove('open');
-            }
+        function closeSyncModal() {
+            document.getElementById('syncConfirmOverlay').classList.remove('open');
+        }
 
-            function closeSyncModalOutside(event) {
-                if (event.target.id === 'syncConfirmOverlay') closeSyncModal();
+        function closeSyncModalOutside(event) {
+            if (event.target.id === 'syncConfirmOverlay') closeSyncModal();
+        }
+        async function confirmSync() {
+            closeSyncModal();
+            document.getElementById('loadingOverlay').classList.add('open');
+            try {
+                const res = await fetch(SYNC_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    }
+                });
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || `Server merespons dengan status ${res.status}`);
+                await loadData();
+                document.getElementById('loadingOverlay').classList.remove('open');
+                showToast(json.message || 'Data kode OK berhasil disinkronkan.', 'success');
+            } catch (e) {
+                document.getElementById('loadingOverlay').classList.remove('open');
+                showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
             }
-            async function confirmSync() {
-                closeSyncModal();
-                document.getElementById('loadingOverlay').classList.add('open');
-                try {
-                    const res = await fetch(SYNC_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': CSRF_TOKEN
-                        }
-                    });
-                    const json = await res.json();
-                    if (!res.ok) throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                    await loadData();
-                    document.getElementById('loadingOverlay').classList.remove('open');
-                    showToast(json.message || 'Data kode OK berhasil disinkronkan.', 'success');
-                } catch (e) {
-                    document.getElementById('loadingOverlay').classList.remove('open');
-                    showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
-                }
+        }
+
+        const pickerData = {
+            unitKerja: {
+                all: [],
+                selected: new Map()
+            },
+            kualifikasi: {
+                all: [],
+                selected: new Map()
+            },
+            pegawai: {
+                all: [],
+                selected: new Map()
+            },
+        };
+        let optionsLoaded = false;
+
+        async function ensureOptionsLoaded() {
+            if (optionsLoaded) return;
+            try {
+                const res = await fetch(OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                pickerData.unitKerja.all = json.unit_kerja || [];
+                pickerData.kualifikasi.all = json.kualifikasi || [];
+                pickerData.pegawai.all = json.pegawai || [];
+                optionsLoaded = true;
+            } catch (e) {
+                showToast('Gagal memuat data unit kerja/kualifikasi/pegawai.', 'error');
             }
+        }
 
-            const pickerData = {
-                unitKerja: {
-                    all: [],
-                    selected: new Map()
-                },
-                kualifikasi: {
-                    all: [],
-                    selected: new Map()
-                },
-                pegawai: {
-                    all: [],
-                    selected: new Map()
-                },
-            };
-            let optionsLoaded = false;
+        function pickerLabel(type, item) {
+            if (type === 'pegawai') return `${item.badge ? item.badge + ' — ' : ''}${item.nama}`;
+            if (type === 'unitKerja') return item.nama_unit_kerja;
+            return item.nama_kualifikasi;
+        }
 
-            async function ensureOptionsLoaded() {
-                if (optionsLoaded) return;
-                try {
-                    const res = await fetch(OPTIONS_ENDPOINT, {
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-                    const json = await res.json();
-                    pickerData.unitKerja.all = json.unit_kerja || [];
-                    pickerData.kualifikasi.all = json.kualifikasi || [];
-                    pickerData.pegawai.all = json.pegawai || [];
-                    optionsLoaded = true;
-                } catch (e) {
-                    showToast('Gagal memuat data unit kerja/kualifikasi/pegawai.', 'error');
-                }
-            }
+        function resetPicker(type) {
+            pickerData[type].selected = new Map();
+            document.getElementById(`chips-${type}`).innerHTML = '';
+            document.getElementById(`dropdown-${type}`).classList.remove('open');
+        }
 
-            function pickerLabel(type, item) {
-                if (type === 'pegawai') return `${item.badge ? item.badge + ' — ' : ''}${item.nama}`;
-                if (type === 'unitKerja') return item.nama_unit_kerja;
-                return item.nama_kualifikasi;
-            }
-
-            function resetPicker(type) {
-                pickerData[type].selected = new Map();
-                document.getElementById(`chips-${type}`).innerHTML = '';
-                document.getElementById(`dropdown-${type}`).classList.remove('open');
-            }
-
-            function renderChips(type) {
-                const wrap = document.getElementById(`chips-${type}`);
-                const items = Array.from(pickerData[type].selected.values());
-                wrap.innerHTML = items.map(item => `
+        function renderChips(type) {
+            const wrap = document.getElementById(`chips-${type}`);
+            const items = Array.from(pickerData[type].selected.values());
+            wrap.innerHTML = items.map(item => `
         <span class="picker-chip">
             ${escapeHtml(pickerLabel(type, item))}
             <button type="button" onclick="pickerRemove('${type}', ${item.id})">✕</button>
         </span>
     `).join('');
-            }
+        }
 
-            function renderDropdown(type, keyword = '') {
-                const optionsWrap = document.getElementById(`options-${type}`);
-                const kw = keyword.trim().toLowerCase();
-                const list = pickerData[type].all.filter(item => {
-                    const label = pickerLabel(type, item).toLowerCase();
-                    return !kw || label.includes(kw);
-                });
+        function renderDropdown(type, keyword = '') {
+            const optionsWrap = document.getElementById(`options-${type}`);
+            const kw = keyword.trim().toLowerCase();
+            const list = pickerData[type].all.filter(item => {
+                const label = pickerLabel(type, item).toLowerCase();
+                return !kw || label.includes(kw);
+            });
 
-                if (list.length === 0) {
-                    optionsWrap.innerHTML = `<div class="picker-empty">Tidak ada data cocok.</div>`;
-                } else {
-                    optionsWrap.innerHTML = list.slice(0, 50).map(item => {
-                        const checked = pickerData[type].selected.has(item.id);
-                        return `
+            if (list.length === 0) {
+                optionsWrap.innerHTML = `<div class="picker-empty">Tidak ada data cocok.</div>`;
+            } else {
+                optionsWrap.innerHTML = list.slice(0, 50).map(item => {
+                    const checked = pickerData[type].selected.has(item.id);
+                    return `
                 <div class="picker-option ${checked ? 'checked' : ''}" onclick="pickerToggle('${type}', ${item.id})">
                     <span class="picker-option-check">${checked ? '✓' : ''}</span>
                     <span>${escapeHtml(pickerLabel(type, item))}</span>
                 </div>
             `;
-                    }).join('');
-                }
-
-                document.getElementById(`count-${type}`).textContent =
-                    `${pickerData[type].selected.size} dipilih`;
+                }).join('');
             }
 
+            document.getElementById(`count-${type}`).textContent =
+                `${pickerData[type].selected.size} dipilih`;
+        }
 
-            function pickerOpen(type) {
-                // tutup picker lain biar tidak ada dua dropdown terbuka bersamaan
-                ['unitKerja', 'kualifikasi', 'pegawai'].forEach(t => {
-                    if (t !== type) pickerClose(t);
-                });
-                renderDropdown(type);
-                document.getElementById(`dropdown-${type}`).classList.add('open');
-            }
 
-            function pickerClose(type) {
-                document.getElementById(`dropdown-${type}`).classList.remove('open');
-            }
+        function pickerOpen(type) {
+            // tutup picker lain biar tidak ada dua dropdown terbuka bersamaan
+            ['unitKerja', 'kualifikasi', 'pegawai'].forEach(t => {
+                if (t !== type) pickerClose(t);
+            });
+            renderDropdown(type);
+            document.getElementById(`dropdown-${type}`).classList.add('open');
+        }
 
-            function pickerSearch(type, keyword) {
-                renderDropdown(type, keyword);
-                document.getElementById(`dropdown-${type}`).classList.add('open');
-            }
+        function pickerClose(type) {
+            document.getElementById(`dropdown-${type}`).classList.remove('open');
+        }
 
-            function pickerToggle(type, id) {
-                const item = pickerData[type].all.find(i => i.id === id);
-                if (!item) return;
-                if (pickerData[type].selected.has(id)) {
-                    pickerData[type].selected.delete(id);
-                } else {
-                    pickerData[type].selected.set(id, item);
-                }
-                renderChips(type);
-                renderDropdown(type);
-            }
+        function pickerSearch(type, keyword) {
+            renderDropdown(type, keyword);
+            document.getElementById(`dropdown-${type}`).classList.add('open');
+        }
 
-            function pickerRemove(type, id) {
+        function pickerToggle(type, id) {
+            const item = pickerData[type].all.find(i => i.id === id);
+            if (!item) return;
+            if (pickerData[type].selected.has(id)) {
                 pickerData[type].selected.delete(id);
-                renderChips(type);
-                renderDropdown(type);
+            } else {
+                pickerData[type].selected.set(id, item);
             }
+            renderChips(type);
+            renderDropdown(type);
+        }
 
-            function pickerSetSelected(type, ids) {
-                const items = (ids || [])
-                    .map(id => pickerData[type].all.find(i => i.id === id))
-                    .filter(Boolean);
-                pickerData[type].selected = new Map(items.map(i => [i.id, i]));
-                renderChips(type);
-            }
+        function pickerRemove(type, id) {
+            pickerData[type].selected.delete(id);
+            renderChips(type);
+            renderDropdown(type);
+        }
 
-            document.addEventListener('click', (e) => {
-                ['unitKerja', 'kualifikasi', 'pegawai'].forEach(type => {
-                    const dropdown = document.getElementById(`dropdown-${type}`);
-                    if (!dropdown.classList.contains('open')) return;
+        function pickerSetSelected(type, ids) {
+            const items = (ids || [])
+                .map(id => pickerData[type].all.find(i => i.id === id))
+                .filter(Boolean);
+            pickerData[type].selected = new Map(items.map(i => [i.id, i]));
+            renderChips(type);
+        }
 
-                    const wrap = document.querySelector(`[data-picker="${type}"]`);
-                    if (wrap && !wrap.contains(e.target)) {
-                        pickerClose(type);
-                    }
-                });
-            }, true);
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    ['unitKerja', 'kualifikasi', 'pegawai'].forEach(pickerClose);
+        document.addEventListener('click', (e) => {
+            ['unitKerja', 'kualifikasi', 'pegawai'].forEach(type => {
+                const dropdown = document.getElementById(`dropdown-${type}`);
+                if (!dropdown.classList.contains('open')) return;
+
+                const wrap = document.querySelector(`[data-picker="${type}"]`);
+                if (wrap && !wrap.contains(e.target)) {
+                    pickerClose(type);
                 }
             });
-
-            // FORM TAMBAH / EDIT
-            async function openAddModal() {
-                currentEditId = null;
-                document.getElementById('formModalEyebrow').textContent = 'Tambah Data';
-                document.getElementById('formModalTitle').textContent = 'Kode OK Baru';
-                document.getElementById('inputKodeOk').value = '';
-                document.getElementById('inputKodeOk').disabled = false;
-                document.getElementById('kodeOkHint').textContent = 'Kosongkan untuk menggunakan nomor urut berikutnya.';
-                document.getElementById('inputStatus').value = '1';
-
-                resetPicker('unitKerja');
-                resetPicker('kualifikasi');
-                resetPicker('pegawai');
-
-                document.getElementById('formModalOverlay').classList.add('open');
-                await ensureOptionsLoaded();
+        }, true);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                ['unitKerja', 'kualifikasi', 'pegawai'].forEach(pickerClose);
             }
+        });
 
-            async function openEditModal(row) {
-                currentEditId = row.id;
-                document.getElementById('formModalEyebrow').textContent = 'Update Data';
-                document.getElementById('formModalTitle').textContent = `Edit Kode OK #${row.kode_ok}`;
-                document.getElementById('inputKodeOk').value = row.kode_ok;
-                document.getElementById('inputKodeOk').disabled = true;
-                document.getElementById('kodeOkHint').textContent = 'Kode OK tidak dapat diubah setelah dibuat.';
-                document.getElementById('inputStatus').value = row.status ? '1' : '0';
+        // FORM TAMBAH / EDIT
+        async function openAddModal() {
+            currentEditId = null;
+            document.getElementById('formModalEyebrow').textContent = 'Tambah Data';
+            document.getElementById('formModalTitle').textContent = 'Kode OK Baru';
+            document.getElementById('inputKodeOk').value = '';
+            document.getElementById('inputKodeOk').disabled = false;
+            document.getElementById('kodeOkHint').textContent = 'Kosongkan untuk menggunakan nomor urut berikutnya.';
+            document.getElementById('inputStatus').value = '1';
+            document.getElementById('inputUraianKerja').value = '';
 
-                document.getElementById('formModalOverlay').classList.add('open');
-                await ensureOptionsLoaded();
 
-                pickerSetSelected('unitKerja', row.unit_kerja_ids);
-                pickerSetSelected('kualifikasi', row.kualifikasi_ids);
-                pickerSetSelected('pegawai', row.pegawai_ids);
+            resetPicker('unitKerja');
+            resetPicker('kualifikasi');
+            resetPicker('pegawai');
+
+            document.getElementById('formModalOverlay').classList.add('open');
+            await ensureOptionsLoaded();
+        }
+
+        async function openEditModal(row) {
+            currentEditId = row.id;
+            document.getElementById('formModalEyebrow').textContent = 'Update Data';
+            document.getElementById('formModalTitle').textContent = `Edit Kode OK #${row.kode_ok}`;
+            document.getElementById('inputKodeOk').value = row.kode_ok;
+            document.getElementById('inputKodeOk').disabled = true;
+            document.getElementById('kodeOkHint').textContent = 'Kode OK tidak dapat diubah setelah dibuat.';
+            document.getElementById('inputStatus').value = row.status ? '1' : '0';
+            document.getElementById('inputUraianKerja').value = row.uraian_kerja || '';
+
+            document.getElementById('formModalOverlay').classList.add('open');
+            await ensureOptionsLoaded();
+
+            pickerSetSelected('unitKerja', row.unit_kerja_ids);
+            pickerSetSelected('kualifikasi', row.kualifikasi_ids);
+            pickerSetSelected('pegawai', row.pegawai_ids);
+        }
+
+        function closeFormModal() {
+            document.getElementById('formModalOverlay').classList.remove('open');
+            currentEditId = null;
+        }
+
+        function closeFormModalOutside(event) {
+            if (event.target.id === 'formModalOverlay') closeFormModal();
+        }
+
+        async function submitForm() {
+            const btn = document.getElementById('btnSubmitForm');
+            const originalText = btn.textContent;
+
+            const payload = {
+                kode_ok: document.getElementById('inputKodeOk').value.trim() || null,
+                uraian_kerja: document.getElementById('inputUraianKerja').value.trim() || null,
+                status: parseInt(document.getElementById('inputStatus').value, 10),
+                unit_kerja_ids: Array.from(pickerData.unitKerja.selected.keys()),
+                kualifikasi_ids: Array.from(pickerData.kualifikasi.selected.keys()),
+                pegawai_ids: Array.from(pickerData.pegawai.selected.keys()),
+            };
+
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            try {
+                const isEdit = currentEditId !== null;
+                const url = isEdit ? `${UPDATE_ENDPOINT_BASE}/${currentEditId}` : STORE_ENDPOINT;
+
+                const res = await fetch(url, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+                if (!res.ok) {
+                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
+                    throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
+                }
+                closeFormModal();
+                await loadData();
+                showToast(json.message || (isEdit ? 'Kode OK berhasil diperbarui.' :
+                    'Kode OK baru berhasil ditambahkan.'), 'success');
+            } catch (e) {
+                showToast(e.message || 'Terjadi kesalahan saat menyimpan data.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
             }
+        }
 
-            function closeFormModal() {
-                document.getElementById('formModalOverlay').classList.remove('open');
-                currentEditId = null;
-            }
+        // HAPUS
+        function openDeleteModal(id, kodeOk, jumlahPegawai) {
+            deleteTargetId = id;
+            deleteTargetKode = kodeOk;
+            const extraWarning = jumlahPegawai > 0 ?
+                ` Kode OK ini masih dipakai oleh ${jumlahPegawai} pegawai — sebaiknya nonaktifkan saja lewat Edit, bukan dihapus.` :
+                '';
+            document.getElementById('deleteConfirmDesc').textContent =
+                `Kode OK #${kodeOk} akan dihapus permanen dan tidak dapat dikembalikan.${extraWarning}`;
+            document.getElementById('deleteConfirmOverlay').classList.add('open');
+        }
 
-            function closeFormModalOutside(event) {
-                if (event.target.id === 'formModalOverlay') closeFormModal();
-            }
+        function closeDeleteModal() {
+            document.getElementById('deleteConfirmOverlay').classList.remove('open');
+            deleteTargetId = null;
+        }
 
-            async function submitForm() {
-                const btn = document.getElementById('btnSubmitForm');
-                const originalText = btn.textContent;
-
-                const payload = {
-                    kode_ok: document.getElementById('inputKodeOk').value.trim() || null,
-                    status: parseInt(document.getElementById('inputStatus').value, 10),
-                    unit_kerja_ids: Array.from(pickerData.unitKerja.selected.keys()),
-                    kualifikasi_ids: Array.from(pickerData.kualifikasi.selected.keys()),
-                    pegawai_ids: Array.from(pickerData.pegawai.selected.keys()),
-                };
-
-                btn.disabled = true;
-                btn.textContent = 'Menyimpan...';
-
-                try {
-                    const isEdit = currentEditId !== null;
-                    const url = isEdit ? `${UPDATE_ENDPOINT_BASE}/${currentEditId}` : STORE_ENDPOINT;
-
-                    const res = await fetch(url, {
-                        method: isEdit ? 'PUT' : 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': CSRF_TOKEN
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    const json = await res.json();
-                    if (!res.ok) {
-                        const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
-                        throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
+        function closeDeleteModalOutside(event) {
+            if (event.target.id === 'deleteConfirmOverlay') closeDeleteModal();
+        }
+        async function confirmDelete() {
+            if (!deleteTargetId) return;
+            try {
+                const res = await fetch(`${DELETE_ENDPOINT_BASE}/${deleteTargetId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
                     }
-                    closeFormModal();
-                    await loadData();
-                    showToast(json.message || (isEdit ? 'Kode OK berhasil diperbarui.' :
-                        'Kode OK baru berhasil ditambahkan.'), 'success');
-                } catch (e) {
-                    showToast(e.message || 'Terjadi kesalahan saat menyimpan data.', 'error');
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = originalText;
-                }
+                });
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || `Server merespons dengan status ${res.status}`);
+                closeDeleteModal();
+                await loadData();
+                showToast(json.message || 'Kode OK berhasil dihapus.', 'success');
+            } catch (e) {
+                closeDeleteModal();
+                showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
             }
+        }
 
-            // HAPUS
-            function openDeleteModal(id, kodeOk, jumlahPegawai) {
-                deleteTargetId = id;
-                deleteTargetKode = kodeOk;
-                const extraWarning = jumlahPegawai > 0 ?
-                    ` Kode OK ini masih dipakai oleh ${jumlahPegawai} pegawai — sebaiknya nonaktifkan saja lewat Edit, bukan dihapus.` :
-                    '';
-                document.getElementById('deleteConfirmDesc').textContent =
-                    `Kode OK #${kodeOk} akan dihapus permanen dan tidak dapat dikembalikan.${extraWarning}`;
-                document.getElementById('deleteConfirmOverlay').classList.add('open');
-            }
+        // DETAIL (scrollable table)
+        function openDetailModal(id) {
+            const row = lastLoadedRows.find(r => r.id === id);
+            if (!row) return;
 
-            function closeDeleteModal() {
-                document.getElementById('deleteConfirmOverlay').classList.remove('open');
-                deleteTargetId = null;
-            }
+            document.getElementById('detailEyebrow').textContent = row.uraian_kerja || 'Detail Kode OK';
+            document.getElementById('detailTitle').textContent = `Kode OK #${row.kode_ok}`;
+            document.getElementById('detailJumlahPegawai').textContent = row.jumlah_pegawai;
+            document.getElementById('detailJumlahUnitKerja').textContent = (row.unit_kerja_list || []).length;
+            document.getElementById('detailJumlahKualifikasi').textContent = (row.kualifikasi_list || []).length;
 
-            function closeDeleteModalOutside(event) {
-                if (event.target.id === 'deleteConfirmOverlay') closeDeleteModal();
-            }
-            async function confirmDelete() {
-                if (!deleteTargetId) return;
-                try {
-                    const res = await fetch(`${DELETE_ENDPOINT_BASE}/${deleteTargetId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': CSRF_TOKEN
-                        }
-                    });
-                    const json = await res.json();
-                    if (!res.ok) throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                    closeDeleteModal();
-                    await loadData();
-                    showToast(json.message || 'Kode OK berhasil dihapus.', 'success');
-                } catch (e) {
-                    closeDeleteModal();
-                    showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
-                }
-            }
+            const unitTagsWrap = document.getElementById('detailUnitKerjaTags');
+            unitTagsWrap.innerHTML = (row.unit_kerja_list || []).length ?
+                row.unit_kerja_list.map(u => `<span class="status-pill sp-blue">${escapeHtml(u)}</span>`).join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada data unit kerja.</span>`;
 
-            // DETAIL (scrollable table)
-            function openDetailModal(id) {
-                const row = lastLoadedRows.find(r => r.id === id);
-                if (!row) return;
+            const qualTagsWrap = document.getElementById('detailKualifikasiTags');
+            qualTagsWrap.innerHTML = (row.kualifikasi_list || []).length ?
+                row.kualifikasi_list.map(k => `<span class="status-pill sp-amber">${escapeHtml(k)}</span>`).join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada data kualifikasi.</span>`;
 
-                document.getElementById('detailEyebrow').textContent = row.uraian_kode_ok || 'Detail Kode OK';
-                document.getElementById('detailTitle').textContent = `Kode OK #${row.kode_ok}`;
-                document.getElementById('detailJumlahPegawai').textContent = row.jumlah_pegawai;
-                document.getElementById('detailJumlahUnitKerja').textContent = (row.unit_kerja_list || []).length;
-                document.getElementById('detailJumlahKualifikasi').textContent = (row.kualifikasi_list || []).length;
-
-                const unitTagsWrap = document.getElementById('detailUnitKerjaTags');
-                unitTagsWrap.innerHTML = (row.unit_kerja_list || []).length ?
-                    row.unit_kerja_list.map(u => `<span class="status-pill sp-blue">${escapeHtml(u)}</span>`).join('') :
-                    `<span style="font-size:11px;color:#CBD5E1;">Belum ada data unit kerja.</span>`;
-
-                const qualTagsWrap = document.getElementById('detailKualifikasiTags');
-                qualTagsWrap.innerHTML = (row.kualifikasi_list || []).length ?
-                    row.kualifikasi_list.map(k => `<span class="status-pill sp-amber">${escapeHtml(k)}</span>`).join('') :
-                    `<span style="font-size:11px;color:#CBD5E1;">Belum ada data kualifikasi.</span>`;
-
-                const pegawaiBody = document.getElementById('detailPegawaiBody');
-                const list = row.pegawai_list || [];
-                pegawaiBody.innerHTML = list.length ? list.map(p => `
+            const pegawaiBody = document.getElementById('detailPegawaiBody');
+            const list = row.pegawai_list || [];
+            pegawaiBody.innerHTML = list.length ? list.map(p => `
                 <tr>
                     <td class="td-badge">${escapeHtml(p.badge)}</td>
                     <td>${escapeHtml(p.nama)}</td>
@@ -2205,17 +2214,17 @@
                 <tr><td colspan="4" style="text-align:center;color:#94A3B8;padding:24px 0;">Belum ada pegawai di kode OK ini.</td></tr>
             `;
 
-                document.getElementById('detailModalOverlay').classList.add('open');
-            }
+            document.getElementById('detailModalOverlay').classList.add('open');
+        }
 
-            function closeDetailModal() {
-                document.getElementById('detailModalOverlay').classList.remove('open');
-            }
+        function closeDetailModal() {
+            document.getElementById('detailModalOverlay').classList.remove('open');
+        }
 
-            function closeDetailModalOutside(event) {
-                if (event.target.id === 'detailModalOverlay') closeDetailModal();
-            }
-        </script>
+        function closeDetailModalOutside(event) {
+            if (event.target.id === 'detailModalOverlay') closeDetailModal();
+        }
+    </script>
 </body>
 
 </html>

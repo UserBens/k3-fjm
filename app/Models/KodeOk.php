@@ -11,7 +11,7 @@ class KodeOk extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'status' => 'boolean',
         'is_manual' => 'boolean',
         'last_sync' => 'datetime',
     ];

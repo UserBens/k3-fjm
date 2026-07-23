@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permintaan_pembelians', function (Blueprint $table) {
-              $table->id();
+            $table->id();
             $table->string('no_pp')->unique(); // contoh: 17/I/PP/2026
             $table->date('tanggal_pp');
             $table->string('unit_kerja')->nullable();
             $table->string('diminta_oleh')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
- 
+
             $table->index('tanggal_pp');
         });
     }

@@ -2016,11 +2016,27 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Kode OK</label>
-                        <input type="text" id="fKodeOk" class="form-input" placeholder="1 / OK-001 / PCS01" />
+                        <div class="ms-dropdown" id="kodeOkWrap">
+                            <button type="button" class="ms-dropdown-btn" onclick="toggleKodeOkDropdown()">
+                                <span id="kodeOkLabel">Pilih Kode OK...</span>
+                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="ms-dropdown-panel" id="kodeOkPanel">
+                                <input type="text" class="ms-search" placeholder="Cari Kode OK..."
+                                    oninput="filterKodeOkOptions(this.value)" />
+                                <div class="ms-options" id="kodeOkOptionsList"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fKodeOk" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Dept / Unit Kerja PIC</label>
-                        <input type="text" id="fDept" class="form-input" placeholder="DEP. PRODUKSI I" />
+                        <input type="text" id="fDept" class="form-input"
+                            placeholder="Otomatis dari Kode OK terpilih" readonly />
                     </div>
                     <div class="form-group span-2">
                         <label class="form-label">Uraian Pekerjaan</label>
@@ -2106,6 +2122,7 @@
         const STORE_ENDPOINT = "{{ route('kode-ok-referensi.store') }}";
         const APD_OPTIONS_ENDPOINT = "{{ route('kode-ok-referensi.apd-options') }}";
         const BASE_ENDPOINT = "{{ url('/kode-ok-referensi') }}";
+        const KODE_OK_OPTIONS_ENDPOINT = "{{ route('kode-ok-referensi.kode-ok-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -2358,6 +2375,71 @@
             }
         }
 
+        let kodeOkOptionsCache = [];
+        let kodeOkSelected = null; // { id, kode_ok, unit_kerja }
+
+        async function loadKodeOkOptions() {
+            if (kodeOkOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(KODE_OK_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                kodeOkOptionsCache = json.data || [];
+            } catch (e) {
+                /* diamkan */
+            }
+        }
+
+        function renderKodeOkOptions(term = '') {
+            const container = document.getElementById('kodeOkOptionsList');
+            const term_ = term.toLowerCase();
+            const list = kodeOkOptionsCache.filter(k =>
+                k.kode_ok.toLowerCase().includes(term_) ||
+                (k.unit_kerja || '').toLowerCase().includes(term_)
+            );
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="ms-option-empty">Kode OK tidak ditemukan.</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(k => `
+        <label class="ms-option-row">
+            <input type="radio" name="kodeOkRadio" value="${k.id}" ${kodeOkSelected?.id === k.id ? 'checked' : ''}
+                onchange='selectKodeOk(${JSON.stringify(k).replace(/'/g, "&#39;")})' />
+            <span>${escapeHtml(k.kode_ok)} <span style="color:#94A3B8;">(${escapeHtml(k.unit_kerja || '-')})</span></span>
+        </label>
+     `).join('');
+        }
+
+        function filterKodeOkOptions(term) {
+            renderKodeOkOptions(term);
+        }
+
+        function selectKodeOk(k) {
+            kodeOkSelected = k;
+            document.getElementById('fKodeOk').value = k.kode_ok;
+            document.getElementById('fDept').value = k.unit_kerja || '';
+            document.getElementById('kodeOkLabel').textContent = k.kode_ok;
+            document.getElementById('kodeOkPanel').classList.remove('open');
+        }
+
+        function toggleKodeOkDropdown() {
+            const panel = document.getElementById('kodeOkPanel');
+            const isOpen = panel.classList.contains('open');
+            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
+            if (!isOpen) {
+                panel.classList.add('open');
+                renderKodeOkOptions();
+                const search = panel.querySelector('.ms-search');
+                search.value = '';
+                search.focus();
+            }
+        }
+
         function renderMsOptions(prefix, term = '') {
             const container = document.getElementById(`${prefix}Options`);
             const term_ = term.toLowerCase();
@@ -2422,12 +2504,28 @@
         async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
             await loadApdOptions();
+            await loadKodeOkOptions();
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Referensi Kode OK' :
                 'Tambah Referensi Kode OK';
 
-            document.getElementById('fKodeOk').value = row?.kode_ok || '';
-            document.getElementById('fDept').value = row?.dept_unit_kerja_pic || '';
+            if (row) {
+                const match = kodeOkOptionsCache.find(k => k.kode_ok === row.kode_ok);
+                kodeOkSelected = match || {
+                    id: null,
+                    kode_ok: row.kode_ok,
+                    unit_kerja: row.dept_unit_kerja_pic
+                };
+                document.getElementById('fKodeOk').value = row.kode_ok;
+                document.getElementById('kodeOkLabel').textContent = row.kode_ok;
+                document.getElementById('fDept').value = row.dept_unit_kerja_pic || '';
+            } else {
+                kodeOkSelected = null;
+                document.getElementById('fKodeOk').value = '';
+                document.getElementById('kodeOkLabel').textContent = 'Pilih Kode OK...';
+                document.getElementById('fDept').value = '';
+            }
+
             document.getElementById('fUraian').value = row?.uraian_pekerjaan || '';
             document.getElementById('fKategori').value = row?.kategori_pekerjaan || '';
 
