@@ -10,6 +10,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class LogApdController extends Controller
 {
@@ -305,5 +309,150 @@ class LogApdController extends Controller
                 'jadwal_tukar_selanjutnya' => $jadwalSelanjutnya,
             ],
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'xlsx');
+
+        $query = LogApd::query();
+        $query->search($request->input('search'));
+
+        if ($request->filled('jenis_transaksi')) {
+            $query->where('jenis_transaksi', $request->input('jenis_transaksi'));
+        }
+        if ($request->filled('unit_kerja')) {
+            $query->where('unit_kerja', $request->input('unit_kerja'));
+        }
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal', '>=', $request->input('tanggal_dari'));
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal', '<=', $request->input('tanggal_sampai'));
+        }
+        if ($request->filled('id')) {
+            $ids = array_filter(explode(',', $request->input('id')));
+            $query->whereIn('id', $ids);
+        }
+
+        $rows = $query->orderByDesc('tanggal')->orderByDesc('id')->get();
+        $filename = 'log-apd-' . now()->format('Ymd-His');
+
+        return $format === 'csv'
+            ? $this->exportCsv($rows, $filename)
+            : $this->exportXlsx($rows, $filename);
+    }
+
+    private function columns(): array
+    {
+        return [
+            'No. Dokumen',
+            'Tanggal',
+            'Jenis Transaksi',
+            'Keterangan Lainnya',
+            'ID Karyawan',
+            'Nama Karyawan',
+            'Kode OK',
+            'Unit Kerja',
+            'Jabatan',
+            'Kode APD',
+            'Jenis APD',
+            'Merk/Type',
+            'Ukuran',
+            'Qty Keluar',
+            'Qty Masuk',
+            'Kondisi APD Lama',
+            'Pernah Tukar',
+            'Alasan Penggantian',
+            'Diterima Oleh',
+            'Keterangan',
+        ];
+    }
+
+    private function rowToArray(LogApd $row): array
+    {
+        return [
+            $row->no_dokumen,
+            optional($row->tanggal)->format('d/m/Y'),
+            $row->jenis_transaksi,
+            $row->keterangan_lainnya,
+            $row->id_karyawan,
+            $row->nama_karyawan,
+            $row->kode_ok,
+            $row->unit_kerja,
+            $row->jabatan,
+            $row->kode_apd,
+            $row->jenis_apd,
+            $row->merk_type,
+            $row->ukuran,
+            $row->qty_keluar,
+            $row->qty_masuk,
+            $row->kondisi_apd_lama,
+            $row->pernah_tukar === null ? '-' : ($row->pernah_tukar ? 'Ya' : 'Tidak'),
+            $row->alasan_penggantian,
+            $row->diterima_oleh,
+            $row->keterangan,
+        ];
+    }
+
+    private function exportXlsx($rows, string $filename)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Log APD');
+
+        $columns = $this->columns();
+        $sheet->fromArray($columns, null, 'A1');
+
+        // Kolom terakhir dihitung dari jumlah header, mis. 20 kolom -> "T"
+        $lastCol = Coordinate::stringFromColumnIndex(count($columns));
+        $headerRange = "A1:{$lastCol}1";
+
+        $sheet->getStyle($headerRange)->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
+        $sheet->getStyle($headerRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('2D4B9E');
+
+        $rowNum = 2;
+        foreach ($rows as $row) {
+            $sheet->fromArray($this->rowToArray($row), null, "A{$rowNum}");
+            $rowNum++;
+        }
+
+        foreach (range('A', $lastCol) as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, "{$filename}.xlsx", [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    private function exportCsv($rows, string $filename)
+    {
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}.csv\"",
+        ];
+
+        $columns = $this->columns();
+
+        $callback = function () use ($rows, $columns) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, $columns);
+
+            foreach ($rows as $row) {
+                fputcsv($handle, $this->rowToArray($row));
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

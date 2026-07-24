@@ -16,6 +16,11 @@ class Supplierapd extends Model
         'id'
     ];
 
+    public function scopeAktif(Builder $query): Builder
+    {
+        return $query->where('status', 'Aktif');
+    }
+
     public function scopeSearch(Builder $query, ?string $term): Builder
     {
         if (blank($term)) {

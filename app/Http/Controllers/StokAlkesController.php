@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\StokAlkes;
+use App\Models\Supplierapd;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -36,6 +37,10 @@ class StokAlkesController extends Controller
             $query->where('kondisi', $request->kondisi);
         }
 
+        if ($request->filled('tipe_alat')) {
+            $query->where('tipe_alat', $request->tipe_alat);
+        }
+
         $paginated = $query
             ->orderBy('jenis_alat')
             ->paginate($perPage);
@@ -67,6 +72,8 @@ class StokAlkesController extends Controller
                     'Tidak Aktif'
                 ],
 
+                'tipe_alat' => ['Consumable', 'Non-Consumable'],
+
                 'kondisi' => [
                     'Baik',
                     'Rusak Ringan',
@@ -74,6 +81,7 @@ class StokAlkesController extends Controller
                     'Perlu Kalibrasi'
                 ]
             ]
+
         ]);
     }
 
@@ -95,31 +103,27 @@ class StokAlkesController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, StokAlkes $stokAlke)
+    public function update(Request $request, StokAlkes $stokAlkes)
     {
         $validated = $this->validateData($request);
-        if ($stokAlke->jenis_alat != $validated['jenis_alat']) {
-            $validated['kode_alkes'] =
-                $this->generateKodeAlkes($validated['jenis_alat']);
-        }
-        $validated['stok_tersedia'] =
-            $validated['stok_awal']
-            - $validated['digunakan']
-            - $validated['rusak'];
 
-        $stokAlke->update($validated);
+        if ($stokAlkes->jenis_alat != $validated['jenis_alat']) {
+            $validated['kode_alkes'] = $this->generateKodeAlkes($validated['jenis_alat']);
+        }
+        $validated['stok_tersedia'] = $validated['stok_awal'] - $validated['digunakan'] - $validated['rusak'];
+
+        $stokAlkes->update($validated);
 
         return response()->json([
             'message' => 'Data alat kesehatan berhasil diperbarui.',
-            'data' => $stokAlke
+            'data' => $stokAlkes
         ]);
     }
 
-    public function destroy(StokAlkes $stokAlke)
+    public function destroy(StokAlkes $stokAlkes)
     {
-        $nama = $stokAlke->jenis_alat;
-
-        $stokAlke->delete();
+        $nama = $stokAlkes->jenis_alat;
+        $stokAlkes->delete();
 
         return response()->json([
             'message' => "Data {$nama} berhasil dihapus."
@@ -130,7 +134,7 @@ class StokAlkesController extends Controller
     {
         return $request->validate([
             'kode_alkes' => ['nullable', 'string', 'max:50', Rule::unique('stok_alkes', 'kode_alkes')
-                ->ignore($request->route('stokAlke'))],
+                ->ignore($request->route('stokAlkes'))],   // ← diperbaiki
 
             'jenis_alat' => ['required', 'string', 'max:255'],
 
@@ -154,8 +158,7 @@ class StokAlkesController extends Controller
                 'nullable',
                 'string',
                 'max:100',
-                Rule::unique('stok_alkes', 'nomor_seri') // BENAR
-                    ->ignore($request->route('stokAlkes')),
+                Rule::unique('stok_alkes', 'nomor_seri')->ignore($request->route('stokAlkes')),
             ],
 
             'kategori' => ['required', 'string', 'max:100'],
@@ -183,6 +186,9 @@ class StokAlkesController extends Controller
             ],
 
             'keterangan' => ['nullable', 'string'],
+
+            'tipe_alat' => ['required', Rule::in(['Consumable', 'Non-Consumable'])],
+            'interval_kalibrasi' => ['nullable', Rule::in(['3_BULAN', '6_BULAN', '1_TAHUN', '2_TAHUN'])],
 
             'status' => [
                 'required',
@@ -228,5 +234,23 @@ class StokAlkesController extends Controller
             $prefix,
             $next
         );
+    }
+
+    public function supplierOptions(Request $request)
+    {
+        $items = Supplierapd::query()
+            ->aktif()
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $term = $request->search;
+                $q->where(function ($qq) use ($term) {
+                    $qq->where('nama_supplier', 'like', "%{$term}%")
+                        ->orWhere('kategori_produk', 'like', "%{$term}%")
+                        ->orWhere('merk_utama', 'like', "%{$term}%");
+                });
+            })
+            ->orderBy('nama_supplier')
+            ->get(['id', 'nama_supplier', 'kategori_produk', 'merk_utama', 'wilayah']);
+
+        return response()->json(['data' => $items]);
     }
 }

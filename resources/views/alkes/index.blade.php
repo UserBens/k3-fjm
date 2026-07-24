@@ -1222,11 +1222,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Kode Alkes</label>
-                        <input
-                            type="text"
-                            id="fKodeAlkes"
-                            class="form-input"
-                            readonly
+                        <input type="text" id="fKodeAlkes" class="form-input" readonly
                             placeholder="Otomatis dibuat">
                     </div>
 
@@ -1243,6 +1239,13 @@
                             <option value="Terapi">Terapi</option>
                             <option value="Emergency">Emergency</option>
                             <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipe Alat</label>
+                        <select id="fTipeAlat" class="form-select">
+                            <option value="Non-Consumable">Non-Consumable</option>
+                            <option value="Consumable">Consumable</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1299,22 +1302,33 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Tanggal Kalibrasi</label>
-                        <input type="date" id="fTanggalKalibrasi" class="form-input" />
+                        <input type="date" id="fTanggalKalibrasi" class="form-input"
+                            onchange="onKalibrasiInputChange()" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Interval Kalibrasi</label>
+                        <select id="fIntervalKalibrasi" class="form-select" onchange="onKalibrasiInputChange()">
+                            <option value="">— Tidak ada jadwal rutin —</option>
+                            <option value="3_BULAN">3 Bulan</option>
+                            <option value="6_BULAN">6 Bulan</option>
+                            <option value="1_TAHUN">1 Tahun</option>
+                            <option value="2_TAHUN">2 Tahun</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Jadwal Kalibrasi Berikut</label>
                         <input type="date" id="fJadwalKalibrasiBerikut" class="form-input" />
+                        <div class="detail-subtitle" style="margin-top:4px;">
+                            Terisi otomatis dari Tanggal Kalibrasi + Interval, atau isi manual jika perlu.
+                        </div>
                     </div>
-                    <div class="form-group span-2">
+                    <div class="form-group">
                         <label class="form-label">Masa Garansi</label>
                         <input type="date" id="fMasaGaransi" class="form-input" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tanggal Expired</label>
-                        <input
-                            type="date"
-                            id="fTanggalExp"
-                            class="form-input">
+                        <input type="date" id="fTanggalExp" class="form-input">
                     </div>
                 </div>
 
@@ -1327,8 +1341,23 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Supplier</label>
-                        <input type="text" id="fSupplier" class="form-input"
-                            placeholder="PT. Medika Sejahtera" />
+                        <div class="ms-dropdown" id="supplierWrap">
+                            <button type="button" class="ms-dropdown-btn" onclick="toggleSupplierDropdown()">
+                                <span id="supplierLabel">Pilih Supplier...</span>
+                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="ms-dropdown-panel" id="supplierPanel">
+                                <input type="text" class="ms-search"
+                                    placeholder="Cari nama supplier / merk / kategori produk..."
+                                    oninput="filterSupplierOptions(this.value)" />
+                                <div class="ms-options" id="supplierOptionsList"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fSupplier" />
                     </div>
                 </div>
 
@@ -1401,6 +1430,10 @@
                         <div class="detail-field"><label>Type</label><input type="text" id="dType" readonly>
                         </div>
                     </div>
+                    <div class="detail-field"><label>Tipe Alat</label><input type="text" id="dTipeAlat" readonly>
+                    </div>
+                    <div class="detail-field"><label>Interval Kalibrasi</label><input type="text"
+                            id="dIntervalKalibrasi" readonly></div>
                 </div>
 
                 <div class="detail-section">
@@ -1533,6 +1566,7 @@
     <script>
         const DATA_ENDPOINT = "{{ route('master-stok-alkes.data') }}";
         const STORE_ENDPOINT = "{{ route('master-stok-alkes.store') }}";
+        const SUPPLIER_OPTIONS_ENDPOINT = "{{ route('master-stok-alkes.supplier-options') }}";
         const BASE_ENDPOINT = "{{ url('/master-stok-alkes') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
@@ -1550,6 +1584,7 @@
         let filterOptionsLoaded = false;
         let currentEditId = null;
         let currentDeleteId = null;
+        let supplierOptionsCache = [];
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1852,8 +1887,10 @@
         }
 
         // ══════ MODAL TAMBAH / EDIT ══════
-        function openFormModal(row = null) {
+        async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
+
+            await loadSupplierOptions();
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data Alkes' : 'Tambah Alkes';
             document.getElementById('formModalSub').textContent = row ? `Perbarui data untuk ${row.jenis_alat}` :
@@ -1870,20 +1907,22 @@
             document.getElementById('fDigunakan').value = row?.digunakan ?? 0;
             document.getElementById('fRusak').value = row?.rusak ?? 0;
             document.getElementById('fReorderPoint').value = row?.reorder_point ?? 0;
-            document.getElementById('fTanggalKalibrasi').value = row?.tanggal_kalibrasi ? row.tanggal_kalibrasi.substring(0,
-                10) : '';
+            document.getElementById('fTanggalKalibrasi').value = row?.tanggal_kalibrasi ? row.tanggal_kalibrasi
+                .substring(0, 10) : '';
             document.getElementById('fJadwalKalibrasiBerikut').value = row?.jadwal_kalibrasi_berikut ? row
                 .jadwal_kalibrasi_berikut.substring(0, 10) : '';
-            document.getElementById('fTanggalExp').value =
-            row?.tanggal_exp
-                ? row.tanggal_exp.substring(0,10)
-                : '';
+            document.getElementById('fTanggalExp').value = row?.tanggal_exp ? row.tanggal_exp.substring(0, 10) : '';
             document.getElementById('fMasaGaransi').value = row?.masa_garansi ? row.masa_garansi.substring(0, 10) : '';
             document.getElementById('fHargaSatuan').value = row?.harga_satuan ?? 0;
-            document.getElementById('fSupplier').value = row?.supplier || '';
             document.getElementById('fKondisi').value = row?.kondisi || 'Baik';
             document.getElementById('fStatus').value = row?.status || 'Aktif';
             document.getElementById('fKeterangan').value = row?.keterangan || '';
+            document.getElementById('fTipeAlat').value = row?.tipe_alat || 'Non-Consumable';
+            document.getElementById('fIntervalKalibrasi').value = row?.interval_kalibrasi || '';
+
+            document.getElementById('fSupplier').value = row?.supplier || '';
+            document.getElementById('supplierLabel').textContent = row?.supplier || 'Pilih Supplier...';
+            document.getElementById('supplierPanel').classList.remove('open');
 
             document.getElementById('formModalOverlay').classList.add('open');
         }
@@ -1925,6 +1964,8 @@
                 kondisi: document.getElementById('fKondisi').value,
                 status: document.getElementById('fStatus').value,
                 keterangan: document.getElementById('fKeterangan').value.trim() || null,
+                tipe_alat: document.getElementById('fTipeAlat').value,
+                interval_kalibrasi: document.getElementById('fIntervalKalibrasi').value || null,
             };
 
             const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
@@ -1992,6 +2033,8 @@
             document.getElementById('dKondisi').value = row.kondisi || '-';
             document.getElementById('dStatus').value = row.status || '-';
             document.getElementById('dKeterangan').value = row.keterangan || '-';
+            document.getElementById('dTipeAlat').value = row.tipe_alat || '-';
+            document.getElementById('dIntervalKalibrasi').value = INTERVAL_KALIBRASI_LABEL[row.interval_kalibrasi] || '-';
 
             document.getElementById('detailModalOverlay').classList.add('open');
         }
@@ -2041,6 +2084,106 @@
                 showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
             }
         }
+
+        const INTERVAL_KALIBRASI_BULAN = {
+            '3_BULAN': 3,
+            '6_BULAN': 6,
+            '1_TAHUN': 12,
+            '2_TAHUN': 24,
+        };
+
+        const INTERVAL_KALIBRASI_LABEL = {
+            '3_BULAN': '3 Bulan',
+            '6_BULAN': '6 Bulan',
+            '1_TAHUN': '1 Tahun',
+            '2_TAHUN': '2 Tahun',
+        };
+
+        function onKalibrasiInputChange() {
+            const tanggalKalibrasi = document.getElementById('fTanggalKalibrasi').value;
+            const interval = document.getElementById('fIntervalKalibrasi').value;
+
+            if (!tanggalKalibrasi || !interval) return;
+
+            const bulan = INTERVAL_KALIBRASI_BULAN[interval];
+            if (!bulan) return;
+
+            const tgl = new Date(tanggalKalibrasi);
+            tgl.setMonth(tgl.getMonth() + bulan);
+
+            const yyyy = tgl.getFullYear();
+            const mm = String(tgl.getMonth() + 1).padStart(2, '0');
+            const dd = String(tgl.getDate()).padStart(2, '0');
+
+            document.getElementById('fJadwalKalibrasiBerikut').value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        async function loadSupplierOptions() {
+            if (supplierOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(SUPPLIER_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                supplierOptionsCache = json.data || [];
+            } catch (e) {
+                // Diamkan — field tetap bisa dikosongkan tanpa master data
+            }
+        }
+
+        function renderSupplierOptions(term = '') {
+            const container = document.getElementById('supplierOptionsList');
+            const term_ = term.toLowerCase();
+            const list = supplierOptionsCache.filter(s =>
+                s.nama_supplier.toLowerCase().includes(term_) ||
+                (s.kategori_produk || '').toLowerCase().includes(term_) ||
+                (s.merk_utama || '').toLowerCase().includes(term_)
+            );
+
+            container.innerHTML = list.length === 0 ?
+                `<div class="ms-option-empty">Supplier tidak ditemukan.</div>` :
+                list.map(s => `
+            <label class="ms-option-row">
+                <input type="radio" name="supplierRadio" value="${s.id}"
+                    onchange='selectSupplier(${JSON.stringify(s).replace(/'/g, "&#39;")})' />
+                <span>${escapeHtml(s.nama_supplier)}
+                    <span style="color:#94A3B8;">(${escapeHtml(s.kategori_produk || '-')})</span>
+                </span>
+            </label>
+        `).join('');
+        }
+
+        function filterSupplierOptions(term) {
+            renderSupplierOptions(term);
+        }
+
+        function selectSupplier(s) {
+            document.getElementById('fSupplier').value = s.nama_supplier;
+            document.getElementById('supplierLabel').textContent = s.nama_supplier;
+            document.getElementById('supplierPanel').classList.remove('open');
+        }
+
+        function toggleSupplierDropdown() {
+            const panel = document.getElementById('supplierPanel');
+            const isOpen = panel.classList.contains('open');
+            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
+            if (!isOpen) {
+                panel.classList.add('open');
+                renderSupplierOptions();
+                const search = panel.querySelector('.ms-search');
+                search.value = '';
+                search.focus();
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('supplierWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('supplierPanel')?.classList.remove('open');
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', loadData);
     </script>

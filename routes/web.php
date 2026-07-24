@@ -331,6 +331,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::prefix('log-apd')->name('log-apd.')->group(function () {
         Route::get('/', [LogApdController::class, 'index'])->name('index');
         Route::get('/data', [LogApdController::class, 'data'])->name('data');
+        Route::get('/export', [LogApdController::class, 'export'])->name('export'); // baru
         Route::get('/apd-options', [LogApdController::class, 'apdOptions'])->name('apd-options');
         Route::get('/kode-ok-options', [LogApdController::class, 'kodeOkOptions'])->name('kode-ok-options');
         Route::get('/riwayat-tukar', [LogApdController::class, 'riwayatTukar'])->name('riwayat-tukar'); // baru
@@ -344,6 +345,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::prefix('master-stok-alkes')->name('master-stok-alkes.')->group(function () {
         Route::get('/', [StokAlkesController::class, 'index'])->name('index');
         Route::get('/data', [StokAlkesController::class, 'data'])->name('data');
+        Route::get('/supplier-options', [StokAlkesController::class, 'supplierOptions'])->name('supplier-options'); // diperbaiki
         Route::post('/', [StokAlkesController::class, 'store'])->name('store');
         Route::put('/{stokAlkes}', [StokAlkesController::class, 'update'])->name('update');
         Route::delete('/{stokAlkes}', [StokAlkesController::class, 'destroy'])->name('destroy');

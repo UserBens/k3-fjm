@@ -203,6 +203,14 @@
             cursor: pointer;
             transition: background 0.15s;
             white-space: nowrap;
+            display: inline-flex;
+            /* Mengubah tombol menjadi container flex */
+            align-items: center;
+            /* Menyejajarkan ikon dan teks tepat di tengah secara vertikal */
+            justify-content: center;
+            /* Mengatur posisi konten di tengah secara horizontal */
+            gap: 8px;
+            /* Memberikan jarak yang rapi antara ikon dan teks */
         }
 
         .btn-outline:hover {
@@ -1373,6 +1381,45 @@
             background: #F1F5F9;
             color: #64748B;
         }
+
+        .export-dropdown {
+            position: relative;
+        }
+
+        .export-dropdown-panel {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: 200px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            padding: 6px;
+            display: none;
+            z-index: 20;
+        }
+
+        .export-dropdown-panel.open {
+            display: block;
+        }
+
+        .export-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .export-option:hover {
+            background: #F1F5F9;
+        }
     </style>
 </head>
 
@@ -1401,7 +1448,25 @@
                         <div class="pg-title">LOG <span>APD</span></div>
                         <div class="pg-sub">Catatan keluar-masuk / serah terima APD ke karyawan.</div>
                     </div>
-                    <div class="pg-actions">
+                    <div class="pg-actions" style="display:flex; gap:8px;">
+                        <div class="export-dropdown" id="exportDropdownWrap">
+                            <button class="btn-outline" onclick="toggleExportDropdown()">
+                                <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                                </svg>
+                                Export Data
+                            </button>
+                            <div class="export-dropdown-panel" id="exportDropdownPanel">
+                                <button type="button" class="export-option" onclick="exportData('xlsx')">
+                                    Export ke Excel (.xlsx)
+                                </button>
+                                <button type="button" class="export-option" onclick="exportData('csv')">
+                                    Export ke CSV (.csv)
+                                </button>
+                            </div>
+                        </div>
                         <button class="btn-primary" onclick="openFormModal()">
                             <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -1838,6 +1903,7 @@
         // ══════ CONFIG ══════
         const DATA_ENDPOINT = "{{ route('log-apd.data') }}";
         const STORE_ENDPOINT = "{{ route('log-apd.store') }}";
+        const EXPORT_ENDPOINT = "{{ route('log-apd.export') }}";
         const APD_OPTIONS_ENDPOINT = "{{ route('log-apd.apd-options') }}";
         const CARI_PEGAWAI_ENDPOINT = "{{ route('log-apd.cari-pegawai') }}";
         const BASE_ENDPOINT = "{{ url('/log-apd') }}";
@@ -2056,6 +2122,13 @@
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                             Hapus
+                        </button>
+                        <button class="btn-row-action" onclick="exportData('xlsx', ${row.id})" title="Export log ini ke Excel">
+                            <svg style="width:14px;height:14px; color:#1A7A3C;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                            </svg>
+                            Export
                         </button>
                     </td>
                 </tr>
@@ -2698,6 +2771,36 @@
             } catch (e) {
                 box.innerHTML = `<div class="info-box-line" style="color:#D0021B;">Gagal memuat riwayat tukar.</div>`;
             }
+        }
+
+        function toggleExportDropdown() {
+            document.getElementById('exportDropdownPanel').classList.toggle('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('exportDropdownWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('exportDropdownPanel')?.classList.remove('open');
+            }
+        });
+
+        // ids: kosongkan untuk export sesuai filter yang lagi aktif; isi ID untuk export satu log spesifik
+        function exportData(format, ids = null) {
+            const params = new URLSearchParams();
+
+            if (ids) {
+                params.set('id', ids);
+            } else {
+                if (state.search) params.set('search', state.search);
+                if (state.jenis_transaksi) params.set('jenis_transaksi', state.jenis_transaksi);
+                if (state.unit_kerja) params.set('unit_kerja', state.unit_kerja);
+                if (state.tanggal_dari) params.set('tanggal_dari', state.tanggal_dari);
+                if (state.tanggal_sampai) params.set('tanggal_sampai', state.tanggal_sampai);
+            }
+            params.set('format', format);
+
+            window.location.href = `${EXPORT_ENDPOINT}?${params.toString()}`;
+            document.getElementById('exportDropdownPanel')?.classList.remove('open');
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
