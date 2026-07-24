@@ -2250,7 +2250,7 @@
             ${escapeHtml(item.kode_ok)}
             <button type="button" onclick="kodeOkToggle('${item.kode_ok}')">✕</button>
         </span>
-    `).join('');
+     `).join('');
         }
 
         function renderKodeOkDropdown(keyword = '') {

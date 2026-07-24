@@ -238,7 +238,7 @@ class StokAlkesController extends Controller
 
     public function supplierOptions(Request $request)
     {
-        $items = Supplierapd::query()
+        $items = SupplierApd::query()
             ->aktif()
             ->when($request->filled('search'), function ($q) use ($request) {
                 $term = $request->search;

@@ -53,6 +53,7 @@
             border-radius: 4px;
         }
 
+        /* TOPBAR */
         #topbar {
             height: 52px;
             background: #fff;
@@ -131,6 +132,7 @@
             background: rgba(0, 0, 0, 0.07);
         }
 
+        /* CONTENT */
         #main-content {
             flex: 1;
             display: flex;
@@ -256,6 +258,7 @@
             min-width: 0;
         }
 
+        /* FILTER BAR */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -332,6 +335,7 @@
             color: #1A1D2E;
         }
 
+        /* TABLE */
         .rtable-wrap {
             width: 100%;
             overflow-x: auto;
@@ -339,7 +343,7 @@
 
         .rtable {
             width: 100%;
-            min-width: 980px;
+            min-width: 900px;
             border-collapse: collapse;
         }
 
@@ -486,6 +490,7 @@
             }
         }
 
+        /* stok mini bar */
         .stok-line {
             display: flex;
             align-items: center;
@@ -499,6 +504,7 @@
             color: #1A1D2E;
         }
 
+        /* PAGINATION */
         .pagination-bar {
             display: flex;
             align-items: center;
@@ -577,6 +583,7 @@
             padding: 0 2px;
         }
 
+        /* RESPONSIVE */
         .hamburger-btn {
             display: none;
             width: 32px;
@@ -665,6 +672,7 @@
             }
         }
 
+        /* MODAL GENERIC */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -780,6 +788,7 @@
             background: #A80115;
         }
 
+        /* TOAST */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -864,6 +873,7 @@
             flex-shrink: 0;
         }
 
+        /* ACTION BUTTONS */
         .btn-row-action {
             display: inline-flex;
             align-items: center;
@@ -885,8 +895,9 @@
             background: #F8F9FF;
         }
 
+        /* FORM (modal tambah/edit) */
         .form-modal-box {
-            width: 680px;
+            width: 640px;
             max-width: calc(100vw - 32px);
             max-height: 90vh;
             display: flex;
@@ -919,6 +930,10 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px 14px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
         }
 
         .form-group.span-2 {
@@ -981,6 +996,7 @@
             }
         }
 
+        /* MODAL DETAIL */
         .detail-modal-box {
             max-width: 620px;
             width: 100%;
@@ -1041,6 +1057,7 @@
             letter-spacing: 0.04em;
             margin-bottom: 10px;
             margin-top: 20px;
+
         }
 
         .detail-section-title svg {
@@ -1092,6 +1109,203 @@
             .detail-field.span-2 {
                 grid-column: span 1;
             }
+        }
+
+        .kode-ok-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kode-ok-row .form-input {
+            flex: 1;
+        }
+
+        .btn-remove-kode-ok {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            border: 1px solid rgba(208, 2, 27, 0.2);
+            background: rgba(208, 2, 27, 0.06);
+            color: #D0021B;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .btn-remove-kode-ok:hover {
+            background: rgba(208, 2, 27, 0.14);
+        }
+
+        .kode-ok-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 1px 7px;
+            border-radius: 6px;
+            background: rgba(45, 75, 158, 0.08);
+            color: #2D4B9E;
+            font-size: 10px;
+            font-weight: 700;
+            margin: 0 4px 4px 0;
+        }
+
+        .multi-picker {
+            position: relative;
+        }
+
+        .picker-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 6px;
+            max-height: 96px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .picker-chips:empty {
+            display: none;
+            margin-bottom: 0;
+        }
+
+        .picker-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #EFF3FB;
+            color: #2D4B9E;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .picker-chip button {
+            background: none;
+            border: none;
+            color: #2D4B9E;
+            cursor: pointer;
+            font-size: 10px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .picker-dropdown {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            max-height: 260px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .picker-dropdown.open {
+            display: flex;
+        }
+
+
+        .picker-options {
+            overflow-y: auto;
+            padding: 6px;
+        }
+
+
+        .picker-dropdown-footer {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-top: 1px solid #E2E8F0;
+            background: #F8FAFC;
+        }
+
+        .picker-selected-count {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+
+        .picker-done-btn {
+            border: none;
+            background: #2D4B9E;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .picker-done-btn:hover {
+            background: #1A3C8A;
+        }
+
+        .picker-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            margin-bottom: 2px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .picker-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .picker-option:hover {
+            background: #F8FAFC;
+        }
+
+        .picker-option.checked {
+            background: #EFF6FF;
+            color: #2D4B9E;
+            font-weight: 700;
+        }
+
+        .picker-option-check {
+            width: 16px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 16px;
+            border-radius: 4px;
+            border: 1.5px solid #CBD5E1;
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .picker-option.checked .picker-option-check {
+            background: #2D4B9E;
+            border-color: #2D4B9E;
+        }
+
+        .picker-option span:last-child {
+            overflow-wrap: anywhere;
+        }
+
+        .picker-empty {
+            padding: 16px 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
         }
     </style>
 </head>
@@ -1341,20 +1555,13 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Supplier</label>
-                        <div class="ms-dropdown" id="supplierWrap">
-                            <button type="button" class="ms-dropdown-btn" onclick="toggleSupplierDropdown()">
-                                <span id="supplierLabel">Pilih Supplier...</span>
-                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div class="ms-dropdown-panel" id="supplierPanel">
-                                <input type="text" class="ms-search"
-                                    placeholder="Cari nama supplier / merk / kategori produk..."
-                                    oninput="filterSupplierOptions(this.value)" />
-                                <div class="ms-options" id="supplierOptionsList"></div>
+                        <div class="multi-picker" data-picker="supplier">
+                            <div class="picker-chips" id="chips-supplier"></div>
+                            <input type="text" class="form-input" id="supplierSearchInput"
+                                placeholder="Cari supplier..." oninput="pickerSearchSupplier(this.value)"
+                                onfocus="pickerOpenSupplier()" autocomplete="off" />
+                            <div class="picker-dropdown" id="dropdown-supplier">
+                                <div class="picker-options" id="options-supplier"></div>
                             </div>
                         </div>
                         <input type="hidden" id="fSupplier" />
@@ -1890,8 +2097,6 @@
         async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
 
-            await loadSupplierOptions();
-
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data Alkes' : 'Tambah Alkes';
             document.getElementById('formModalSub').textContent = row ? `Perbarui data untuk ${row.jenis_alat}` :
                 'Lengkapi data master & stok di bawah ini.';
@@ -1919,11 +2124,8 @@
             document.getElementById('fKeterangan').value = row?.keterangan || '';
             document.getElementById('fTipeAlat').value = row?.tipe_alat || 'Non-Consumable';
             document.getElementById('fIntervalKalibrasi').value = row?.interval_kalibrasi || '';
-
-            document.getElementById('fSupplier').value = row?.supplier || '';
-            document.getElementById('supplierLabel').textContent = row?.supplier || 'Pilih Supplier...';
-            document.getElementById('supplierPanel').classList.remove('open');
-
+            await ensureSupplierOptionsLoaded();
+            resetSupplierPicker(row?.supplier || null);
             document.getElementById('formModalOverlay').classList.add('open');
         }
 
@@ -2118,8 +2320,14 @@
             document.getElementById('fJadwalKalibrasiBerikut').value = `${yyyy}-${mm}-${dd}`;
         }
 
-        async function loadSupplierOptions() {
-            if (supplierOptionsCache.length > 0) return;
+        const pickerSupplier = {
+            all: [],
+            selected: null
+        };
+        let supplierOptionsLoaded = false;
+
+        async function ensureSupplierOptionsLoaded() {
+            if (supplierOptionsLoaded) return;
             try {
                 const res = await fetch(SUPPLIER_OPTIONS_ENDPOINT, {
                     headers: {
@@ -2127,56 +2335,99 @@
                     }
                 });
                 const json = await res.json();
-                supplierOptionsCache = json.data || [];
+                pickerSupplier.all = json.data || [];
+                supplierOptionsLoaded = true;
             } catch (e) {
-                // Diamkan — field tetap bisa dikosongkan tanpa master data
+                showToast('Gagal memuat daftar supplier.', 'error');
             }
         }
 
-        function renderSupplierOptions(term = '') {
-            const container = document.getElementById('supplierOptionsList');
-            const term_ = term.toLowerCase();
-            const list = supplierOptionsCache.filter(s =>
-                s.nama_supplier.toLowerCase().includes(term_) ||
-                (s.kategori_produk || '').toLowerCase().includes(term_) ||
-                (s.merk_utama || '').toLowerCase().includes(term_)
-            );
-
-            container.innerHTML = list.length === 0 ?
-                `<div class="ms-option-empty">Supplier tidak ditemukan.</div>` :
-                list.map(s => `
-            <label class="ms-option-row">
-                <input type="radio" name="supplierRadio" value="${s.id}"
-                    onchange='selectSupplier(${JSON.stringify(s).replace(/'/g, "&#39;")})' />
-                <span>${escapeHtml(s.nama_supplier)}
-                    <span style="color:#94A3B8;">(${escapeHtml(s.kategori_produk || '-')})</span>
-                </span>
-            </label>
-        `).join('');
+        function supplierLabel(item) {
+            const parts = [item.nama_supplier];
+            if (item.kategori_produk) parts.push(item.kategori_produk);
+            if (item.wilayah) parts.push(item.wilayah);
+            return parts.join(' — ');
         }
 
-        function filterSupplierOptions(term) {
-            renderSupplierOptions(term);
-        }
-
-        function selectSupplier(s) {
-            document.getElementById('fSupplier').value = s.nama_supplier;
-            document.getElementById('supplierLabel').textContent = s.nama_supplier;
-            document.getElementById('supplierPanel').classList.remove('open');
-        }
-
-        function toggleSupplierDropdown() {
-            const panel = document.getElementById('supplierPanel');
-            const isOpen = panel.classList.contains('open');
-            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
-            if (!isOpen) {
-                panel.classList.add('open');
-                renderSupplierOptions();
-                const search = panel.querySelector('.ms-search');
-                search.value = '';
-                search.focus();
+        function renderSupplierChip() {
+            const wrap = document.getElementById('chips-supplier');
+            if (!pickerSupplier.selected) {
+                wrap.innerHTML = '';
+                document.getElementById('fSupplier').value = '';
+                return;
             }
+            const item = pickerSupplier.selected;
+            wrap.innerHTML = `
+        <span class="picker-chip">
+            ${escapeHtml(item.nama_supplier)}
+            <button type="button" onclick="supplierClear()">✕</button>
+        </span>`;
+            document.getElementById('fSupplier').value = item.nama_supplier;
         }
+
+        function renderSupplierDropdown(keyword = '') {
+            const optionsWrap = document.getElementById('options-supplier');
+            const kw = keyword.trim().toLowerCase();
+            const list = pickerSupplier.all.filter(item => supplierLabel(item).toLowerCase().includes(kw));
+
+            optionsWrap.innerHTML = list.length === 0 ?
+                `<div class="picker-empty">Supplier tidak ditemukan.</div>` :
+                list.slice(0, 50).map(item => {
+                    const checked = pickerSupplier.selected?.nama_supplier === item.nama_supplier;
+                    const safeName = item.nama_supplier.replace(/'/g, "\\'");
+                    return `
+                <div class="picker-option ${checked ? 'checked' : ''}" onclick="supplierSelect('${safeName}')">
+                    <span class="picker-option-check">${checked ? '✓' : ''}</span>
+                    <span>${escapeHtml(supplierLabel(item))}</span>
+                </div>`;
+                }).join('');
+        }
+
+        function supplierSelect(nama) {
+            const item = pickerSupplier.all.find(i => i.nama_supplier === nama);
+            if (!item) return;
+            pickerSupplier.selected = item;
+            renderSupplierChip();
+            pickerCloseSupplier();
+            document.getElementById('supplierSearchInput').value = '';
+        }
+
+        function supplierClear() {
+            pickerSupplier.selected = null;
+            renderSupplierChip();
+        }
+
+        function resetSupplierPicker(existingName = null) {
+            pickerSupplier.selected = existingName ?
+                (pickerSupplier.all.find(i => i.nama_supplier === existingName) || {
+                    nama_supplier: existingName
+                }) :
+                null;
+            renderSupplierChip();
+            document.getElementById('dropdown-supplier').classList.remove('open');
+            document.getElementById('supplierSearchInput').value = '';
+        }
+
+        function pickerOpenSupplier() {
+            renderSupplierDropdown();
+            document.getElementById('dropdown-supplier').classList.add('open');
+        }
+
+        function pickerCloseSupplier() {
+            document.getElementById('dropdown-supplier').classList.remove('open');
+        }
+
+        function pickerSearchSupplier(keyword) {
+            renderSupplierDropdown(keyword);
+            document.getElementById('dropdown-supplier').classList.add('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdown-supplier');
+            if (!dropdown.classList.contains('open')) return;
+            const wrap = document.querySelector('[data-picker="supplier"]');
+            if (wrap && !wrap.contains(e.target)) pickerCloseSupplier();
+        });
 
         document.addEventListener('click', (e) => {
             const wrap = document.getElementById('supplierWrap');
