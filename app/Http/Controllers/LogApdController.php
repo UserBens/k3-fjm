@@ -9,6 +9,7 @@ use App\Models\Pegawai;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class LogApdController extends Controller
 {
@@ -91,9 +92,32 @@ class LogApdController extends Controller
     public function apdOptions()
     {
         $items = StokAPD::query()
-            ->select('id', 'kode_apd', 'jenis_apd', 'merk_rekomendasi', 'ukuran_tersedia')
+            ->select(
+                'id',
+                'kode_apd',
+                'jenis_apd',
+                'merk_rekomendasi',
+                'ukuran_tersedia',
+                'stok_awal',
+                'digunakan',
+                'rusak',
+                'reorder_point',
+                'masa_pakai',
+                'terakhir_pengadaan'
+            )
             ->orderBy('jenis_apd')
-            ->get();
+            ->get()
+            ->map(fn(StokAPD $s) => [
+                'id'                => $s->id,
+                'kode_apd'          => $s->kode_apd,
+                'jenis_apd'         => $s->jenis_apd,
+                'merk_rekomendasi'  => $s->merk_rekomendasi,
+                'ukuran_tersedia'   => $s->ukuran_tersedia,
+                'stok_tersedia'     => $s->stok_tersedia,     // accessor
+                'reorder_point'     => $s->reorder_point,
+                'status'            => $s->status,            // OK / REORDER
+                'lifetime_status'   => $s->lifetime_status,    // AMAN / SEGERA / HABIS MASA
+            ]);
 
         return response()->json(['data' => $items]);
     }
@@ -197,8 +221,14 @@ class LogApdController extends Controller
             'qty_keluar'         => ['nullable', 'integer', 'min:0'],
             'qty_masuk'          => ['nullable', 'integer', 'min:0'],
             'jenis_transaksi'    => ['required', 'string', 'max:50'],
-            'no_po_pr'           => ['nullable', 'string', 'max:100'],
-            'kondisi_apd_lama'   => ['nullable', 'string', 'max:150'],
+            'keterangan_lainnya' => ['nullable', 'required_if:jenis_transaksi,LAINNYA', 'string', 'max:255'],
+            'kondisi_apd_lama'   => [
+                'nullable',
+                'string',
+                'max:150',
+                Rule::requiredIf(fn() => in_array($request->input('jenis_transaksi'), LogApd::JENIS_TRANSAKSI_TUKAR)),
+            ],
+            'pernah_tukar'       => ['nullable', 'boolean'],
             'alasan_penggantian' => ['nullable', 'string'],
             'diterima_oleh'      => ['nullable', 'string', 'max:150'],
             'keterangan'         => ['nullable', 'string'],
@@ -227,11 +257,53 @@ class LogApdController extends Controller
             'qty_keluar'         => $row->qty_keluar,
             'qty_masuk'          => $row->qty_masuk,
             'jenis_transaksi'    => $row->jenis_transaksi,
-            'no_po_pr'           => $row->no_po_pr,
+            'keterangan_lainnya' => $row->keterangan_lainnya,
             'kondisi_apd_lama'   => $row->kondisi_apd_lama,
+            'pernah_tukar'       => $row->pernah_tukar,
             'alasan_penggantian' => $row->alasan_penggantian,
             'diterima_oleh'      => $row->diterima_oleh,
             'keterangan'         => $row->keterangan,
         ];
+    }
+
+    public function riwayatTukar(Request $request): JsonResponse
+    {
+        $idKaryawan = $request->query('id_karyawan');
+        $stokApdId  = $request->query('stok_apd_id');
+
+        if (!$idKaryawan || !$stokApdId) {
+            return response()->json(['data' => null]);
+        }
+
+        $last = LogApd::where('id_karyawan', $idKaryawan)
+            ->where('stok_apd_id', $stokApdId)
+            ->whereIn('jenis_transaksi', ['TUKAR LAMA', 'TUKAR RUSAK', 'JATAH BARU'])
+            ->orderByDesc('tanggal')
+            ->first();
+
+        if (!$last) {
+            return response()->json(['data' => ['pernah_tukar' => false]]);
+        }
+
+        $jadwalSelanjutnya = null;
+        $stokApd = StokAPD::find($stokApdId);
+
+        if ($stokApd && $stokApd->masa_pakai) {
+            $totalHari = StokAPD::parseMasaPakaiToDays($stokApd->masa_pakai);
+            if ($totalHari !== null) {
+                $jadwalSelanjutnya = $last->tanggal->copy()->addDays($totalHari)->format('Y-m-d');
+            }
+        }
+
+        return response()->json([
+            'data' => [
+                'pernah_tukar'             => true,
+                'tanggal_terakhir'         => $last->tanggal->format('Y-m-d'),
+                'no_dokumen'               => $last->no_dokumen,
+                'jenis_transaksi'          => $last->jenis_transaksi,
+                'kondisi_apd_lama'         => $last->kondisi_apd_lama,
+                'jadwal_tukar_selanjutnya' => $jadwalSelanjutnya,
+            ],
+        ]);
     }
 }

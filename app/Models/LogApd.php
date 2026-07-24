@@ -13,9 +13,10 @@ class LogApd extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'tanggal'    => 'date',
-        'qty_keluar' => 'integer',
-        'qty_masuk'  => 'integer',
+        'tanggal'      => 'date',
+        'qty_keluar'   => 'integer',
+        'qty_masuk'    => 'integer',
+        'pernah_tukar' => 'boolean',
     ];
 
     // Daftar jenis transaksi baku, dipakai di dropdown form & filter
@@ -27,6 +28,8 @@ class LogApd extends Model
         'HILANG',
         'LAINNYA',
     ];
+
+    const JENIS_TRANSAKSI_TUKAR = ['TUKAR LAMA', 'TUKAR RUSAK'];
 
     // Teks placeholder utk kolom terkait karyawan yang kosong (mis. transaksi MASUK gudang)
     const FALLBACK_KARYAWAN = 'Data Tidak Ditemukan';

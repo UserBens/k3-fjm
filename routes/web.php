@@ -332,7 +332,8 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/', [LogApdController::class, 'index'])->name('index');
         Route::get('/data', [LogApdController::class, 'data'])->name('data');
         Route::get('/apd-options', [LogApdController::class, 'apdOptions'])->name('apd-options');
-        Route::get('/kode-ok-options', [LogApdController::class, 'kodeOkOptions'])->name('kode-ok-options'); // baru
+        Route::get('/kode-ok-options', [LogApdController::class, 'kodeOkOptions'])->name('kode-ok-options');
+        Route::get('/riwayat-tukar', [LogApdController::class, 'riwayatTukar'])->name('riwayat-tukar'); // baru
         Route::get('/cari-pegawai', [LogApdController::class, 'cariPegawai'])->name('cari-pegawai');
         Route::post('/', [LogApdController::class, 'store'])->name('store');
         Route::put('/{logApd}', [LogApdController::class, 'update'])->name('update');

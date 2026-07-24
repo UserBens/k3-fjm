@@ -1310,6 +1310,69 @@
             font-size: 12px;
             color: #94A3B8;
         }
+
+        /* ══════ INFO BOX (Stok APD & Riwayat Tukar) ══════ */
+        .info-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #334155;
+            margin-top: 12px
+        }
+
+        .info-box-line {
+            line-height: 1.6;
+        }
+
+        .info-box-line+.info-box-line {
+            margin-top: 4px;
+        }
+
+        .info-box-line b {
+            color: #1E293B;
+            font-weight: 600;
+        }
+
+        /* ══════ STATUS PILL variants (dipakai juga di tabel) ══════ */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        .status-pill.sp-green {
+            background: #DCFCE7;
+            color: #1A7A3C;
+        }
+
+        .status-pill.sp-red {
+            background: #FEE2E2;
+            color: #D0021B;
+        }
+
+        .status-pill.sp-amber {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .status-pill.sp-blue {
+            background: #DBEAFE;
+            color: #2D4B9E;
+        }
+
+        .status-pill.sp-gray {
+            background: #F1F5F9;
+            color: #64748B;
+        }
     </style>
 </head>
 
@@ -1393,7 +1456,7 @@
                                 <th>Kode OK / Unit Kerja / Jabatan</th>
                                 <th>Data APD</th>
                                 <th>Qty &amp; Transaksi</th>
-                                <th>PO/PR &amp; Kondisi Lama</th>
+                                <th>Kondisi APD Lama</th>
                                 <th>Alasan &amp; Diterima Oleh</th>
                                 <th>Keterangan</th>
                                 <th style="text-align:center;">Aksi</th>
@@ -1450,6 +1513,11 @@
                     <div class="form-group">
                         <label class="form-label">Jenis Transaksi</label>
                         <select id="fJenisTransaksi" class="form-select"></select>
+                    </div>
+                    <div class="form-group span-2" id="wrapLainnya" style="display:none;">
+                        <label class="form-label">Keterangan Jenis Transaksi Lainnya</label>
+                        <input type="text" id="fKeteranganLainnya" class="form-input"
+                            placeholder="Jelaskan jenis transaksi..." />
                     </div>
                 </div>
 
@@ -1513,6 +1581,7 @@
                             <option value="">— Pilih untuk autofill kode/merk/ukuran, atau isi manual di bawah —
                             </option>
                         </select>
+                        <div class="form-group span-2" id="stokApdInfoBox" style="display:none;"></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Kode APD</label>
@@ -1542,18 +1611,21 @@
                         <label class="form-label">Qty Masuk</label>
                         <input type="number" min="0" id="fQtyMasuk" class="form-input" placeholder="0" />
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">No. PO/PR (jika ada)</label>
-                        <input type="text" id="fNoPoPr" class="form-input" placeholder="PO-2025-001" />
-                    </div>
                 </div>
 
                 <div class="form-section-title">Detail Penggantian</div>
                 <div class="form-grid">
-                    <div class="form-group">
+                    <div class="form-group" id="wrapKondisiLama" style="display:none;">
                         <label class="form-label">Kondisi APD Lama</label>
                         <input type="text" id="fKondisiApdLama" class="form-input"
                             placeholder="Baik / Rusak – lens retak" />
+                    </div>
+                    <input type="hidden" id="fPernahTukar" />
+                    <div class="form-group span-2" id="wrapRiwayatTukar" style="display:none;">
+                        <label class="form-label">Riwayat &amp; Jadwal Tukar</label>
+                        <div id="riwayatTukarBox" class="info-box">
+                            <div class="info-box-line">Memuat riwayat tukar...</div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Diterima Oleh</label>
@@ -1702,10 +1774,6 @@
                             <label>Qty Masuk</label>
                             <input type="text" id="dQtyMasuk" readonly>
                         </div>
-                        <div class="detail-field span-2">
-                            <label>No. PO/PR</label>
-                            <input type="text" id="dNoPoPr" readonly>
-                        </div>
                     </div>
                 </div>
 
@@ -1774,6 +1842,7 @@
         const CARI_PEGAWAI_ENDPOINT = "{{ route('log-apd.cari-pegawai') }}";
         const BASE_ENDPOINT = "{{ url('/log-apd') }}";
         const KODE_OK_OPTIONS_ENDPOINT = "{{ route('log-apd.kode-ok-options') }}";
+        const RIWAYAT_TUKAR_ENDPOINT = "{{ route('log-apd.riwayat-tukar') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const JENIS_TRANSAKSI_OPTIONS = @json(\App\Models\LogApd::JENIS_TRANSAKSI);
@@ -1953,8 +2022,7 @@
                     </td>
  
                     <td style="max-width:180px;">
-                        <div class="td-name-sub">PO/PR: ${escapeHtml(display(row.no_po_pr))}</div>
-                        <div class="td-name-sub">Kondisi lama: ${escapeHtml(display(row.kondisi_apd_lama))}</div>
+                        <div class="td-name-sub">${escapeHtml(display(row.kondisi_apd_lama))}</div>
                     </td>
  
                     <td style="max-width:200px;">
@@ -2210,17 +2278,53 @@
             }
         }
 
+        function renderStokInfoBox(item) {
+            const box = document.getElementById('stokApdInfoBox');
+            if (!item) {
+                box.style.display = 'none';
+                return;
+            }
+
+            const stokPillClass = item.status === 'REORDER' ? 'sp-red' : 'sp-green';
+            const lifetimeMap = {
+                'SEGERA': 'sp-amber',
+                'HABIS MASA': 'sp-red',
+                'AMAN': 'sp-green'
+            };
+            const lifetimePillClass = lifetimeMap[item.lifetime_status] || 'sp-gray';
+
+            box.style.display = '';
+            box.innerHTML = `
+                <div class="info-box" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <span>Stok tersedia: <b>${item.stok_tersedia}</b> <span style="color:#94A3B8;">(reorder point: ${item.reorder_point})</span></span>
+                    <span class="status-pill ${stokPillClass}">${item.status}</span>
+                    ${item.lifetime_status ? `<span class="status-pill ${lifetimePillClass}">${escapeHtml(item.lifetime_status)}</span>` : ''}
+                </div>
+            `;
+        }
+
         function onStokApdSelectChange() {
             const id = document.getElementById('fStokApdId').value;
-            if (!id) return;
+
+            if (!id) {
+                renderStokInfoBox(null);
+                loadRiwayatTukar();
+                return;
+            }
 
             const item = apdOptionsCache.find(i => String(i.id) === String(id));
-            if (!item) return;
+            if (!item) {
+                renderStokInfoBox(null);
+                return;
+            }
 
             document.getElementById('fKodeApd').value = item.kode_apd || '';
             document.getElementById('fJenisApd').value = item.jenis_apd || '';
             document.getElementById('fMerkType').value = item.merk_rekomendasi || '';
             document.getElementById('fUkuran').value = item.ukuran_tersedia || '';
+
+            renderStokInfoBox(item);
+            loadRiwayatTukar();
         }
 
         // ══════ PICKER PEGAWAI — Data Karyawan ══════
@@ -2266,6 +2370,8 @@
             document.getElementById('fUnitKerja').value = p.unit_kerja;
             document.getElementById('pegawaiPickerInput').value = `${p.nama} (${p.badge})`;
             document.getElementById('pegawaiPickerDropdown').classList.remove('open');
+            const jenis = document.getElementById('fJenisTransaksi').value;
+            if (['TUKAR LAMA', 'TUKAR RUSAK'].includes(jenis)) loadRiwayatTukar();
         }
 
         // ══════ PICKER PEGAWAI — Diterima Oleh ══════
@@ -2361,14 +2467,24 @@
 
             document.getElementById('fQtyKeluar').value = row?.qty_keluar ?? 0;
             document.getElementById('fQtyMasuk').value = row?.qty_masuk ?? 0;
-            document.getElementById('fNoPoPr').value = row?.no_po_pr || '';
-
             document.getElementById('fKondisiApdLama').value = row?.kondisi_apd_lama || '';
             document.getElementById('fAlasanPenggantian').value = row?.alasan_penggantian || '';
             document.getElementById('fKeterangan').value = row?.keterangan || '';
             document.getElementById('fKodeOk').value = row?.kode_ok || '';
             document.getElementById('kodeOkLabel').textContent = row?.kode_ok || 'Pilih Kode OK...';
             document.getElementById('kodeOkPanel').classList.remove('open');
+            document.getElementById('fKeteranganLainnya').value = row?.keterangan_lainnya || '';
+            document.getElementById('fPernahTukar').value =
+                row?.pernah_tukar === true ? '1' : (row?.pernah_tukar === false ? '0' : '');
+
+            if (row?.stok_apd_id) {
+                const item = apdOptionsCache.find(i => String(i.id) === String(row.stok_apd_id));
+                renderStokInfoBox(item || null);
+            } else {
+                renderStokInfoBox(null);
+            }
+
+            onJenisTransaksiChange();
 
             document.getElementById('formModalOverlay').classList.add('open');
         }
@@ -2397,7 +2513,9 @@
                 kode_ok: document.getElementById('fKodeOk').value.trim() || null,
                 unit_kerja: document.getElementById('fUnitKerja').value.trim() || null,
                 jabatan: document.getElementById('fJabatan').value.trim() || null,
-
+                keterangan_lainnya: document.getElementById('fKeteranganLainnya').value.trim() || null,
+                pernah_tukar: document.getElementById('fPernahTukar').value === '' ? null : document.getElementById(
+                    'fPernahTukar').value === '1',
                 stok_apd_id: document.getElementById('fStokApdId').value || null,
                 kode_apd: document.getElementById('fKodeApd').value.trim() || null,
                 jenis_apd: document.getElementById('fJenisApd').value.trim(),
@@ -2406,7 +2524,6 @@
 
                 qty_keluar: document.getElementById('fQtyKeluar').value || 0,
                 qty_masuk: document.getElementById('fQtyMasuk').value || 0,
-                no_po_pr: document.getElementById('fNoPoPr').value.trim() || null,
 
                 kondisi_apd_lama: document.getElementById('fKondisiApdLama').value.trim() || null,
                 diterima_oleh: document.getElementById('fDiterimaOleh').value.trim() || null,
@@ -2469,8 +2586,6 @@
 
             document.getElementById('dQtyKeluar').value = row.qty_keluar;
             document.getElementById('dQtyMasuk').value = row.qty_masuk;
-            document.getElementById('dNoPoPr').value = display(row.no_po_pr);
-
             document.getElementById('dKondisiApdLama').value = display(row.kondisi_apd_lama);
             document.getElementById('dDiterimaOleh').value = display(row.diterima_oleh);
             document.getElementById('dAlasanPenggantian').value = display(row.alasan_penggantian);
@@ -2528,6 +2643,60 @@
             } catch (e) {
                 closeDeleteModal();
                 showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
+            }
+        }
+
+        document.getElementById('fJenisTransaksi').addEventListener('change', onJenisTransaksiChange);
+
+        function onJenisTransaksiChange() {
+            const jenis = document.getElementById('fJenisTransaksi').value;
+            document.getElementById('wrapLainnya').style.display = jenis === 'LAINNYA' ? '' : 'none';
+
+            const isTukar = ['TUKAR LAMA', 'TUKAR RUSAK'].includes(jenis);
+            document.getElementById('wrapKondisiLama').style.display = isTukar ? '' : 'none';
+            document.getElementById('wrapRiwayatTukar').style.display = isTukar ? '' : 'none';
+
+            if (isTukar) loadRiwayatTukar();
+        }
+
+        async function loadRiwayatTukar() {
+            const idKaryawan = document.getElementById('fIdKaryawan').value;
+            const stokApdId = document.getElementById('fStokApdId').value;
+            const box = document.getElementById('riwayatTukarBox');
+
+            if (!idKaryawan || !stokApdId) {
+                box.innerHTML =
+                    `<div class="info-box-line" style="color:#94A3B8;">Pilih karyawan dan APD dari master untuk melihat riwayat.</div>`;
+                document.getElementById('fPernahTukar').value = '';
+                return;
+            }
+
+            box.innerHTML = `<div class="info-box-line">Memuat riwayat tukar...</div>`;
+
+            try {
+                const res = await fetch(
+                    `${RIWAYAT_TUKAR_ENDPOINT}?id_karyawan=${encodeURIComponent(idKaryawan)}&stok_apd_id=${encodeURIComponent(stokApdId)}`, {
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                    });
+                const json = await res.json();
+                const data = json.data;
+
+                if (!data || !data.pernah_tukar) {
+                    box.innerHTML = `<div class="info-box-line">Belum pernah tukar untuk APD ini.</div>`;
+                    document.getElementById('fPernahTukar').value = '0';
+                    return;
+                }
+
+                document.getElementById('fPernahTukar').value = '1';
+                box.innerHTML = `
+            <div class="info-box-line"><b>Terakhir tukar:</b> ${formatDate(data.tanggal_terakhir)} (${escapeHtml(data.no_dokumen)}, ${escapeHtml(data.jenis_transaksi)})</div>
+            <div class="info-box-line"><b>Kondisi lama saat itu:</b> ${escapeHtml(display(data.kondisi_apd_lama))}</div>
+            <div class="info-box-line"><b>Jadwal tukar selanjutnya:</b> ${data.jadwal_tukar_selanjutnya ? formatDate(data.jadwal_tukar_selanjutnya) : 'Tidak dapat dihitung (masa pakai tidak diketahui)'}</div>
+        `;
+            } catch (e) {
+                box.innerHTML = `<div class="info-box-line" style="color:#D0021B;">Gagal memuat riwayat tukar.</div>`;
             }
         }
 
