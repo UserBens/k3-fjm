@@ -1385,7 +1385,7 @@
                         <thead>
                             <tr>
                                 <th>Data APD</th>
-                                <th>Fungsi &amp; Merk Rekomendasi</th>
+                                {{-- <th>Fungsi &amp; Merk Rekomendasi</th> --}}
                                 <th>Spesifikasi &amp; Standar</th>
                                 <th>Stok</th>
                                 <th>Harga &amp; Supplier</th>
@@ -1474,11 +1474,11 @@
                         <label class="form-label">Merk Rekomendasi</label>
                         <input type="text" id="fMerk" class="form-input" placeholder="MSA, Honeywell, 3M" />
                     </div>
-                    <div class="form-group span-2">
+                    {{-- <div class="form-group span-2">
                         <label class="form-label">Fungsi / Sasaran Dilindungi</label>
                         <textarea id="fFungsi" class="form-textarea" rows="2"
                             placeholder="Pelindung kepala dari benturan, benda jatuh, listrik"></textarea>
-                    </div>
+                    </div> --}}
                 </div>
                 <!-- ═══ SECTION KODE OK — DI SINI TEMPATNYA, BUKAN DI MODAL DETAIL ═══ -->
                 <div class="form-section-title">Kode OK (Order Kerja)</div>
@@ -1567,8 +1567,16 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Masa Pakai</label>
-                        <input type="text" id="fMasaPakai" class="form-input"
-                            placeholder="5 tahun / Sekali pakai" />
+                        <div style="display: flex; gap: 8px;">
+                            <select id="fMasaPakaiSatuan" class="form-select" style="width: 45%;"
+                                onchange="toggleMasaPakaiAngka()">
+                                <option value="Bulan">Bulan</option>
+                                <option value="Tahun">Tahun</option>
+                                <option value="Sekali pakai">Sekali Pakai</option>
+                            </select>
+                            <input type="number" id="fMasaPakaiAngka" class="form-input"
+                                placeholder="Nilai (Cth: 5)" style="width: 55%;" min="1" />
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Terakhir Pengadaan</label>
@@ -1639,10 +1647,10 @@
                             <input type="text" id="dKodeOk" readonly>
                         </div>
                         <!-- ═══════════════════════════════════════ -->
-                        <div class="detail-field span-2">
+                        {{-- <div class="detail-field span-2">
                             <label>Fungsi / Sasaran Dilindungi</label>
                             <textarea id="dFungsi" readonly rows="2"></textarea>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -1902,6 +1910,18 @@
             filterOptionsLoaded = true;
         }
 
+        function toggleMasaPakaiAngka() {
+            const satuan = document.getElementById('fMasaPakaiSatuan').value;
+            const angkaInput = document.getElementById('fMasaPakaiAngka');
+
+            if (satuan === 'Sekali pakai') {
+                angkaInput.style.display = 'none';
+                angkaInput.value = '';
+            } else {
+                angkaInput.style.display = 'block';
+            }
+        }
+
         function renderTable(rows) {
             const tbody = document.getElementById('tableBody');
 
@@ -1942,13 +1962,6 @@
                         <div style="margin-top:4px;">
                             ${(row.kode_ok || []).map(k => `<span class="kode-ok-pill">OK ${escapeHtml(k)}</span>`).join('') || '<span class="td-name-sub">Belum ada OK</span>'}
                         </div>
-                    </td>
-
-                    <td style="max-width:220px;">
-                        <div class="td-name-sub" style="white-space:normal; line-height:1.4; color:#334155; font-weight:600; margin-bottom:3px;">
-                            ${escapeHtml(row.fungsi_sasaran || '-')}
-                        </div>
-                        <div class="td-name-sub">${escapeHtml(row.merk_rekomendasi || '-')}</div>
                     </td>
 
                     <td style="max-width:220px;">
@@ -2369,7 +2382,7 @@
             document.getElementById('fJenisApd').value = row?.jenis_apd || '';
             document.getElementById('fKategori').value = row?.kategori || 'WAJIB';
             document.getElementById('fMerk').value = row?.merk_rekomendasi || '';
-            document.getElementById('fFungsi').value = row?.fungsi_sasaran || '';
+            // document.getElementById('fFungsi').value = row?.fungsi_sasaran || '';
             document.getElementById('fSpesifikasi').value = row?.spesifikasi_teknis || '';
             document.getElementById('fUkuran').value = row?.ukuran_tersedia || '';
             document.getElementById('fStandar').value = row?.standar_regulasi || '';
@@ -2379,9 +2392,40 @@
             document.getElementById('fReorderPoint').value = row?.reorder_point ?? 0;
             document.getElementById('fHarga').value = row?.harga_satuan ?? 0;
             document.getElementById('fSupplier').value = row?.supplier || '';
-            document.getElementById('fMasaPakai').value = row?.masa_pakai || '';
-            document.getElementById('fTerakhirPengadaan').value = row?.terakhir_pengadaan ? row.terakhir_pengadaan
-                .substring(0, 10) : '';
+            let masaPakai = row?.masa_pakai || '';
+            let mpAngka = '';
+            let mpSatuan = 'Bulan'; // Default
+
+            if (masaPakai) {
+                let text = masaPakai.toLowerCase().trim();
+                if (text === 'sekali pakai') {
+                    mpSatuan = 'Sekali pakai';
+                } else {
+                    // Deteksi angka dan satuan
+                    let match = text.match(/^(\d+)\s*(bulan|tahun)$/);
+                    if (match) {
+                        mpAngka = match[1];
+                        mpSatuan = match[2] === 'tahun' ? 'Tahun' : 'Bulan';
+                    } else if (text.includes('tahun')) {
+                        mpSatuan = 'Tahun';
+                        mpAngka = text.replace(/\D/g, ''); // Ambil angkanya saja
+                    } else if (text.includes('bulan')) {
+                        mpSatuan = 'Bulan';
+                        mpAngka = text.replace(/\D/g, '');
+                    }
+                }
+            }
+
+            document.getElementById('fMasaPakaiSatuan').value = mpSatuan;
+            document.getElementById('fMasaPakaiAngka').value = mpAngka;
+
+            // Sesuaikan visibilitas input angka
+            toggleMasaPakaiAngka();
+
+            document.getElementById('fTerakhirPengadaan').value = row?.terakhir_pengadaan ?
+                row.terakhir_pengadaan.substring(0, 10) :
+                '';
+
             document.getElementById('fKeterangan').value = row?.keterangan || '';
 
             resetGambarApdPreview(row?.gambar_apd_url || null);
@@ -2413,7 +2457,7 @@
             formData.append('jenis_apd', document.getElementById('fJenisApd').value.trim());
             formData.append('kategori', document.getElementById('fKategori').value);
             formData.append('merk_rekomendasi', document.getElementById('fMerk').value.trim());
-            formData.append('fungsi_sasaran', document.getElementById('fFungsi').value.trim());
+            // formData.append('fungsi_sasaran', document.getElementById('fFungsi').value.trim());
             formData.append('spesifikasi_teknis', document.getElementById('fSpesifikasi').value.trim());
             formData.append('ukuran_tersedia', document.getElementById('fUkuran').value.trim());
             formData.append('standar_regulasi', document.getElementById('fStandar').value.trim());
@@ -2423,7 +2467,18 @@
             formData.append('reorder_point', document.getElementById('fReorderPoint').value || 0);
             formData.append('harga_satuan', document.getElementById('fHarga').value || 0);
             formData.append('supplier', document.getElementById('fSupplier').value.trim());
-            formData.append('masa_pakai', document.getElementById('fMasaPakai').value.trim());
+            let mpSatuan = document.getElementById('fMasaPakaiSatuan').value;
+            let mpAngka = document.getElementById('fMasaPakaiAngka').value.trim();
+            let finalMasaPakai = '';
+
+            if (mpSatuan === 'Sekali pakai') {
+                finalMasaPakai = 'Sekali pakai';
+            } else if (mpAngka) {
+                // Gabungkan angka dan satuan (Contoh: "5 Tahun")
+                finalMasaPakai = `${mpAngka} ${mpSatuan}`;
+            }
+
+            formData.append('masa_pakai', finalMasaPakai);
             formData.append('terakhir_pengadaan', document.getElementById('fTerakhirPengadaan').value || '');
             formData.append('keterangan', document.getElementById('fKeterangan').value.trim());
 
@@ -2492,7 +2547,7 @@
             document.getElementById('dKategori').value = row.kategori || '-';
             document.getElementById('dMerk').value = row.merk_rekomendasi || '-';
             document.getElementById('dUkuran').value = row.ukuran_tersedia || '-';
-            document.getElementById('dFungsi').value = row.fungsi_sasaran || '-';
+            // document.getElementById('dFungsi').value = row.fungsi_sasaran || '-';
 
             document.getElementById('dSpesifikasi').value = row.spesifikasi_teknis || '-';
             document.getElementById('dStandar').value = row.standar_regulasi || '-';

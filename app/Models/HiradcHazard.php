@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,8 @@ class HiradcHazard extends Model
         'sub_hazard_register',
         'na_e',
         'deskripsi',
-        'dampak',
+        'dampak_kategori',
+        'detail',
         'l_awal',
         'c_awal',
         'pengendalian_existing',
@@ -40,8 +42,11 @@ class HiradcHazard extends Model
     }
 
     /**
-     * Hitung RR (Risk Rating) = L x C, dan kategorikan LOW/MEDIUM/HIGH.
-     * Ambang berdasarkan contoh dokumen: <=4 LOW, 5-9 MEDIUM, >=10 HIGH.
+     * Hitung RR (Risk Rating) = L x C, dan kategorikan sesuai matriks K3:
+     *   L (Low)      : skor 1–4   → Hijau        → pemantauan rutin
+     *   M (Moderate) : skor 5–9   → Kuning        → perlu pengendalian tambahan
+     *   H (High)     : skor 10–16 → Merah Gelap   → mitigasi ketat & pengawasan langsung
+     *   E (Extreme)  : skor 20–25 → Merah Terang  → pekerjaan tidak boleh dilakukan / harus dihentikan
      */
     public static function tingkatRisiko(?int $l, ?int $c): ?array
     {
@@ -51,9 +56,34 @@ class HiradcHazard extends Model
         $rr = $l * $c;
 
         return match (true) {
-            $rr >= 10 => ['nilai' => $rr, 'label' => 'HIGH', 'emoji' => '🔴', 'class' => 'sp-red'],
-            $rr >= 5 => ['nilai' => $rr, 'label' => 'MEDIUM', 'emoji' => '⚠️', 'class' => 'sp-amber'],
-            default => ['nilai' => $rr, 'label' => 'LOW', 'emoji' => '✅', 'class' => 'sp-green'],
+            $rr >= 20 => [
+                'nilai' => $rr,
+                'kode' => 'E',
+                'label' => 'Extreme',
+                'class' => 'hx-cat-e',
+                'intervensi' => 'Pekerjaan tidak boleh dilakukan atau harus segera dihentikan sampai tingkat bahaya diturunkan secara signifikan.',
+            ],
+            $rr >= 10 => [
+                'nilai' => $rr,
+                'kode' => 'H',
+                'label' => 'High',
+                'class' => 'hx-cat-h',
+                'intervensi' => 'Pekerjaan berisiko tinggi. Diperlukan mitigasi ketat dan pengawasan langsung sebelum pekerjaan dimulai.',
+            ],
+            $rr >= 5 => [
+                'nilai' => $rr,
+                'kode' => 'M',
+                'label' => 'Moderate',
+                'class' => 'hx-cat-m',
+                'intervensi' => 'Diperlukan tindakan pengendalian tambahan untuk menurunkan risiko hingga ke batas yang dapat diterima.',
+            ],
+            default => [
+                'nilai' => $rr,
+                'kode' => 'L',
+                'label' => 'Low',
+                'class' => 'hx-cat-l',
+                'intervensi' => 'Risiko dapat diterima. Pengendalian yang ada sudah memadai, cukup lakukan pemantauan rutin.',
+            ],
         };
     }
 

@@ -25,14 +25,17 @@ return new class extends Migration
             $table->string('disiapkan_nama')->nullable();
             $table->string('disiapkan_paraf')->nullable();
             $table->date('disiapkan_tanggal')->nullable();
+            $table->string('disiapkan_ttd')->nullable();
 
             $table->string('diperiksa_nama')->nullable();
             $table->string('diperiksa_paraf')->nullable();
             $table->date('diperiksa_tanggal')->nullable();
+            $table->string('diperiksa_ttd')->nullable();
 
             $table->string('disahkan_nama')->nullable();
             $table->string('disahkan_paraf')->nullable();
             $table->date('disahkan_tanggal')->nullable();
+            $table->string('disahkan_ttd')->nullable();
 
             $table->string('dokumen')->nullable();        // path PDF pendukung (opsional)
             $table->string('dokumen_hiradc')->nullable(); // nama file asli
@@ -72,7 +75,8 @@ return new class extends Migration
             $table->enum('na_e', ['N', 'A', 'E'])->nullable();
 
             $table->text('deskripsi')->nullable();  // IDENTIFIKASI RISIKO - deskripsi
-            $table->string('dampak')->nullable();   // Manusia/Aset + tingkat dampak (mis. "Manusia - FAI")
+            $table->string('dampak_kategori')->nullable();
+            $table->string('detail')->nullable();
 
             // Risiko Awal (Inherent)
             $table->unsignedTinyInteger('l_awal')->nullable();

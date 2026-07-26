@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('jenis_apd');                    // Helm Safety
             $table->enum('kategori', ['WAJIB', 'KHUSUS'])->default('WAJIB');
 
-            $table->text('fungsi_sasaran')->nullable();     // Fungsi / Sasaran Dilindungi
+            // $table->text('fungsi_sasaran')->nullable();     // Fungsi / Sasaran Dilindungi
             $table->string('merk_rekomendasi')->nullable();
             $table->text('spesifikasi_teknis')->nullable();
             $table->string('ukuran_tersedia')->nullable();  // S/M/L/XL, 36-45, Universal, dst

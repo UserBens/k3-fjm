@@ -934,6 +934,15 @@
                     <tbody id="detailTableBody"></tbody>
                 </table>
             </div>
+
+            <div class="hx-legend">
+                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-l"></span> L — Low (1–4)</span>
+                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-m"></span> M — Moderate (5–9)</span>
+                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-h"></span> H — High (10–16)</span>
+                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-e"></span> E — Extreme (20–25)</span>
+            </div>
+
+            <div id="detailSignBlock" class="hx-sign-block"></div>
         </div>
     </div>
 
@@ -962,33 +971,35 @@
                             id="fRevisi" class="form-input" /></div>
                     <div class="form-group"><label class="form-label">Tanggal</label><input type="date"
                             id="fTanggal" class="form-input" /></div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Dokumen Pendukung (PDF)</label>
-                        <input type="file" id="fDokumen" class="form-input" accept="application/pdf" />
-                        <div id="dokumenExisting" style="font-size:12px;color:#94A3B8;margin-top:4px;"></div>
-                    </div>
                 </div>
 
-                <div class="form-section-title">Pengesahan</div>
-                <div class="form-grid">
-                    <div class="form-group"><label class="form-label">Disiapkan — Nama</label><input type="text"
-                            id="fDisiapkanNama" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Disiapkan — Paraf</label><input type="text"
-                            id="fDisiapkanParaf" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Disiapkan — Tanggal</label><input
-                            type="date" id="fDisiapkanTanggal" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Diperiksa — Nama</label><input type="text"
-                            id="fDiperiksaNama" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Diperiksa — Paraf</label><input type="text"
-                            id="fDiperiksaParaf" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Diperiksa — Tanggal</label><input
-                            type="date" id="fDiperiksaTanggal" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Disahkan — Nama</label><input type="text"
-                            id="fDisahkanNama" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Disahkan — Paraf</label><input type="text"
-                            id="fDisahkanParaf" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Disahkan — Tanggal</label><input type="date"
-                            id="fDisahkanTanggal" class="form-input" /></div>
+                <!-- ══ Pengesahan & Tanda Tangan — terpisah dari header, TTD berupa upload gambar ══ -->
+                <div class="form-section-title">Pengesahan &amp; Tanda Tangan</div>
+                <div class="hx-sign-grid">
+                    @foreach (['disiapkan' => 'Disiapkan', 'diperiksa' => 'Diperiksa', 'disahkan' => 'Disahkan'] as $key => $label)
+                        <div class="hx-sign-card">
+                            <div class="hx-sign-title">{{ $label }}</div>
+                            <div class="form-group">
+                                <label class="form-label">Nama</label>
+                                <input type="text" id="f{{ ucfirst($key) }}Nama" class="form-input" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tanggal</label>
+                                <input type="date" id="f{{ ucfirst($key) }}Tanggal" class="form-input" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tanda Tangan (gambar)</label>
+                                <input type="file" id="f{{ ucfirst($key) }}Ttd" class="form-input"
+                                    accept="image/*" onchange="previewTtd('{{ $key }}', this)" />
+                                <div class="hx-ttd-preview-wrap">
+                                    <img id="ttdPreview{{ ucfirst($key) }}" class="hx-ttd-preview"
+                                        style="display:none;" />
+                                    <span id="ttdExisting{{ ucfirst($key) }}"
+                                        style="font-size:11px;color:#94A3B8;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="form-section-title"
@@ -1038,6 +1049,24 @@
                         <tbody id="builderTableBody"></tbody>
                     </table>
                 </div>
+
+                <div class="hx-legend">
+                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-l"></span> L — Low (1–4)</span>
+                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-m"></span> M — Moderate
+                        (5–9)</span>
+                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-h"></span> H — High (10–16)</span>
+                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-e"></span> E — Extreme
+                        (20–25)</span>
+                </div>
+
+                <!-- ══ Lampiran opsional — TERPISAH dari Pengesahan, bukan bagian dari lembar HIRADC ══ -->
+                <details class="hx-attachment-panel">
+                    <summary>Lampiran Dokumen Pendukung (opsional, PDF)</summary>
+                    <div class="form-group" style="margin-top:8px;">
+                        <input type="file" id="fDokumen" class="form-input" accept="application/pdf" />
+                        <div id="dokumenExisting" style="font-size:12px;color:#94A3B8;margin-top:4px;"></div>
+                    </div>
+                </details>
             </div>
 
             <div class="modal-actions" style="margin-top:16px;">
@@ -1146,24 +1175,30 @@
             padding: 2px;
         }
 
+        /* Kategori risiko: L (hijau) / M (kuning) / H (merah gelap) / E (merah terang) */
         .hx-cat {
             text-align: center;
             font-weight: 700;
             border-radius: 4px;
         }
 
-        .hx-cat-low {
+        .hx-cat-l {
             background: #16a34a;
             color: #fff;
         }
 
-        .hx-cat-medium {
-            background: #f59e0b;
+        .hx-cat-m {
+            background: #eab308;
             color: #1a1a1a;
         }
 
-        .hx-cat-high {
-            background: #dc2626;
+        .hx-cat-h {
+            background: #991b1b;
+            color: #fff;
+        }
+
+        .hx-cat-e {
+            background: #ef4444;
             color: #fff;
         }
 
@@ -1182,6 +1217,28 @@
             border-radius: 6px;
             text-align: center;
             font-size: 10.5px;
+        }
+
+        .hx-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 10px;
+            font-size: 11.5px;
+            color: #94A3B8;
+        }
+
+        .hx-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hx-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
         }
 
         /* Builder (editable) variant */
@@ -1258,6 +1315,90 @@
             border-color: #2D6CDF;
             color: #93C5FD;
         }
+
+        /* Pengesahan & tanda tangan */
+        .hx-sign-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .hx-sign-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hx-sign-card {
+            border: 1px solid #1E293B;
+            border-radius: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, .02);
+        }
+
+        .hx-sign-title {
+            font-weight: 700;
+            color: #93C5FD;
+            font-size: 12.5px;
+            margin-bottom: 8px;
+        }
+
+        .hx-ttd-preview-wrap {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hx-ttd-preview {
+            max-width: 140px;
+            max-height: 60px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            background: #fff;
+            padding: 2px;
+        }
+
+        .hx-attachment-panel {
+            margin-top: 14px;
+            border: 1px dashed #334155;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .hx-attachment-panel summary {
+            cursor: pointer;
+            font-size: 12.5px;
+            color: #94A3B8;
+        }
+
+        .hx-attachment-panel summary:hover {
+            color: #93C5FD;
+        }
+
+        .hx-sign-block {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .hx-sign-block .hx-sign-view {
+            text-align: center;
+            font-size: 11.5px;
+            color: #94A3B8;
+        }
+
+        .hx-sign-block .hx-sign-view img {
+            display: block;
+            max-width: 140px;
+            max-height: 60px;
+            background: #fff;
+            border-radius: 6px;
+            margin: 0 auto 4px;
+            padding: 2px;
+        }
     </style>
 
     <script>
@@ -1277,6 +1418,8 @@
         let formState = {
             groups: []
         };
+
+        const SIGN_KEYS = ['disiapkan', 'diperiksa', 'disahkan'];
 
         const HAZARD_REGISTERS = ['Mechanical', 'Enviromental', 'Physical', 'Ergonomic', 'Psychosocial', 'Chemical',
             'Biological', 'Electrical'
@@ -1329,32 +1472,42 @@
             }, 4000);
         }
 
-        // Sama persis dengan HiradcHazard::tingkatRisiko() di backend
+        // Sama persis dengan HiradcHazard::tingkatRisiko() di backend:
+        // L 1-4 (hijau) · M 5-9 (kuning) · H 10-16 (merah gelap) · E 20-25 (merah terang)
         function HiradcRisk(l, c) {
             l = parseInt(l);
             c = parseInt(c);
             if (!l || !c) return null;
             const rr = l * c;
+            if (rr >= 20) return {
+                nilai: rr,
+                kode: 'E',
+                label: 'Extreme',
+                cls: 'hx-cat-e'
+            };
             if (rr >= 10) return {
                 nilai: rr,
-                label: 'HIGH',
-                cls: 'hx-cat-high'
+                kode: 'H',
+                label: 'High',
+                cls: 'hx-cat-h'
             };
             if (rr >= 5) return {
                 nilai: rr,
-                label: 'MEDIUM',
-                cls: 'hx-cat-medium'
+                kode: 'M',
+                label: 'Moderate',
+                cls: 'hx-cat-m'
             };
             return {
                 nilai: rr,
-                label: 'LOW',
-                cls: 'hx-cat-low'
+                kode: 'L',
+                label: 'Low',
+                cls: 'hx-cat-l'
             };
         }
 
         function catCell(risk) {
             if (!risk) return `<td class="hx-cat hx-cat-none">-</td><td class="hx-cat hx-cat-none">-</td>`;
-            return `<td class="hx-lc">${risk.nilai}</td><td class="hx-cat ${risk.cls}">${risk.label}</td>`;
+            return `<td class="hx-lc">${risk.nilai}</td><td class="hx-cat ${risk.cls}" title="${risk.label}">${risk.kode}</td>`;
         }
 
         // ══════ LOAD LIST ══════
@@ -1504,6 +1657,19 @@
             <strong>Disahkan:</strong> ${escapeHtml(display(doc.disahkan_nama))} (${escapeHtml(display(doc.disahkan_tanggal))})
         `;
 
+            const signHtml = (label, nama, tanggal, ttdUrl) => `
+            <div class="hx-sign-view">
+                <div><strong>${label}</strong></div>
+                ${ttdUrl ? `<img src="${ttdUrl}" alt="TTD ${label}" />` : `<div style="height:40px;display:flex;align-items:center;justify-content:center;color:#475569;">(belum ada ttd)</div>`}
+                <div>${escapeHtml(display(nama))}</div>
+                <div>${escapeHtml(display(tanggal))}</div>
+            </div>
+        `;
+            document.getElementById('detailSignBlock').innerHTML =
+                signHtml('Disiapkan', doc.disiapkan_nama, doc.disiapkan_tanggal, doc.disiapkan_ttd_url) +
+                signHtml('Diperiksa', doc.diperiksa_nama, doc.diperiksa_tanggal, doc.diperiksa_ttd_url) +
+                signHtml('Disahkan', doc.disahkan_nama, doc.disahkan_tanggal, doc.disahkan_ttd_url);
+
             let rows = '';
             const COLSPAN = 21;
 
@@ -1588,10 +1754,38 @@
             };
         }
 
+        function resetTtdInputs() {
+            SIGN_KEYS.forEach(key => {
+                const Key = key.charAt(0).toUpperCase() + key.slice(1);
+                document.getElementById(`f${Key}Ttd`).value = '';
+                const img = document.getElementById(`ttdPreview${Key}`);
+                img.style.display = 'none';
+                img.src = '';
+                document.getElementById(`ttdExisting${Key}`).textContent = '';
+            });
+        }
+
+        function previewTtd(key, input) {
+            const Key = key.charAt(0).toUpperCase() + key.slice(1);
+            const file = input.files[0];
+            const img = document.getElementById(`ttdPreview${Key}`);
+            if (!file) {
+                img.style.display = 'none';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => {
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
         async function openBuilderModal(id = null) {
             currentEditId = id;
             document.getElementById('fDokumen').value = '';
             document.getElementById('dokumenExisting').textContent = '';
+            resetTtdInputs();
 
             if (id) {
                 document.getElementById('itemModalTitle').textContent = 'Edit Dokumen HIRADC';
@@ -1612,6 +1806,12 @@
                         document.getElementById('dokumenExisting').textContent =
                             `File saat ini: ${doc.dokumen_hiradc} (biarkan kosong jika tidak ingin ganti)`;
                     }
+                    SIGN_KEYS.forEach(key => {
+                        const Key = key.charAt(0).toUpperCase() + key.slice(1);
+                        const url = doc[`${key}_ttd_url`];
+                        if (url) document.getElementById(`ttdExisting${Key}`).textContent =
+                            'TTD sudah ada (biarkan kosong jika tidak ingin ganti)';
+                    });
                 } catch (e) {
                     showToast(e.message || 'Gagal memuat data.', 'error');
                     return;
@@ -1635,13 +1835,10 @@
             document.getElementById('fRevisi').value = doc.revisi || '';
             document.getElementById('fTanggal').value = doc.tanggal || '';
             document.getElementById('fDisiapkanNama').value = doc.disiapkan_nama || '';
-            document.getElementById('fDisiapkanParaf').value = doc.disiapkan_paraf || '';
             document.getElementById('fDisiapkanTanggal').value = doc.disiapkan_tanggal || '';
             document.getElementById('fDiperiksaNama').value = doc.diperiksa_nama || '';
-            document.getElementById('fDiperiksaParaf').value = doc.diperiksa_paraf || '';
             document.getElementById('fDiperiksaTanggal').value = doc.diperiksa_tanggal || '';
             document.getElementById('fDisahkanNama').value = doc.disahkan_nama || '';
-            document.getElementById('fDisahkanParaf').value = doc.disahkan_paraf || '';
             document.getElementById('fDisahkanTanggal').value = doc.disahkan_tanggal || '';
         }
 
@@ -1869,7 +2066,6 @@
 
             rowHtml += '</tr>';
 
-            // baris tambahan "+ hazard" & "hapus aktivitas" muncul setelah baris hazard terakhir item ini
             if (hi === hazards.length - 1) {
                 rowHtml += `
                 <tr>
@@ -1926,15 +2122,19 @@
             fd.append('no_hiradc', document.getElementById('fNoHiradc').value.trim());
             fd.append('revisi', document.getElementById('fRevisi').value.trim());
             fd.append('tanggal', document.getElementById('fTanggal').value);
+
             fd.append('disiapkan_nama', document.getElementById('fDisiapkanNama').value.trim());
-            fd.append('disiapkan_paraf', document.getElementById('fDisiapkanParaf').value.trim());
             fd.append('disiapkan_tanggal', document.getElementById('fDisiapkanTanggal').value);
             fd.append('diperiksa_nama', document.getElementById('fDiperiksaNama').value.trim());
-            fd.append('diperiksa_paraf', document.getElementById('fDiperiksaParaf').value.trim());
             fd.append('diperiksa_tanggal', document.getElementById('fDiperiksaTanggal').value);
             fd.append('disahkan_nama', document.getElementById('fDisahkanNama').value.trim());
-            fd.append('disahkan_paraf', document.getElementById('fDisahkanParaf').value.trim());
             fd.append('disahkan_tanggal', document.getElementById('fDisahkanTanggal').value);
+
+            SIGN_KEYS.forEach(key => {
+                const Key = key.charAt(0).toUpperCase() + key.slice(1);
+                const file = document.getElementById(`f${Key}Ttd`).files[0];
+                if (file) fd.append(`${key}_ttd`, file);
+            });
 
             const dokumenFile = document.getElementById('fDokumen').files[0];
             if (dokumenFile) fd.append('dokumen', dokumenFile);
@@ -2009,6 +2209,7 @@
 
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
+
 
 </body>
 

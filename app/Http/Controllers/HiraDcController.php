@@ -58,7 +58,7 @@ class HiradcController extends Controller
     {
         try {
             $validated = $this->validatedDocument($request);
-            $validated = $this->handleUpload($request, $validated);
+            $validated = $this->handleUploads($request, $validated);
 
             $document = DB::transaction(function () use ($validated, $request) {
                 $document = HiradcDocument::create($validated);
@@ -88,7 +88,7 @@ class HiradcController extends Controller
     {
         try {
             $validated = $this->validatedDocument($request);
-            $validated = $this->handleUpload($request, $validated, $hiradc);
+            $validated = $this->handleUploads($request, $validated, $hiradc);
 
             DB::transaction(function () use ($hiradc, $validated, $request) {
                 $hiradc->update($validated);
@@ -118,8 +118,10 @@ class HiradcController extends Controller
     public function destroy(HiradcDocument $hiradc)
     {
         try {
-            if ($hiradc->dokumen) {
-                Storage::disk('public')->delete($hiradc->dokumen);
+            foreach (['dokumen', 'disiapkan_ttd', 'diperiksa_ttd', 'disahkan_ttd'] as $field) {
+                if ($hiradc->{$field}) {
+                    Storage::disk('public')->delete($hiradc->{$field});
+                }
             }
             $hiradc->delete(); // cascade ke groups/items/hazards
 
@@ -195,15 +197,19 @@ class HiradcController extends Controller
             'no_hiradc' => $d->no_hiradc,
             'revisi' => $d->revisi,
             'tanggal' => optional($d->tanggal)->format('Y-m-d'),
+
             'disiapkan_nama' => $d->disiapkan_nama,
-            'disiapkan_paraf' => $d->disiapkan_paraf,
             'disiapkan_tanggal' => optional($d->disiapkan_tanggal)->format('Y-m-d'),
+            'disiapkan_ttd_url' => $d->disiapkan_ttd_url,
+
             'diperiksa_nama' => $d->diperiksa_nama,
-            'diperiksa_paraf' => $d->diperiksa_paraf,
             'diperiksa_tanggal' => optional($d->diperiksa_tanggal)->format('Y-m-d'),
+            'diperiksa_ttd_url' => $d->diperiksa_ttd_url,
+
             'disahkan_nama' => $d->disahkan_nama,
-            'disahkan_paraf' => $d->disahkan_paraf,
             'disahkan_tanggal' => optional($d->disahkan_tanggal)->format('Y-m-d'),
+            'disahkan_ttd_url' => $d->disahkan_ttd_url,
+
             'dokumen_url' => $d->dokumen_url,
             'dokumen_hiradc' => $d->dokumen_hiradc,
             'groups' => $d->groups->map(fn($g) => $this->transformGroup($g)),
@@ -254,15 +260,19 @@ class HiradcController extends Controller
             'no_hiradc' => 'nullable|string|max:50',
             'revisi' => 'nullable|string|max:50',
             'tanggal' => 'nullable|date',
+
             'disiapkan_nama' => 'nullable|string|max:100',
-            'disiapkan_paraf' => 'nullable|string|max:100',
             'disiapkan_tanggal' => 'nullable|date',
+            'disiapkan_ttd' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'diperiksa_nama' => 'nullable|string|max:100',
-            'diperiksa_paraf' => 'nullable|string|max:100',
             'diperiksa_tanggal' => 'nullable|date',
+            'diperiksa_ttd' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'disahkan_nama' => 'nullable|string|max:100',
-            'disahkan_paraf' => 'nullable|string|max:100',
             'disahkan_tanggal' => 'nullable|date',
+            'disahkan_ttd' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'dokumen' => 'nullable|file|mimes:pdf|max:10240',
 
             // struktur bersarang groups[]
@@ -285,7 +295,11 @@ class HiradcController extends Controller
         ]);
     }
 
-    private function handleUpload(Request $request, array $validated, ?HiradcDocument $hiradc = null): array
+    /**
+     * Tangani upload dokumen PDF (opsional) + 3 gambar tanda tangan
+     * (disiapkan_ttd, diperiksa_ttd, disahkan_ttd), masing-masing independen.
+     */
+    private function handleUploads(Request $request, array $validated, ?HiradcDocument $hiradc = null): array
     {
         if ($request->hasFile('dokumen')) {
             if ($hiradc && $hiradc->dokumen) {
@@ -296,6 +310,17 @@ class HiradcController extends Controller
             $validated['dokumen_hiradc'] = $file->getClientOriginalName();
         } else {
             unset($validated['dokumen']);
+        }
+
+        foreach (['disiapkan_ttd', 'diperiksa_ttd', 'disahkan_ttd'] as $field) {
+            if ($request->hasFile($field)) {
+                if ($hiradc && $hiradc->{$field}) {
+                    Storage::disk('public')->delete($hiradc->{$field});
+                }
+                $validated[$field] = $request->file($field)->store('hiradc-ttd', 'public');
+            } else {
+                unset($validated[$field]);
+            }
         }
 
         // groups bukan kolom di tabel hiradc_documents, jangan ikut mass-assign
@@ -311,7 +336,7 @@ class HiradcController extends Controller
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
-            'input' => $request?->except(['_token', 'dokumen']),
+            'input' => $request?->except(['_token', 'dokumen', 'disiapkan_ttd', 'diperiksa_ttd', 'disahkan_ttd']),
             'trace' => $e->getTraceAsString(),
         ], fn($v) => $v !== null));
     }
@@ -321,7 +346,7 @@ class HiradcController extends Controller
         Log::error("Hiradc@{$context} gagal validasi", array_filter([
             'id' => $id,
             'errors' => $e->errors(),
-            'input' => $request->except(['_token', 'dokumen']),
+            'input' => $request->except(['_token', 'dokumen', 'disiapkan_ttd', 'diperiksa_ttd', 'disahkan_ttd']),
         ], fn($v) => $v !== null));
     }
 }

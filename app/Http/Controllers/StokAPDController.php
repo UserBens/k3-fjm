@@ -198,7 +198,7 @@ class StokAPDController extends Controller
         return $request->validate([
             'jenis_apd'          => ['required', 'string', 'max:150'],
             'kategori'           => ['required', Rule::in(['WAJIB', 'KHUSUS'])],
-            'fungsi_sasaran'     => ['nullable', 'string'],
+            // 'fungsi_sasaran'     => ['nullable', 'string'],
             'merk_rekomendasi'   => ['nullable', 'string', 'max:255'],
             'spesifikasi_teknis' => ['nullable', 'string'],
             'ukuran_tersedia'    => ['nullable', 'string', 'max:100'],
