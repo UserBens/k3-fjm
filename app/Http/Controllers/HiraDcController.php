@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hiradc;
+use App\Models\HiradcDocument;
+use App\Models\HiradcGroup;
+use App\Models\HiradcItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+
 
 class HiradcController extends Controller
 {
@@ -19,141 +23,274 @@ class HiradcController extends Controller
     public function data(Request $request)
     {
         try {
-            $rows = Hiradc::orderByDesc('id')->get()->map(function (Hiradc $h) {
-                return [
-                    'id' => $h->id,
-                    'no_hiradc' => $h->no_hiradc,
-                    'judul_pekerjaan' => $h->judul_pekerjaan,
-                    'kategori_pekerjaan' => $h->kategori_pekerjaan,
-                    'potensi_bahaya' => $h->potensi_bahaya,
-                    'konsekuensi_dampak' => $h->konsekuensi_dampak,
-                    'l_awal' => $h->l_awal,
-                    's_awal' => $h->s_awal,
-                    'risiko_awal' => $h->risiko_awal,
-                    'apd_wajib' => $h->apd_wajib,
-                    'apd_khusus' => $h->apd_khusus,
-                    'pengendalian_utama' => $h->pengendalian_utama,
-                    'l_sesudah' => $h->l_sesudah,
-                    's_sesudah' => $h->s_sesudah,
-                    'risiko_sesudah' => $h->risiko_sesudah,
-                    'pic' => $h->pic,
-                    'status' => $h->status,
-                    'dokumen_url' => $h->dokumen_url,
-                    'dokumen_hiradc' => $h->dokumen_hiradc,
-                ];
-            });
+            $documents = HiradcDocument::with([
+                'groups.children.children.items.hazards',
+                'groups.items.hazards',
+                'groups.children.items.hazards',
+            ])->orderByDesc('id')->get();
 
-            return response()->json(['data' => $rows]);
+            return response()->json(['data' => $documents->map(fn($d) => $this->transformDocument($d))]);
         } catch (Throwable $e) {
             $this->logError('data', $e);
 
-            return response()->json([
-                'message' => 'Gagal memuat data HIRADC.',
-            ], 500);
+            return response()->json(['message' => 'Gagal memuat data HIRADC.'], 500);
+        }
+    }
+
+    public function show(HiradcDocument $hiradc)
+    {
+        try {
+            $hiradc->load([
+                'groups.children.children.items.hazards',
+                'groups.items.hazards',
+                'groups.children.items.hazards',
+            ]);
+
+            return response()->json(['data' => $this->transformDocument($hiradc)]);
+        } catch (Throwable $e) {
+            $this->logError('show', $e, null, $hiradc->id);
+
+            return response()->json(['message' => 'Gagal memuat detail HIRADC.'], 500);
         }
     }
 
     public function store(Request $request)
     {
         try {
-            $validated = $this->validated($request);
+            $validated = $this->validatedDocument($request);
             $validated = $this->handleUpload($request, $validated);
 
-            $hiradc = Hiradc::create($validated);
+            $document = DB::transaction(function () use ($validated, $request) {
+                $document = HiradcDocument::create($validated);
+                $this->syncGroups($document, $request->input('groups', []));
 
-            return response()->json(['message' => 'Data HIRADC berhasil ditambahkan.', 'data' => $hiradc], 201);
+                return $document;
+            });
+
+            $document->load(['groups.children.children.items.hazards', 'groups.items.hazards', 'groups.children.items.hazards']);
+
+            return response()->json([
+                'message' => 'Data HIRADC berhasil ditambahkan.',
+                'data' => $this->transformDocument($document),
+            ], 201);
         } catch (ValidationException $e) {
             $this->logValidationError('store', $e, $request);
 
-            return response()->json([
-                'message' => 'Data yang dikirim tidak valid.',
-                'errors' => $e->errors(),
-            ], 422);
+            return response()->json(['message' => 'Data yang dikirim tidak valid.', 'errors' => $e->errors()], 422);
         } catch (Throwable $e) {
             $this->logError('store', $e, $request);
 
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-            ], 500);
+            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
         }
     }
 
-    public function update(Request $request, Hiradc $hiradc)
+    public function update(Request $request, HiradcDocument $hiradc)
     {
         try {
-            $validated = $this->validated($request);
+            $validated = $this->validatedDocument($request);
             $validated = $this->handleUpload($request, $validated, $hiradc);
 
-            $hiradc->update($validated);
+            DB::transaction(function () use ($hiradc, $validated, $request) {
+                $hiradc->update($validated);
 
-            return response()->json(['message' => 'Data HIRADC berhasil diperbarui.', 'data' => $hiradc]);
+                // Cara paling aman untuk struktur bersarang: hapus & buat ulang groups/items/hazards.
+                $hiradc->allGroups()->delete(); // cascade ke items & hazards via FK cascadeOnDelete
+                $this->syncGroups($hiradc, $request->input('groups', []));
+            });
+
+            $hiradc->load(['groups.children.children.items.hazards', 'groups.items.hazards', 'groups.children.items.hazards']);
+
+            return response()->json([
+                'message' => 'Data HIRADC berhasil diperbarui.',
+                'data' => $this->transformDocument($hiradc),
+            ]);
         } catch (ValidationException $e) {
             $this->logValidationError('update', $e, $request, $hiradc->id);
 
-            return response()->json([
-                'message' => 'Data yang dikirim tidak valid.',
-                'errors' => $e->errors(),
-            ], 422);
+            return response()->json(['message' => 'Data yang dikirim tidak valid.', 'errors' => $e->errors()], 422);
         } catch (Throwable $e) {
             $this->logError('update', $e, $request, $hiradc->id);
 
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat memperbarui data.',
-            ], 500);
+            return response()->json(['message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
         }
     }
 
-    public function destroy(Hiradc $hiradc)
+    public function destroy(HiradcDocument $hiradc)
     {
         try {
             if ($hiradc->dokumen) {
                 Storage::disk('public')->delete($hiradc->dokumen);
             }
-
-            $hiradc->delete();
+            $hiradc->delete(); // cascade ke groups/items/hazards
 
             return response()->json(['message' => 'Data HIRADC berhasil dihapus.']);
         } catch (Throwable $e) {
             $this->logError('destroy', $e, null, $hiradc->id);
 
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menghapus data.',
-            ], 500);
+            return response()->json(['message' => 'Terjadi kesalahan saat menghapus data.'], 500);
         }
     }
 
-    private function validated(Request $request): array
+    /**
+     * Simpan groups secara rekursif (mendukung sub-group berjenjang seperti
+     * "Cleaning GBB A" > "Cleaning Koridor Gudang A").
+     */
+    private function syncGroups(HiradcDocument $document, array $groups, ?int $parentId = null): void
     {
-        return $request->validate([
-            'no_hiradc' => 'nullable|string|max:50',
-            'judul_pekerjaan' => 'required|string|max:200',
-            'kategori_pekerjaan' => 'required|string|max:150',
-            'potensi_bahaya' => 'required|string',
-            'konsekuensi_dampak' => 'nullable|string',
-            'l_awal' => 'required|integer|min:1|max:5',
-            's_awal' => 'required|integer|min:1|max:5',
-            'apd_wajib' => 'nullable|string',
-            'apd_khusus' => 'nullable|string',
-            'pengendalian_utama' => 'nullable|string',
-            'l_sesudah' => 'nullable|integer|min:1|max:5',
-            's_sesudah' => 'nullable|integer|min:1|max:5',
-            'pic' => 'nullable|string|max:100',
-            'status' => 'required|in:Open,Close',
-            'dokumen' => 'nullable|file|mimes:pdf|max:10240', // maks 10MB, khusus PDF
-        ]);
+        foreach ($groups as $gIndex => $groupData) {
+            $group = HiradcGroup::create([
+                'hiradc_document_id' => $document->id,
+                'parent_id' => $parentId,
+                'nama' => $groupData['nama'] ?? '',
+                'urutan' => $gIndex,
+            ]);
+
+            foreach (($groupData['items'] ?? []) as $iIndex => $itemData) {
+                $item = HiradcItem::create([
+                    'hiradc_group_id' => $group->id,
+                    'no' => $itemData['no'] ?? null,
+                    'aktivitas' => $itemData['aktivitas'] ?? '',
+                    'kesimpulan_apd' => $itemData['kesimpulan_apd'] ?? null,
+                    'urutan' => $iIndex,
+                ]);
+
+                foreach (($itemData['hazards'] ?? []) as $hIndex => $hazardData) {
+                    $item->hazards()->create([
+                        'hazard_register' => $hazardData['hazard_register'] ?? null,
+                        'sub_hazard_register' => $hazardData['sub_hazard_register'] ?? null,
+                        'na_e' => $hazardData['na_e'] ?? null,
+                        'deskripsi' => $hazardData['deskripsi'] ?? null,
+                        'dampak_kategori' => $hazardData['dampak_kategori'] ?? null,
+                        'detail' => $hazardData['detail'] ?? null,
+                        'l_awal' => $hazardData['l_awal'] ?? null,
+                        'c_awal' => $hazardData['c_awal'] ?? null,
+                        'pengendalian_existing' => $hazardData['pengendalian_existing'] ?? null,
+                        'l_sisa' => $hazardData['l_sisa'] ?? null,
+                        'c_sisa' => $hazardData['c_sisa'] ?? null,
+                        'r_o' => $hazardData['r_o'] ?? null,
+                        'additional_control' => $hazardData['additional_control'] ?? null,
+                        'pic' => $hazardData['pic'] ?? null,
+                        'due_date' => $hazardData['due_date'] ?? null,
+                        'urutan' => $hIndex,
+                    ]);
+                }
+            }
+
+            if (!empty($groupData['children'])) {
+                $this->syncGroups($document, $groupData['children'], $group->id);
+            }
+        }
     }
 
     /**
-     * Handle file upload dokumen HIRADC. Kalau ada file baru & sedang edit,
-     * file lama dihapus dari storage supaya tidak menumpuk sampah.
+     * Ubah struktur Eloquent jadi bentuk datar+bersarang yang gampang dipakai frontend.
      */
-    private function handleUpload(Request $request, array $validated, ?Hiradc $hiradc = null): array
+    private function transformDocument(HiradcDocument $d): array
+    {
+        return [
+            'id' => $d->id,
+            'departemen' => $d->departemen,
+            'bagian' => $d->bagian,
+            'pekerjaan' => $d->pekerjaan,
+            'no_hiradc' => $d->no_hiradc,
+            'revisi' => $d->revisi,
+            'tanggal' => optional($d->tanggal)->format('Y-m-d'),
+            'disiapkan_nama' => $d->disiapkan_nama,
+            'disiapkan_paraf' => $d->disiapkan_paraf,
+            'disiapkan_tanggal' => optional($d->disiapkan_tanggal)->format('Y-m-d'),
+            'diperiksa_nama' => $d->diperiksa_nama,
+            'diperiksa_paraf' => $d->diperiksa_paraf,
+            'diperiksa_tanggal' => optional($d->diperiksa_tanggal)->format('Y-m-d'),
+            'disahkan_nama' => $d->disahkan_nama,
+            'disahkan_paraf' => $d->disahkan_paraf,
+            'disahkan_tanggal' => optional($d->disahkan_tanggal)->format('Y-m-d'),
+            'dokumen_url' => $d->dokumen_url,
+            'dokumen_hiradc' => $d->dokumen_hiradc,
+            'groups' => $d->groups->map(fn($g) => $this->transformGroup($g)),
+        ];
+    }
+
+    private function transformGroup(HiradcGroup $g): array
+    {
+        return [
+            'id' => $g->id,
+            'nama' => $g->nama,
+            'items' => $g->items->map(fn($item) => [
+                'id' => $item->id,
+                'no' => $item->no,
+                'aktivitas' => $item->aktivitas,
+                'kesimpulan_apd' => $item->kesimpulan_apd,
+                'hazards' => $item->hazards->map(fn($h) => [
+                    'id' => $h->id,
+                    'hazard_register' => $h->hazard_register,
+                    'sub_hazard_register' => $h->sub_hazard_register,
+                    'na_e' => $h->na_e,
+                    'deskripsi' => $h->deskripsi,
+                    'dampak_kategori' => $h->dampak_kategori,
+                    'detail' => $h->detail,
+                    'l_awal' => $h->l_awal,
+                    'c_awal' => $h->c_awal,
+                    'risiko_awal' => $h->risiko_awal,
+                    'pengendalian_existing' => $h->pengendalian_existing,
+                    'l_sisa' => $h->l_sisa,
+                    'c_sisa' => $h->c_sisa,
+                    'risiko_sisa' => $h->risiko_sisa,
+                    'r_o' => $h->r_o,
+                    'additional_control' => $h->additional_control,
+                    'pic' => $h->pic,
+                    'due_date' => optional($h->due_date)->format('Y-m-d'),
+                ]),
+            ]),
+            'children' => $g->children->map(fn($child) => $this->transformGroup($child)),
+        ];
+    }
+
+    private function validatedDocument(Request $request): array
+    {
+        return $request->validate([
+            'departemen' => 'required|string|max:200',
+            'bagian' => 'required|string|max:200',
+            'pekerjaan' => 'required|string|max:200',
+            'no_hiradc' => 'nullable|string|max:50',
+            'revisi' => 'nullable|string|max:50',
+            'tanggal' => 'nullable|date',
+            'disiapkan_nama' => 'nullable|string|max:100',
+            'disiapkan_paraf' => 'nullable|string|max:100',
+            'disiapkan_tanggal' => 'nullable|date',
+            'diperiksa_nama' => 'nullable|string|max:100',
+            'diperiksa_paraf' => 'nullable|string|max:100',
+            'diperiksa_tanggal' => 'nullable|date',
+            'disahkan_nama' => 'nullable|string|max:100',
+            'disahkan_paraf' => 'nullable|string|max:100',
+            'disahkan_tanggal' => 'nullable|date',
+            'dokumen' => 'nullable|file|mimes:pdf|max:10240',
+
+            // struktur bersarang groups[]
+            'groups' => 'nullable|array',
+            'groups.*.nama' => 'required_with:groups|string|max:200',
+            'groups.*.items' => 'nullable|array',
+            'groups.*.items.*.aktivitas' => 'required_with:groups.*.items|string',
+            'groups.*.items.*.no' => 'nullable|integer',
+            'groups.*.items.*.kesimpulan_apd' => 'nullable|string',
+            'groups.*.items.*.hazards' => 'nullable|array',
+            'groups.*.items.*.hazards.*.l_awal' => 'nullable|integer|min:1|max:5',
+            'groups.*.items.*.hazards.*.c_awal' => 'nullable|integer|min:1|max:5',
+            'groups.*.items.*.hazards.*.l_sisa' => 'nullable|integer|min:1|max:5',
+            'groups.*.items.*.hazards.*.c_sisa' => 'nullable|integer|min:1|max:5',
+            'groups.*.items.*.hazards.*.na_e' => 'nullable|in:N,A,E',
+            'groups.*.items.*.hazards.*.dampak_kategori' => 'nullable|in:Manusia,Aset,Lingkungan',
+            'groups.*.items.*.hazards.*.r_o' => 'nullable|in:R,O',
+            'groups.*.items.*.hazards.*.due_date' => 'nullable|date',
+            'groups.*.children' => 'nullable|array', // sub-group berjenjang, divalidasi longgar
+        ]);
+    }
+
+    private function handleUpload(Request $request, array $validated, ?HiradcDocument $hiradc = null): array
     {
         if ($request->hasFile('dokumen')) {
             if ($hiradc && $hiradc->dokumen) {
                 Storage::disk('public')->delete($hiradc->dokumen);
             }
-
             $file = $request->file('dokumen');
             $validated['dokumen'] = $file->store('hiradc-dokumen', 'public');
             $validated['dokumen_hiradc'] = $file->getClientOriginalName();
@@ -161,13 +298,12 @@ class HiradcController extends Controller
             unset($validated['dokumen']);
         }
 
+        // groups bukan kolom di tabel hiradc_documents, jangan ikut mass-assign
+        unset($validated['groups']);
+
         return $validated;
     }
 
-    /**
-     * Log error umum (Throwable) lengkap dengan detail teknis.
-     * Detail ini HANYA masuk ke log, tidak pernah dikirim ke response JSON.
-     */
     private function logError(string $context, Throwable $e, ?Request $request = null, ?int $id = null): void
     {
         Log::error("Hiradc@{$context} gagal", array_filter([
@@ -180,9 +316,6 @@ class HiradcController extends Controller
         ], fn($v) => $v !== null));
     }
 
-    /**
-     * Log error validasi lengkap dengan detail input yang dikirim.
-     */
     private function logValidationError(string $context, ValidationException $e, Request $request, ?int $id = null): void
     {
         Log::error("Hiradc@{$context} gagal validasi", array_filter([
