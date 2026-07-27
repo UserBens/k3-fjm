@@ -1433,6 +1433,23 @@
 
             <div class="form-modal-body">
                 <div class="form-section-title">Data Umum</div>
+                <div class="form-section-title">Kode OK (Order Kerja)</div>
+                <div class="multi-picker" data-picker="kodeOk">
+                    <div class="picker-chips" id="chips-kodeOk"></div>
+                    <input type="text" class="form-input" placeholder="Cari kode OK..."
+                        oninput="pickerSearchKodeOk(this.value)" onfocus="pickerOpenKodeOk()" autocomplete="off" />
+                    <div class="picker-dropdown" id="dropdown-kodeOk">
+                        <div class="picker-options" id="options-kodeOk"></div>
+                        <div class="picker-dropdown-footer">
+                            <span class="picker-selected-count" id="count-kodeOk">0 dipilih</span>
+                            <button type="button" class="picker-done-btn"
+                                onclick="pickerCloseKodeOk()">Selesai</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-subtitle" style="margin-top:6px; margin-bottom:4px;">
+                    Satu alat kesehatan boleh punya lebih dari satu Kode OK.
+                </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Kode Alkes</label>
@@ -1623,6 +1640,10 @@
                         </svg>
                         Data Umum
                     </div>
+                    <div class="detail-field span-2">
+                        <label>Kode OK</label>
+                        <input type="text" id="dKodeOk" readonly>
+                    </div>
                     <div class="detail-form-grid">
                         <div class="detail-field">
                             <label>Kode Alkes</label>
@@ -1774,6 +1795,7 @@
         const DATA_ENDPOINT = "{{ route('master-stok-alkes.data') }}";
         const STORE_ENDPOINT = "{{ route('master-stok-alkes.store') }}";
         const SUPPLIER_OPTIONS_ENDPOINT = "{{ route('master-stok-alkes.supplier-options') }}";
+        const KODE_OK_OPTIONS_ENDPOINT = "{{ route('master-stok-alkes.kode-ok-options') }}";
         const BASE_ENDPOINT = "{{ url('/master-stok-alkes') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
@@ -1942,6 +1964,9 @@
                                     · <span class="status-pill sp-blue" style="margin-left:2px;">${escapeHtml(row.kategori)}</span>
                                 </div>
                             </div>
+                        </div>
+                         <div style="margin-top:4px;">
+                            ${(row.kode_ok || []).map(k => `<span class="kode-ok-pill">OK ${escapeHtml(k)}</span>`).join('') || '<span class="td-name-sub">Belum ada OK</span>'}
                         </div>
                     </td>
 
@@ -2126,6 +2151,14 @@
             document.getElementById('fIntervalKalibrasi').value = row?.interval_kalibrasi || '';
             await ensureSupplierOptionsLoaded();
             resetSupplierPicker(row?.supplier || null);
+
+            await ensureSupplierOptionsLoaded();
+            resetSupplierPicker(row?.supplier || null);
+
+            resetKodeOkPicker(); // ← baru
+            await ensureKodeOkOptionsLoaded(); // ← baru
+            setKodeOkSelected(row?.kode_ok || []); // ← baru
+
             document.getElementById('formModalOverlay').classList.add('open');
         }
 
@@ -2167,6 +2200,7 @@
                 status: document.getElementById('fStatus').value,
                 keterangan: document.getElementById('fKeterangan').value.trim() || null,
                 tipe_alat: document.getElementById('fTipeAlat').value,
+                kode_ok: Array.from(pickerKodeOk.selected.keys()), // ← baru
                 interval_kalibrasi: document.getElementById('fIntervalKalibrasi').value || null,
             };
 
@@ -2237,7 +2271,8 @@
             document.getElementById('dKeterangan').value = row.keterangan || '-';
             document.getElementById('dTipeAlat').value = row.tipe_alat || '-';
             document.getElementById('dIntervalKalibrasi').value = INTERVAL_KALIBRASI_LABEL[row.interval_kalibrasi] || '-';
-
+            document.getElementById('dKodeOk').value =
+                (row.kode_ok && row.kode_ok.length > 0) ? row.kode_ok.join(', ') : '-';
             document.getElementById('detailModalOverlay').classList.add('open');
         }
 
@@ -2434,6 +2469,109 @@
             if (wrap && !wrap.contains(e.target)) {
                 document.getElementById('supplierPanel')?.classList.remove('open');
             }
+        });
+
+        const pickerKodeOk = {
+            all: [],
+            selected: new Map()
+        };
+        let kodeOkOptionsLoaded = false;
+
+        async function ensureKodeOkOptionsLoaded() {
+            if (kodeOkOptionsLoaded) return;
+            try {
+                const res = await fetch(KODE_OK_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                pickerKodeOk.all = json.data || [];
+                kodeOkOptionsLoaded = true;
+            } catch (e) {
+                showToast('Gagal memuat data Kode OK.', 'error');
+            }
+        }
+
+        function kodeOkLabel(item) {
+            return item.uraian_kerja ? `${item.kode_ok} — ${item.uraian_kerja}` : item.kode_ok;
+        }
+
+        function renderKodeOkChips() {
+            const wrap = document.getElementById('chips-kodeOk');
+            const items = Array.from(pickerKodeOk.selected.values());
+            wrap.innerHTML = items.map(item => `
+        <span class="picker-chip">
+            ${escapeHtml(item.kode_ok)}
+            <button type="button" onclick="kodeOkToggle('${item.kode_ok}')">✕</button>
+        </span>
+     `).join('');
+        }
+
+        function renderKodeOkDropdown(keyword = '') {
+            const optionsWrap = document.getElementById('options-kodeOk');
+            const kw = keyword.trim().toLowerCase();
+            const list = pickerKodeOk.all.filter(item => kodeOkLabel(item).toLowerCase().includes(kw));
+
+            optionsWrap.innerHTML = list.length === 0 ?
+                `<div class="picker-empty">Kode OK tidak ditemukan.</div>` :
+                list.slice(0, 50).map(item => {
+                    const checked = pickerKodeOk.selected.has(item.kode_ok);
+                    return `
+        <div class="picker-option ${checked ? 'checked' : ''}" onclick="kodeOkToggle('${item.kode_ok}')">
+            <span class="picker-option-check">${checked ? '✓' : ''}</span>
+            <span>${escapeHtml(kodeOkLabel(item))}</span>
+        </div>`;
+                }).join('');
+
+            document.getElementById('count-kodeOk').textContent = `${pickerKodeOk.selected.size} dipilih`;
+        }
+
+        function kodeOkToggle(kode) {
+            const item = pickerKodeOk.all.find(i => i.kode_ok === kode);
+            if (!item) return;
+            if (pickerKodeOk.selected.has(kode)) pickerKodeOk.selected.delete(kode);
+            else pickerKodeOk.selected.set(kode, item);
+            renderKodeOkChips();
+            renderKodeOkDropdown();
+        }
+
+        function resetKodeOkPicker() {
+            pickerKodeOk.selected = new Map();
+            document.getElementById('chips-kodeOk').innerHTML = '';
+            document.getElementById('dropdown-kodeOk').classList.remove('open');
+        }
+
+        function setKodeOkSelected(kodeArray) {
+            const items = (kodeArray || []).map(k =>
+                pickerKodeOk.all.find(i => i.kode_ok === k) || {
+                    kode_ok: k,
+                    uraian_kerja: null
+                }
+            );
+            pickerKodeOk.selected = new Map(items.map(i => [i.kode_ok, i]));
+            renderKodeOkChips();
+        }
+
+        function pickerOpenKodeOk() {
+            renderKodeOkDropdown();
+            document.getElementById('dropdown-kodeOk').classList.add('open');
+        }
+
+        function pickerCloseKodeOk() {
+            document.getElementById('dropdown-kodeOk').classList.remove('open');
+        }
+
+        function pickerSearchKodeOk(keyword) {
+            renderKodeOkDropdown(keyword);
+            document.getElementById('dropdown-kodeOk').classList.add('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdown-kodeOk');
+            if (!dropdown.classList.contains('open')) return;
+            const wrap = document.querySelector('[data-picker="kodeOk"]');
+            if (wrap && !wrap.contains(e.target)) pickerCloseKodeOk();
         });
 
         document.addEventListener('DOMContentLoaded', loadData);

@@ -37,6 +37,8 @@ class StokAlkes extends Model
         'status_stok',
         'status_kalibrasi',
         'status_kadaluarsa',
+        'kode_ok', // ← baru
+
     ];
 
     public function getStokTersediaAttribute(): int
@@ -144,5 +146,21 @@ class StokAlkes extends Model
             AlatKesehatanPenggunaan::class,
             'stok_alkes_id' // BENAR — samakan dengan kolom FK di migration
         );
+    }
+
+    public function getKodeOkAttribute()
+    {
+        // Hindari query N+1: kalau relasi belum di-load, load dulu.
+        if (!$this->relationLoaded('kodeOkRelasi')) {
+            $this->load('kodeOkRelasi');
+        }
+
+        return $this->kodeOkRelasi->pluck('kode_ok')->values();
+    }
+
+    public function kodeOkRelasi()
+    {
+        return $this->belongsToMany(KodeOk::class, 'alkes_kode_ok', 'stok_alkes_id', 'kode_ok_id')
+            ->withTimestamps();
     }
 }

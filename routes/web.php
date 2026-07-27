@@ -345,7 +345,8 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::prefix('master-stok-alkes')->name('master-stok-alkes.')->group(function () {
         Route::get('/', [StokAlkesController::class, 'index'])->name('index');
         Route::get('/data', [StokAlkesController::class, 'data'])->name('data');
-        Route::get('/supplier-options', [StokAlkesController::class, 'supplierOptions'])->name('supplier-options'); // diperbaiki
+        Route::get('/supplier-options', [StokAlkesController::class, 'supplierOptions'])->name('supplier-options');
+        Route::get('/kode-ok-options', [StokAlkesController::class, 'kodeOkOptions'])->name('kode-ok-options'); // ← baru
         Route::post('/', [StokAlkesController::class, 'store'])->name('store');
         Route::put('/{stokAlkes}', [StokAlkesController::class, 'update'])->name('update');
         Route::delete('/{stokAlkes}', [StokAlkesController::class, 'destroy'])->name('destroy');
@@ -409,6 +410,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::prefix('hiradc')->name('hiradc.')->group(function () {
         Route::get('/', [HiradcController::class, 'index'])->name('index');
         Route::get('/data', [HiradcController::class, 'data'])->name('data');
+        Route::get('/kode-ok/options', [HiradcController::class, 'kodeOkOptions'])->name('kodeOk.options'); // ← diganti
         Route::get('/{hiradc}', [HiradcController::class, 'show'])->name('show');
         Route::post('/', [HiradcController::class, 'store'])->name('store');
         Route::put('/{hiradc}', [HiradcController::class, 'update'])->name('update');

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KodeOk;
 use App\Models\StokAlkes;
 use App\Models\Supplierapd;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class StokAlkesController extends Controller
@@ -19,6 +21,7 @@ class StokAlkesController extends Controller
         $perPage = $request->integer('per_page', 10);
 
         $query = StokAlkes::query()
+            ->with('kodeOkRelasi') // ← baru
             ->search($request->search);
 
         if ($request->filled('kategori')) {
@@ -89,18 +92,30 @@ class StokAlkesController extends Controller
     {
         $validated = $this->validateData($request);
 
-        $validated['stok_tersedia'] =
-            $validated['stok_awal']
-            - $validated['digunakan']
-            - $validated['rusak'];
-
+        $validated['stok_tersedia'] = $validated['stok_awal'] - $validated['digunakan'] - $validated['rusak'];
         $validated['kode_alkes'] = $this->generateKodeAlkes($validated['jenis_alat']);
-        $alkes = StokAlkes::create($validated);
+
+        $kodeOkList = $validated['kode_ok'] ?? [];
+        unset($validated['kode_ok']); // bukan kolom di tabel stok_alkes
+
+        $alkes = DB::transaction(function () use ($validated, $kodeOkList) {
+            $alkes = StokAlkes::create($validated);
+            $this->syncKodeOk($alkes, $kodeOkList);
+            return $alkes;
+        });
+
+        $alkes->load('kodeOkRelasi');
 
         return response()->json([
             'message' => 'Data alat kesehatan berhasil ditambahkan.',
             'data' => $alkes
         ], 201);
+    }
+
+    private function syncKodeOk(StokAlkes $alkes, array $kodeOkList): void
+    {
+        $ids = KodeOk::whereIn('kode_ok', $kodeOkList)->pluck('id');
+        $alkes->kodeOkRelasi()->sync($ids);
     }
 
     public function update(Request $request, StokAlkes $stokAlkes)
@@ -112,7 +127,15 @@ class StokAlkesController extends Controller
         }
         $validated['stok_tersedia'] = $validated['stok_awal'] - $validated['digunakan'] - $validated['rusak'];
 
-        $stokAlkes->update($validated);
+        $kodeOkList = $validated['kode_ok'] ?? [];
+        unset($validated['kode_ok']); // bukan kolom di tabel stok_alkes
+
+        DB::transaction(function () use ($stokAlkes, $validated, $kodeOkList) {
+            $stokAlkes->update($validated);
+            $this->syncKodeOk($stokAlkes, $kodeOkList); // ← baru, ini yang hilang
+        });
+
+        $stokAlkes->refresh()->load('kodeOkRelasi'); // ← baru, supaya response bawa data kode_ok terbaru
 
         return response()->json([
             'message' => 'Data alat kesehatan berhasil diperbarui.',
@@ -189,7 +212,8 @@ class StokAlkesController extends Controller
 
             'tipe_alat' => ['required', Rule::in(['Consumable', 'Non-Consumable'])],
             'interval_kalibrasi' => ['nullable', Rule::in(['3_BULAN', '6_BULAN', '1_TAHUN', '2_TAHUN'])],
-
+            'kode_ok' => ['nullable', 'array'],
+            'kode_ok.*' => ['string', 'exists:kode_oks,kode_ok'],
             'status' => [
                 'required',
                 Rule::in([
@@ -198,6 +222,15 @@ class StokAlkesController extends Controller
                 ])
             ],
         ]);
+    }
+
+    public function kodeOkOptions()
+    {
+        $kodeOks = KodeOk::where('status', true)
+            ->orderBy('kode_ok')
+            ->get(['id', 'kode_ok', 'uraian_kerja']);
+
+        return response()->json(['data' => $kodeOks]);
     }
 
     private function generateKodeAlkes(string $jenisAlat): string

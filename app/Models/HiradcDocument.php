@@ -12,27 +12,8 @@ class HiradcDocument extends Model
 
     protected $table = 'hiradc_documents';
 
-    protected $fillable = [
-        'departemen',
-        'bagian',
-        'pekerjaan',
-        'no_hiradc',
-        'revisi',
-        'tanggal',
-        'disiapkan_nama',
-        'disiapkan_paraf',
-        'disiapkan_tanggal',
-        'disiapkan_ttd',
-        'diperiksa_nama',
-        'diperiksa_paraf',
-        'diperiksa_tanggal',
-        'diperiksa_ttd',
-        'disahkan_nama',
-        'disahkan_paraf',
-        'disahkan_tanggal',
-        'disahkan_ttd',
-        'dokumen',
-        'dokumen_hiradc',
+    protected $guarded = [
+        'id'
     ];
 
     protected $casts = [
@@ -71,5 +52,10 @@ class HiradcDocument extends Model
     public function getDisahkanTtdUrlAttribute(): ?string
     {
         return $this->disahkan_ttd ? Storage::disk('public')->url($this->disahkan_ttd) : null;
+    }
+    
+    public function kodeOk()
+    {
+        return $this->belongsTo(KodeOk::class, 'kode_ok_id');
     }
 }

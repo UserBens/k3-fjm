@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\HiradcDocument;
 use App\Models\HiradcGroup;
 use App\Models\HiradcItem;
+use App\Models\KodeOk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,6 +25,8 @@ class HiradcController extends Controller
     {
         try {
             $documents = HiradcDocument::with([
+                'kodeOk.unitKerjaRelasi',
+                'kodeOk.kualifikasiRelasi',
                 'groups.children.children.items.hazards',
                 'groups.items.hazards',
                 'groups.children.items.hazards',
@@ -40,11 +43,13 @@ class HiradcController extends Controller
     public function show(HiradcDocument $hiradc)
     {
         try {
-            $hiradc->load([
+            $documents = HiradcDocument::with([
+                'kodeOk.unitKerjaRelasi',
+                'kodeOk.kualifikasiRelasi',
                 'groups.children.children.items.hazards',
                 'groups.items.hazards',
                 'groups.children.items.hazards',
-            ]);
+            ])->orderByDesc('id')->get();
 
             return response()->json(['data' => $this->transformDocument($hiradc)]);
         } catch (Throwable $e) {
@@ -194,6 +199,16 @@ class HiradcController extends Controller
             'departemen' => $d->departemen,
             'bagian' => $d->bagian,
             'pekerjaan' => $d->pekerjaan,
+            'kode_ok_id' => $d->kode_ok_id, // ← baru
+            'kode_ok' => $d->kodeOk ? [
+                'id' => $d->kodeOk->id,
+                'kode_ok' => $d->kodeOk->kode_ok,
+                'uraian_kerja' => $d->kodeOk->uraian_kerja,
+                'pengawas' => $d->kodeOk->pengawas,
+                'unit_kerja' => $d->kodeOk->unitKerjaRelasi->pluck('nama')->values(),
+                'kualifikasi' => $d->kodeOk->kualifikasiRelasi->pluck('nama')->values(),
+            ] : null, // ← baru
+
             'no_hiradc' => $d->no_hiradc,
             'revisi' => $d->revisi,
             'tanggal' => optional($d->tanggal)->format('Y-m-d'),
@@ -257,6 +272,7 @@ class HiradcController extends Controller
             'departemen' => 'required|string|max:200',
             'bagian' => 'required|string|max:200',
             'pekerjaan' => 'required|string|max:200',
+            'kode_ok_id' => 'nullable|exists:kode_oks,id',
             'no_hiradc' => 'nullable|string|max:50',
             'revisi' => 'nullable|string|max:50',
             'tanggal' => 'nullable|date',
@@ -348,5 +364,29 @@ class HiradcController extends Controller
             'errors' => $e->errors(),
             'input' => $request->except(['_token', 'dokumen', 'disiapkan_ttd', 'diperiksa_ttd', 'disahkan_ttd']),
         ], fn($v) => $v !== null));
+    }
+
+    public function kodeOkOptions()
+    {
+        try {
+            $kodeOks = KodeOk::with(['unitKerjaRelasi', 'kualifikasiRelasi'])
+                ->where('status', true)
+                ->orderBy('kode_ok')
+                ->get()
+                ->map(fn($k) => [
+                    'id' => $k->id,
+                    'kode_ok' => $k->kode_ok,
+                    'uraian_kerja' => $k->uraian_kerja,
+                    'pengawas' => $k->pengawas,
+                    'unit_kerja' => $k->unitKerjaRelasi->pluck('nama'),
+                    'kualifikasi' => $k->kualifikasiRelasi->pluck('nama'),
+                ]);
+
+            return response()->json(['data' => $kodeOks]);
+        } catch (Throwable $e) {
+            $this->logError('kodeOkOptions', $e);
+
+            return response()->json(['message' => 'Gagal memuat data Kode OK.'], 500);
+        }
     }
 }
