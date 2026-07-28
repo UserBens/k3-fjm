@@ -36,6 +36,7 @@ use App\Http\Controllers\PermintaanPembelianController;
 use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\ReferensiKodeOkController;
+use App\Http\Controllers\RegistrasiK3Controller;
 use App\Http\Controllers\RencanaPelatihanK3Controller;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
@@ -451,4 +452,12 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{dcu}', [DcuController::class, 'destroy'])->name('destroy');
         Route::get('/cari-pegawai', [DcuController::class, 'cariPegawai'])->name('cari-pegawai');
     });
+
+    // REGISTRASI AWAL K3 & SCREENING
+    Route::get('registrasi-k3', [RegistrasiK3Controller::class, 'index'])->name('registrasi-k3.index');
+    Route::get('registrasi-k3/api', [RegistrasiK3Controller::class, 'api'])->name('registrasi-k3.api');
+    Route::get('registrasi-k3/create', [RegistrasiK3Controller::class, 'create'])->name('registrasi-k3.create');
+    Route::post('registrasi-k3', [RegistrasiK3Controller::class, 'store'])->name('registrasi-k3.store');
+    Route::get('registrasi-k3/{id}/edit', [RegistrasiK3Controller::class, 'edit'])->name('registrasi-k3.edit');
+    Route::put('registrasi-k3/{id}', [RegistrasiK3Controller::class, 'update'])->name('registrasi-k3.update');
 });

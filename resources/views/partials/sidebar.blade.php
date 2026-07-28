@@ -246,7 +246,7 @@
                 </svg>
             </div>
             <div class="sb-logo-text">K3 PT. FOKUS JASA MITRA</div>
-            
+
         </div>
     </div>
 
@@ -315,7 +315,7 @@
                 href="{{ route('safety-officer.index') }}">
                 <span class="nav-label">Data Safety Officer</span>
             </a>
-          
+
             <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
                 href="{{ route('kode-ok.index') }}">
                 <span class="nav-label">Master Kode OK</span>
@@ -324,15 +324,15 @@
         </div>
     </div>
 
-      {{-- REGISTRASI TENAGA --}}
+    {{-- REGISTRASI TENAGA --}}
     <div class="sb-section">
         <div class="sb-section-label">Registrasi Tenaga</div>
 
         @php
-            // Sesuaikan nama route ini dengan yang ada di web.php Anda
             $registrasitenagaActive =
                 request()->routeIs('memo-kib.*') ||
-                request()->routeIs('pengembalian-apd-kib.*');
+                request()->routeIs('pengembalian-apd-kib.*') ||
+                request()->routeIs('registrasi-k3.*'); // BARU: Tambahan active state untuk Registrasi K3
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $registrasitenagaActive ? 'active' : '' }}"
@@ -344,36 +344,26 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span class="nav-label">Data Tenaga</span>
+                <span class="nav-label">Registrasi Tenaga</span>
             </div>
 
-            <svg class="dropdown-arrow {{ $registrasitenagaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
+            <svg class="dropdown-arrow {{ $registrasitenagaActive ? 'rotate' : '' }}" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-
         </a>
 
         <div id="registrasitenagaDropdown" class="dropdown-menu {{ $registrasitenagaActive ? 'show' : '' }}">
 
+            {{-- MENU BARU REGISTRASI K3 --}}
+            <a class="nav-link {{ request()->routeIs('registrasi-k3.*') ? 'active' : '' }}"
+                href="{{ route('registrasi-k3.create') }}">
+                <span class="nav-label">Registrasi Awal K3</span>
+            </a>
+
             {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
                 <span class="nav-label">Memo KIB</span>
             </a> --}}
-
-            <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
-                href="{{ route('pengawas.index') }}">
-                <span class="nav-label">Data Pengawas</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('safety-officer.*') ? 'active' : '' }}"
-                href="{{ route('safety-officer.index') }}">
-                <span class="nav-label">Data Safety Officer</span>
-            </a>
-          
-            <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
-                href="{{ route('kode-ok.index') }}">
-                <span class="nav-label">Master Kode OK</span>
-            </a>
 
         </div>
     </div>
@@ -419,7 +409,8 @@
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dashboard-monitoring-kpi.*') ? 'active' : '' }}" href="{{route('dashboard-monitoring-kpi.index')}}">
+            <a class="nav-link {{ request()->routeIs('dashboard-monitoring-kpi.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-monitoring-kpi.index') }}">
                 <span class="nav-label">Dashboard Monitoring KPI</span>
             </a>
 
@@ -535,12 +526,12 @@
                 href="{{ route('leading-input.index') }}">
                 <span class="nav-label">Leading Input</span>
             </a>
-           
+
             <a class="nav-link {{ request()->routeIs('master-jadwal-shift.*') ? 'active' : '' }}"
                 href="{{ route('master-jadwal-shift.index') }}">
                 <span class="nav-label">Master Jadwal Shift</span>
             </a>
-            
+
             <a class="nav-link {{ request()->routeIs('master-hari-libur.*') ? 'active' : '' }}"
                 href="{{ route('master-hari-libur.index') }}">
                 <span class="nav-label">Master Hari Libur</span>
@@ -636,7 +627,8 @@
                 <span class="nav-label">Matriks TNA K3</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('rencana-pelatihan-k3.*') ? 'active' : '' }}" href="{{route('rencana-pelatihan-k3.index')}}">
+            <a class="nav-link {{ request()->routeIs('rencana-pelatihan-k3.*') ? 'active' : '' }}"
+                href="{{ route('rencana-pelatihan-k3.index') }}">
                 <span class="nav-label">Rencana Implementasi</span>
             </a>
 
@@ -818,7 +810,7 @@
                 href="{{ route('kartu-stok.index') }}">
                 <span class="nav-label">Kartu Stok</span>
             </a>
-           
+
             <a class="nav-link {{ request()->routeIs('permintaan-pembelian.*') ? 'active' : '' }}"
                 href="{{ route('permintaan-pembelian.index') }}">
                 <span class="nav-label">Permintaan Pembelian</span>

@@ -43,7 +43,7 @@ return new class extends Migration
                 $table->enum($col, ['WAJIB', 'KONDISIONAL', 'TIDAK'])->default('TIDAK');
             }
 
-            $table->foreignId('hiradc_id')->nullable()->constrained('hiradcs')->nullOnDelete();
+            $table->foreignId('hiradc_id')->constrained('hiradc_documents')->nullOnDelete();
             $table->string('potensi_bahaya_aktivitas')->nullable();
             $table->string('jenis_bahaya')->nullable();
             $table->text('konsekuensi_dampak')->nullable();
