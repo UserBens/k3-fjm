@@ -854,6 +854,38 @@
             height: 20px;
             background: rgba(0, 0, 0, 0.07);
         }
+
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #64748B;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: #2D4B9E;
+            color: #2D4B9E;
+        }
+
+        .tab-btn.active {
+            background: #2D4B9E;
+            border-color: #2D4B9E;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 
@@ -909,12 +941,8 @@
                     <div class="summary-value" id="sumTotalBaris">—</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-label">Item APD</div>
-                    <div class="summary-value blue" id="sumItemApd">—</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-label">Item Alkes</div>
-                    <div class="summary-value green" id="sumItemAlkes">—</div>
+                    <div class="summary-label" id="sumItemLabel">Item APD</div>
+                    <div class="summary-value blue" id="sumItemAktif">—</div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-label">Item Saldo ≤ 0</div>
@@ -924,6 +952,22 @@
 
             <!-- FILTER BAR -->
             <div class="section-card" style="margin-bottom:14px;">
+                <div class="tab-bar">
+                    <button type="button" class="tab-btn active" id="tabApd" onclick="switchTab('APD')">
+                        <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Kartu Stok APD
+                    </button>
+                    <button type="button" class="tab-btn" id="tabAlkes" onclick="switchTab('ALKES')">
+                        <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Kartu Stok Alkes
+                    </button>
+                </div>
                 <div class="filter-bar">
                     <div class="filter-search">
                         <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
@@ -935,12 +979,6 @@
                             placeholder="Cari kode item, nama item, no. dokumen, jenis transaksi..."
                             oninput="onSearchInput()" />
                     </div>
-
-                    <select id="filterTipeItem" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Tipe Item</option>
-                        <option value="APD">APD</option>
-                        <option value="ALKES">Alkes</option>
-                    </select>
 
                     <select id="filterKodeItem" class="filter-select" onchange="onFilterChange()">
                         <option value="">Semua Kode Item</option>
@@ -1053,7 +1091,7 @@
 
         const state = {
             search: '',
-            tipe_item: '',
+            tipe_item: 'APD', // ← default: tab APD aktif duluan
             kode_item: '',
             tanggal_dari: '',
             tanggal_sampai: '',
@@ -1064,6 +1102,7 @@
         let searchDebounce = null;
         let filterOptionsLoaded = false;
         let lastRows = [];
+        let activeTab = 'APD';
 
         function escapeHtml(str) {
             const div = document.createElement('div');
@@ -1109,8 +1148,21 @@
             }, 350);
         }
 
+        function switchTab(tab) {
+            if (activeTab === tab) return;
+            activeTab = tab;
+            state.tipe_item = tab;
+            state.kode_item = '';
+            state.page = 1;
+
+            document.getElementById('tabApd').classList.toggle('active', tab === 'APD');
+            document.getElementById('tabAlkes').classList.toggle('active', tab === 'ALKES');
+            document.getElementById('filterKodeItem').value = '';
+
+            loadData();
+        }
+
         function onFilterChange() {
-            state.tipe_item = document.getElementById('filterTipeItem').value;
             state.kode_item = document.getElementById('filterKodeItem').value;
             state.tanggal_dari = document.getElementById('filterTanggalDari').value;
             state.tanggal_sampai = document.getElementById('filterTanggalSampai').value;
@@ -1126,17 +1178,15 @@
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('filterTipeItem').value = '';
             document.getElementById('filterKodeItem').value = '';
             document.getElementById('filterTanggalDari').value = '';
             document.getElementById('filterTanggalSampai').value = '';
             Object.assign(state, {
                 search: '',
-                tipe_item: '',
                 kode_item: '',
                 tanggal_dari: '',
                 tanggal_sampai: '',
-                page: 1
+                page: 1,
             });
             loadData();
         }
@@ -1151,23 +1201,24 @@
         }
 
         function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
+            if (!options) return;
             const select = document.getElementById('filterKodeItem');
+            const currentValue = state.kode_item;
+
+            select.innerHTML = '<option value="">Semua Kode Item</option>';
             (options.kode_item || []).forEach(val => {
                 const opt = document.createElement('option');
                 opt.value = val;
                 opt.textContent = val;
                 select.appendChild(opt);
             });
-            filterOptionsLoaded = true;
+            select.value = currentValue;
         }
 
         function updateSummaryCards(rows) {
             const totalBaris = rows.length;
-            const apdItems = new Set(rows.filter(r => r.tipe_item === 'APD').map(r => r.kode_item));
-            const alkesItems = new Set(rows.filter(r => r.tipe_item === 'ALKES').map(r => r.kode_item));
+            const itemAktif = new Set(rows.map(r => r.kode_item));
 
-            // Ambil saldo TERAKHIR per kode_item dari baris yang sedang ditampilkan (halaman berjalan)
             const lastSaldoPerItem = {};
             rows.forEach(r => {
                 lastSaldoPerItem[r.kode_item] = r.saldo;
@@ -1175,9 +1226,18 @@
             const habisCount = Object.values(lastSaldoPerItem).filter(s => s <= 0).length;
 
             document.getElementById('sumTotalBaris').textContent = totalBaris;
-            document.getElementById('sumItemApd').textContent = apdItems.size;
-            document.getElementById('sumItemAlkes').textContent = alkesItems.size;
+            document.getElementById('sumItemAktif').textContent = itemAktif.size;
             document.getElementById('sumSaldoHabis').textContent = habisCount;
+
+            const labelEl = document.getElementById('sumItemLabel');
+            const valueEl = document.getElementById('sumItemAktif');
+            if (activeTab === 'APD') {
+                labelEl.textContent = 'Item APD';
+                valueEl.className = 'summary-value blue';
+            } else {
+                labelEl.textContent = 'Item Alkes';
+                valueEl.className = 'summary-value green';
+            }
         }
 
         function renderTable(rows) {
@@ -1205,8 +1265,8 @@
                 <tr class="${isFirstOfItem ? 'row-item-first' : ''}">
                     <td>${row.no}</td>
                     <td>
-                        <div class="td-name-main">${escapeHtml(row.kode_item)}</div>
-                        <div class="td-name-sub">${escapeHtml(row.nama_item)} <span class="tipe-badge ${tipeClass}" style="margin-left:4px;">${row.tipe_item}</span></div>
+                        <div class="td-name-main">${escapeHtml(row.nama_item)} <span class="tipe-badge ${tipeClass}" style="margin-left:4px;">${row.tipe_item}</span></div>
+                        <div class="td-name-sub">${escapeHtml(row.kode_item)}</div>
                     </td>
                     <td>${formatDate(row.tanggal)}</td>
                     <td class="td-name-sub" style="font-weight:600; color:#475569;">${escapeHtml(display(row.sumber))}</td>

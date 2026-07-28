@@ -324,6 +324,60 @@
         </div>
     </div>
 
+      {{-- REGISTRASI TENAGA --}}
+    <div class="sb-section">
+        <div class="sb-section-label">Registrasi Tenaga</div>
+
+        @php
+            // Sesuaikan nama route ini dengan yang ada di web.php Anda
+            $registrasitenagaActive =
+                request()->routeIs('memo-kib.*') ||
+                request()->routeIs('pengembalian-apd-kib.*');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $registrasitenagaActive ? 'active' : '' }}"
+            onclick="toggleDropdown('registrasitenagaDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="nav-label">Data Tenaga</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $registrasitenagaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+
+        </a>
+
+        <div id="registrasitenagaDropdown" class="dropdown-menu {{ $registrasitenagaActive ? 'show' : '' }}">
+
+            {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
+                <span class="nav-label">Memo KIB</span>
+            </a> --}}
+
+            <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
+                href="{{ route('pengawas.index') }}">
+                <span class="nav-label">Data Pengawas</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('safety-officer.*') ? 'active' : '' }}"
+                href="{{ route('safety-officer.index') }}">
+                <span class="nav-label">Data Safety Officer</span>
+            </a>
+          
+            <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
+                href="{{ route('kode-ok.index') }}">
+                <span class="nav-label">Master Kode OK</span>
+            </a>
+
+        </div>
+    </div>
+
     {{-- KPI --}}
     <div class="sb-section">
         <div class="sb-section-label">Key Performance Indicator</div>

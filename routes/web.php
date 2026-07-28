@@ -426,10 +426,12 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{matriksApdJabatan}', [MatriksApdJabatanController::class, 'destroy'])->name('destroy');
     });
 
-    // PERMINTAAN PEMBELIAN
     Route::prefix('permintaan-pembelian')->name('permintaan-pembelian.')->group(function () {
         Route::get('/', [PermintaanPembelianController::class, 'index'])->name('index');
         Route::get('/data', [PermintaanPembelianController::class, 'data'])->name('data');
+        Route::get('/unit-kerja-options', [PermintaanPembelianController::class, 'unitKerjaOptions'])->name('unit-kerja-options'); // ← baru
+        Route::get('/cari-pegawai', [PermintaanPembelianController::class, 'cariPegawai'])->name('cari-pegawai'); // ← baru
+        Route::get('/daftar-apd', [PermintaanPembelianController::class, 'daftarApd'])->name('daftar-apd'); // ← baru
         Route::post('/', [PermintaanPembelianController::class, 'store'])->name('store');
         Route::put('/{item}', [PermintaanPembelianController::class, 'update'])->name('update');
         Route::delete('/{item}', [PermintaanPembelianController::class, 'destroy'])->name('destroy');

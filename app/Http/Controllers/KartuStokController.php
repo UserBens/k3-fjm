@@ -80,7 +80,12 @@ class KartuStokController extends Controller
                 ],
                 'filter_options' => [
                     'tipe_item' => ['APD', 'ALKES'],
-                    'kode_item' => $ledger->pluck('kode_item')->unique()->sort()->values(),
+                    'kode_item' => $ledger
+                        ->when($tipeItem, fn($collection) => $collection->filter(fn($row) => $row['tipe_item'] === $tipeItem))
+                        ->pluck('kode_item')
+                        ->unique()
+                        ->sort()
+                        ->values(),
                 ],
             ]);
         } catch (\Throwable $e) {

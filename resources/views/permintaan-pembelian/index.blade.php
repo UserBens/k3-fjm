@@ -1187,6 +1187,170 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        .picker-wrap {
+            position: relative;
+        }
+
+        .picker-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            z-index: 20;
+        }
+
+        .picker-dropdown.open {
+            display: block;
+        }
+
+        .picker-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .picker-item:hover {
+            background: #F0F4FF;
+        }
+
+        .picker-item-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .picker-selected-chip {
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            background: #F0F4FF;
+            font-size: 12px;
+        }
+
+        .picker-selected-chip .chip-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-selected-chip .chip-sub {
+            font-size: 10.5px;
+            color: #64748B;
+        }
+
+        .picker-clear-btn {
+            background: none;
+            border: none;
+            color: #D0021B;
+            cursor: pointer;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .ms-options {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        /* ══════ Checklist dropdown multi-select (APD Wajib / Khusus) ══════ */
+        .ms-dropdown {
+            position: relative;
+        }
+
+        .ms-dropdown-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12.5px;
+            color: #1A1D2E;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .ms-dropdown-btn:hover {
+            border-color: #94A3B8;
+        }
+
+        .ms-dropdown-panel {
+            display: none;
+            position: absolute;
+            z-index: 40;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 260px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .ms-dropdown-panel.open {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ms-search {
+            border: none;
+            border-bottom: 1px solid #E2E8F0;
+            padding: 9px 12px;
+            font-size: 12.5px;
+            outline: none;
+            width: 100%;
+        }
+
+        .ms-options {
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .ms-option-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            font-size: 12.5px;
+            color: #1A1D2E;
+            cursor: pointer;
+        }
+
+        .ms-option-row:hover {
+            background: #F8FAFC;
+        }
+
+        .ms-option-row input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .ms-option-empty {
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+        }
     </style>
 </head>
 
@@ -1337,7 +1501,9 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">No. PP</label>
-                        <input type="text" id="fNoPp" class="form-input" placeholder="17/I/PP/2026" />
+                        <input type="text" id="fNoPp" class="form-input" readonly disabled
+                            style="background:#F1F5F9; color:#64748B; cursor:not-allowed;"
+                            placeholder="Otomatis digenerate setelah disimpan" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tanggal PP</label>
@@ -1345,11 +1511,32 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Unit Kerja</label>
-                        <input type="text" id="fUnitKerja" class="form-input" placeholder="Warehouse" />
+                        <div class="ms-dropdown" id="unitKerjaWrap">
+                            <button type="button" class="ms-dropdown-btn" onclick="toggleUnitKerjaDropdown()">
+                                <span id="unitKerjaLabel">Pilih Unit Kerja...</span>
+                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="ms-dropdown-panel" id="unitKerjaPanel">
+                                <input type="text" class="ms-search" placeholder="Cari unit kerja..."
+                                    oninput="filterUnitKerjaOptions(this.value)" />
+                                <div class="ms-options" id="unitKerjaOptionsList"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fUnitKerja" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Diminta Oleh</label>
-                        <input type="text" id="fDimintaOleh" class="form-input" placeholder="Nama pemohon" />
+                        <div class="picker-wrap">
+                            <input type="text" id="dimintaOlehPickerInput" class="form-input"
+                                placeholder="Cari nama atau badge tenaga..." oninput="onDimintaOlehPickerInput()"
+                                autocomplete="off" />
+                            <div class="picker-dropdown" id="dimintaOlehPickerDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fDimintaOleh" />
                     </div>
                 </div>
                 <div class="detail-subtitle" style="margin-top:8px;">
@@ -1360,8 +1547,23 @@
                 <div class="form-grid">
                     <div class="form-group span-2">
                         <label class="form-label">Nama APD</label>
-                        <input type="text" id="fNamaApd" class="form-input"
-                            placeholder="Helm Krisbow + Tali Dagu" />
+                        <div class="ms-dropdown" id="apdWrap">
+                            <button type="button" class="ms-dropdown-btn" onclick="toggleApdDropdown()">
+                                <span id="apdLabel">Pilih Nama APD...</span>
+                                <svg style="width:13px;height:13px; flex-shrink:0;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="ms-dropdown-panel" id="apdPanel">
+                                <input type="text" class="ms-search"
+                                    placeholder="Cari jenis APD, kode, atau merk..."
+                                    oninput="filterApdOptions(this.value)" />
+                                <div class="ms-options" id="apdOptionsList"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fNamaApd" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Qty Diminta</label>
@@ -1380,6 +1582,18 @@
                         <label class="form-label">Keterangan</label>
                         <textarea id="fKeterangan" class="form-textarea" rows="2"
                             placeholder="Contoh: Tali helm kurang 17 / Belum datang / Kurang"></textarea>
+                    </div>
+
+                    <div class="form-group span-2" id="wrapBuktiSerahTerima" style="display:none;">
+                        <label class="form-label">Bukti Serah Terima</label>
+                        <input type="file" id="fBuktiSerahTerima" class="form-input" accept="image/*,.pdf"
+                            onchange="onBuktiSerahTerimaChange()" />
+                        <div id="buktiSerahTerimaPreviewBox" style="margin-top:6px; display:none;">
+                            <div class="detail-subtitle" id="buktiSerahTerimaPreviewLabel">Bukti saat ini:</div>
+                            <a id="buktiSerahTerimaLink" href="#" target="_blank"
+                                style="font-size:12.5px; font-weight:600; color:#2D4B9E; text-decoration:underline;">Lihat
+                                file</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1461,6 +1675,11 @@
                             <label>Keterangan</label>
                             <textarea id="dKeterangan" readonly rows="2"></textarea>
                         </div>
+
+                        <div class="detail-field span-2" id="dBuktiSerahTerimaWrap" style="display:none;">
+                            <label>Bukti Serah Terima</label>
+                            <div id="dBuktiSerahTerimaContent" style="font-size:12.5px;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1498,6 +1717,9 @@
         const DATA_ENDPOINT = "{{ route('permintaan-pembelian.data') }}";
         const STORE_ENDPOINT = "{{ route('permintaan-pembelian.store') }}";
         const BASE_ENDPOINT = "{{ url('/permintaan-pembelian') }}";
+        const UNIT_KERJA_OPTIONS_ENDPOINT = "{{ route('permintaan-pembelian.unit-kerja-options') }}";
+        const CARI_PEGAWAI_ENDPOINT = "{{ route('permintaan-pembelian.cari-pegawai') }}";
+        const DAFTAR_APD_ENDPOINT = "{{ route('permintaan-pembelian.daftar-apd') }}"; // ganti dari CARI_APD_ENDPOINT
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1515,6 +1737,8 @@
         let currentEditId = null;
         let currentDeleteId = null;
         let currentRows = [];
+        let unitKerjaOptionsCache = [];
+        let apdOptionsCache = [];
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1564,6 +1788,18 @@
             }, 350);
         }
 
+        function onBuktiSerahTerimaChange() {
+            const input = document.getElementById('fBuktiSerahTerima');
+            const box = document.getElementById('buktiSerahTerimaPreviewBox');
+            const label = document.getElementById('buktiSerahTerimaPreviewLabel');
+
+            if (input.files && input.files[0]) {
+                label.textContent = `File dipilih: ${input.files[0].name} (akan menggantikan bukti lama jika disimpan)`;
+                document.getElementById('buktiSerahTerimaLink').style.display = 'none';
+                box.style.display = '';
+            }
+        }
+
         function onFilterChange() {
             state.status = document.getElementById('filterStatus').value;
             state.unit_kerja = document.getElementById('filterUnitKerja').value;
@@ -1594,6 +1830,21 @@
                 page: 1,
             });
             loadData();
+        }
+
+        async function loadUnitKerjaOptions() {
+            if (unitKerjaOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(UNIT_KERJA_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                unitKerjaOptionsCache = json.data || [];
+            } catch (e) {
+                // Diamkan — dropdown tetap bisa dikosongkan tanpa master data
+            }
         }
 
         function goToPage(page) {
@@ -1830,25 +2081,177 @@
             }, 4000);
         }
 
+        let dimintaOlehPickerDebounce = null;
+
+        function onDimintaOlehPickerInput() {
+            clearTimeout(dimintaOlehPickerDebounce);
+            dimintaOlehPickerDebounce = setTimeout(searchDimintaOlehPicker, 350);
+        }
+
+        async function searchDimintaOlehPicker() {
+            const search = document.getElementById('dimintaOlehPickerInput').value.trim();
+            const dropdown = document.getElementById('dimintaOlehPickerDropdown');
+            if (search.length < 2) {
+                dropdown.classList.remove('open');
+                return;
+            }
+            try {
+                const res = await fetch(`${CARI_PEGAWAI_ENDPOINT}?search=${encodeURIComponent(search)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                });
+                const json = await res.json();
+                dropdown.innerHTML = (!json.data || json.data.length === 0) ?
+                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada tenaga ditemukan.</div>` :
+                    json.data.map(p => `
+                <div class="picker-item" onclick='pilihDimintaOleh(${JSON.stringify(p).replace(/'/g, "&#39;")})'>
+                    <div class="picker-item-name">${escapeHtml(p.nama)}</div>
+                    <div class="picker-item-sub">${escapeHtml(p.badge)} · ${escapeHtml(p.jabatan)} · ${escapeHtml(p.unit_kerja)}</div>
+                </div>`).join('');
+                dropdown.classList.add('open');
+            } catch (e) {
+                dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;
+                dropdown.classList.add('open');
+            }
+        }
+
+        function pilihDimintaOleh(p) {
+            document.getElementById('fDimintaOleh').value = p.nama;
+            document.getElementById('dimintaOlehPickerInput').value = `${p.nama} (${p.badge})`;
+            document.getElementById('dimintaOlehPickerDropdown').classList.remove('open');
+        }
+
+        async function loadApdOptions() {
+            if (apdOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(DAFTAR_APD_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                apdOptionsCache = json.data || [];
+            } catch (e) {
+                // Diamkan — dropdown tetap bisa dikosongkan tanpa master data
+            }
+        }
+
+        function apdOptionLabel(item) {
+            return `${item.jenis_apd} (${item.kode_apd})`;
+        }
+
+        function renderApdOptions(term = '') {
+            const container = document.getElementById('apdOptionsList');
+            const term_ = term.toLowerCase();
+            const list = apdOptionsCache.filter(a =>
+                a.jenis_apd.toLowerCase().includes(term_) ||
+                (a.kode_apd || '').toLowerCase().includes(term_) ||
+                (a.merk_rekomendasi || '').toLowerCase().includes(term_)
+            );
+
+            container.innerHTML = list.length === 0 ?
+                `<div class="ms-option-empty">APD tidak ditemukan.</div>` :
+                list.map(a => `
+            <label class="ms-option-row">
+                <input type="radio" name="apdRadio" value="${a.id}"
+                    onchange='selectApd(${JSON.stringify(a).replace(/'/g, "&#39;")})' />
+                <span>${escapeHtml(a.jenis_apd)} <span style="color:#94A3B8;">(${escapeHtml(a.kode_apd)} · Stok: ${a.stok_tersedia})</span></span>
+            </label>
+        `).join('');
+        }
+
+        function filterApdOptions(term) {
+            renderApdOptions(term);
+        }
+
+        function selectApd(a) {
+            document.getElementById('fNamaApd').value = a.jenis_apd;
+            document.getElementById('apdLabel').textContent = a.jenis_apd;
+            document.getElementById('apdPanel').classList.remove('open');
+        }
+
+        function toggleApdDropdown() {
+            const panel = document.getElementById('apdPanel');
+            const isOpen = panel.classList.contains('open');
+            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
+            if (!isOpen) {
+                panel.classList.add('open');
+                renderApdOptions();
+                const search = panel.querySelector('.ms-search');
+                search.value = '';
+                search.focus();
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('apdWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('apdPanel')?.classList.remove('open');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const wrapDiminta = document.getElementById('dimintaOlehPickerInput')?.closest('.picker-wrap');
+            if (wrapDiminta && !wrapDiminta.contains(e.target)) {
+                document.getElementById('dimintaOlehPickerDropdown')?.classList.remove('open');
+            }
+        });
+
         // ══════ MODAL TAMBAH / EDIT ══════
-        function openFormModal(row = null) {
+        async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
 
-            document.getElementById('formModalTitle').textContent = row ? 'Edit Permintaan APD' : 'Tambah Permintaan APD';
+            currentEditId = row ? row.id : null;
+
+            await loadUnitKerjaOptions();
+            await loadApdOptions();
+            document.getElementById('formModalTitle').textContent = row ? 'Edit Permintaan APD' :
+                'Tambah Permintaan APD';
             document.getElementById('formModalSub').textContent = row ?
                 `Perbarui data permintaan "${row.nama_apd}" (${row.no_pp})` :
                 'Lengkapi data permintaan pembelian APD di bawah ini.';
 
             document.getElementById('fNoPp').value = row?.no_pp || '';
+            document.getElementById('fNoPp').placeholder = row ? '' : 'Otomatis digenerate setelah disimpan';
             document.getElementById('fTanggalPp').value = row?.tanggal_pp || '';
-            document.getElementById('fUnitKerja').value = row?.unit_kerja || '';
-            document.getElementById('fDimintaOleh').value = row?.diminta_oleh || '';
 
+            document.getElementById('fUnitKerja').value = row?.unit_kerja || '';
+            document.getElementById('unitKerjaLabel').textContent = row?.unit_kerja || 'Pilih Unit Kerja...';
+            document.getElementById('unitKerjaPanel').classList.remove('open');
+            document.getElementById('fDimintaOleh').value = row?.diminta_oleh || '';
+            document.getElementById('dimintaOlehPickerInput').value = row?.diminta_oleh || '';
+            document.getElementById('dimintaOlehPickerDropdown').classList.remove('open');
+
+            document.getElementById('apdLabel').textContent = row?.nama_apd || 'Pilih Nama APD...';
+            document.getElementById('apdPanel').classList.remove('open');
             document.getElementById('fNamaApd').value = row?.nama_apd || '';
+
             document.getElementById('fQtyPermintaan').value = row?.qty_permintaan ?? '';
             document.getElementById('fQtyDatang').value = row?.qty_datang ?? 0;
             document.getElementById('fTanggalDatang').value = row?.tanggal_datang || '';
             document.getElementById('fKeterangan').value = row?.keterangan || '';
+
+            // Bukti serah terima cuma relevan saat edit
+            const wrapBukti = document.getElementById('wrapBuktiSerahTerima');
+            document.getElementById('fBuktiSerahTerima').value = '';
+            const previewBox = document.getElementById('buktiSerahTerimaPreviewBox');
+            const previewLabel = document.getElementById('buktiSerahTerimaPreviewLabel');
+            const previewLink = document.getElementById('buktiSerahTerimaLink');
+
+            if (row) {
+                wrapBukti.style.display = '';
+                if (row.bukti_serah_terima_url) {
+                    previewLabel.textContent = 'Bukti saat ini:';
+                    previewLink.href = row.bukti_serah_terima_url;
+                    previewLink.style.display = '';
+                    previewBox.style.display = '';
+                } else {
+                    previewBox.style.display = 'none';
+                }
+            } else {
+                wrapBukti.style.display = 'none';
+            }
 
             document.getElementById('formModalOverlay').classList.add('open');
         }
@@ -1868,31 +2271,34 @@
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const payload = {
-                no_pp: document.getElementById('fNoPp').value.trim(),
-                tanggal_pp: document.getElementById('fTanggalPp').value,
-                unit_kerja: document.getElementById('fUnitKerja').value.trim() || null,
-                diminta_oleh: document.getElementById('fDimintaOleh').value.trim() || null,
+            const formData = new FormData();
+            formData.append('tanggal_pp', document.getElementById('fTanggalPp').value);
+            formData.append('unit_kerja', document.getElementById('fUnitKerja').value.trim());
+            formData.append('diminta_oleh', document.getElementById('fDimintaOleh').value.trim());
+            formData.append('nama_apd', document.getElementById('fNamaApd').value.trim());
+            formData.append('qty_permintaan', document.getElementById('fQtyPermintaan').value || 0);
+            formData.append('qty_datang', document.getElementById('fQtyDatang').value || 0);
+            formData.append('tanggal_datang', document.getElementById('fTanggalDatang').value || '');
+            formData.append('keterangan', document.getElementById('fKeterangan').value.trim());
 
-                nama_apd: document.getElementById('fNamaApd').value.trim(),
-                qty_permintaan: document.getElementById('fQtyPermintaan').value || 0,
-                qty_datang: document.getElementById('fQtyDatang').value || 0,
-                tanggal_datang: document.getElementById('fTanggalDatang').value || null,
-                keterangan: document.getElementById('fKeterangan').value.trim() || null,
-            };
+            if (currentEditId) {
+                const fileInput = document.getElementById('fBuktiSerahTerima');
+                if (fileInput.files && fileInput.files[0]) {
+                    formData.append('bukti_serah_terima', fileInput.files[0]);
+                }
+                formData.append('_method', 'PUT'); // spoofing method, karena FormData harus lewat POST
+            }
 
             const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-            const method = currentEditId ? 'PUT' : 'POST';
 
             try {
                 const res = await fetch(url, {
-                    method,
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN,
                     },
-                    body: JSON.stringify(payload),
+                    body: formData,
                 });
 
                 const json = await res.json();
@@ -1931,7 +2337,15 @@
             document.getElementById('dTanggalDatang').value = formatDate(row.tanggal_datang);
             document.getElementById('dStatus').value = row.status;
             document.getElementById('dKeterangan').value = display(row.keterangan);
-
+            const buktiWrap = document.getElementById('dBuktiSerahTerimaWrap');
+            const buktiContent = document.getElementById('dBuktiSerahTerimaContent');
+            if (row.bukti_serah_terima_url) {
+                buktiContent.innerHTML =
+                    `<a href="${row.bukti_serah_terima_url}" target="_blank" style="color:#2D4B9E; text-decoration:underline; font-weight:600;">Lihat bukti serah terima</a>`;
+                buktiWrap.style.display = '';
+            } else {
+                buktiWrap.style.display = 'none';
+            }
             document.getElementById('detailModalOverlay').classList.add('open');
         }
 
@@ -1986,6 +2400,52 @@
                 showToast(e.message || 'Terjadi kesalahan saat menghapus data.', 'error');
             }
         }
+
+        function renderUnitKerjaOptions(term = '') {
+            const container = document.getElementById('unitKerjaOptionsList');
+            const term_ = term.toLowerCase();
+            const list = unitKerjaOptionsCache.filter(u => u.toLowerCase().includes(term_));
+
+            container.innerHTML = list.length === 0 ?
+                `<div class="ms-option-empty">Unit kerja tidak ditemukan.</div>` :
+                list.map(u => `
+            <label class="ms-option-row">
+                <input type="radio" name="unitKerjaRadio" value="${escapeHtml(u)}"
+                    onchange="selectUnitKerja('${u.replace(/'/g, "\\'")}')" />
+                <span>${escapeHtml(u)}</span>
+            </label>
+        `).join('');
+        }
+
+        function filterUnitKerjaOptions(term) {
+            renderUnitKerjaOptions(term);
+        }
+
+        function selectUnitKerja(u) {
+            document.getElementById('fUnitKerja').value = u;
+            document.getElementById('unitKerjaLabel').textContent = u;
+            document.getElementById('unitKerjaPanel').classList.remove('open');
+        }
+
+        function toggleUnitKerjaDropdown() {
+            const panel = document.getElementById('unitKerjaPanel');
+            const isOpen = panel.classList.contains('open');
+            document.querySelectorAll('.ms-dropdown-panel.open').forEach(p => p.classList.remove('open'));
+            if (!isOpen) {
+                panel.classList.add('open');
+                renderUnitKerjaOptions();
+                const search = panel.querySelector('.ms-search');
+                search.value = '';
+                search.focus();
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('unitKerjaWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('unitKerjaPanel')?.classList.remove('open');
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
