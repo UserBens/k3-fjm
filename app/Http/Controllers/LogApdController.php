@@ -8,6 +8,7 @@ use App\Models\StokAPD;
 use App\Models\Pegawai;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -169,7 +170,12 @@ class LogApdController extends Controller
         }
 
         $data = $validator->validated();
+        unset($data['hapus_foto_apd']); // tidak relevan saat create
         $data['no_dokumen'] = LogApd::generateNoDokumen();
+
+        if ($request->hasFile('foto_apd')) {
+            $data['foto_apd'] = $request->file('foto_apd')->store('log-apd', 'public');
+        }
 
         $log = LogApd::create($data);
 
@@ -190,7 +196,18 @@ class LogApdController extends Controller
             ], 422);
         }
 
-        $logApd->update($validator->validated());
+        $data = $validator->validated();
+
+        if ($request->hasFile('foto_apd')) {
+            if ($logApd->foto_apd) {
+                Storage::disk('public')->delete($logApd->foto_apd);
+            }
+            $data['foto_apd'] = $request->file('foto_apd')->store('log-apd', 'public');
+        } else {
+            unset($data['foto_apd']); // tidak upload baru → foto lama tetap dipertahankan
+        }
+
+        $logApd->update($data);
 
         return response()->json([
             'message' => "Log APD {$logApd->no_dokumen} berhasil diperbarui.",
@@ -201,6 +218,11 @@ class LogApdController extends Controller
     public function destroy(LogApd $logApd)
     {
         $noDokumen = $logApd->no_dokumen;
+
+        if ($logApd->foto_apd) {
+            Storage::disk('public')->delete($logApd->foto_apd);
+        }
+
         $logApd->delete();
 
         return response()->json([
@@ -236,6 +258,8 @@ class LogApdController extends Controller
             'alasan_penggantian' => ['nullable', 'string'],
             'diterima_oleh'      => ['nullable', 'string', 'max:150'],
             'keterangan'         => ['nullable', 'string'],
+            'rutin_non_rutin'    => ['required', 'string', Rule::in(LogApd::RUTIN_NON_RUTIN)],
+            'foto_apd'        => ['nullable', 'image', 'max:5120'], // max 5MB
         ]);
     }
 
@@ -248,6 +272,7 @@ class LogApdController extends Controller
             'no'                 => $no,
             'tanggal'            => optional($row->tanggal)->format('Y-m-d'),
             'no_dokumen'         => $row->no_dokumen,
+            'rutin_non_rutin'    => $row->rutin_non_rutin,
             'id_karyawan'        => $row->id_karyawan,
             'nama_karyawan'      => $row->nama_karyawan,
             'kode_ok'            => $row->kode_ok,
@@ -266,6 +291,8 @@ class LogApdController extends Controller
             'pernah_tukar'       => $row->pernah_tukar,
             'alasan_penggantian' => $row->alasan_penggantian,
             'diterima_oleh'      => $row->diterima_oleh,
+            'foto_apd'           => $row->foto_apd,
+            'foto_apd_url'       => $row->foto_apd ? Storage::disk('public')->url($row->foto_apd) : null,
             'keterangan'         => $row->keterangan,
         ];
     }
@@ -348,6 +375,7 @@ class LogApdController extends Controller
         return [
             'No. Dokumen',
             'Tanggal',
+            'Rutin/Non Rutin',   // baru
             'Jenis Transaksi',
             'Keterangan Lainnya',
             'ID Karyawan',
@@ -374,6 +402,7 @@ class LogApdController extends Controller
         return [
             $row->no_dokumen,
             optional($row->tanggal)->format('d/m/Y'),
+            $row->rutin_non_rutin,   // baru
             $row->jenis_transaksi,
             $row->keterangan_lainnya,
             $row->id_karyawan,

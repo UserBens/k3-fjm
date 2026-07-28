@@ -20,7 +20,7 @@ class AlatKesehatanPenggunaController extends Controller
     public function data(Request $request): JsonResponse
     {
         try {
-            $query = AlatKesehatanPenggunaan::with('alatKesehatan')->search($request->query('search'));
+            $query = AlatKesehatanPenggunaan::with(['alatKesehatan.kodeOkRelasi'])->search($request->query('search'));
 
             if ($alatId = $request->query('stok_alkes_id')) {
                 $query->where('stok_alkes_id', $alatId);
@@ -55,6 +55,8 @@ class AlatKesehatanPenggunaController extends Controller
                     'unit_kerja' => $item->unit_kerja ?? '-',
                     'stok_alkes_id' => $item->stok_alkes_id,
                     'jenis_alat' => $item->alatKesehatan->jenis_alat ?? '-',
+                    'kode_ok' => $item->kode_ok,
+                    'alat_kode_ok' => optional($item->alatKesehatan)?->kodeOkRelasi->pluck('kode_ok')->values() ?? [],
                     'jumlah_digunakan' => $item->jumlah_digunakan,
                     'keterangan' => $item->keterangan ?? '-',
                 ];
@@ -181,7 +183,7 @@ class AlatKesehatanPenggunaController extends Controller
     public function cariAlat(Request $request): JsonResponse
     {
         $search = trim((string) $request->query('search', ''));
-        $query = StokAlkes::where('status', 'Aktif');
+        $query = StokAlkes::with('kodeOkRelasi')->where('status', 'Aktif');
 
         if ($search !== '') {
             $query->search($search);
@@ -193,6 +195,7 @@ class AlatKesehatanPenggunaController extends Controller
             'merk' => $a->merk ?? '-',
             'type' => $a->type ?? '-',
             'stok_tersedia' => $a->stok_tersedia,
+            'kode_ok' => $a->kodeOkRelasi->pluck('kode_ok')->values(),
         ]);
 
         return response()->json(['data' => $results]);
@@ -210,6 +213,7 @@ class AlatKesehatanPenggunaController extends Controller
         return $request->validate([
             'tanggal' => 'required|date',
             'stok_alkes_id' => 'required|exists:stok_alkes,id',
+            'kode_ok' => 'nullable|string|max:50',
             'id_karyawan' => 'required|string|max:50',
             'nama_pengguna' => 'required|string|max:255',
             'jabatan' => 'nullable|string|max:255',

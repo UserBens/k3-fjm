@@ -203,6 +203,14 @@
             cursor: pointer;
             transition: background 0.15s;
             white-space: nowrap;
+            display: inline-flex;
+            /* Mengubah tombol menjadi container flex */
+            align-items: center;
+            /* Menyejajarkan ikon dan teks tepat di tengah secara vertikal */
+            justify-content: center;
+            /* Mengatur posisi konten di tengah secara horizontal */
+            gap: 8px;
+            /* Memberikan jarak yang rapi antara ikon dan teks */
         }
 
         .btn-outline:hover {
@@ -1151,6 +1159,267 @@
             font-weight: 700;
             margin: 0 4px 4px 0;
         }
+
+        .picker-wrap {
+            position: relative;
+        }
+
+        .picker-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            z-index: 20;
+        }
+
+        .picker-dropdown.open {
+            display: block;
+        }
+
+        .picker-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .picker-item:hover {
+            background: #F0F4FF;
+        }
+
+        .picker-item-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .picker-selected-chip {
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            background: #F0F4FF;
+            font-size: 12px;
+        }
+
+        .picker-selected-chip .chip-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-selected-chip .chip-sub {
+            font-size: 10.5px;
+            color: #64748B;
+        }
+
+        .picker-clear-btn {
+            background: none;
+            border: none;
+            color: #D0021B;
+            cursor: pointer;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        /* ══════ Checklist dropdown multi-select (APD Wajib / Khusus) ══════ */
+        .ms-dropdown {
+            position: relative;
+        }
+
+        .ms-dropdown-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12.5px;
+            color: #1A1D2E;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .ms-dropdown-btn:hover {
+            border-color: #94A3B8;
+        }
+
+        .ms-dropdown-panel {
+            display: none;
+            position: absolute;
+            z-index: 40;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 260px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .ms-dropdown-panel.open {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ms-search {
+            border: none;
+            border-bottom: 1px solid #E2E8F0;
+            padding: 9px 12px;
+            font-size: 12.5px;
+            outline: none;
+            width: 100%;
+        }
+
+        .ms-options {
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .ms-option-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            font-size: 12.5px;
+            color: #1A1D2E;
+            cursor: pointer;
+        }
+
+        .ms-option-row:hover {
+            background: #F8FAFC;
+        }
+
+        .ms-option-row input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .ms-option-empty {
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        /* ══════ INFO BOX (Stok APD & Riwayat Tukar) ══════ */
+        .info-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #334155;
+            margin-top: 12px
+        }
+
+        .info-box-line {
+            line-height: 1.6;
+        }
+
+        .info-box-line+.info-box-line {
+            margin-top: 4px;
+        }
+
+        .info-box-line b {
+            color: #1E293B;
+            font-weight: 600;
+        }
+
+        /* ══════ STATUS PILL variants (dipakai juga di tabel) ══════ */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        .status-pill.sp-green {
+            background: #DCFCE7;
+            color: #1A7A3C;
+        }
+
+        .status-pill.sp-red {
+            background: #FEE2E2;
+            color: #D0021B;
+        }
+
+        .status-pill.sp-amber {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .status-pill.sp-blue {
+            background: #DBEAFE;
+            color: #2D4B9E;
+        }
+
+        .status-pill.sp-gray {
+            background: #F1F5F9;
+            color: #64748B;
+        }
+
+        .export-dropdown {
+            position: relative;
+        }
+
+        .export-dropdown-panel {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: 200px;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            padding: 6px;
+            display: none;
+            z-index: 20;
+        }
+
+        .export-dropdown-panel.open {
+            display: block;
+        }
+
+        .export-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .export-option:hover {
+            background: #F1F5F9;
+        }
     </style>
 </head>
 
@@ -1223,6 +1492,7 @@
                                 <th>Tenaga</th>
                                 <th>Unit Kerja / Bagian</th>
                                 <th>Alat Digunakan</th>
+                                <th>Kode OK</th>
                                 <th>Keterangan</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
@@ -1292,6 +1562,12 @@
                             id="fJenisAlatTerpilih" class="form-input" readonly style="background:#F8FAFC;" /></div>
                     <div class="form-group"><label class="form-label">Stok Tersedia</label><input type="text"
                             id="fStokTersedia" class="form-input" readonly style="background:#F8FAFC;" /></div>
+                    <div class="form-group">
+                        <label class="form-label">Kode OK</label>
+                        <select id="fKodeOk" class="form-select">
+                            <option value="">— Pilih Kode OK —</option>
+                        </select>
+                    </div>
                     <div class="form-group"><label class="form-label">Tanggal Penggunaan</label><input type="date"
                             id="fTanggal" class="form-input" /></div>
                     <div class="form-group"><label class="form-label">Jumlah Digunakan</label><input type="number"
@@ -1502,6 +1778,7 @@
                     </td>
                     <td>${escapeHtml(row.unit_kerja)}</td>
                     <td><span class="status-pill sp-blue">${escapeHtml(row.jenis_alat)}</span> <span class="td-name-sub">×${row.jumlah_digunakan}</span></td>
+                    <td>${row.kode_ok ? `<span class="kode-ok-pill">OK ${escapeHtml(row.kode_ok)}</span>` : '<span class="td-name-sub">-</span>'}</td>
                     <td>${escapeHtml(row.keterangan)}</td>
                     <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-row-action" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
@@ -1509,6 +1786,14 @@
                     </td>
                 </tr>
             `).join('');
+        }
+
+        function populateKodeOkSelect(list, selected = '') {
+            const select = document.getElementById('fKodeOk');
+            const options = list || [];
+            select.innerHTML = '<option value="">— Pilih Kode OK —</option>' +
+                options.map(k => `<option value="${escapeHtml(k)}">${escapeHtml(k)}</option>`).join('');
+            select.value = options.includes(selected) ? selected : '';
         }
 
         function renderPagination(meta) {
@@ -1641,6 +1926,7 @@
             document.getElementById('fStokTersedia').value = a.stok_tersedia;
             document.getElementById('alatPickerInput').value = `${a.jenis_alat} (${a.merk} ${a.type})`;
             document.getElementById('alatPickerDropdown').classList.remove('open');
+            populateKodeOkSelect(a.kode_ok || []);
         }
 
         document.addEventListener('click', (e) => {
@@ -1668,6 +1954,7 @@
             document.getElementById('alatPickerInput').value = row ? row.jenis_alat : '';
             document.getElementById('fJenisAlatTerpilih').value = row?.jenis_alat || '';
             document.getElementById('fStokTersedia').value = '';
+            populateKodeOkSelect(row?.alat_kode_ok || [], row?.kode_ok || '');
 
             document.getElementById('fTanggal').value = row?.tanggal || new Date().toISOString().substring(0, 10);
             document.getElementById('fJumlahDigunakan').value = row?.jumlah_digunakan ?? 1;
@@ -1700,6 +1987,7 @@
             const payload = {
                 tanggal: document.getElementById('fTanggal').value,
                 stok_alkes_id: selectedAlatId,
+                kode_ok: document.getElementById('fKodeOk').value || null,
                 id_karyawan: document.getElementById('fIdKaryawan').value,
                 nama_pengguna: document.getElementById('fNamaPengguna').value,
                 jabatan: document.getElementById('fJabatan').value,

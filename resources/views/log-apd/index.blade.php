@@ -1524,6 +1524,7 @@
                                 <th>Kondisi APD Lama</th>
                                 <th>Alasan &amp; Diterima Oleh</th>
                                 <th>Keterangan</th>
+                                <th>Rutin/Non Rutin</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
@@ -1579,6 +1580,16 @@
                         <label class="form-label">Jenis Transaksi</label>
                         <select id="fJenisTransaksi" class="form-select"></select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Pilih Karyawan</label>
+
+                        <div class="picker-wrap" style="margin-bottom:10px;">
+                            <input type="text" id="pegawaiPickerInput" class="form-input"
+                                placeholder="Cari nama atau badge karyawan..." oninput="onPegawaiPickerInput()"
+                                autocomplete="off" />
+                            <div class="picker-dropdown" id="pegawaiPickerDropdown"></div>
+                        </div>
+                    </div>
                     <div class="form-group span-2" id="wrapLainnya" style="display:none;">
                         <label class="form-label">Keterangan Jenis Transaksi Lainnya</label>
                         <input type="text" id="fKeteranganLainnya" class="form-input"
@@ -1586,37 +1597,49 @@
                     </div>
                 </div>
 
-                <div class="form-section-title">Data Karyawan</div>
-                <div class="detail-subtitle" style="margin-top:-4px; margin-bottom:8px;">
-                    Kosongkan jika transaksi tidak terkait karyawan (mis. barang masuk gudang / PO).
-                </div>
-                <div class="picker-wrap" style="margin-bottom:10px;">
-                    <input type="text" id="pegawaiPickerInput" class="form-input"
-                        placeholder="Cari nama atau badge karyawan..." oninput="onPegawaiPickerInput()"
-                        autocomplete="off" />
-                    <div class="picker-dropdown" id="pegawaiPickerDropdown"></div>
-                </div>
+                <div class="form-section-title">Detail Penggantian</div>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">ID Karyawan</label>
-                        <input type="text" id="fIdKaryawan" class="form-input" readonly
-                            style="background:#F8FAFC;" placeholder="Terisi otomatis dari pencarian" />
+                    <div class="form-group" id="wrapKondisiLama" style="display:none;">
+                        <label class="form-label">Kondisi APD Lama</label>
+                        <input type="text" id="fKondisiApdLama" class="form-input"
+                            placeholder="Baik / Rusak – lens retak" />
+                    </div>
+                    <input type="hidden" id="fPernahTukar" />
+                    <div class="form-group span-2" id="wrapRiwayatTukar" style="display:none;">
+                        <label class="form-label">Riwayat &amp; Jadwal Tukar</label>
+                        <div id="riwayatTukarBox" class="info-box">
+                            <div class="info-box-line">Memuat riwayat tukar...</div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Nama Karyawan</label>
-                        <input type="text" id="fNamaKaryawan" class="form-input" readonly
-                            style="background:#F8FAFC;" placeholder="Terisi otomatis dari pencarian" />
+                        <label class="form-label">Diterima Oleh</label>
+                        <div class="picker-wrap">
+                            <input type="text" id="diterimaOlehPickerInput" class="form-input"
+                                placeholder="Cari nama atau badge karyawan..." oninput="onDiterimaOlehPickerInput()"
+                                autocomplete="off" />
+                            <div class="picker-dropdown" id="diterimaOlehPickerDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fDiterimaOleh" />
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Jabatan</label>
-                        <input type="text" id="fJabatan" class="form-input" readonly style="background:#F8FAFC;"
-                            placeholder="Terisi otomatis dari pencarian" />
+                    <div class="form-group span-2">
+                        <label class="form-label">Alasan Penggantian</label>
+                        <textarea id="fAlasanPenggantian" class="form-textarea" rows="2"
+                            placeholder="Masa pakai habis / pecah saat kerja / karyawan baru"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Unit Kerja</label>
-                        <input type="text" id="fUnitKerja" class="form-input" readonly
-                            style="background:#F8FAFC;" placeholder="Terisi otomatis dari pencarian" />
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group mb-2">
+                        <label class="form-label">Rutin / Non Rutin</label>
+                        <select id="fRutinNonRutin" class="form-select"></select>
                     </div>
+                </div>
+
+                <div class="form-grid">
+                    <input type="hidden" id="fIdKaryawan" />
+                    <input type="hidden" id="fNamaKaryawan" />
+                    <input type="hidden" id="fJabatan" />
+                    <input type="hidden" id="fUnitKerja" />
                     <div class="form-group">
                         <label class="form-label">Kode OK</label>
                         <div class="ms-dropdown" id="kodeOkWrap">
@@ -1664,6 +1687,18 @@
                         <label class="form-label">Ukuran</label>
                         <input type="text" id="fUkuran" class="form-input" placeholder="L / Universal" />
                     </div>
+
+                    <div class="form-group span-2">
+                        <label class="form-label">Foto APD / Bukti</label>
+                        <input type="file" id="fFotoApd" class="form-input" accept="image/*"
+                            onchange="onFotoApdChange()" />
+                        <div id="fotoApdPreviewBox" style="margin-top:8px; display:none;">
+                            <div class="detail-subtitle" id="fotoApdPreviewLabel" style="margin-bottom:4px;">Foto
+                                saat ini:</div>
+                            <img id="fotoApdPreviewImg" src=""
+                                style="max-width:160px; max-height:120px; border-radius:8px; border:1px solid #E2E8F0;" />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-section-title">Kuantitas</div>
@@ -1691,16 +1726,6 @@
                         <div id="riwayatTukarBox" class="info-box">
                             <div class="info-box-line">Memuat riwayat tukar...</div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Diterima Oleh</label>
-                        <div class="picker-wrap">
-                            <input type="text" id="diterimaOlehPickerInput" class="form-input"
-                                placeholder="Cari nama atau badge karyawan..." oninput="onDiterimaOlehPickerInput()"
-                                autocomplete="off" />
-                            <div class="picker-dropdown" id="diterimaOlehPickerDropdown"></div>
-                        </div>
-                        <input type="hidden" id="fDiterimaOleh" />
                     </div>
                     <div class="form-group span-2">
                         <label class="form-label">Alasan Penggantian</label>
@@ -1760,6 +1785,39 @@
                             <input type="text" id="dJenisTransaksi" readonly>
                         </div>
                     </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Detail Penggantian
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Kondisi APD Lama</label>
+                            <input type="text" id="dKondisiApdLama" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Diterima Oleh</label>
+                            <input type="text" id="dDiterimaOleh" readonly>
+                        </div>
+                        <div class="detail-field span-2">
+                            <label>Alasan Penggantian</label>
+                            <textarea id="dAlasanPenggantian" readonly rows="2"></textarea>
+                        </div>
+                        <div class="detail-field span-2">
+                            <label>Keterangan</label>
+                            <textarea id="dKeterangan" readonly rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-field">
+                    <label>Rutin / Non Rutin</label>
+                    <input type="text" id="dRutinNonRutin" readonly>
                 </div>
 
                 <div class="detail-section">
@@ -1843,30 +1901,9 @@
                 </div>
 
                 <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Detail Penggantian
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Kondisi APD Lama</label>
-                            <input type="text" id="dKondisiApdLama" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Diterima Oleh</label>
-                            <input type="text" id="dDiterimaOleh" readonly>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>Alasan Penggantian</label>
-                            <textarea id="dAlasanPenggantian" readonly rows="2"></textarea>
-                        </div>
-                        <div class="detail-field span-2">
-                            <label>Keterangan</label>
-                            <textarea id="dKeterangan" readonly rows="2"></textarea>
-                        </div>
+                    <div class="detail-section-title">Foto APD / Bukti</div>
+                    <div id="dFotoApdBox">
+                        <div class="detail-field-empty" style="color:#94A3B8; font-size:13px;">Tidak ada foto.</div>
                     </div>
                 </div>
             </div>
@@ -1913,6 +1950,7 @@
 
         const JENIS_TRANSAKSI_OPTIONS = @json(\App\Models\LogApd::JENIS_TRANSAKSI);
         const FALLBACK_KARYAWAN = @json(\App\Models\LogApd::FALLBACK_KARYAWAN);
+        const RUTIN_NON_RUTIN_OPTIONS = @json(\App\Models\LogApd::RUTIN_NON_RUTIN);
 
         const state = {
             search: '',
@@ -2098,6 +2136,12 @@
  
                     <td style="max-width:180px;">
                         <div class="td-name-sub" style="white-space:normal; line-height:1.4;">${escapeHtml(display(row.keterangan))}</div>
+                    </td>
+
+                    <td>
+                        <span class="status-pill ${row.rutin_non_rutin === 'RUTIN' ? 'sp-green' : 'sp-amber'}">
+                            ${escapeHtml(display(row.rutin_non_rutin))}
+                        </span>
                     </td>
  
                     <td style="text-align:center; white-space:nowrap;">
@@ -2559,6 +2603,21 @@
 
             onJenisTransaksiChange();
 
+            populateRutinNonRutinSelect();
+            document.getElementById('fRutinNonRutin').value = row?.rutin_non_rutin || RUTIN_NON_RUTIN_OPTIONS[0];
+
+            document.getElementById('fFotoApd').value = '';
+
+            const previewBox = document.getElementById('fotoApdPreviewBox');
+            const previewLabel = document.getElementById('fotoApdPreviewLabel');
+            if (row?.foto_apd_url) {
+                document.getElementById('fotoApdPreviewImg').src = row.foto_apd_url;
+                previewLabel.textContent = 'Foto saat ini:';
+                previewBox.style.display = '';
+            } else {
+                previewBox.style.display = 'none';
+            }
+
             document.getElementById('formModalOverlay').classList.add('open');
         }
 
@@ -2577,45 +2636,53 @@
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const payload = {
-                tanggal: document.getElementById('fTanggal').value,
-                jenis_transaksi: document.getElementById('fJenisTransaksi').value,
+            const formData = new FormData();
+            formData.append('tanggal', document.getElementById('fTanggal').value);
+            formData.append('jenis_transaksi', document.getElementById('fJenisTransaksi').value);
+            formData.append('rutin_non_rutin', document.getElementById('fRutinNonRutin').value);
 
-                id_karyawan: document.getElementById('fIdKaryawan').value.trim() || null,
-                nama_karyawan: document.getElementById('fNamaKaryawan').value.trim() || null,
-                kode_ok: document.getElementById('fKodeOk').value.trim() || null,
-                unit_kerja: document.getElementById('fUnitKerja').value.trim() || null,
-                jabatan: document.getElementById('fJabatan').value.trim() || null,
-                keterangan_lainnya: document.getElementById('fKeteranganLainnya').value.trim() || null,
-                pernah_tukar: document.getElementById('fPernahTukar').value === '' ? null : document.getElementById(
-                    'fPernahTukar').value === '1',
-                stok_apd_id: document.getElementById('fStokApdId').value || null,
-                kode_apd: document.getElementById('fKodeApd').value.trim() || null,
-                jenis_apd: document.getElementById('fJenisApd').value.trim(),
-                merk_type: document.getElementById('fMerkType').value.trim() || null,
-                ukuran: document.getElementById('fUkuran').value.trim() || null,
+            const appendOrEmpty = (key, val) => formData.append(key, val ?? '');
 
-                qty_keluar: document.getElementById('fQtyKeluar').value || 0,
-                qty_masuk: document.getElementById('fQtyMasuk').value || 0,
+            appendOrEmpty('id_karyawan', document.getElementById('fIdKaryawan').value.trim());
+            appendOrEmpty('nama_karyawan', document.getElementById('fNamaKaryawan').value.trim());
+            appendOrEmpty('kode_ok', document.getElementById('fKodeOk').value.trim());
+            appendOrEmpty('unit_kerja', document.getElementById('fUnitKerja').value.trim());
+            appendOrEmpty('jabatan', document.getElementById('fJabatan').value.trim());
+            appendOrEmpty('keterangan_lainnya', document.getElementById('fKeteranganLainnya').value.trim());
 
-                kondisi_apd_lama: document.getElementById('fKondisiApdLama').value.trim() || null,
-                diterima_oleh: document.getElementById('fDiterimaOleh').value.trim() || null,
-                alasan_penggantian: document.getElementById('fAlasanPenggantian').value.trim() || null,
-                keterangan: document.getElementById('fKeterangan').value.trim() || null,
-            };
+            const pernahTukar = document.getElementById('fPernahTukar').value;
+            if (pernahTukar !== '') formData.append('pernah_tukar', pernahTukar === '1' ? '1' : '0');
+
+            appendOrEmpty('stok_apd_id', document.getElementById('fStokApdId').value);
+            appendOrEmpty('kode_apd', document.getElementById('fKodeApd').value.trim());
+            formData.append('jenis_apd', document.getElementById('fJenisApd').value.trim());
+            appendOrEmpty('merk_type', document.getElementById('fMerkType').value.trim());
+            appendOrEmpty('ukuran', document.getElementById('fUkuran').value.trim());
+
+            formData.append('qty_keluar', document.getElementById('fQtyKeluar').value || 0);
+            formData.append('qty_masuk', document.getElementById('fQtyMasuk').value || 0);
+
+            appendOrEmpty('kondisi_apd_lama', document.getElementById('fKondisiApdLama').value.trim());
+            appendOrEmpty('diterima_oleh', document.getElementById('fDiterimaOleh').value.trim());
+            appendOrEmpty('alasan_penggantian', document.getElementById('fAlasanPenggantian').value.trim());
+            appendOrEmpty('keterangan', document.getElementById('fKeterangan').value.trim());
+
+            const fotoInput = document.getElementById('fFotoApd');
+            if (fotoInput.files && fotoInput.files[0]) {
+                formData.append('foto_apd', fotoInput.files[0]);
+            }
 
             const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-            const method = currentEditId ? 'PUT' : 'POST';
+            if (currentEditId) formData.append('_method', 'PUT'); // spoofing, karena FormData harus lewat POST
 
             try {
                 const res = await fetch(url, {
-                    method,
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN,
                     },
-                    body: JSON.stringify(payload),
+                    body: formData,
                 });
 
                 const json = await res.json();
@@ -2663,6 +2730,12 @@
             document.getElementById('dDiterimaOleh').value = display(row.diterima_oleh);
             document.getElementById('dAlasanPenggantian').value = display(row.alasan_penggantian);
             document.getElementById('dKeterangan').value = display(row.keterangan);
+            document.getElementById('dRutinNonRutin').value = row.rutin_non_rutin || '-';
+
+            const fotoBox = document.getElementById('dFotoApdBox');
+            fotoBox.innerHTML = row.foto_apd_url ?
+                `<a href="${row.foto_apd_url}" target="_blank"><img src="${row.foto_apd_url}" style="max-width:220px; max-height:160px; border-radius:8px; border:1px solid #E2E8F0;" /></a>` :
+                `<div class="detail-field-empty" style="color:#94A3B8; font-size:13px;">Tidak ada foto.</div>`;
 
             document.getElementById('detailModalOverlay').classList.add('open');
         }
@@ -2801,6 +2874,32 @@
 
             window.location.href = `${EXPORT_ENDPOINT}?${params.toString()}`;
             document.getElementById('exportDropdownPanel')?.classList.remove('open');
+        }
+
+        function populateRutinNonRutinSelect() {
+            const select = document.getElementById('fRutinNonRutin');
+            select.innerHTML = RUTIN_NON_RUTIN_OPTIONS
+                .map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`)
+                .join('');
+        }
+
+        let fotoApdRemovedFlag = false;
+
+        function onFotoApdChange() {
+            const input = document.getElementById('fFotoApd');
+            const box = document.getElementById('fotoApdPreviewBox');
+            const img = document.getElementById('fotoApdPreviewImg');
+            const label = document.getElementById('fotoApdPreviewLabel');
+
+            if (input.files && input.files[0]) {
+                img.src = URL.createObjectURL(input.files[0]);
+                label.textContent = 'Preview foto baru (akan menggantikan foto lama jika disimpan):';
+                box.style.display = '';
+            }
+        }
+
+        function onHapusFotoApdToggle() {
+            fotoApdRemovedFlag = document.getElementById('fHapusFotoApd').checked;
         }
 
         document.addEventListener('DOMContentLoaded', loadData);

@@ -30,6 +30,7 @@ class LogApd extends Model
     ];
 
     const JENIS_TRANSAKSI_TUKAR = ['TUKAR LAMA', 'TUKAR RUSAK'];
+    const RUTIN_NON_RUTIN = ['RUTIN', 'NON RUTIN'];
 
     // Teks placeholder utk kolom terkait karyawan yang kosong (mis. transaksi MASUK gudang)
     const FALLBACK_KARYAWAN = 'Data Tidak Ditemukan';
