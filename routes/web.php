@@ -16,6 +16,7 @@ use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\KartuStokController;
 use App\Http\Controllers\KodeOkController;
 use App\Http\Controllers\KodeOkReferensiController;
+use App\Http\Controllers\KpiK3MatriksController;
 use App\Http\Controllers\LeadingDashboardController;
 use App\Http\Controllers\LeadingInputController;
 use App\Http\Controllers\LogApdController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PelaporanPengawasController;
 use App\Http\Controllers\PengawasController;
 use App\Http\Controllers\PermintaanPembelianController;
 use App\Http\Controllers\PusatReminderController;
@@ -460,4 +462,23 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('registrasi-k3', [RegistrasiK3Controller::class, 'store'])->name('registrasi-k3.store');
     Route::get('registrasi-k3/{id}/edit', [RegistrasiK3Controller::class, 'edit'])->name('registrasi-k3.edit');
     Route::put('registrasi-k3/{id}', [RegistrasiK3Controller::class, 'update'])->name('registrasi-k3.update');
+
+    // MATRIKS AKTIVITAS KPI K3 & PENGATURAN
+    Route::prefix('kpi-k3/matriks')->name('kpi-k3.matriks.')->group(function () {
+        Route::get('/', [KpiK3MatriksController::class, 'index'])->name('index');
+        Route::get('/api', [KpiK3MatriksController::class, 'api'])->name('api');
+        Route::post('/', [KpiK3MatriksController::class, 'store'])->name('store');
+        Route::put('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'update'])->name('update');
+        Route::delete('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::put('kpi-k3/pengaturan', [KpiK3MatriksController::class, 'updatePengaturan'])->name('kpi-k3.pengaturan.update');
+
+    // MANAJEMEN PELAPORAN PENGAWAS
+    Route::get('pelaporan-pengawas', [PelaporanPengawasController::class, 'index'])->name('pelaporan-pengawas.index');
+    Route::get('pelaporan-pengawas/api', [PelaporanPengawasController::class, 'api'])->name('pelaporan-pengawas.api');
+    Route::get('pelaporan-pengawas/create', [PelaporanPengawasController::class, 'create'])->name('pelaporan-pengawas.create');
+    Route::post('pelaporan-pengawas', [PelaporanPengawasController::class, 'store'])->name('pelaporan-pengawas.store');
+    Route::get('pelaporan-pengawas/{id}/edit', [PelaporanPengawasController::class, 'edit'])->name('pelaporan-pengawas.edit');
+    Route::put('pelaporan-pengawas/{id}', [PelaporanPengawasController::class, 'update'])->name('pelaporan-pengawas.update');
 });

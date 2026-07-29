@@ -385,7 +385,9 @@
                 request()->routeIs('monitoring-pengawas.*') ||
                 request()->routeIs('rekap-pengawas.*') ||
                 request()->routeIs('monitoring-medis.*') ||
-                request()->routeIs('rekap-medis.*');
+                request()->routeIs('rekap-medis.*') ||
+                request()->routeIs('kpi-k3.matriks.*') ||
+                request()->routeIs('kpi-k3.pengaturan.*');
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $monitoringActive ? 'active' : '' }}"
@@ -461,6 +463,15 @@
                 href="{{ route('rekap-medis.index') }}">
                 <span class="nav-label">Rekap Medis</span>
             </a>
+
+            <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->
+            <a class="nav-link {{ request()->routeIs('kpi-k3.matriks.*') ? 'active' : '' }}"
+                href="{{ route('kpi-k3.matriks.index') }}">
+                <span class="nav-label">KPI K3 Matriks</span>
+            </a>
+
+            <!-- Jika route pengaturan menggunakan method PUT, Anda bisa meng arahkan ke halaman edit/index yang sesuai, atau sesuaikan jika ada route get-nya -->
+            <!-- Contoh jika diarahkan ke halaman matriks atau pengaturan khusus -->
 
         </div>
     </div>
