@@ -993,32 +993,28 @@
                 </div>
 
                 <!-- ══ Pengesahan & Tanda Tangan — terpisah dari header, TTD berupa upload gambar ══ -->
-                <div class="form-section-title">Pengesahan &amp; Tanda Tangan</div>
-                <div class="hx-sign-grid">
-                    @foreach (['disiapkan' => 'Disiapkan', 'diperiksa' => 'Diperiksa', 'disahkan' => 'Disahkan'] as $key => $label)
-                        <div class="hx-sign-card">
-                            <div class="hx-sign-title">{{ $label }}</div>
-                            <div class="form-group">
-                                <label class="form-label">Nama</label>
-                                <input type="text" id="f{{ ucfirst($key) }}Nama" class="form-input" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Tanggal</label>
-                                <input type="date" id="f{{ ucfirst($key) }}Tanggal" class="form-input" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Tanda Tangan (gambar)</label>
-                                <input type="file" id="f{{ ucfirst($key) }}Ttd" class="form-input"
-                                    accept="image/*" onchange="previewTtd('{{ $key }}', this)" />
-                                <div class="hx-ttd-preview-wrap">
-                                    <img id="ttdPreview{{ ucfirst($key) }}" class="hx-ttd-preview"
-                                        style="display:none;" />
-                                    <span id="ttdExisting{{ ucfirst($key) }}"
-                                        style="font-size:11px;color:#94A3B8;"></span>
-                                </div>
+                <div class="form-section-title">Pengesahan (Disiapkan Oleh)</div>
+                <div class="hx-sign-grid" style="grid-template-columns: 1fr; max-width: 400px;">
+                    <div class="hx-sign-card">
+                        <div class="hx-sign-title">Disiapkan</div>
+                        <div class="form-group">
+                            <label class="form-label">Nama</label>
+                            <input type="text" id="fDisiapkanNama" class="form-input" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" id="fDisiapkanTanggal" class="form-input" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanda Tangan (gambar)</label>
+                            <input type="file" id="fDisiapkanTtd" class="form-input" accept="image/*"
+                                onchange="previewTtd('disiapkan', this)" />
+                            <div class="hx-ttd-preview-wrap">
+                                <img id="ttdPreviewDisiapkan" class="hx-ttd-preview" style="display:none;" />
+                                <span id="ttdExistingDisiapkan" style="font-size:11px;color:#94A3B8;"></span>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
 
                 <div class="form-section-title"
@@ -1736,8 +1732,7 @@
             groups: []
         };
 
-        const SIGN_KEYS = ['disiapkan', 'diperiksa', 'disahkan'];
-
+        const SIGN_KEYS = ['disiapkan'];
         const HAZARD_REGISTERS = ['Mechanical', 'Enviromental', 'Physical', 'Ergonomic', 'Psychosocial', 'Chemical',
             'Biological', 'Electrical'
         ];
@@ -1890,31 +1885,79 @@
                 tbody.innerHTML =
                     `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-title">Belum ada data</div><div class="empty-state-sub">Klik "Tambah Dokumen HIRADC" untuk mulai.</div></div></td></tr>`;
             } else {
-                tbody.innerHTML = pageRows.map((row, idx) => `
-                <tr>
-                    <td>${start + idx + 1}</td>
-                    <td>${escapeHtml(display(row.no_hiradc))}</td>
-                    <td>${escapeHtml(row.departemen)}</td>
-                    <td>${escapeHtml(row.bagian)}</td>
-                    <td style="max-width:220px;white-space:normal;">${escapeHtml(row.pekerjaan)}</td>
-                    <td>${escapeHtml(display(row.revisi))}</td>
-                    <td>${escapeHtml(display(row.tanggal))}</td>
-                    <td>${countItems(row)}</td>
-                    <td style="text-align:center;white-space:nowrap;">
-                        <button class="btn-row-action" onclick="openDetailModal(${row.id})" title="Detail">
-                            <svg style="width:14px;height:14px;color:#2D4B9E;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        </button>
-                        <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">
-                            <svg style="width:14px;height:14px;color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                        </button>
-                        <button class="btn-row-action" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.pekerjaan)}')" title="Hapus">
-                            <svg style="width:14px;height:14px;color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+                tbody.innerHTML = pageRows.map((row, idx) => {
+                    // Tentukan Badge Status
+                    let statusHtml = '';
+                    if (row.status === 'disahkan') statusHtml =
+                        `<span style="background:#16a34a;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold;">Disahkan</span>`;
+                    else if (row.status === 'diperiksa') statusHtml =
+                        `<span style="background:#2D6CDF;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold;">Diperiksa</span>`;
+                    else statusHtml =
+                        `<span style="background:#64748B;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold;">Draft</span>`;
+
+                    // Logika Tombol Aksi berdasarkan status
+                    let actionButtons = `
+                    <button class="btn-row-action" onclick="openDetailModal(${row.id})" title="Detail">👁️</button>
+                        `;
+
+                    if (row.status === 'draft') {
+                        actionButtons += `
+                                <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">✏️</button>
+                                <button class="btn-row-action" style="color:#2D6CDF" onclick="confirmAction(${row.id}, 'periksa')" title="Periksa Dokumen">✔️ Periksa</button>
+                                <button class="btn-row-action" style="color:#D0021B;" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.pekerjaan)}')" title="Hapus">🗑️</button>
+                            `;
+                    } else if (row.status === 'diperiksa') {
+                        actionButtons += `
+                                <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan Dokumen">✅ Sahkan</button>
+                            `;
+                    }
+
+                    return `
+                        <tr>
+                            <td>${start + idx + 1}</td>
+                            <td>${escapeHtml(display(row.no_hiradc))}</td>
+                            <td>${escapeHtml(row.departemen)}</td>
+                            <td>${escapeHtml(row.bagian)}</td>
+                            <td style="max-width:220px;white-space:normal;">${escapeHtml(row.pekerjaan)}</td>
+                            <td>${escapeHtml(display(row.revisi))}</td>
+                            <td>${escapeHtml(display(row.tanggal))}</td>
+                            <td>${countItems(row)}</td>
+                            <td>${statusHtml}</td>
+                            <td style="text-align:center;white-space:nowrap; gap:6px;">
+                                ${actionButtons}
+                            </td>
+                        </tr>
+                        `;
+                }).join('');
             }
             renderPagination(totalPages);
+        }
+
+        async function confirmAction(id, actionType) {
+            let confirmMsg = actionType === 'periksa' ?
+                "Apakah Anda yakin sudah memeriksa dokumen ini dengan teliti?" :
+                "Apakah Anda yakin ingin mengesahkan dokumen HIRADC ini?";
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const res = await fetch(`${BASE_ENDPOINT}/${id}/${actionType}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || `Status ${res.status}`);
+
+                showToast(json.message, 'success');
+                await loadData(); // Reload tabel untuk update status
+            } catch (e) {
+                showToast(e.message || `Gagal memproses dokumen.`, 'error');
+            }
         }
 
         function renderPagination(totalPages) {
@@ -2158,18 +2201,14 @@
             document.getElementById('fDepartemen').value = doc.departemen || '';
             document.getElementById('fBagian').value = doc.bagian || '';
             document.getElementById('fPekerjaan').value = doc.pekerjaan || '';
-            // Kode OK di-set terpisah di openBuilderModal (perlu await load options dulu)
-            document.getElementById('fNoHiradc').value = doc.no_hiradc || '';
-
+            // Kode OK di-set terpisah di openBuilderModal
             document.getElementById('fNoHiradc').value = doc.no_hiradc || '';
             document.getElementById('fRevisi').value = doc.revisi || '';
             document.getElementById('fTanggal').value = doc.tanggal || '';
+
+            // Hanya sisakan input disiapkan
             document.getElementById('fDisiapkanNama').value = doc.disiapkan_nama || '';
             document.getElementById('fDisiapkanTanggal').value = doc.disiapkan_tanggal || '';
-            document.getElementById('fDiperiksaNama').value = doc.diperiksa_nama || '';
-            document.getElementById('fDiperiksaTanggal').value = doc.diperiksa_tanggal || '';
-            document.getElementById('fDisahkanNama').value = doc.disahkan_nama || '';
-            document.getElementById('fDisahkanTanggal').value = doc.disahkan_tanggal || '';
         }
 
         function closeItemModal() {
@@ -2449,17 +2488,20 @@
             fd.append('departemen', document.getElementById('fDepartemen').value.trim());
             fd.append('bagian', document.getElementById('fBagian').value.trim());
             fd.append('pekerjaan', pekerjaan);
-            fd.append('kode_ok_id', document.getElementById('fKodeOkId').value); // ← baru
+            fd.append('kode_ok_id', document.getElementById('fKodeOkId').value);
             fd.append('no_hiradc', document.getElementById('fNoHiradc').value.trim());
             fd.append('revisi', document.getElementById('fRevisi').value.trim());
             fd.append('tanggal', document.getElementById('fTanggal').value);
 
+            // Hanya append 'disiapkan' sesuai dengan yang ada di HTML Modal
             fd.append('disiapkan_nama', document.getElementById('fDisiapkanNama').value.trim());
             fd.append('disiapkan_tanggal', document.getElementById('fDisiapkanTanggal').value);
-            fd.append('diperiksa_nama', document.getElementById('fDiperiksaNama').value.trim());
-            fd.append('diperiksa_tanggal', document.getElementById('fDiperiksaTanggal').value);
-            fd.append('disahkan_nama', document.getElementById('fDisahkanNama').value.trim());
-            fd.append('disahkan_tanggal', document.getElementById('fDisahkanTanggal').value);
+
+            // BARIS DI BAWAH INI DIHAPUS KARENA ELEMENNYA TIDAK ADA DI DOM
+            // fd.append('diperiksa_nama', document.getElementById('fDiperiksaNama').value.trim());
+            // fd.append('diperiksa_tanggal', document.getElementById('fDiperiksaTanggal').value);
+            // fd.append('disahkan_nama', document.getElementById('fDisahkanNama').value.trim());
+            // fd.append('disahkan_tanggal', document.getElementById('fDisahkanTanggal').value);
 
             SIGN_KEYS.forEach(key => {
                 const Key = key.charAt(0).toUpperCase() + key.slice(1);
@@ -2564,7 +2606,7 @@
             return item.uraian_kerja ? `${item.kode_ok} — ${item.uraian_kerja}` : item.kode_ok;
         }
 
-       function renderKodeOkChip() {
+        function renderKodeOkChip() {
             const wrap = document.getElementById('chips-kodeOk');
             if (!pickerKodeOk.selected) {
                 wrap.innerHTML = '';
