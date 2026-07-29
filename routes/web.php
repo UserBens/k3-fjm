@@ -31,9 +31,11 @@ use App\Http\Controllers\MemoKibController;
 use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\MonitoringLaporanSoController;
+use App\Http\Controllers\OperatorAlatBeratController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PelaporanPengawasController;
 use App\Http\Controllers\PengawasController;
+use App\Http\Controllers\PengembalianKibApdController;
 use App\Http\Controllers\PermintaanPembelianController;
 use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
@@ -418,6 +420,8 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::post('/', [HiradcController::class, 'store'])->name('store');
         Route::put('/{hiradc}', [HiradcController::class, 'update'])->name('update');
         Route::delete('/{hiradc}', [HiradcController::class, 'destroy'])->name('destroy');
+        Route::put('/{hiradc}/periksa', [HiradcController::class, 'periksa'])->name('periksa');
+        Route::put('/{hiradc}/sahkan', [HiradcController::class, 'sahkan'])->name('sahkan');
     });
 
     // MATRIKS APD JABATAN
@@ -441,11 +445,19 @@ Route::middleware(['auth.custom'])->group(function () {
     });
 
     // MONITORING ALBER
-    Route::get('alber', [AlatBeratController::class, 'index'])->name('alber.index');
-    Route::get('alber-operatornonaktif', [AlatBeratController::class, 'indexOperatorNonAktif'])->name('alber.operatornonaktif');
-    Route::get('alber-master-oncall', [AlatBeratController::class, 'indexMasterOncall'])->name('alber.master-oncall');
-    Route::get('alber-master-allin', [AlatBeratController::class, 'indexMasterAllIn'])->name('alber.master-allin');
+    Route::prefix('operator-alat-berat')->name('operator-alat-berat.')->group(function () {
+        Route::get('/', [OperatorAlatBeratController::class, 'index'])->name('index');
+        Route::get('/data', [OperatorAlatBeratController::class, 'data'])->name('data');
+        Route::get('/area-kerja-options', [OperatorAlatBeratController::class, 'areaKerjaOptions'])->name('area-kerja-options');
+        Route::get('/kualifikasi-options', [OperatorAlatBeratController::class, 'kualifikasiOptions'])->name('kualifikasi-options');
+        Route::get('/kode-ok-options', [OperatorAlatBeratController::class, 'kodeOkOptions'])->name('kode-ok-options');
+        Route::get('/cari-pegawai', [OperatorAlatBeratController::class, 'cariPegawai'])->name('cari-pegawai');
+        Route::post('/', [OperatorAlatBeratController::class, 'store'])->name('store');
+        Route::put('/{id}', [OperatorAlatBeratController::class, 'update'])->name('update');
+        Route::delete('/{id}', [OperatorAlatBeratController::class, 'destroy'])->name('destroy');
+    });
 
+    // DATA-DCU
     Route::prefix('data-dcu')->name('dcu.')->group(function () {
         Route::get('/', [DcuController::class, 'index'])->name('index');
         Route::get('/data', [DcuController::class, 'data'])->name('data');
@@ -455,13 +467,29 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/cari-pegawai', [DcuController::class, 'cariPegawai'])->name('cari-pegawai');
     });
 
-    // REGISTRASI AWAL K3 & SCREENING
-    Route::get('registrasi-k3', [RegistrasiK3Controller::class, 'index'])->name('registrasi-k3.index');
-    Route::get('registrasi-k3/api', [RegistrasiK3Controller::class, 'api'])->name('registrasi-k3.api');
-    Route::get('registrasi-k3/create', [RegistrasiK3Controller::class, 'create'])->name('registrasi-k3.create');
-    Route::post('registrasi-k3', [RegistrasiK3Controller::class, 'store'])->name('registrasi-k3.store');
-    Route::get('registrasi-k3/{id}/edit', [RegistrasiK3Controller::class, 'edit'])->name('registrasi-k3.edit');
-    Route::put('registrasi-k3/{id}', [RegistrasiK3Controller::class, 'update'])->name('registrasi-k3.update');
+    // REGISTRASI K3
+    Route::prefix('registrasi-k3')->name('registrasi-k3.')->group(function () {
+        Route::get('/', [RegistrasiK3Controller::class, 'index'])->name('index');
+        Route::get('/data', [RegistrasiK3Controller::class, 'data'])->name('data');
+        Route::get('/lokasi-kerja-options', [RegistrasiK3Controller::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options');
+        Route::get('/unit-kerja-options', [RegistrasiK3Controller::class, 'unitKerjaOptions'])->name('unit-kerja-options');
+        Route::get('/jabatan-options', [RegistrasiK3Controller::class, 'jabatanOptions'])->name('jabatan-options');
+        Route::get('/apd-options', [RegistrasiK3Controller::class, 'apdOptions'])->name('apd-options');
+        Route::get('/cari-pegawai', [RegistrasiK3Controller::class, 'cariPegawai'])->name('cari-pegawai');
+        Route::post('/', [RegistrasiK3Controller::class, 'store'])->name('store');
+        Route::put('/{id}', [RegistrasiK3Controller::class, 'update'])->name('update');
+    });
+
+    // PENGEMBALIAN KIB & APD K3
+    Route::prefix('pengembalian-kib-apd')->name('pengembalian-kib-apd.')->group(function () {
+        Route::get('/', [PengembalianKibApdController::class, 'index'])->name('index');
+        Route::get('/data', [PengembalianKibApdController::class, 'data'])->name('data');
+        Route::get('/apd-options', [PengembalianKibApdController::class, 'apdOptions'])->name('apd-options');
+        Route::get('/cari-pegawai', [PengembalianKibApdController::class, 'cariPegawai'])->name('cari-pegawai');
+        Route::post('/', [PengembalianKibApdController::class, 'store'])->name('store');
+        Route::put('/{pengembalianKibApd}', [PengembalianKibApdController::class, 'update'])->name('update');
+        Route::delete('/{pengembalianKibApd}', [PengembalianKibApdController::class, 'destroy'])->name('destroy');
+    });
 
     // MATRIKS AKTIVITAS KPI K3 & PENGATURAN
     Route::prefix('kpi-k3/matriks')->name('kpi-k3.matriks.')->group(function () {

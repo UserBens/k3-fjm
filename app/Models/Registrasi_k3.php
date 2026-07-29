@@ -18,5 +18,6 @@ class Registrasi_k3 extends Model
     // Otomatis convert array checkbox ke JSON saat simpan, dan ke array lagi saat dipanggil
     protected $casts = [
         'checklist_apd' => 'array',
+        'tanggal_induction' => 'date',
     ];
 }

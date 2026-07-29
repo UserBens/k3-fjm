@@ -331,7 +331,7 @@
         @php
             $registrasitenagaActive =
                 request()->routeIs('memo-kib.*') ||
-                request()->routeIs('pengembalian-apd-kib.*') ||
+                request()->routeIs('pengembalian-kib-apd.*') ||
                 request()->routeIs('registrasi-k3.*'); // BARU: Tambahan active state untuk Registrasi K3
         @endphp
 
@@ -357,14 +357,65 @@
 
             {{-- MENU BARU REGISTRASI K3 --}}
             <a class="nav-link {{ request()->routeIs('registrasi-k3.*') ? 'active' : '' }}"
-                href="{{ route('registrasi-k3.create') }}">
+                href="{{ route('registrasi-k3.index') }}">
                 <span class="nav-label">Registrasi Awal K3</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('pengembalian-kib-apd.*') ? 'active' : '' }}"
+                href="{{ route('pengembalian-kib-apd.index') }}">
+                <span class="nav-label">Pengembalian APD KIB</span>
             </a>
 
             {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
                 <span class="nav-label">Memo KIB</span>
             </a> --}}
 
+        </div>
+    </div>
+
+    {{--  HALAMAN TENAGA AHLI --}}
+    <div class="sb-section">
+        <div class="sb-section-label">Alat Berat All In & On Call</div>
+
+        @php
+            // Hapus .* agar nama route cocok persis dengan yang ada di web.php
+            $alberActive =
+                request()->routeIs('operator-alat-berat.*') ||
+                request()->routeIs('alber.master-oncall') ||
+                request()->routeIs('alber.master-allin');
+        @endphp
+
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
+            onclick="toggleDropdown('alberDropdown', this)">
+
+            <div class="nav-dropdown-left">
+                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                </svg>
+                <span class="nav-label">Monitoring Operator Alat Berat</span>
+            </div>
+
+            <svg class="dropdown-arrow {{ $alberActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+
+        </a>
+
+        <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
+            <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}"
+                href="#">
+                <span class="nav-label">Dashboard</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('operator-alat-berat.*') ? 'active' : '' }}"
+                href="{{ route('operator-alat-berat.index') }}">
+                <span class="nav-label">Master All In</span>
+            </a>
         </div>
     </div>
 
@@ -855,65 +906,6 @@
             {{-- <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Lembar Folowup</span>
             </a> --}}
-
-        </div>
-    </div>
-
-    {{-- ALAT BERAT --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Alat Berat All In & On Call</div>
-
-        @php
-            // Hapus .* agar nama route cocok persis dengan yang ada di web.php
-            $alberActive =
-                request()->routeIs('alber.index') ||
-                request()->routeIs('alber.operatornonaktif') ||
-                request()->routeIs('alber.master-oncall') ||
-                request()->routeIs('alber.master-allin');
-        @endphp
-
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
-            onclick="toggleDropdown('alberDropdown', this)">
-
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                </svg>
-                <span class="nav-label">Monitoring Operator Alat Berat</span>
-            </div>
-
-            <svg class="dropdown-arrow {{ $alberActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
-
-            <a class="nav-link {{ request()->routeIs('alber.index') ? 'active' : '' }}"
-                href="{{ route('alber.index') }}">
-                <span class="nav-label">Dashboard Alat Berat</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('alber.operatornonaktif') ? 'active' : '' }}"
-                href="{{ route('alber.operatornonaktif') }}">
-                <span class="nav-label">Operator Non-Aktif</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('alber.master-oncall') ? 'active' : '' }}"
-                href="{{ route('alber.master-oncall') }}">
-                <span class="nav-label">Master On Call</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}"
-                href="{{ route('alber.master-allin') }}">
-                <span class="nav-label">Master All In</span>
-            </a>
 
         </div>
     </div>

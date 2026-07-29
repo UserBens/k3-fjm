@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hiradc;
 use App\Models\HiradcDocument;
 use App\Models\HiradcGroup;
 use App\Models\HiradcItem;
 use App\Models\KodeOk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -189,6 +191,49 @@ class HiradcController extends Controller
         }
     }
 
+    public function periksa(Request $request, $id)
+    {
+        // Ambil data user dari session yang Anda buat di LoginController
+        $authUser = session('auth_user');
+
+        if (!$authUser) {
+            return response()->json(['message' => 'Anda harus login terlebih dahulu.'], 401);
+        }
+
+        $hiradc = HiradcDocument::find($id);
+
+        $hiradc->diperiksa_nama = $authUser['nama_lengkap'];
+        $hiradc->diperiksa_tanggal = now();
+
+        // TAMBAHKAN BARIS INI: Ubah status dokumen menjadi diperiksa
+        $hiradc->status = 'diperiksa';
+
+        $hiradc->save();
+
+        return response()->json(['message' => 'Dokumen berhasil diperiksa.']);
+    }
+
+    public function sahkan(Request $request, $id)
+    {
+        $authUser = session('auth_user');
+
+        if (!$authUser) {
+            return response()->json(['message' => 'Anda harus login terlebih dahulu.'], 401);
+        }
+
+        $hiradc = HiradcDocument::find($id);
+
+        $hiradc->disahkan_nama = $authUser['nama_lengkap'];
+        $hiradc->disahkan_tanggal = now();
+
+        // TAMBAHKAN BARIS INI: Ubah status dokumen menjadi disahkan
+        $hiradc->status = 'disahkan';
+
+        $hiradc->save();
+
+        return response()->json(['message' => 'Dokumen berhasil disahkan.']);
+    }
+
     /**
      * Ubah struktur Eloquent jadi bentuk datar+bersarang yang gampang dipakai frontend.
      */
@@ -224,6 +269,10 @@ class HiradcController extends Controller
             'disahkan_nama' => $d->disahkan_nama,
             'disahkan_tanggal' => optional($d->disahkan_tanggal)->format('Y-m-d'),
             'disahkan_ttd_url' => $d->disahkan_ttd_url,
+
+            'status' => $d->status,
+            'diperiksa_badge' => $d->diperiksa_badge,
+            'disahkan_badge' => $d->disahkan_badge,
 
             'dokumen_url' => $d->dokumen_url,
             'dokumen_hiradc' => $d->dokumen_hiradc,

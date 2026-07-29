@@ -39,6 +39,11 @@ return new class extends Migration
             $table->date('disahkan_tanggal')->nullable();
             $table->string('disahkan_ttd')->nullable();
 
+            // Tambahkan di dalam Schema::create/table('hiradc_documents', ...)
+            $table->string('status')->default('draft'); // draft, diperiksa, disahkan
+            $table->string('diperiksa_badge')->nullable();
+            $table->string('disahkan_badge')->nullable();
+
             $table->string('dokumen')->nullable();        // path PDF pendukung (opsional)
             $table->string('dokumen_hiradc')->nullable(); // nama file asli
 
