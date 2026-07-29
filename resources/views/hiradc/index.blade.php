@@ -785,6 +785,28 @@
             height: 20px;
             background: rgba(0, 0, 0, 0.07);
         }
+
+        /* ACTION BUTTONS */
+        .btn-row-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: transparent;
+            cursor: pointer;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 6px;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-row-action:hover {
+            background: #F8F9FF;
+        }
     </style>
 </head>
 
@@ -1897,19 +1919,45 @@
 
                     // Logika Tombol Aksi berdasarkan status
                     let actionButtons = `
-                    <button class="btn-row-action" onclick="openDetailModal(${row.id})" title="Detail">👁️</button>
-                        `;
+                        <button class="btn-row-action" onclick="openDetailModal(${row.id})" title="Detail">
+                            <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Detail
+                        </button>
+                    `;
 
-                    if (row.status === 'draft') {
-                        actionButtons += `
-                                <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">✏️</button>
-                                <button class="btn-row-action" style="color:#2D6CDF" onclick="confirmAction(${row.id}, 'periksa')" title="Periksa Dokumen">✔️ Periksa</button>
-                                <button class="btn-row-action" style="color:#D0021B;" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.pekerjaan)}')" title="Hapus">🗑️</button>
-                            `;
-                    } else if (row.status === 'diperiksa') {
-                        actionButtons += `
-                                <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan Dokumen">✅ Sahkan</button>
-                            `;
+                                        if (row.status === 'draft') {
+                                            actionButtons += `
+                            <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">
+                                <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit
+                            </button>
+                            <button class="btn-row-action" style="color:#2D6CDF" onclick="confirmAction(${row.id}, 'periksa')" title="Periksa Dokumen">
+                                <svg style="width:14px;height:14px; color:#2D6CDF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Periksa
+                            </button>
+                            <button class="btn-row-action" style="color:#D0021B;" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.pekerjaan)}')" title="Hapus">
+                                <svg style="width:14px;height:14px; color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Hapus
+                            </button>
+                        `;
+                                        } else if (row.status === 'diperiksa') {
+                                            actionButtons += `
+                            <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan Dokumen">
+                                <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Sahkan
+                            </button>
+                        `;
                     }
 
                     return `
