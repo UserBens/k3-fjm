@@ -59,7 +59,7 @@ class PelaporanPengawasController extends Controller
                     ->filter()
                     ->sort()
                     ->values(),
-                'status' => ['APPROVE', 'REJECT', 'CANCEL'],
+                'status' => ['PENDING', 'APPROVE', 'REJECT', 'CANCEL'],
             ];
 
             // 4. Pagination
@@ -197,7 +197,7 @@ class PelaporanPengawasController extends Controller
             }
 
             $validated['id_laporan']    = $this->generateIdLaporan();
-            $validated['status']        = $validated['status'] ?? 'APPROVE';
+            $validated['status']    = $validated['status'] ?? 'PENDING';
             $validated['lokasi_berkas'] = 'ARSIP';
             $validated['diperiksa_oleh'] = $request->user()->email ?? auth()->user()?->email;
 
@@ -307,7 +307,7 @@ class PelaporanPengawasController extends Controller
             'foto_kegiatan_safety_briefing' => [$briefingFileRule, 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
             'formulir_presensi_pdf'         => [$briefingFileRule, 'mimes:pdf', 'max:4096'],
 
-            'status' => ['nullable', 'in:APPROVE,REJECT,CANCEL'],
+            'status' => ['nullable', 'in:PENDING,APPROVE,REJECT,CANCEL'],
         ]);
     }
 

@@ -1539,6 +1539,7 @@
 
                     <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
                         <option value="">Semua Status</option>
+                        <option value="PENDING">PENDING</option> <!-- TAMBAHKAN INI -->
                         <option value="APPROVE">APPROVE</option>
                         <option value="REJECT">REJECT</option>
                         <option value="CANCEL">CANCEL</option>
@@ -1963,7 +1964,8 @@
         function statusPillClass(status) {
             if (status === 'APPROVE') return 'sp-green';
             if (status === 'REJECT') return 'sp-red';
-            return 'sp-amber';
+            if (status === 'PENDING') return 'sp-amber'; // Status PENDING
+            return 'sp-gray';
         }
 
         function showToast(message, type = 'success') {

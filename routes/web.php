@@ -167,6 +167,8 @@ Route::middleware(['auth.custom'])->group(function () {
     // DATA MEDIS
     Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
     Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
+    Route::get('/data-medis/jenis-aktivitas-options', [DataMedisController::class, 'jenisAktivitasOptions'])->name('data-medis.jenis-aktivitas-options'); // ← BARU
+    Route::get('/data-medis/lokasi-kerja-options', [DataMedisController::class, 'lokasiKerjaOptions'])->name('data-medis.lokasi-kerja-options'); // ← BARU
     Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
     Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
     Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
@@ -238,15 +240,18 @@ Route::middleware(['auth.custom'])->group(function () {
                 ->name('data');
         });
 
-    // routes/web.php
-    Route::get('monitoring-pengawas', [MonitoringkpiController::class, 'indexMonitoringPengawas'])
-        ->name('monitoring-pengawas.index');
-    Route::get('monitoring-pengawas/list-pengawas', [MonitoringkpiController::class, 'listPengawas'])
-        ->name('monitoring-pengawas.list-pengawas');
-
-    Route::get('monitoring-pengawas/data', [MonitoringkpiController::class, 'dataMonitoringPengawas'])
-        ->name('monitoring-pengawas.data');
-
+    // MONITORING LAPORAN (Medis, Safety, Pengawas)
+    Route::prefix('monitoring-laporan')->name('monitoring-laporan.')->group(function () {
+        Route::get('/', [MonitoringLaporanController::class, 'index'])->name('index');
+        Route::get('/data', [MonitoringLaporanController::class, 'data'])->name('data');
+        Route::get('/{sumber}/{id}', [MonitoringLaporanController::class, 'detail'])
+            ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
+            ->name('detail');
+        Route::patch('/{sumber}/{id}/status', [MonitoringLaporanController::class, 'updateStatus'])
+            ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
+            ->name('update-status');
+    });
+    
     Route::get('rekap-pengawas', [MonitoringkpiController::class, 'indexRekapPengawas'])->name('rekap-pengawas.index');
     Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
     Route::get('rekap-medis', [MonitoringkpiController::class, 'indexRekapMedis'])->name('rekap-medis.index');

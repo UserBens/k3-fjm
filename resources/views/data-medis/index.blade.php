@@ -1364,19 +1364,31 @@
 
                 <div class="form-section-title">Area & Aktivitas</div>
                 <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label class="form-label">Jenis Aktivitas KPI</label>
+                        <div class="picker-wrap">
+                            <input type="text" id="jenisAktifitasPickerInput" class="form-input"
+                                placeholder="Cari jenis aktifitas (nama atau kode)..."
+                                oninput="onJenisAktifitasPickerInput()" onfocus="onJenisAktifitasPickerFocus()"
+                                autocomplete="off" />
+                            <div class="picker-dropdown" id="jenisAktifitasPickerDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fJenisAktifitas" />
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Area Kerja</label>
-                        <input type="text" id="fAreaKerja" class="form-input" placeholder="PABRIK III B" />
+                        <div class="picker-wrap">
+                            <input type="text" id="areaKerjaInput" class="form-input"
+                                placeholder="Cari Area Kerja..." oninput="onAreaKerjaPickerInput()"
+                                onfocus="onAreaKerjaPickerFocus()" autocomplete="off" />
+                            <div class="picker-dropdown" id="areaKerjaDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fAreaKerja">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Unit Kerja</label>
                         <input type="text" id="fUnitKerja" class="form-input"
                             placeholder="ALAT BERAT EXISTING" />
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Jenis Aktivitas KPI</label>
-                        <input type="text" id="fJenisAktifitas" class="form-input"
-                            placeholder="[E.1] Laporan DCU" />
                     </div>
                 </div>
 
@@ -1557,6 +1569,8 @@
         const STORE_ENDPOINT = "{{ route('data-medis.store') }}";
         const BASE_ENDPOINT = "{{ url('/data-medis') }}";
         const CARI_TENAGA_ENDPOINT = "{{ route('data-medis.cari-tenaga') }}";
+        const JENIS_AKTIVITAS_OPTIONS_ENDPOINT = "{{ route('data-medis.jenis-aktivitas-options') }}";
+        const LOKASI_KERJA_OPTIONS_ENDPOINT = "{{ route('data-medis.lokasi-kerja-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1572,6 +1586,8 @@
         let filterOptionsLoaded = false;
         let currentEditId = null;
         let currentDeleteId = null;
+        let jenisAktivitasOptionsCache = [];
+        let jenisAktivitasDebounce = null;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1827,6 +1843,119 @@
             }
         }
 
+        async function loadJenisAktivitasOptions(search = '') {
+            try {
+                const url = search ?
+                    `${JENIS_AKTIVITAS_OPTIONS_ENDPOINT}?search=${encodeURIComponent(search)}` :
+                    JENIS_AKTIVITAS_OPTIONS_ENDPOINT;
+                const res = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                jenisAktivitasOptionsCache = json.data || [];
+            } catch (e) {
+                jenisAktivitasOptionsCache = [];
+            }
+        }
+
+        function renderJenisAktifitasDropdown() {
+            const dropdown = document.getElementById('jenisAktifitasPickerDropdown');
+            dropdown.innerHTML = jenisAktivitasOptionsCache.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada aktifitas ditemukan.</div>` :
+                jenisAktivitasOptionsCache.map(a => `
+            <div class="picker-item" onclick='pilihJenisAktifitas(${JSON.stringify(a).replace(/'/g, "&#39;")})'>
+                <div class="picker-item-name">${escapeHtml(a.label)}</div>
+            </div>
+        `).join('');
+            dropdown.classList.add('open');
+        }
+
+        function onJenisAktifitasPickerInput() {
+            document.getElementById('fJenisAktifitas').value = '';
+            clearTimeout(jenisAktivitasDebounce);
+            const keyword = document.getElementById('jenisAktifitasPickerInput').value.trim();
+            jenisAktivitasDebounce = setTimeout(async () => {
+                await loadJenisAktivitasOptions(keyword);
+                renderJenisAktifitasDropdown();
+            }, 300);
+        }
+
+        async function onJenisAktifitasPickerFocus() {
+            if (jenisAktivitasOptionsCache.length === 0) await loadJenisAktivitasOptions();
+            renderJenisAktifitasDropdown();
+        }
+
+        function pilihJenisAktifitas(a) {
+            document.getElementById('jenisAktifitasPickerInput').value = a.label;
+            document.getElementById('fJenisAktifitas').value = a.nama_aktivitas;
+            document.getElementById('jenisAktifitasPickerDropdown').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('jenisAktifitasPickerInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('jenisAktifitasPickerDropdown')?.classList.remove('open');
+            }
+        });
+
+        // ══════ PICKER "AREA KERJA" — statis + master Lokasi Kerja ══════
+        let lokasiKerjaOptionsCache = [];
+
+        async function loadLokasiKerjaOptions() {
+            if (lokasiKerjaOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(LOKASI_KERJA_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                lokasiKerjaOptionsCache = json.data || [];
+            } catch (e) {
+                /* diamkan */
+            }
+        }
+
+        function renderAreaKerjaDropdown(keyword = '') {
+            const dropdown = document.getElementById('areaKerjaDropdown');
+            const filtered = keyword ?
+                lokasiKerjaOptionsCache.filter(v => v.toLowerCase().includes(keyword.toLowerCase())) :
+                lokasiKerjaOptionsCache;
+
+            dropdown.innerHTML = filtered.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada data ditemukan.</div>` :
+                filtered.map(v =>
+                    `<div class="picker-item" onclick="pilihAreaKerja('${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`
+                ).join('');
+
+            dropdown.classList.add('open');
+        }
+
+        function onAreaKerjaPickerInput() {
+            document.getElementById('fAreaKerja').value = '';
+            renderAreaKerjaDropdown(document.getElementById('areaKerjaInput').value.trim());
+        }
+
+        async function onAreaKerjaPickerFocus() {
+            if (lokasiKerjaOptionsCache.length === 0) await loadLokasiKerjaOptions();
+            renderAreaKerjaDropdown(document.getElementById('areaKerjaInput').value.trim());
+        }
+
+        function pilihAreaKerja(value) {
+            document.getElementById('areaKerjaInput').value = value;
+            document.getElementById('fAreaKerja').value = value;
+            document.getElementById('areaKerjaDropdown').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('areaKerjaInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('areaKerjaDropdown')?.classList.remove('open');
+            }
+        });
+
         // ══════ TOAST ══════
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
@@ -1910,8 +2039,9 @@
         });
 
         // ══════ MODAL TAMBAH / EDIT ══════
-        function openFormModal(row = null) {
+        async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
+            await loadLokasiKerjaOptions(); // ← BARU
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Laporan KPI Medis' :
                 'Tambah Laporan KPI Medis';
@@ -1924,7 +2054,8 @@
             document.getElementById('tenagaPickerDropdown').innerHTML = '';
             document.getElementById('fBadgeTenaga').value = row?.badge_tenaga && row.badge_tenaga !== '-' ? row
                 .badge_tenaga : '';
-            document.getElementById('fNamaTenaga').value = row?.nama_tenaga && row.nama_tenaga !== '-' ? row.nama_tenaga :
+            document.getElementById('fNamaTenaga').value = row?.nama_tenaga && row.nama_tenaga !== '-' ? row
+                .nama_tenaga :
                 '';
 
             if (row && row.nama_tenaga && row.nama_tenaga !== '-') {
@@ -1934,10 +2065,17 @@
             }
 
             document.getElementById('fTanggalPelaksanaan').value = row?.tanggal_pelaksanaan || '';
-            document.getElementById('fAreaKerja').value = row?.area_kerja && row.area_kerja !== '-' ? row.area_kerja : '';
-            document.getElementById('fUnitKerja').value = row?.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja : '';
-            document.getElementById('fJenisAktifitas').value = row?.jenis_aktifitas_kpi && row.jenis_aktifitas_kpi !== '-' ?
-                row.jenis_aktifitas_kpi : '';
+            const areaKerjaVal = row?.area_kerja && row.area_kerja !== '-' ? row.area_kerja : '';
+            document.getElementById('areaKerjaInput').value = areaKerjaVal;
+            document.getElementById('fAreaKerja').value = areaKerjaVal;
+
+            document.getElementById('fUnitKerja').value = row?.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja :
+                '';
+
+            const jenisAktifitasVal = row?.jenis_aktifitas_kpi && row.jenis_aktifitas_kpi !== '-' ? row
+                .jenis_aktifitas_kpi : '';
+            document.getElementById('jenisAktifitasPickerInput').value = jenisAktifitasVal;
+            document.getElementById('fJenisAktifitas').value = jenisAktifitasVal;
             document.getElementById('fStatusPindah').value = row?.status_pindah || 'PENDING';
             document.getElementById('fKeputusan').value = row?.keputusan || 'PENDING';
 

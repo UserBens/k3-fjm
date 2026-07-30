@@ -425,15 +425,15 @@
         @php
             $monitoringActive =
                 request()->routeIs('dashboard-monitoring-kpi.*') ||
-                request()->routeIs('pelaporan-pengawas.*') ||
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
+                request()->routeIs('pelaporan-pengawas.*') ||
+                request()->routeIs('monitoring-laporan.*') ||
                 request()->routeIs('data-unsafe.*') ||
                 request()->routeIs('toolbox-meeting.*') ||
                 // request()->routeIs('data-reject-monitoring.*') ||
                 request()->routeIs('monitoring-so.*') ||
                 request()->routeIs('dashboard-individu.*') ||
-                request()->routeIs('monitoring-pengawas.*') ||
                 request()->routeIs('rekap-pengawas.*') ||
                 request()->routeIs('monitoring-medis.*') ||
                 request()->routeIs('rekap-medis.*') ||
@@ -467,6 +467,12 @@
                 <span class="nav-label">Dashboard Monitoring KPI</span>
             </a>
 
+            <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->
+            <a class="nav-link {{ request()->routeIs('kpi-k3.matriks.*') ? 'active' : '' }}"
+                href="{{ route('kpi-k3.matriks.index') }}">
+                <span class="nav-label">Matriks KPI</span>
+            </a>
+
             <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
                 href="{{ route('data-medis.index') }}">
                 <span class="nav-label">Pelaporan Medis</span>
@@ -483,6 +489,11 @@
                 <span class="nav-label">Pelaporan Pengawas</span>
             </a>
 
+            <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}"
+                href="{{ route('monitoring-laporan.index') }}">
+                <span class="nav-label">Data Pelaporan</span>
+            </a>
+
             <a class="nav-link {{ request()->routeIs('data-unsafe.*') ? 'active' : '' }}"
                 href="{{ route('data-unsafe.index') }}">
                 <span class="nav-label">Data UA/UC</span>
@@ -496,36 +507,30 @@
                 href="{{ route('data-reject-monitoring.index') }}">
                 <span class="nav-label">Monitoring Dokumen Reject</span>
             </a> --}}
-            <a class="nav-link {{ request()->routeIs('monitoring-laporan-so.*') ? 'active' : '' }}"
+            {{-- <a class="nav-link {{ request()->routeIs('monitoring-laporan-so.*') ? 'active' : '' }}"
                 href="{{ route('monitoring-laporan-so.index') }}">
                 <span class="nav-label">Monitoring SO</span>
-            </a>
+            </a> --}}
             <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}"
                 href="{{ route('dashboard-individu.index') }}">
                 <span class="nav-label">Dashboard Individu</span>
             </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}"
-                href="{{ route('monitoring-pengawas.index') }}">
+            {{-- <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}"
+                href="#">
                 <span class="nav-label">Monitoring Pengawas</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('rekap-pengawas.*') ? 'active' : '' }}"
+            </a> --}}
+            {{-- <a class="nav-link {{ request()->routeIs('rekap-pengawas.*') ? 'active' : '' }}"
                 href="{{ route('rekap-pengawas.index') }}">
                 <span class="nav-label">Rekap Pengawas</span>
             </a>
             <a class="nav-link {{ request()->routeIs('monitoring-medis.*') ? 'active' : '' }}"
                 href="{{ route('monitoring-medis.index') }}">
                 <span class="nav-label">Monitoring Medis</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('rekap-medis.*') ? 'active' : '' }}"
+            </a> --}}
+            {{-- <a class="nav-link {{ request()->routeIs('rekap-medis.*') ? 'active' : '' }}"
                 href="{{ route('rekap-medis.index') }}">
                 <span class="nav-label">Rekap Medis</span>
-            </a>
-
-            <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->
-            <a class="nav-link {{ request()->routeIs('kpi-k3.matriks.*') ? 'active' : '' }}"
-                href="{{ route('kpi-k3.matriks.index') }}">
-                <span class="nav-label">KPI K3 Matriks</span>
-            </a>
+            </a> --}}
 
             <!-- Jika route pengaturan menggunakan method PUT, Anda bisa meng arahkan ke halaman edit/index yang sesuai, atau sesuaikan jika ada route get-nya -->
             <!-- Contoh jika diarahkan ke halaman matriks atau pengaturan khusus -->

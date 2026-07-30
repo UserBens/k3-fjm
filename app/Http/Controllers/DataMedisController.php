@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AktivitasKpiK3;
 use App\Models\Datamedis;
+use App\Models\LokasiKerja;
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -164,6 +166,68 @@ class DataMedisController extends Controller
             Log::error('Gagal memperbarui keputusan laporan KPI: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan sistem saat memperbarui keputusan.'], 500);
         }
+    }
+
+    // Dropdown/picker "Jenis Aktivitas KPI" <- master aktivitas_kpi_k3 (hanya yang berstatus AKTIF & sesuai tahun berjalan).
+    public function jenisAktivitasOptions(Request $request): JsonResponse
+    {
+        $search = trim((string) $request->query('search', ''));
+        $tahunIni = (int) now()->format('Y');
+
+        $query = AktivitasKpiK3::query()
+            ->where('status', 'AKTIF')
+            ->where('mulai_berlaku', '<=', $tahunIni)
+            ->where(function ($q) use ($tahunIni) {
+                $q->whereNull('akhir_berlaku')->orWhere('akhir_berlaku', '>=', $tahunIni);
+            });
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_aktivitas', 'ilike', "%{$search}%")
+                    ->orWhere('kode', 'ilike', "%{$search}%");
+            });
+        }
+
+        $items = $query->orderBy('kode')->get()->map(fn(AktivitasKpiK3 $a) => [
+            'id'             => $a->id,
+            'kode'           => $a->kode,
+            'nama_aktivitas' => $a->nama_aktivitas,
+            'label'          => "[{$a->kode}] {$a->nama_aktivitas}",
+        ]);
+
+        return response()->json(['data' => $items]);
+    }
+
+    // Dropdown/picker "Area Kerja" <- gabungan daftar tetap + master Lokasi Kerja.
+    public function lokasiKerjaOptions(): JsonResponse
+    {
+        $staticOptions = [
+            'KAWASAN',
+            'PABRIK I A',
+            'PABRIK I B',
+            'PABRIK II A',
+            'PABRIK II B',
+            'PABRIK III A',
+            'PABRIK III B',
+            'PELABUHAN',
+            'PERGUDANGAN',
+        ];
+
+        $fromMaster = LokasiKerja::query()
+            ->select('nama_lokasi')
+            ->whereNotNull('nama_lokasi')
+            ->where('nama_lokasi', '!=', '')
+            ->distinct()
+            ->pluck('nama_lokasi')
+            ->all();
+
+        $items = collect($staticOptions)
+            ->merge($fromMaster)
+            ->unique()
+            ->sort(SORT_STRING)
+            ->values();
+
+        return response()->json(['data' => $items]);
     }
 
     public function destroy($id): JsonResponse
