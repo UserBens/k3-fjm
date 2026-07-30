@@ -177,6 +177,8 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::prefix('data-safety')->name('data-safety.')->group(function () {
         Route::get('/', [DataSafetyController::class, 'index'])->name('index');
         Route::get('/data', [DataSafetyController::class, 'data'])->name('data');
+        Route::get('/lokasi-kerja-options', [DataSafetyController::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options'); // ← BARU
+        Route::get('/jenis-aktivitas-options', [DataSafetyController::class, 'jenisAktivitasOptions'])->name('jenis-aktivitas-options');
         Route::post('/', [DataSafetyController::class, 'store'])->name('store');
         Route::put('/{dataSafety}', [DataSafetyController::class, 'update'])->name('update');
         Route::delete('/{dataSafety}', [DataSafetyController::class, 'destroy'])->name('destroy');
@@ -502,11 +504,15 @@ Route::middleware(['auth.custom'])->group(function () {
 
     Route::put('kpi-k3/pengaturan', [KpiK3MatriksController::class, 'updatePengaturan'])->name('kpi-k3.pengaturan.update');
 
-    // MANAJEMEN PELAPORAN PENGAWAS
-    Route::get('pelaporan-pengawas', [PelaporanPengawasController::class, 'index'])->name('pelaporan-pengawas.index');
-    Route::get('pelaporan-pengawas/api', [PelaporanPengawasController::class, 'api'])->name('pelaporan-pengawas.api');
-    Route::get('pelaporan-pengawas/create', [PelaporanPengawasController::class, 'create'])->name('pelaporan-pengawas.create');
-    Route::post('pelaporan-pengawas', [PelaporanPengawasController::class, 'store'])->name('pelaporan-pengawas.store');
-    Route::get('pelaporan-pengawas/{id}/edit', [PelaporanPengawasController::class, 'edit'])->name('pelaporan-pengawas.edit');
-    Route::put('pelaporan-pengawas/{id}', [PelaporanPengawasController::class, 'update'])->name('pelaporan-pengawas.update');
+    // PELAPORAN PENGAWAS
+    Route::prefix('pelaporan-pengawas')->name('pelaporan-pengawas.')->group(function () {
+        Route::get('/', [PelaporanPengawasController::class, 'index'])->name('index');
+        Route::get('/data', [PelaporanPengawasController::class, 'data'])->name('data');
+        Route::get('/lokasi-kerja-options', [PelaporanPengawasController::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options');
+        Route::get('/unit-kerja-options', [PelaporanPengawasController::class, 'unitKerjaOptions'])->name('unit-kerja-options');
+        Route::get('/jenis-aktivitas-options', [PelaporanPengawasController::class, 'jenisAktivitasOptions'])->name('jenis-aktivitas-options');
+        Route::get('/cari-pengawas', [PelaporanPengawasController::class, 'cariPengawas'])->name('cari-pengawas');
+        Route::post('/', [PelaporanPengawasController::class, 'store'])->name('store');
+        Route::put('/{id}', [PelaporanPengawasController::class, 'update'])->name('update');
+    });
 });

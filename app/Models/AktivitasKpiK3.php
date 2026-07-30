@@ -32,6 +32,11 @@ class AktivitasKpiK3 extends Model
         });
     }
 
+    public function getLabelAttribute(): string
+    {
+        return "[{$this->kode}] {$this->nama_aktivitas}";
+    }
+
     public function scopeAktif($query)
     {
         return $query->where('status', 'AKTIF');

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AktivitasKpiK3;
 use App\Models\DataSafety;
+use App\Models\LokasiKerja;
 use App\Models\Pegawai;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -188,6 +190,105 @@ class DataSafetyController extends Controller
         ]);
 
         return response()->json(['data' => $results]);
+    }
+
+    // Dropdown/picker "Jenis Aktifitas KPI" <- master aktivitas_kpi_k3 (hanya yang berstatus AKTIF & sesuai tahun berjalan).
+    public function jenisAktivitasOptions(Request $request): JsonResponse
+    {
+        $search = trim((string) $request->query('search', ''));
+        $tahunIni = (int) now()->format('Y');
+
+        $query = AktivitasKpiK3::query()
+            ->where('status', 'AKTIF')
+            ->where('mulai_berlaku', '<=', $tahunIni)
+            ->where(function ($q) use ($tahunIni) {
+                $q->whereNull('akhir_berlaku')->orWhere('akhir_berlaku', '>=', $tahunIni);
+            });
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_aktivitas', 'ilike', "%{$search}%")
+                    ->orWhere('kode', 'ilike', "%{$search}%");
+            });
+        }
+
+        $items = $query->orderBy('kode')->get()->map(fn(AktivitasKpiK3 $a) => [
+            'id'             => $a->id,
+            'kode'           => $a->kode,
+            'nama_aktivitas' => $a->nama_aktivitas,
+            'label'          => "[{$a->kode}] {$a->nama_aktivitas}",
+            'kategori'       => $this->resolveKategoriForm($a->nama_aktivitas),
+        ]);
+
+        return response()->json(['data' => $items]);
+    }
+
+    // Dropdown/picker "Area Kerja" <- gabungan daftar tetap + master Lokasi Kerja.
+    public function lokasiKerjaOptions(): JsonResponse
+    {
+        $staticOptions = [
+            'KAWASAN',
+            'PABRIK I A',
+            'PABRIK I B',
+            'PABRIK II A',
+            'PABRIK II B',
+            'PABRIK III A',
+            'PABRIK III B',
+            'PELABUHAN',
+            'PERGUDANGAN',
+        ];
+
+        $fromMaster = LokasiKerja::query()
+            ->select('nama_lokasi')
+            ->whereNotNull('nama_lokasi')
+            ->where('nama_lokasi', '!=', '')
+            ->distinct()
+            ->pluck('nama_lokasi')
+            ->all();
+
+        $items = collect($staticOptions)
+            ->merge($fromMaster)
+            ->unique()
+            ->sort(SORT_STRING)
+            ->values();
+
+        return response()->json(['data' => $items]);
+    }
+
+    /**
+     * Memetakan nama_aktivitas (master aktivitas_kpi_k3) ke kategori form
+     * (nilai data-cat pada .category-block) berdasarkan kata kunci.
+     * Sesuaikan/tambahkan aturan di sini jika penamaan di master berbeda.
+     */
+    private function resolveKategoriForm(string $nama): string
+    {
+        $n = strtolower($nama);
+
+        $rules = [
+            'p3k'                     => ['p3k'],
+            'dcu'                     => ['dcu'],
+            'romberg'                 => ['romberg', 'keseimbangan'],
+            'bugar_sehat'             => ['bugar sehat', 'bugar'],
+            'sosialisasi_keselamatan' => ['sosialisasi keselamatan'],
+            'sosialisasi_kesehatan'   => ['sosialisasi kesehatan'],
+            'reward'                  => ['reward', 'punishment'],
+            'briefing'                => ['safety briefing', 'briefing'],
+            'nearmiss'                => ['nearmiss'],
+            'permit'                  => ['safety permit', 'permit'],
+            'observi'                 => ['observi'],
+            'peralatan'               => ['inspeksi peralatan', 'peralatan'],
+            'temuan'                  => ['area kerja', 'temuan'],
+        ];
+
+        foreach ($rules as $kategori => $keywords) {
+            foreach ($keywords as $kw) {
+                if (str_contains($n, $kw)) {
+                    return $kategori;
+                }
+            }
+        }
+
+        return '';
     }
 
     private function storeFileIfPresent(Request $request, string $field, string $folder): ?string

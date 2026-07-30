@@ -407,8 +407,7 @@
         </a>
 
         <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
-            <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}"
-                href="#">
+            <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}" href="#">
                 <span class="nav-label">Dashboard</span>
             </a>
 
@@ -426,6 +425,7 @@
         @php
             $monitoringActive =
                 request()->routeIs('dashboard-monitoring-kpi.*') ||
+                request()->routeIs('pelaporan-pengawas.*') ||
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
                 request()->routeIs('data-unsafe.*') ||
@@ -469,12 +469,18 @@
 
             <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
                 href="{{ route('data-medis.index') }}">
-                <span class="nav-label">Data Medis</span>
+                <span class="nav-label">Pelaporan Medis</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('data-safety.*') ? 'active' : '' }}"
                 href="{{ route('data-safety.index') }}">
-                <span class="nav-label">Data Safety</span>
+                <span class="nav-label">Pelaporan Safety Officer</span>
+            </a>
+
+            {{-- Added: Menu Pelaporan Pengawas --}}
+            <a class="nav-link {{ request()->routeIs('pelaporan-pengawas.*') ? 'active' : '' }}"
+                href="{{ route('pelaporan-pengawas.index') }}">
+                <span class="nav-label">Pelaporan Pengawas</span>
             </a>
 
             <a class="nav-link {{ request()->routeIs('data-unsafe.*') ? 'active' : '' }}"
