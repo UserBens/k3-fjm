@@ -6,6 +6,7 @@ use App\Http\Controllers\AlatKesehatanPenggunaController;
 use App\Http\Controllers\DashboardApdAlkesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardKpiController;
+use App\Http\Controllers\DashboardKpiK3Controller;
 use App\Http\Controllers\DataMedisController;
 use App\Http\Controllers\DataRejectMonitoringController;
 use App\Http\Controllers\DataSafetyController;
@@ -251,7 +252,7 @@ Route::middleware(['auth.custom'])->group(function () {
             ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
             ->name('update-status');
     });
-    
+
     Route::get('rekap-pengawas', [MonitoringkpiController::class, 'indexRekapPengawas'])->name('rekap-pengawas.index');
     Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
     Route::get('rekap-medis', [MonitoringkpiController::class, 'indexRekapMedis'])->name('rekap-medis.index');
@@ -520,4 +521,11 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::post('/', [PelaporanPengawasController::class, 'store'])->name('store');
         Route::put('/{id}', [PelaporanPengawasController::class, 'update'])->name('update');
     });
+
+
+    Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])
+        ->name('dashboard-kpi-k3.index');
+
+    Route::get('/api/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'api'])
+        ->name('dashboard-kpi-k3.api');
 });
