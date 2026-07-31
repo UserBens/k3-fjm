@@ -1418,7 +1418,7 @@
                     </div>
                 </div>
 
-                <div class="form-section-title">Status</div>
+                {{-- <div class="form-section-title">Status</div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Status Pindah</label>
@@ -1436,7 +1436,7 @@
                             <option value="REJECT">REJECT</option>
                         </select>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="modal-actions" style="margin-top:18px;">
@@ -2076,8 +2076,8 @@
                 .jenis_aktifitas_kpi : '';
             document.getElementById('jenisAktifitasPickerInput').value = jenisAktifitasVal;
             document.getElementById('fJenisAktifitas').value = jenisAktifitasVal;
-            document.getElementById('fStatusPindah').value = row?.status_pindah || 'PENDING';
-            document.getElementById('fKeputusan').value = row?.keputusan || 'PENDING';
+            // document.getElementById('fStatusPindah').value = row?.status_pindah || 'PENDING';
+            // document.getElementById('fKeputusan').value = row?.keputusan || 'PENDING';
 
             // File input selalu dikosongkan; hanya terisi jika user upload file baru
             document.getElementById('fFotoEvidence').value = '';
@@ -2150,8 +2150,8 @@
             formData.append('area_kerja', document.getElementById('fAreaKerja').value.trim());
             formData.append('unit_kerja', document.getElementById('fUnitKerja').value.trim());
             formData.append('jenis_aktifitas_kpi', document.getElementById('fJenisAktifitas').value.trim());
-            formData.append('status_pindah', document.getElementById('fStatusPindah').value);
-            formData.append('keputusan', document.getElementById('fKeputusan').value);
+            // formData.append('status_pindah', document.getElementById('fStatusPindah').value);
+            // formData.append('keputusan', document.getElementById('fKeputusan').value);
 
             const fotoFile = document.getElementById('fFotoEvidence').files[0];
             if (fotoFile) formData.append('foto_evidence', fotoFile);

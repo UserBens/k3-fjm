@@ -617,7 +617,7 @@
 
             <!-- PANEL SAKLAR -->
             <div class="panel-saklar">
-                <div class="panel-saklar-title">Panel Saklar · ubah di sini, seluruh dashboard mengikuti</div>
+                {{-- <div class="panel-saklar-title">Panel Saklar · ubah di sini, seluruh dashboard mengikuti</div> --}}
                 <div class="saklar-grid">
                     <div class="saklar-field">
                         <label>Tahun</label>

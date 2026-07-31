@@ -425,6 +425,7 @@
         @php
             $monitoringActive =
                 request()->routeIs('dashboard-monitoring-kpi.*') ||
+                request()->routeIs('laporan-capaian-kpi.*') ||
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
                 request()->routeIs('pelaporan-pengawas.*') ||
@@ -465,6 +466,11 @@
             <a class="nav-link {{ request()->routeIs('dashboard-monitoring-kpi.*') ? 'active' : '' }}"
                 href="{{ route('dashboard-monitoring-kpi.index') }}">
                 <span class="nav-label">Dashboard Monitoring KPI</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('laporan-capaian-kpi.*') ? 'active' : '' }}"
+                href="{{ route('laporan-capaian-kpi.index') }}">
+                <span class="nav-label">Laporan Cpaian KPI</span>
             </a>
 
             <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->

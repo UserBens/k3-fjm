@@ -1631,7 +1631,7 @@
                     </div>
                 </div>
 
-                <div class="form-section-title">Arsip &amp; Status</div>
+                {{-- <div class="form-section-title">Arsip &amp; Status</div>
                 <div class="form-grid">
                     <div class="form-group span-2"><label class="form-label">Arsip</label><input type="file"
                             id="f_arsip" class="form-input" /></div>
@@ -1649,7 +1649,7 @@
                             <option value="REJECT">REJECT</option>
                         </select>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="modal-actions" style="margin-top:16px;">
@@ -1757,8 +1757,8 @@
             fMateriSosialisasiKesehatan: 'materi_sosialisasi_kesehatan',
             fNamaPekerjaRomberg: 'nama_pekerja_romberg',
             fKelasKotakP3k: 'kelas_kotak_p3k',
-            fStatusPindah: 'status_pindah',
-            fKeputusan: 'keputusan',
+            // fStatusPindah: 'status_pindah',
+            // fKeputusan: 'keputusan',
         };
 
         // Peta jenis_aktifitas_kpi (text) → kategori
@@ -2600,10 +2600,10 @@
                 if (el && row) el.value = row[fieldName] || (fieldName.includes('status') || fieldName ===
                     'keputusan' ? 'PENDING' : '');
             });
-            if (!row) {
-                document.getElementById('fStatusPindah').value = 'PENDING';
-                document.getElementById('fKeputusan').value = 'PENDING';
-            }
+            // if (!row) {
+            //     document.getElementById('fStatusPindah').value = 'PENDING';
+            //     document.getElementById('fKeputusan').value = 'PENDING';
+            // }
 
             // Area Kerja (picker dari master Lokasi Kerja)
             document.getElementById('areaKerjaInput').value = row?.area_kerja || '';

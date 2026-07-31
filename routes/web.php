@@ -18,6 +18,7 @@ use App\Http\Controllers\KartuStokController;
 use App\Http\Controllers\KodeOkController;
 use App\Http\Controllers\KodeOkReferensiController;
 use App\Http\Controllers\KpiK3MatriksController;
+use App\Http\Controllers\LaporanCapaianKpiController;
 use App\Http\Controllers\LeadingDashboardController;
 use App\Http\Controllers\LeadingInputController;
 use App\Http\Controllers\LogApdController;
@@ -523,9 +524,14 @@ Route::middleware(['auth.custom'])->group(function () {
     });
 
 
+    // DASHBOARD KPI
     Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])
         ->name('dashboard-kpi-k3.index');
 
     Route::get('/api/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'api'])
         ->name('dashboard-kpi-k3.api');
+
+    // LAPORAN KPI
+    Route::get('/laporan-capaian-kpi', [LaporanCapaianKpiController::class, 'index'])->name('laporan-capaian-kpi.index');
+    Route::get('/laporan-capaian-kpi/api', [LaporanCapaianKpiController::class, 'api'])->name('laporan-capaian-kpi.api');
 });
