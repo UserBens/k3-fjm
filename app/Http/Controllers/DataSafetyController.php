@@ -47,8 +47,8 @@ class DataSafetyController extends Controller
         'formulir_kegiatan_sosialisasi_kesehatan' => ['formulir_kegiatan_sosialisasi_kesehatan_path', 'formulir-sosialisasi-kesehatan'],
         'kesesuaian_isi_p3k' => ['kesesuaian_isi_p3k_path', 'kesesuaian-p3k'],
         'formulir_kegiatan_inspeksi_p3k' => ['formulir_kegiatan_inspeksi_p3k_path', 'formulir-inspeksi-p3k'],
-        'arsip' => ['arsip_path', 'arsip'],
     ];
+
 
     public function index()
     {
@@ -110,8 +110,8 @@ class DataSafetyController extends Controller
 
         try {
             $validated['waktu_submit'] = now();
-            $validated['status_pindah'] = $validated['status_pindah'] ?? 'PENDING';
             $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING';
+            $validated['kategori_form'] = $this->resolveKategoriForm($validated['jenis_aktifitas_kpi'] ?? '');
 
             foreach ($this->fileFields as $formField => [$column, $folder]) {
                 $path = $this->storeFileIfPresent($request, $formField, $folder);
@@ -134,6 +134,7 @@ class DataSafetyController extends Controller
     public function update(Request $request, DataSafety $dataSafety): JsonResponse
     {
         $validated = $this->validateData($request);
+        $validated['kategori_form'] = $this->resolveKategoriForm($validated['jenis_aktifitas_kpi'] ?? '');
 
         try {
             foreach ($this->fileFields as $formField => [$column, $folder]) {
@@ -307,8 +308,8 @@ class DataSafetyController extends Controller
     private function transform(DataSafety $d): array
     {
         $base = $d->toArray();
+        $base['tanggal_pelaksanaan'] = $d->tanggal_pelaksanaan?->format('Y-m-d');
 
-        // Ubah semua kolom *_path jadi full URL
         foreach ($this->fileFields as [$column, $folder]) {
             $base[$column . '_url'] = $d->{$column} ? asset('storage/' . $d->{$column}) : null;
         }
@@ -357,7 +358,6 @@ class DataSafetyController extends Controller
 
             'kelas_kotak_p3k' => 'nullable|string|max:50',
 
-            'status_pindah' => 'nullable|string|max:30',
             'keputusan' => 'nullable|string|max:30',
             'indikasi_duplikat' => 'nullable|string|max:20',
         ];

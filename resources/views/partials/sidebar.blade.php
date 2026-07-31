@@ -470,7 +470,7 @@
 
             <a class="nav-link {{ request()->routeIs('laporan-capaian-kpi.*') ? 'active' : '' }}"
                 href="{{ route('laporan-capaian-kpi.index') }}">
-                <span class="nav-label">Laporan Cpaian KPI</span>
+                <span class="nav-label">Laporan Capaian KPI</span>
             </a>
 
             <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->

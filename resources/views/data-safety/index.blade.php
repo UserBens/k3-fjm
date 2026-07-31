@@ -931,7 +931,7 @@
         }
 
         .form-section-title:first-child {
-            margin-top: 0;
+            margin-top: 20px;
         }
 
         .form-grid {
@@ -1301,9 +1301,7 @@
                     <select id="filterAreaKerja" class="filter-select" onchange="onFilterChange()">
                         <option value="">Semua Area Kerja</option>
                     </select>
-                    <select id="filterKeputusan" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Keputusan</option>
-                    </select>
+
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
 
@@ -1318,7 +1316,6 @@
                                 <th>Area / Unit Kerja</th>
                                 <th>Tgl Pelaksanaan</th>
                                 <th>Status</th>
-                                <th>Keputusan</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
@@ -1383,10 +1380,6 @@
                     <input type="hidden" id="fNamaTenaga">
                 </div>
                 <div class="form-grid">
-                    {{-- <div class="form-group"><label class="form-label">Badge</label><input type="text"
-                            id="fBadgeTenaga" class="form-input" readonly style="background:#F8FAFC;" /></div>
-                    <div class="form-group span-2"><label class="form-label">Nama Tenaga</label><input type="text"
-                            id="fNamaTenaga" class="form-input" readonly style="background:#F8FAFC;" /></div> --}}
                     <div class="form-group"><label class="form-label">Unit Kerja</label><input type="text"
                             id="fUnitKerja" class="form-input" /></div>
                     <div class="form-group">
@@ -1423,12 +1416,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Foto Alat</label>
-                            <input type="file" id="f_foto_alat" class="form-input" accept="image/*"
-                                onchange="previewImage(this, 'preview_foto_alat')" />
-                            <div id="preview_foto_alat" style="display:none; margin-top:8px;">
-                                <img src="" alt="Preview"
-                                    style="max-width:140px; max-height:140px; border-radius:8px; border:1px solid #e2e8f0; object-fit:cover;">
-                            </div>
+                            <input type="file" id="f_foto_alat" class="form-input" accept="image/*" />
                         </div>
                         <div class="form-group"><label class="form-label">Formulir Inspeksi</label><input
                                 type="file" id="f_formulir_inspeksi_peralatan" class="form-input" /></div>
@@ -1454,8 +1442,10 @@
                         </div>
                         <div class="form-group"><label class="form-label">Status Temuan</label><input type="text"
                                 id="fStatusTemuan" class="form-input" /></div>
-                        <div class="form-group"><label class="form-label">Foto Temuan UA/UC</label><input
-                                type="file" id="f_foto_temuan_uauc" class="form-input" accept="image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Temuan UA/UC</label>
+                            <input type="file" id="f_foto_temuan_uauc" class="form-input" accept="image/*" />
+                        </div>
                         <div class="form-group span-2"><label class="form-label">Formulir Kegiatan Inspeksi Area
                                 Kerja</label><input type="file" id="f_formulir_kegiatan_inspeksi_area_kerja"
                                 class="form-input" /></div>
@@ -1500,9 +1490,11 @@
                         <div class="form-group span-4"><label class="form-label">Keterangan Bahaya</label>
                             <textarea id="fKeteranganBahayaNearmiss" class="form-textarea" rows="2"></textarea>
                         </div>
-                        <div class="form-group"><label class="form-label">Foto Temuan Bahaya</label><input
-                                type="file" id="f_foto_temuan_bahaya_nearmiss" class="form-input"
-                                accept="image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Temuan Bahaya</label>
+                            <input type="file" id="f_foto_temuan_bahaya_nearmiss" class="form-input"
+                                accept="image/*" />
+                        </div>
                     </div>
                 </div>
 
@@ -1510,12 +1502,16 @@
                 <div class="category-block" data-cat="briefing">
                     <div class="form-section-title">Safety Briefing</div>
                     <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Foto Pelaksanaan</label><input
-                                type="file" id="f_foto_pelaksanaan_safety_briefing" class="form-input"
-                                accept="image/*" /></div>
-                        <div class="form-group"><label class="form-label">Foto Daftar Hadir (PDF)</label><input
-                                type="file" id="f_foto_daftar_hadir_briefing" class="form-input"
-                                accept=".pdf,image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Pelaksanaan</label>
+                            <input type="file" id="f_foto_pelaksanaan_safety_briefing" class="form-input"
+                                accept="image/*" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Daftar Hadir (PDF)</label>
+                            <input type="file" id="f_foto_daftar_hadir_briefing" class="form-input"
+                                accept=".pdf,image/*" />
+                        </div>
                         <div class="form-group span-2"><label class="form-label">Formulir Kegiatan</label><input
                                 type="file" id="f_formulir_kegiatan_safety_briefing" class="form-input" /></div>
                     </div>
@@ -1532,8 +1528,10 @@
                         <div class="form-group span-2"><label class="form-label">Alasan Pemberian</label>
                             <textarea id="fAlasanPemberian" class="form-textarea" rows="2"></textarea>
                         </div>
-                        <div class="form-group"><label class="form-label">Foto Evidence</label><input type="file"
-                                id="f_foto_evidence_reward" class="form-input" accept="image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Evidence</label>
+                            <input type="file" id="f_foto_evidence_reward" class="form-input" accept="image/*" />
+                        </div>
                         <div class="form-group"><label class="form-label">Formulir Kegiatan</label><input
                                 type="file" id="f_formulir_kegiatan_reward" class="form-input" /></div>
                     </div>
@@ -1546,8 +1544,10 @@
                         <div class="form-group span-4"><label class="form-label">Materi Sosialisasi</label>
                             <textarea id="fMateriSosialisasiKeselamatan" class="form-textarea" rows="2"></textarea>
                         </div>
-                        <div class="form-group"><label class="form-label">Foto Kegiatan</label><input type="file"
-                                id="f_foto_kegiatan_sosialisasi_keselamatan" class="form-input" accept="image/*" />
+                        <div class="form-group">
+                            <label class="form-label">Foto Kegiatan</label>
+                            <input type="file" id="f_foto_kegiatan_sosialisasi_keselamatan" class="form-input"
+                                accept="image/*" />
                         </div>
                         <div class="form-group"><label class="form-label">Formulir Presensi (PDF)</label><input
                                 type="file" id="f_formulir_presensi_sosialisasi_keselamatan" class="form-input" />
@@ -1562,8 +1562,10 @@
                 <div class="category-block" data-cat="dcu">
                     <div class="form-section-title">Kegiatan DCU</div>
                     <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Foto Kegiatan DCU</label><input
-                                type="file" id="f_foto_kegiatan_dcu" class="form-input" accept="image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Kegiatan DCU</label>
+                            <input type="file" id="f_foto_kegiatan_dcu" class="form-input" accept="image/*" />
+                        </div>
                         <div class="form-group"><label class="form-label">Formulir Hasil Pemeriksaan</label><input
                                 type="file" id="f_formulir_hasil_pemeriksaan_dcu" class="form-input" /></div>
                         <div class="form-group"><label class="form-label">Formulir Kegiatan</label><input
@@ -1575,8 +1577,11 @@
                 <div class="category-block" data-cat="bugar_sehat">
                     <div class="form-section-title">Bugar Sehat</div>
                     <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Foto Kegiatan</label><input type="file"
-                                id="f_foto_kegiatan_bugar_sehat" class="form-input" accept="image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Kegiatan</label>
+                            <input type="file" id="f_foto_kegiatan_bugar_sehat" class="form-input"
+                                accept="image/*" />
+                        </div>
                         <div class="form-group"><label class="form-label">Formulir Presensi (PDF)</label><input
                                 type="file" id="f_formulir_presensi_bugar_sehat" class="form-input" /></div>
                         <div class="form-group"><label class="form-label">Formulir Kegiatan</label><input
@@ -1590,8 +1595,11 @@
                     <div class="form-grid">
                         <div class="form-group span-2"><label class="form-label">Nama Pekerja</label><input
                                 type="text" id="fNamaPekerjaRomberg" class="form-input" /></div>
-                        <div class="form-group"><label class="form-label">Foto Kegiatan</label><input type="file"
-                                id="f_foto_kegiatan_tes_keseimbangan" class="form-input" accept="image/*" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Kegiatan</label>
+                            <input type="file" id="f_foto_kegiatan_tes_keseimbangan" class="form-input"
+                                accept="image/*" />
+                        </div>
                         <div class="form-group"><label class="form-label">Formulir Hasil Pemeriksaan</label><input
                                 type="file" id="f_formulir_hasil_pemeriksaan_romberg" class="form-input" /></div>
                         <div class="form-group"><label class="form-label">Formulir Kegiatan</label><input
@@ -1606,8 +1614,10 @@
                         <div class="form-group span-4"><label class="form-label">Materi Sosialisasi</label>
                             <textarea id="fMateriSosialisasiKesehatan" class="form-textarea" rows="2"></textarea>
                         </div>
-                        <div class="form-group"><label class="form-label">Foto Kegiatan</label><input type="file"
-                                id="f_foto_kegiatan_sosialisasi_kesehatan" class="form-input" accept="image/*" />
+                        <div class="form-group">
+                            <label class="form-label">Foto Kegiatan</label>
+                            <input type="file" id="f_foto_kegiatan_sosialisasi_kesehatan" class="form-input"
+                                accept="image/*" />
                         </div>
                         <div class="form-group"><label class="form-label">Formulir Presensi (PDF)</label><input
                                 type="file" id="f_formulir_presensi_sosialisasi_kesehatan" class="form-input" />
@@ -1630,26 +1640,6 @@
                                 type="file" id="f_formulir_kegiatan_inspeksi_p3k" class="form-input" /></div>
                     </div>
                 </div>
-
-                {{-- <div class="form-section-title">Arsip &amp; Status</div>
-                <div class="form-grid">
-                    <div class="form-group span-2"><label class="form-label">Arsip</label><input type="file"
-                            id="f_arsip" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Status Pindah</label>
-                        <select id="fStatusPindah" class="form-select">
-                            <option value="PENDING">PENDING</option>
-                            <option value="SUKSES">SUKSES</option>
-                            <option value="GAGAL">GAGAL</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label class="form-label">Keputusan</label>
-                        <select id="fKeputusan" class="form-select">
-                            <option value="PENDING">PENDING</option>
-                            <option value="APPROVE">APPROVE</option>
-                            <option value="REJECT">REJECT</option>
-                        </select>
-                    </div>
-                </div> --}}
             </div>
 
             <div class="modal-actions" style="margin-top:16px;">
@@ -1688,7 +1678,7 @@
                 </div>
 
                 <div class="detail-section">
-                    <div class="detail-section-title">Arsip & Status</div>
+                    <div class="detail-section-title">Status</div>
                     <div class="form-grid" id="detailArsipGrid"></div>
                 </div>
             </div>
@@ -1726,7 +1716,6 @@
         let jenisAktivitasDebounce = null;
         let lokasiKerjaOptionsCache = [];
 
-
         // Daftar field id → nama field form (dipakai untuk kirim FormData)
         const TEXT_FIELDS = {
             fBadgeTenaga: 'badge_tenaga',
@@ -1757,25 +1746,6 @@
             fMateriSosialisasiKesehatan: 'materi_sosialisasi_kesehatan',
             fNamaPekerjaRomberg: 'nama_pekerja_romberg',
             fKelasKotakP3k: 'kelas_kotak_p3k',
-            // fStatusPindah: 'status_pindah',
-            // fKeputusan: 'keputusan',
-        };
-
-        // Peta jenis_aktifitas_kpi (text) → kategori
-        const CATEGORY_MAP = {
-            '[C.1] Laporan Inspeksi Peralatan': 'peralatan',
-            'Inspeksi Area Kerja': 'temuan',
-            'OBSERI': 'observi',
-            'Verifikasi Safety Permit': 'permit',
-            'Laporan Nearmiss': 'nearmiss',
-            'Safety Briefing': 'briefing',
-            'Reward / Punishment': 'reward',
-            'Sosialisasi Keselamatan Kerja': 'sosialisasi_keselamatan',
-            'Kegiatan DCU': 'dcu',
-            'Bugar Sehat': 'bugar_sehat',
-            'Tes Keseimbangan (Romberg)': 'romberg',
-            'Sosialisasi Kesehatan Kerja': 'sosialisasi_kesehatan',
-            'Inspeksi Kotak P3K': 'p3k',
         };
 
         // Field per kategori: field mengacu ke key hasil transform() —
@@ -2101,7 +2071,6 @@
             document.getElementById('detailNamaTitle').textContent = row.nama_tenaga || '-';
             document.getElementById('detailBadgeSub').textContent = row.badge_tenaga || '-';
 
-            // Data umum
             const umumFields = [{
                     label: 'Tanggal Pelaksanaan',
                     value: formatDate(row.tanggal_pelaksanaan)
@@ -2134,8 +2103,7 @@
                 `<div class="detail-field${f.span ? ' span-' + f.span : ''}"><label>${f.label}</label><div class="detail-value">${escapeHtml(f.value)}</div></div>`
             ).join('');
 
-            // Detail sesuai kategori
-            const category = CATEGORY_MAP[row.jenis_aktifitas_kpi];
+            const category = row.kategori_form;
             const fields = DETAIL_FIELDS[category];
             document.getElementById('detailKategoriTitle').textContent = row.jenis_aktifitas_kpi ?
                 `Detail — ${row.jenis_aktifitas_kpi}` : 'Detail Aktifitas';
@@ -2144,27 +2112,10 @@
                 fields.map(item => buildDetailField(item, row)).join('') :
                 `<div class="detail-empty-note">Tidak ada detail tambahan untuk jenis aktifitas ini.</div>`;
 
-            // Arsip & status
             const arsipFields = [{
-                    label: 'Arsip',
-                    el: row.arsip_path_url ?
-                        `<a class="detail-link" href="${escapeHtml(row.arsip_path_url)}" target="_blank" rel="noopener">Buka Arsip ↗</a>` :
-                        `<div class="detail-value" style="color:#CBD5E1;">Belum ada arsip</div>`,
-                    span: 2
-                },
-                {
-                    label: 'Status Pindah',
-                    el: `<div class="detail-value">${escapeHtml(row.status_pindah || '-')}</div>`
-                },
-                {
-                    label: 'Keputusan',
-                    el: `<div class="detail-value">${escapeHtml(row.keputusan || '-')}</div>`
-                },
-                {
-                    label: 'Indikasi Duplikat',
-                    el: `<div class="detail-value">${escapeHtml(row.indikasi_duplikat || '-')}</div>`
-                },
-            ];
+                label: 'Keputusan',
+                el: `<div class="detail-value">${escapeHtml(row.keputusan || '-')}</div>`
+            }, ];
             document.getElementById('detailArsipGrid').innerHTML = arsipFields.map(f =>
                 `<div class="detail-field${f.span ? ' span-' + f.span : ''}"><label>${f.label}</label>${f.el}</div>`
             ).join('');
@@ -2233,7 +2184,6 @@
         function onFilterChange() {
             state.jenis_aktifitas_kpi = document.getElementById('filterJenis').value;
             state.area_kerja = document.getElementById('filterAreaKerja').value;
-            state.keputusan = document.getElementById('filterKeputusan').value;
             state.page = 1;
             loadData();
         }
@@ -2248,12 +2198,10 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('filterJenis').value = '';
             document.getElementById('filterAreaKerja').value = '';
-            document.getElementById('filterKeputusan').value = '';
             Object.assign(state, {
                 search: '',
                 jenis_aktifitas_kpi: '',
                 area_kerja: '',
-                keputusan: '',
                 page: 1
             });
             loadData();
@@ -2281,7 +2229,6 @@
             };
             build('filterJenis', options.jenis_aktifitas_kpi || []);
             build('filterAreaKerja', options.area_kerja || []);
-            build('filterKeputusan', options.keputusan || []);
             filterOptionsLoaded = true;
         }
 
@@ -2298,7 +2245,6 @@
                     <td>${escapeHtml(row.jenis_aktifitas_kpi || '-')}</td>
                     <td><div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.area_kerja || '-')}</div><div class="td-name-sub">${escapeHtml(row.unit_kerja || '-')}</div></td>
                     <td>${formatDate(row.tanggal_pelaksanaan)}</td>
-                    <td><span class="status-pill ${row.status_pindah === 'SUKSES' ? 'sp-green' : row.status_pindah === 'GAGAL' ? 'sp-red' : 'sp-amber'}">${row.status_pindah}</span></td>
                     <td><span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span></td>
                     <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>
@@ -2520,56 +2466,137 @@
             }
         });
 
-        // ══════ PREVIEW GAMBAR UPLOAD ══════
-        const IMAGE_PREVIEW_FIELDS = {
-            foto_alat: 'foto_alat_path_url',
-            foto_temuan_uauc: 'foto_temuan_uauc_path_url',
-            foto_temuan_bahaya_nearmiss: 'foto_temuan_bahaya_nearmiss_path_url',
-            foto_pelaksanaan_safety_briefing: 'foto_pelaksanaan_safety_briefing_path_url',
-            foto_daftar_hadir_briefing: 'foto_daftar_hadir_briefing_path_url',
-            foto_evidence_reward: 'foto_evidence_reward_path_url',
-            foto_kegiatan_sosialisasi_keselamatan: 'foto_kegiatan_sosialisasi_keselamatan_path_url',
-            foto_kegiatan_dcu: 'foto_kegiatan_dcu_path_url',
-            foto_kegiatan_bugar_sehat: 'foto_kegiatan_bugar_sehat_path_url',
-            foto_kegiatan_tes_keseimbangan: 'foto_kegiatan_tes_keseimbangan_path_url',
-            foto_kegiatan_sosialisasi_kesehatan: 'foto_kegiatan_sosialisasi_kesehatan_path_url',
-        };
+        // ══════ SISTEM PREVIEW FILE GENERIK (image + dokumen) ══════
+        // Berlaku otomatis untuk SEMUA <input type="file"> di dalam .form-modal-body,
+        // baik saat memilih file baru (Tambah/Edit) maupun menampilkan file lama (Edit).
 
-        function previewImage(input, previewId) {
-            const box = document.getElementById(previewId);
-            if (!box) return;
-            const img = box.querySelector('img');
-            if (!input.files || !input.files[0] || !input.files[0].type.startsWith('image/')) {
-                box.style.display = 'none';
-                img.src = '';
-                return;
+        function formatFileSize(bytes) {
+            if (!bytes && bytes !== 0) return '';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let i = 0,
+                size = bytes;
+            while (size >= 1024 && i < units.length - 1) {
+                size /= 1024;
+                i++;
             }
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                img.src = e.target.result;
-                box.style.display = 'block';
-            };
-            reader.readAsDataURL(input.files[0]);
+            return `${size.toFixed(size >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
         }
 
-        function resetImagePreviews() {
-            Object.keys(IMAGE_PREVIEW_FIELDS).forEach(field => {
-                const box = document.getElementById('preview_' + field);
-                if (box) {
-                    box.style.display = 'none';
-                    box.querySelector('img').src = '';
-                }
+        function getFileNameFromUrl(url) {
+            try {
+                return decodeURIComponent(url.split('/').pop().split('?')[0]);
+            } catch (e) {
+                return 'dokumen';
+            }
+        }
+
+        function isImageUrl(url) {
+            return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(url || '');
+        }
+
+        function fieldNameFromInput(input) {
+            return input.id.replace(/^f_/, '');
+        }
+
+        function ensureFilePreviewBox(input) {
+            const fieldName = fieldNameFromInput(input);
+            let box = document.getElementById('filepreview_' + fieldName);
+            if (box) return box;
+            box = document.createElement('div');
+            box.id = 'filepreview_' + fieldName;
+            box.style.cssText = 'display:none; margin-top:8px;';
+            input.insertAdjacentElement('afterend', box);
+            return box;
+        }
+
+        function renderImagePreview(box, src, caption) {
+            box.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="${src}" alt="Preview" style="width:64px; height:64px; border-radius:8px; border:1px solid #e2e8f0; object-fit:cover; flex-shrink:0;">
+                    <div style="min-width:0;">
+                        <div style="font-size:11.5px; font-weight:600; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px;">${escapeHtml(caption)}</div>
+                        <a href="${src}" target="_blank" rel="noopener" style="font-size:11px; color:#2D4B9E; text-decoration:none;">Lihat ukuran penuh ↗</a>
+                    </div>
+                </div>`;
+            box.style.display = 'block';
+        }
+
+        function renderDocPreview(box, href, caption, isNew) {
+            box.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px; padding:6px 10px; background:#F8FAFC; border:1px solid #e2e8f0; border-radius:8px;">
+                    <span style="font-size:16px;">📄</span>
+                    <div style="min-width:0; flex:1;">
+                        <div style="font-size:11.5px; font-weight:600; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(caption)}</div>
+                        <div style="font-size:10.5px; color:#94A3B8;">${isNew ? 'Siap diupload' : 'Dokumen tersimpan'}</div>
+                    </div>
+                    ${href ? `<a href="${href}" target="_blank" rel="noopener" style="font-size:11px; color:#2D4B9E; text-decoration:none; flex-shrink:0;">Buka ↗</a>` : ''}
+                </div>`;
+            box.style.display = 'block';
+        }
+
+        function clearFilePreview(box) {
+            if (!box) return;
+            box.style.display = 'none';
+            box.innerHTML = '';
+        }
+
+        function restoreExistingPreview(input, box) {
+            const url = input.dataset.existingUrl;
+            if (!url) {
+                clearFilePreview(box);
+                return;
+            }
+            if (isImageUrl(url)) renderImagePreview(box, url, getFileNameFromUrl(url));
+            else renderDocPreview(box, url, getFileNameFromUrl(url), false);
+        }
+
+        function onFileInputChange(e) {
+            const input = e.target;
+            const box = ensureFilePreviewBox(input);
+            const file = input.files && input.files[0];
+
+            if (!file) {
+                restoreExistingPreview(input, box); // balik ke file lama (mode edit) kalau ada
+                return;
+            }
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (ev) => renderImagePreview(box, ev.target.result,
+                    `${file.name} (${formatFileSize(file.size)})`);
+                reader.readAsDataURL(file);
+            } else {
+                renderDocPreview(box, null, `${file.name} (${formatFileSize(file.size)})`, true);
+            }
+        }
+
+        function setupFilePreviewListeners() {
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                ensureFilePreviewBox(input);
+                if (input.dataset.previewBound) return;
+                input.dataset.previewBound = '1';
+                input.addEventListener('change', onFileInputChange);
             });
         }
 
-        function setExistingImagePreviews(row) {
-            Object.entries(IMAGE_PREVIEW_FIELDS).forEach(([field, urlKey]) => {
-                const box = document.getElementById('preview_' + field);
-                if (!box) return;
-                const url = row ? row[urlKey] : null;
+        function resetFilePreviews() {
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                delete input.dataset.existingUrl;
+                clearFilePreview(document.getElementById('filepreview_' + fieldNameFromInput(input)));
+            });
+        }
+
+        function setExistingFilePreviews(row) {
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                const fieldName = fieldNameFromInput(input);
+                const url = row ? row[fieldName + '_path_url'] : null;
+                const box = document.getElementById('filepreview_' + fieldName);
                 if (url) {
-                    box.querySelector('img').src = url;
-                    box.style.display = 'block';
+                    input.dataset.existingUrl = url;
+                    if (isImageUrl(url)) renderImagePreview(box, url, getFileNameFromUrl(url));
+                    else renderDocPreview(box, url, getFileNameFromUrl(url), false);
+                } else {
+                    delete input.dataset.existingUrl;
+                    clearFilePreview(box);
                 }
             });
         }
@@ -2579,7 +2606,7 @@
             currentEditId = row ? row.id : null;
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data Safety' : 'Tambah Data Safety';
 
-            await loadLokasiKerjaOptions(); // ← BARU
+            await loadLokasiKerjaOptions();
 
             document.querySelectorAll(
                 '.form-modal-body input[type="text"], .form-modal-body input[type="date"], .form-modal-body textarea, .form-modal-body select'
@@ -2590,31 +2617,24 @@
                 }
             });
             document.querySelectorAll('.form-modal-body input[type="file"]').forEach(el => el.value = '');
-            resetImagePreviews();
+            resetFilePreviews();
 
             document.getElementById('tenagaPickerInput').value = row ?
                 `${row.nama_tenaga || ''} (${row.badge_tenaga || ''})` : '';
 
             Object.entries(TEXT_FIELDS).forEach(([elId, fieldName]) => {
                 const el = document.getElementById(elId);
-                if (el && row) el.value = row[fieldName] || (fieldName.includes('status') || fieldName ===
-                    'keputusan' ? 'PENDING' : '');
+                if (el && row) el.value = row[fieldName] || '';
             });
-            // if (!row) {
-            //     document.getElementById('fStatusPindah').value = 'PENDING';
-            //     document.getElementById('fKeputusan').value = 'PENDING';
-            // }
 
-            // Area Kerja (picker dari master Lokasi Kerja)
             document.getElementById('areaKerjaInput').value = row?.area_kerja || '';
             document.getElementById('fAreaKerja').value = row?.area_kerja || '';
 
-            // Jenis Aktifitas KPI (picker dari master aktivitas_kpi_k3)
             document.getElementById('jenisAktifitasPickerInput').value = row ? (row.jenis_aktifitas_kpi || '') : '';
             document.getElementById('fJenisAktifitas').value = row ? (row.jenis_aktifitas_kpi || '') : '';
-            toggleCategoryBlocks(row ? (CATEGORY_MAP[row.jenis_aktifitas_kpi] || '') : '');
+            toggleCategoryBlocks(row ? (row.kategori_form || '') : '');
 
-            setExistingImagePreviews(row);
+            setExistingFilePreviews(row);
 
             document.getElementById('formModalOverlay').classList.add('open');
         }
@@ -2692,8 +2712,12 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupFilePreviewListeners();
+        });
     </script>
 </body>
+
 
 </html>
