@@ -92,17 +92,36 @@ class PelaporanPengawasController extends Controller
     }
 
     // Dropdown "Area Kerja" <- master Lokasi Kerja.
+    // Dropdown "Area Kerja" <- gabungan master Lokasi Kerja + opsi statis.
     public function lokasiKerjaOptions(): JsonResponse
     {
+        $staticOptions = [
+            'KAWASAN',
+            'PABRIK I A',
+            'PABRIK I B',
+            'PABRIK II A',
+            'PABRIK II B',
+            'PABRIK III A',
+            'PABRIK III B',
+            'PELABUHAN',
+            'PERGUDANGAN',
+        ];
+
         $items = LokasiKerja::query()
             ->select('nama_lokasi')
             ->whereNotNull('nama_lokasi')
             ->where('nama_lokasi', '!=', '')
             ->distinct()
-            ->orderBy('nama_lokasi')
             ->pluck('nama_lokasi');
 
-        return response()->json(['data' => $items]);
+        $merged = collect($staticOptions)
+            ->merge($items)
+            ->filter()
+            ->unique()
+            ->sort(SORT_STRING)
+            ->values();
+
+        return response()->json(['data' => $merged]);
     }
 
     // Dropdown "Unit Kerja" <- master Unit Kerja.

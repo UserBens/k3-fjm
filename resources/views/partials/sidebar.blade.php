@@ -517,10 +517,10 @@
                 href="{{ route('monitoring-laporan-so.index') }}">
                 <span class="nav-label">Monitoring SO</span>
             </a> --}}
-            <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}"
+            {{-- <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}"
                 href="{{ route('dashboard-individu.index') }}">
                 <span class="nav-label">Dashboard Individu</span>
-            </a>
+            </a> --}}
             {{-- <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}"
                 href="#">
                 <span class="nav-label">Monitoring Pengawas</span>

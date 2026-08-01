@@ -268,6 +268,7 @@ class MonitoringLaporanController extends Controller
                         'sumber' => 'PENGAWAS',
                         'sumber_label' => self::SUMBER_LABEL['PENGAWAS'],
                         'id' => $item->id,
+                        'waktu_submit' => optional($item->waktu_submit ?? $item->created_at)->toDateTimeString(),
                         'tanggal_pelaksanaan' => optional($item->tanggal_pelaksanaan)->toDateString(),
                         'nama_petugas' => $item->nama_pengawas,
                         'badge' => $item->badge_pengawas,

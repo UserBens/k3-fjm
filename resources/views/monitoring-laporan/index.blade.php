@@ -1102,6 +1102,18 @@
             });
         }
 
+        function formatDateTime(d) {
+            if (!d) return '-';
+            const dt = new Date(d.replace(' ', 'T')); // handle "YYYY-MM-DD HH:mm:ss"
+            return isNaN(dt.getTime()) ? d : dt.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         function statusPillClass(status) {
             const s = (status || '').toUpperCase();
             if (s === 'APPROVE') return 'sp-green';
@@ -1299,6 +1311,10 @@
                     `${currentDetail.sumber_label} · ${currentDetail.badge || '-'}`;
 
                 const infoFields = [{
+                        label: 'Waktu Submit',
+                        value: formatDateTime(currentDetail.waktu_submit)
+                    },
+                    {
                         label: 'Tanggal Pelaksanaan',
                         value: formatDate(currentDetail.tanggal_pelaksanaan)
                     },

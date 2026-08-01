@@ -1387,11 +1387,32 @@
 
                             <!-- 4. TUNJANGAN -->
                             <div class="pengaturan-group">
-                                <div class="pengaturan-group-title">4 · Tunjangan</div>
+                                <div class="pengaturan-group-title">4 · Tunjangan per Tim</div>
+
                                 <div class="pengaturan-field">
-                                    <label>Tunjangan Penuh per Orang (Rp)</label>
-                                    <input type="number" id="pTunjanganPenuh" min="0" required>
+                                    <label style="display:flex;align-items:center;gap:6px;">
+                                        <input type="checkbox" id="pTunjSafety" style="width:auto;"> Tim SAFETY —
+                                        Nominal Tunjangan (Rp)
+                                    </label>
+                                    <input type="number" id="pTunjanganSafety" min="0" required>
                                 </div>
+
+                                <div class="pengaturan-field">
+                                    <label style="display:flex;align-items:center;gap:6px;">
+                                        <input type="checkbox" id="pTunjPengawas" style="width:auto;"> Tim PENGAWAS —
+                                        Nominal Tunjangan (Rp)
+                                    </label>
+                                    <input type="number" id="pTunjanganPengawas" min="0" required>
+                                </div>
+
+                                <div class="pengaturan-field">
+                                    <label style="display:flex;align-items:center;gap:6px;">
+                                        <input type="checkbox" id="pTunjMedis" style="width:auto;"> Tim MEDIS —
+                                        Nominal Tunjangan (Rp)
+                                    </label>
+                                    <input type="number" id="pTunjanganMedis" min="0" required>
+                                </div>
+
                                 <div class="pengaturan-field">
                                     <label>Skor Minimum agar Tunjangan Dibayar (%)</label>
                                     <input type="number" id="pSkorMin" min="0" max="100"
@@ -1402,35 +1423,7 @@
                                     <input type="number" id="pSkorMax" min="0" max="100"
                                         step="0.1" required>
                                 </div>
-                                <div class="pengaturan-field">
-                                    <label>Tim Penerima Tunjangan</label>
-                                    <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
-                                        <label
-                                            style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:13px;color:#334155;">
-                                            <input type="checkbox" id="pTunjSafety" style="width:auto;"> Tim SAFETY
-                                        </label>
-                                        <label
-                                            style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:13px;color:#334155;">
-                                            <input type="checkbox" id="pTunjPengawas" style="width:auto;"> Tim
-                                            PENGAWAS
-                                        </label>
-                                        <label
-                                            style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:13px;color:#334155;">
-                                            <input type="checkbox" id="pTunjMedis" style="width:auto;"> Tim MEDIS
-                                        </label>
-                                    </div>
-                                </div>
 
-                                <div class="pengaturan-group-title" style="margin-top:14px;">5 · Posisi Kolom Sistem
-                                    di Sheet Form</div>
-                                <div
-                                    style="font-size:11.5px;line-height:1.7;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;">
-                                    <div><strong>Data_Safety</strong> — ID=BJ · STATUS=BK · LOKASI=BL</div>
-                                    <div><strong>Data_Pengawas</strong> — ID=M · STATUS=N · LOKASI=O</div>
-                                    <div><strong>Data_Medis</strong> — ID=J · STATUS=K · LOKASI=L</div>
-                                    <div style="margin-top:4px;font-style:italic;">Otomatis — hanya informasi, tidak
-                                        diedit di sini.</div>
-                                </div>
                             </div>
                         </div>
 
@@ -1886,7 +1879,7 @@
                 if (row.pengawas) badges.push(
                     `<span class="bobot-badge bobot-pengawas">Pengawas ${row.bobot_pengawas}%</span>`);
                 if (row.medis) badges.push(
-                `<span class="bobot-badge bobot-medis">Medis ${row.bobot_medis}%</span>`);
+                    `<span class="bobot-badge bobot-medis">Medis ${row.bobot_medis}%</span>`);
 
                 const statusPill = row.status === 'AKTIF' ?
                     '<span class="status-pill sp-green">AKTIF</span>' :
@@ -2103,7 +2096,9 @@
             document.getElementById('pPorsiKetepatan').value = p.porsi_ketepatan_waktu;
             document.getElementById('pAmbangMerah').value = p.ambang_merah;
             document.getElementById('pAmbangKuning').value = p.ambang_kuning;
-            document.getElementById('pTunjanganPenuh').value = p.tunjangan_penuh;
+            document.getElementById('pTunjanganSafety').value = p.tunjangan_safety;
+            document.getElementById('pTunjanganPengawas').value = p.tunjangan_pengawas;
+            document.getElementById('pTunjanganMedis').value = p.tunjangan_medis;
             document.getElementById('pSkorMin').value = p.skor_minimum_tunjangan;
             document.getElementById('pSkorMax').value = p.skor_maksimum_tunjangan;
             document.getElementById('pTunjSafety').checked = !!p.tim_safety_dapat_tunjangan;
@@ -2130,7 +2125,9 @@
                 batas_lapor_lebih_awal: parseInt(document.getElementById('pBatasLebihAwal').value, 10),
                 porsi_capaian_aktivitas: parseFloat(document.getElementById('pPorsiCapaian').value),
                 porsi_ketepatan_waktu: parseFloat(document.getElementById('pPorsiKetepatan').value),
-                tunjangan_penuh: parseInt(document.getElementById('pTunjanganPenuh').value, 10),
+                tunjangan_safety: parseInt(document.getElementById('pTunjanganSafety').value, 10),
+                tunjangan_pengawas: parseInt(document.getElementById('pTunjanganPengawas').value, 10),
+                tunjangan_medis: parseInt(document.getElementById('pTunjanganMedis').value, 10),
                 skor_minimum_tunjangan: parseFloat(document.getElementById('pSkorMin').value),
                 skor_maksimum_tunjangan: parseFloat(document.getElementById('pSkorMax').value),
                 tim_safety_dapat_tunjangan: document.getElementById('pTunjSafety').checked,
