@@ -424,7 +424,7 @@
 
         @php
             $monitoringActive =
-                request()->routeIs('dashboard-monitoring-kpi.*') ||
+                request()->routeIs('dashboard-kpi-k3.*') ||
                 request()->routeIs('laporan-capaian-kpi.*') ||
                 request()->routeIs('data-medis.*') ||
                 request()->routeIs('data-safety.*') ||
@@ -463,8 +463,8 @@
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
 
-            <a class="nav-link {{ request()->routeIs('dashboard-monitoring-kpi.*') ? 'active' : '' }}"
-                href="{{ route('dashboard-monitoring-kpi.index') }}">
+            <a class="nav-link {{ request()->routeIs('dashboard-kpi-k3.*') ? 'active' : '' }}"
+                href="{{ route('dashboard-kpi-k3.index') }}">
                 <span class="nav-label">Dashboard Monitoring KPI</span>
             </a>
 

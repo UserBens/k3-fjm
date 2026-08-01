@@ -1380,8 +1380,16 @@
                     <input type="hidden" id="fNamaTenaga">
                 </div>
                 <div class="form-grid">
-                    <div class="form-group"><label class="form-label">Unit Kerja</label><input type="text"
-                            id="fUnitKerja" class="form-input" /></div>
+                    <div class="form-group">
+                        <label class="form-label">Unit Kerja</label>
+                        <div class="picker-wrap">
+                            <input type="text" id="unitKerjaInput" class="form-input"
+                                placeholder="Cari Unit Kerja..." oninput="onUnitKerjaPickerInput()"
+                                onfocus="onUnitKerjaPickerFocus()" autocomplete="off" />
+                            <div class="picker-dropdown" id="unitKerjaDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fUnitKerja">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Area Kerja</label>
                         <div class="picker-wrap">
@@ -1715,6 +1723,84 @@
         let jenisAktivitasOptionsCache = [];
         let jenisAktivitasDebounce = null;
         let lokasiKerjaOptionsCache = [];
+
+        const UNIT_KERJA_OPTIONS = [
+            'GLOBAL', 'ADMINISTRASI BISNIS', 'ADMINISTRASI PEMASARAN & PENJUALAN', 'AGRO SOLUTION',
+            'AKUNTANSI BIAYA', 'ALAT BERAT ALL IN', 'ALAT BERAT EXISTING', 'ALAT BERAT ON CALL', 'ALF III',
+            'AMONIA I-A', 'AMONIA I-B', 'AUDIT OPERASI & PRODUKSI', 'BAHAN BAKU DAN BAHAN KEMAS',
+            'BARANG REJECT', 'BENGKEL FABRIKASI', 'BONGKAR MUAT', 'BUNCOB', 'CANDAL HAR I', 'CANDAL HAR II',
+            'CANDAL HAR III', 'CANDAL PRODUKSI', 'CCTPC', 'DEP. PEMELIHARAAN I', 'DEP. PRODUKSI I-B',
+            'DEP. PRODUKSI II-A', 'GUDANG & PENGANTONGAN AREA I', 'GUDANG & PENGANTONGAN AREA II',
+            'GUDANG & PENGANTONGAN AREA III', 'HARPRAS', 'HELPDESK IT', 'HUKUM & SEKRETARIAT',
+            'INFORMASI & KOMUNIKASI', 'INSPEKSI TEKNIK ROTATING', 'INSPEKSI TEKNIK STATIK', 'INSTRUMENT I',
+            'INSTRUMENT II', 'INSTRUMENT III', 'INTERKONEKSI LISTRIK', 'INVESTASI RUTIN & EPC', 'JASA',
+            'JASA PELAYANAN PABRIK', 'K3', 'KEAMANAN', 'KELLAS I', 'KELLAS II-A', 'KELLAS II-B', 'KELLAS III',
+            'KELSIN I', 'KELSIN II', 'KELSIN III', 'KEUANGAN', 'KEUANGAN DAN UMUM', 'KK PABRIK I',
+            'KK PABRIK II', 'KK PABRIK III', 'LAB', 'LAB I-A', 'LAB I-B', 'LAB II-A', 'LAB II-B', 'LAB III-A',
+            'LAB III-B', 'LAB PENELITIAN', 'LAB QUALITY ASSURANCE', 'LAB. BIOPROSES', 'LAB. FORMULASI',
+            'LAB. FORMULASI PUPUK', 'LAB. KULTUR INVITRO', 'LAB. MIKROBIOLOGI', 'LABORATORIUM', 'LISTRIK I',
+            'LISTRIK II', 'LISTRIK III', 'MANAJEMEN ASET', 'MANAJEMEN DAN PENGEMBANGAN SDM',
+            'MANAJEMEN PRODUK BARU', 'MANAJEMEN RESIKO', 'MASJID NURUL JANNAH', 'MEKANIK I', 'MEKANIK II-A',
+            'MEKANIK II-B', 'MEKANIK III', 'MEKANIKAL POMPA', 'MITRA BISNIS KORPORASI', 'NON LOGAM II-A',
+            'NON LOGAM II-B', 'NON LOGAM III', 'NPK I', 'NPK II', 'NPK III', 'NPK IV', 'O&M CSU',
+            'O&M O&M PURIFIKASI II', 'O&M PURIFIKASI I', 'O&M PURIFIKASI I & II', 'O&M TK 1400',
+            'OPERASIONAL KBL', 'OPERASIONAL SDM', 'PA GUNUNGSARI', 'PA I', 'PA II', 'PA II & UBB',
+            'PELAPORAN KEUANGAN & MANAJEMEN', 'PELAYANAN UMUM', 'PEMELIHARAAN II', 'PEMELIHARAAN III',
+            'PEMELIHARAAN KAWASAN', 'PENELITIAN & PENGEMBANGAN USAHA', 'PENGADAAN BARANG', 'PENGADAAN JASA',
+            'PENGAWAS', 'PENGELOLAAN & PEMELIHARAAN', 'PENGELOLAAN PELABUHAN', 'PENGELOLAAN PELANGGAN',
+            'PENGELOLAAN PERSEDIAAN SUKU CADANG & BAHAN BAKU', 'PENGELOLAAN PRODUK',
+            'PENGELOLAAN TRANSFORMASI BISNIS', 'PENGEMBANGAN KOMPETENSI', 'PENGEMBANGAN SISTEM & PROSEDUR',
+            'PENGENDALIAN LINGKUNGAN', 'PERENCANAAN & PENGENDALIAN', 'PERENCANAAN & PENGENDALIAN PRODUKSI',
+            'PERENCANAAN & PENGENDALIAN TA I', 'PERENCANAAN & PENGENDALIAN TA II',
+            'PERENCANAAN & PENGENDALIAN TA III', 'PERSEDIAAN BAHAN BAKU', 'PETROMART', 'PHONSKA I',
+            'PHONSKA II', 'PHONSKA III', 'PHONSKA IV', 'PHONSKA V', 'PIKPG', 'PMK', 'PORTFOLIO BISNIS',
+            'PREVENTIVE CONVEYOR', 'PROCESS SAFETY MANAGEMENT', 'PRODUKSI I-B', 'PRODUKSI II-A',
+            'PRODUKSI II-B', 'PRODUKSI III-A', 'PROJECT MANAJER RETAIL MANAJEMEN', 'PROJECT PP',
+            'PROSES & PENGENDALIAN ENERGI', 'PROTOKOL', 'PROYEK INFRASTRUKTUR', 'PUPUK ORGANIK & TANAH',
+            'RANCANG BANGUN', 'RELIABILITY', 'RENDAL & ANGGARAN', 'REWINDING MOTOR', 'RHI',
+            'RISET TEKNOLOGI', 'SA / SU I', 'SA / SU II', 'SARANA & PERLENGKAPAN', 'SDM', 'SERVICE AC',
+            'SIPIL I', 'SIPIL II-A', 'SIPIL II-B', 'SIPIL III', 'SISTEM & KESEHATAN KERJA', 'SKPG',
+            'STALIR BABAT', 'STALIR GUNUNG SARI', 'SUKU CADANG', 'TANGGUNG JAWAB SOSIAL & LINGKUNGAN',
+            'TEKNOLOGI INFORMASI', 'TRANSPORT', 'UBB', 'UREA I', 'UREA II', 'UTILITAS I-A', 'UTILITAS I-B',
+            'UTILITAS II', 'ZA I / III', 'ZA II', 'ZK', 'RSPG'
+        ];
+
+        function renderUnitKerjaDropdown(keyword = '') {
+            const dropdown = document.getElementById('unitKerjaDropdown');
+            const filtered = keyword ?
+                UNIT_KERJA_OPTIONS.filter(v => v.toLowerCase().includes(keyword.toLowerCase())) :
+                UNIT_KERJA_OPTIONS;
+
+            dropdown.innerHTML = filtered.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada data ditemukan.</div>` :
+                filtered.map(v =>
+                    `<div class="picker-item" onclick="pilihUnitKerja('${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`
+                ).join('');
+
+            dropdown.classList.add('open');
+        }
+
+        function onUnitKerjaPickerInput() {
+            document.getElementById('fUnitKerja').value = '';
+            renderUnitKerjaDropdown(document.getElementById('unitKerjaInput').value.trim());
+        }
+
+        function onUnitKerjaPickerFocus() {
+            renderUnitKerjaDropdown(document.getElementById('unitKerjaInput').value.trim());
+        }
+
+        function pilihUnitKerja(value) {
+            document.getElementById('unitKerjaInput').value = value;
+            document.getElementById('fUnitKerja').value = value;
+            document.getElementById('unitKerjaDropdown').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('unitKerjaInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('unitKerjaDropdown')?.classList.remove('open');
+            }
+        });
 
         // Daftar field id → nama field form (dipakai untuk kirim FormData)
         const TEXT_FIELDS = {
@@ -2338,7 +2424,6 @@
         function pilihTenaga(t) {
             document.getElementById('fBadgeTenaga').value = t.badge;
             document.getElementById('fNamaTenaga').value = t.nama;
-            document.getElementById('fUnitKerja').value = t.unit_kerja;
             document.getElementById('tenagaPickerInput').value = `${t.nama} (${t.badge})`;
             document.getElementById('tenagaPickerDropdown').classList.remove('open');
         }
@@ -2612,10 +2697,11 @@
                 '.form-modal-body input[type="text"], .form-modal-body input[type="date"], .form-modal-body textarea, .form-modal-body select'
             ).forEach(el => {
                 if (el.id !== 'fJenisAktifitas' && el.id !== 'jenisAktifitasPickerInput' && el.id !==
-                    'areaKerjaInput') {
+                    'areaKerjaInput' && el.id !== 'unitKerjaInput') { // ⬅️ tambahkan ini
                     el.value = '';
                 }
             });
+            
             document.querySelectorAll('.form-modal-body input[type="file"]').forEach(el => el.value = '');
             resetFilePreviews();
 
@@ -2629,7 +2715,8 @@
 
             document.getElementById('areaKerjaInput').value = row?.area_kerja || '';
             document.getElementById('fAreaKerja').value = row?.area_kerja || '';
-
+            document.getElementById('unitKerjaInput').value = row?.unit_kerja || '';
+            document.getElementById('fUnitKerja').value = row?.unit_kerja || '';
             document.getElementById('jenisAktifitasPickerInput').value = row ? (row.jenis_aktifitas_kpi || '') : '';
             document.getElementById('fJenisAktifitas').value = row ? (row.jenis_aktifitas_kpi || '') : '';
             toggleCategoryBlocks(row ? (row.kategori_form || '') : '');

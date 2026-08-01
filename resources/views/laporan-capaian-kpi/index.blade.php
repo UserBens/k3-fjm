@@ -439,6 +439,33 @@
             height: 20px;
             background: rgba(0, 0, 0, 0.07);
         }
+
+        .rtable tr.grp-header td {
+            background: #EEF2FF;
+            font-weight: 800;
+            color: #2D4B9E;
+            font-size: 11.5px;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+        }
+
+        .rtable tr.grp-subtotal td {
+            background: #F8FAFC;
+            font-weight: 800;
+            border-top: 1.5px solid #CBD5E1;
+        }
+
+        .rtable tr.grand-total td {
+            background: #1A1D2E;
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .rtable tr.total-a td {
+            background: #F1F5F9;
+            font-weight: 800;
+            border-top: 2px solid #94A3B8;
+        }
     </style>
 </head>
 
@@ -500,6 +527,7 @@
                         <table class="rtable">
                             <thead>
                                 <tr>
+                                    <th>No</th>
                                     <th>Jenis Tim</th>
                                     <th>Target Laporan</th>
                                     <th>Laporan Disetujui</th>
@@ -522,16 +550,16 @@
             </div>
 
             <!-- B & C. RINCIAN PER TIM -->
+            <!-- B. RINCIAN CAPAIAN PER AKTIVITAS KPI (seluruh tim) -->
             <div>
-                <span class="section-label sl-green">B &amp; C · Rincian per Tim</span>
+                <span class="section-label sl-green">B · Rincian Capaian per Aktivitas KPI (hanya program aktif —
+                    seluruh tim)</span>
                 <div class="card-block">
-                    <div class="tim-tabs" id="timTabs"></div>
-
-                    <div class="subsection-title">B. Rincian Capaian per Aktivitas KPI (hanya program aktif)</div>
-                    <div class="rtable-wrap" style="margin-bottom:22px;">
+                    <div class="rtable-wrap">
                         <table class="rtable">
                             <thead>
                                 <tr>
+                                    <th>Tim</th>
                                     <th>Kode</th>
                                     <th>Nama Aktivitas</th>
                                     <th>Bobot (%)</th>
@@ -542,17 +570,24 @@
                             </thead>
                             <tbody id="aktivitasBody">
                                 <tr>
-                                    <td colspan="6" class="loading-state">Memuat rincian aktivitas…</td>
+                                    <td colspan="7" class="loading-state">Memuat rincian aktivitas…</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
 
-                    <div class="subsection-title">C. Rincian per Petugas (hanya aktif · termasuk tunjangan)</div>
+            <!-- C. LAPORAN PER PETUGAS & JENIS (dikelompokkan per tim) -->
+            <div>
+                <span class="section-label sl-gold">C · Laporan per Petugas &amp; Jenis (hanya aktif · termasuk
+                    tunjangan)</span>
+                <div class="card-block">
                     <div class="rtable-wrap">
                         <table class="rtable">
                             <thead>
                                 <tr>
+                                    <th>No</th>
                                     <th>Nama Petugas</th>
                                     <th>Terkirim</th>
                                     <th>Disetujui</th>
@@ -566,7 +601,7 @@
                             </thead>
                             <tbody id="petugasBody">
                                 <tr>
-                                    <td colspan="9" class="loading-state">Memuat data petugas…</td>
+                                    <td colspan="10" class="loading-state">Memuat data petugas…</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -579,15 +614,18 @@
 
     <script>
         const API_URL = "{{ route('laporan-capaian-kpi.api') }}";
-        const fmtRp = (n) => n === null || n === undefined ? '—' : 'Rp ' + Number(n).toLocaleString('id-ID');
-        const fmtPct = (n) => n === null || n === undefined ? '—' : Number(n).toLocaleString('id-ID', {
+        const fmtRp = (n) => n === null || n === undefined || n === 0 ? '-' : 'Rp ' + Number(n).toLocaleString('id-ID');
+        const fmtPct = (n) => n === null || n === undefined ? '-' : Number(n).toLocaleString('id-ID', {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
         }) + '%';
-        const fmtNum = (n) => n === null || n === undefined ? '—' : Number(n).toLocaleString('id-ID');
+        const fmtNum = (n) => n === null || n === undefined || n === 0 ? '-' : Number(n).toLocaleString('id-ID');
 
-        let currentData = null;
-        let currentTim = 'safety';
+        const TEAM_ORDER = [
+            ['safety', 'SAFETY'],
+            ['pengawas', 'PENGAWAS'],
+            ['medis', 'MEDIS'],
+        ];
 
         function populateTahun() {
             const el = document.getElementById('fTahun');
@@ -619,79 +657,94 @@
             return 'kp-perbaikan';
         }
 
-        function renderRingkasan(tim) {
+        // ══════ SECTION A ══════
+        function renderRingkasan(tim, total) {
             const body = document.getElementById('ringkasanBody');
-            const order = [
-                ['safety', 'SAFETY'],
-                ['pengawas', 'PENGAWAS'],
-                ['medis', 'MEDIS'],
-            ];
 
-            const rows = order.map(([key, label]) => {
+            const rows = TEAM_ORDER.map(([key, label], idx) => {
                 const t = tim[key];
                 if (!t) return '';
                 return `
-                    <tr>
-                        <td style="font-weight:800;color:var(--blue)">${label}</td>
-                        <td>${fmtNum(t.target_laporan)}</td>
-                        <td>${fmtNum(t.laporan_disetujui)}</td>
-                        <td>${fmtPct(t.pencapaian_persen)}</td>
-                        <td>${fmtPct(t.ketepatan_target_persen)}</td>
-                        <td>${fmtPct(t.ketepatan_realisasi_persen)}</td>
-                        <td>${fmtPct(t.nilai_kpi_final_persen)}</td>
-                        <td>${fmtRp(t.tunjangan_tim)}</td>
-                        <td><span class="kategori-pill ${kategoriClass(t.kategori)}">${t.kategori}</span></td>
-                    </tr>`;
+            <tr>
+                <td>${idx + 1}</td>
+                <td style="font-weight:800;color:var(--blue)">${label}</td>
+                <td>${fmtNum(t.target_laporan)}</td>
+                <td>${fmtNum(t.laporan_disetujui)}</td>
+                <td>${fmtPct(t.pencapaian_persen)}</td>
+                <td>${fmtPct(t.ketepatan_target_persen)}</td>
+                <td>${fmtPct(t.ketepatan_realisasi_persen)}</td>
+                <td>${fmtPct(t.nilai_kpi_final_persen)}</td>
+                <td>${fmtRp(t.tunjangan_tim)}</td>
+                <td><span class="kategori-pill ${kategoriClass(t.kategori)}">${t.kategori}</span></td>
+            </tr>`;
             }).join('');
 
-            body.innerHTML = rows || '<tr><td colspan="9" class="empty-state">Tidak ada data untuk periode ini.</td></tr>';
+            const totalRow = total ? `
+        <tr class="total-a">
+            <td></td>
+            <td>HASIL PENCAPAIAN TIM (rata²)</td>
+            <td>${fmtNum(total.target_laporan)}</td>
+            <td>${fmtNum(total.laporan_disetujui)}</td>
+            <td>${fmtPct(total.pencapaian_persen)}</td>
+            <td>${fmtPct(total.ketepatan_target_persen)}</td>
+            <td>${fmtPct(total.ketepatan_realisasi_persen)}</td>
+            <td>${fmtPct(total.nilai_kpi_final_persen)}</td>
+            <td>${fmtRp(total.tunjangan_tim)}</td>
+            <td><span class="kategori-pill ${kategoriClass(total.kategori)}">${total.kategori}</span></td>
+        </tr>` : '';
+
+            body.innerHTML = (rows ||
+                '<tr><td colspan="10" class="empty-state">Tidak ada data untuk periode ini.</td></tr>') + totalRow;
         }
 
-        function renderTabs(tim) {
-            const wrap = document.getElementById('timTabs');
-            const order = [
-                ['safety', 'SAFETY'],
-                ['pengawas', 'PENGAWAS'],
-                ['medis', 'MEDIS'],
-            ];
-            wrap.innerHTML = order.map(([key, label]) =>
-                `<div class="tim-tab ${key === currentTim ? 'active' : ''}" data-tim="${key}">${label}</div>`
-            ).join('');
+        // ══════ SECTION B (gabungan seluruh tim, urut Safety → Pengawas → Medis) ══════
+        function renderAktivitasGabungan(tim) {
+            const body = document.getElementById('aktivitasBody');
+            let rows = [];
 
-            wrap.querySelectorAll('.tim-tab').forEach(el => {
-                el.addEventListener('click', () => {
-                    currentTim = el.dataset.tim;
-                    renderTabs(currentData.tim);
-                    renderDetailTim(currentData.tim[currentTim]);
+            TEAM_ORDER.forEach(([key, label]) => {
+                const t = tim[key];
+                if (!t || !t.rincian_aktivitas) return;
+                t.rincian_aktivitas.forEach(r => {
+                    rows.push(`
+                <tr>
+                    <td style="font-weight:700;">${label}</td>
+                    <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
+                    <td>${r.nama_aktivitas}</td>
+                    <td>${fmtPct(r.bobot_persen)}</td>
+                    <td>${fmtNum(r.target_periode)}</td>
+                    <td>${fmtNum(r.disetujui)}</td>
+                    <td>${fmtPct(r.aktual_pencapaian_persen)}</td>
+                </tr>`);
                 });
             });
+
+            body.innerHTML = rows.length ?
+                rows.join('') :
+                '<tr><td colspan="7" class="empty-state">Belum ada aktivitas aktif.</td></tr>';
         }
 
-        function renderDetailTim(t) {
-            const aktBody = document.getElementById('aktivitasBody');
-            const petBody = document.getElementById('petugasBody');
+        // ══════ SECTION C (dikelompokkan per tim + subtotal + grand total) ══════
+        function renderPetugasGabungan(tim, totalTunjanganSeluruhTim) {
+            const body = document.getElementById('petugasBody');
+            let html = '';
+            let adaData = false;
 
-            if (!t || !t.rincian_aktivitas || t.rincian_aktivitas.length === 0) {
-                aktBody.innerHTML =
-                    '<tr><td colspan="6" class="empty-state">Belum ada aktivitas aktif untuk tim ini.</td></tr>';
-            } else {
-                aktBody.innerHTML = t.rincian_aktivitas.map(r => `
-                    <tr>
-                        <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
-                        <td>${r.nama_aktivitas}</td>
-                        <td>${fmtPct(r.bobot_persen)}</td>
-                        <td>${fmtNum(r.target_periode)}</td>
-                        <td>${fmtNum(r.disetujui)}</td>
-                        <td>${fmtPct(r.aktual_pencapaian_persen)}</td>
-                    </tr>`).join('');
-            }
+            TEAM_ORDER.forEach(([key, label]) => {
+                const t = tim[key];
+                if (!t) return;
+                adaData = true;
 
-            if (!t || !t.petugas || t.petugas.length === 0) {
-                petBody.innerHTML =
-                    '<tr><td colspan="9" class="empty-state">Belum ada petugas terdaftar untuk tim ini.</td></tr>';
-            } else {
-                petBody.innerHTML = t.petugas.map(p => `
+                html += `<tr class="grp-header"><td colspan="10">TIM ${label}</td></tr>`;
+
+                if (!t.petugas || t.petugas.length === 0) {
+                    html +=
+                        `<tr><td colspan="10" class="empty-state">Belum ada petugas terdaftar untuk tim ini.</td></tr>`;
+                } else {
+                    t.petugas.forEach((p, idx) => {
+                        html += `
                     <tr>
+                        <td>${idx + 1}</td>
                         <td>${p.nama} <span style="color:#94A3B8;font-weight:600;">(${p.badge ?? '-'})</span></td>
                         <td>${fmtNum(p.terkirim)}</td>
                         <td>${fmtNum(p.disetujui)}</td>
@@ -701,8 +754,39 @@
                         <td>${p.standby}</td>
                         <td>${fmtNum(p.hari_kerja_efektif)}</td>
                         <td>${fmtRp(p.tunjangan)}</td>
-                    </tr>`).join('');
+                    </tr>`;
+                    });
+                }
+
+                const terkirimTim = (t.petugas || []).reduce((s, p) => s + (p.terkirim || 0), 0);
+
+                html += `
+            <tr class="grp-subtotal">
+                <td></td>
+                <td>SUBTOTAL ${label} (aktif)</td>
+                <td>${fmtNum(terkirimTim)}</td>
+                <td>${fmtNum(t.laporan_disetujui)}</td>
+                <td>${fmtPct(t.pencapaian_persen)}</td>
+                <td></td>
+                <td>${fmtPct(t.nilai_kpi_final_persen)}</td>
+                <td></td>
+                <td></td>
+                <td>${fmtRp(t.tunjangan_tim)}</td>
+            </tr>`;
+            });
+
+            if (!adaData) {
+                body.innerHTML = '<tr><td colspan="10" class="empty-state">Tidak ada data untuk periode ini.</td></tr>';
+                return;
             }
+
+            html += `
+        <tr class="grand-total">
+            <td colspan="9">TOTAL TUNJANGAN SELURUH PETUGAS AKTIF (periode ini)</td>
+            <td>${fmtRp(totalTunjanganSeluruhTim)}</td>
+        </tr>`;
+
+            body.innerHTML = html;
         }
 
         async function loadLaporan() {
@@ -710,20 +794,19 @@
                 const res = await fetch(`${API_URL}?${buildQuery()}`);
                 if (!res.ok) throw new Error('Gagal memuat data');
                 const json = await res.json();
-                currentData = json;
 
                 renderPeriode(json.periode);
-                renderRingkasan(json.tim);
-                renderTabs(json.tim);
-                renderDetailTim(json.tim[currentTim]);
+                renderRingkasan(json.tim, json.total);
+                renderAktivitasGabungan(json.tim);
+                renderPetugasGabungan(json.tim, json.total_tunjangan_seluruh_tim);
             } catch (e) {
                 console.error(e);
                 document.getElementById('ringkasanBody').innerHTML =
-                    '<tr><td colspan="9" class="empty-state">Gagal memuat laporan.</td></tr>';
+                    '<tr><td colspan="10" class="empty-state">Gagal memuat laporan.</td></tr>';
                 document.getElementById('aktivitasBody').innerHTML =
-                    '<tr><td colspan="6" class="empty-state">Gagal memuat data.</td></tr>';
+                    '<tr><td colspan="7" class="empty-state">Gagal memuat data.</td></tr>';
                 document.getElementById('petugasBody').innerHTML =
-                    '<tr><td colspan="9" class="empty-state">Gagal memuat data.</td></tr>';
+                    '<tr><td colspan="10" class="empty-state">Gagal memuat data.</td></tr>';
             }
         }
 

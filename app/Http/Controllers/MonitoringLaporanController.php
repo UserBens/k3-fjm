@@ -200,6 +200,50 @@ class MonitoringLaporanController extends Controller
 
                 case 'SAFETY':
                     $item = DataSafety::findOrFail($id);
+
+                    // Peta semua kemungkinan kolom dokumen/foto di data_safety -> label yang ditampilkan
+                    $dokumenMap = [
+                        'foto_alat_path'                              => 'Foto Alat',
+                        'formulir_inspeksi_peralatan_path'             => 'Formulir Inspeksi Peralatan',
+                        'formulir_kegiatan_inspeksi_peralatan_path'    => 'Formulir Kegiatan Inspeksi Peralatan',
+                        'foto_temuan_uauc_path'                        => 'Foto Temuan UA/UC',
+                        'formulir_kegiatan_inspeksi_area_kerja_path'   => 'Formulir Kegiatan Inspeksi Area Kerja',
+                        'formulir_observi_path'                        => 'Formulir Observasi',
+                        'formulir_kegiatan_observi_path'               => 'Formulir Kegiatan Observasi',
+                        'safety_permit_path'                           => 'Safety Permit',
+                        'formulir_kegiatan_verifikasi_safety_permit_path' => 'Formulir Verifikasi Safety Permit',
+                        'foto_temuan_bahaya_nearmiss_path'             => 'Foto Temuan Bahaya Nearmiss',
+                        'foto_pelaksanaan_safety_briefing_path'        => 'Foto Pelaksanaan Safety Briefing',
+                        'foto_daftar_hadir_briefing_path'              => 'Foto Daftar Hadir Briefing',
+                        'formulir_kegiatan_safety_briefing_path'       => 'Formulir Kegiatan Safety Briefing',
+                        'foto_evidence_reward_path'                    => 'Foto Evidence Reward',
+                        'formulir_kegiatan_reward_path'                => 'Formulir Kegiatan Reward',
+                        'foto_kegiatan_sosialisasi_keselamatan_path'   => 'Foto Kegiatan Sosialisasi Keselamatan',
+                        'formulir_presensi_sosialisasi_keselamatan_path' => 'Formulir Presensi Sosialisasi Keselamatan',
+                        'formulir_kegiatan_sosialisasi_keselamatan_path' => 'Formulir Kegiatan Sosialisasi Keselamatan',
+                        'foto_kegiatan_dcu_path'                       => 'Foto Kegiatan DCU',
+                        'formulir_hasil_pemeriksaan_dcu_path'          => 'Formulir Hasil Pemeriksaan DCU',
+                        'formulir_kegiatan_pemeriksaan_dcu_path'       => 'Formulir Kegiatan Pemeriksaan DCU',
+                        'foto_kegiatan_bugar_sehat_path'                => 'Foto Kegiatan Bugar Sehat',
+                        'formulir_presensi_bugar_sehat_path'           => 'Formulir Presensi Bugar Sehat',
+                        'formulir_kegiatan_bugar_sehat_path'           => 'Formulir Kegiatan Bugar Sehat',
+                        'foto_kegiatan_tes_keseimbangan_path'          => 'Foto Kegiatan Tes Keseimbangan',
+                        'formulir_hasil_pemeriksaan_romberg_path'      => 'Formulir Hasil Pemeriksaan Romberg',
+                        'formulir_kegiatan_tes_keseimbangan_path'      => 'Formulir Kegiatan Tes Keseimbangan',
+                        'foto_kegiatan_sosialisasi_kesehatan_path'     => 'Foto Kegiatan Sosialisasi Kesehatan',
+                        'formulir_presensi_sosialisasi_kesehatan_path' => 'Formulir Presensi Sosialisasi Kesehatan',
+                        'formulir_kegiatan_sosialisasi_kesehatan_path' => 'Formulir Kegiatan Sosialisasi Kesehatan',
+                        'kesesuaian_isi_p3k_path'                      => 'Kesesuaian Isi P3K',
+                        'formulir_kegiatan_inspeksi_p3k_path'          => 'Formulir Kegiatan Inspeksi P3K',
+                    ];
+
+                    $dokumen = [];
+                    foreach ($dokumenMap as $column => $label) {
+                        if (!empty($item->{$column})) {
+                            $dokumen[$label] = asset('storage/' . $item->{$column});
+                        }
+                    }
+
                     $data = [
                         'sumber' => 'SAFETY',
                         'sumber_label' => self::SUMBER_LABEL['SAFETY'],
@@ -214,9 +258,7 @@ class MonitoringLaporanController extends Controller
                         'status' => $item->keputusan,
                         'status_pindah' => $item->status_pindah,
                         'indikasi_duplikat' => $item->indikasi_duplikat,
-                        'dokumen' => array_filter([
-                            'Arsip' => $item->arsip_path ? asset('storage/' . $item->arsip_path) : null,
-                        ]),
+                        'dokumen' => $dokumen,
                     ];
                     break;
 

@@ -596,6 +596,32 @@
             height: 20px;
             background: rgba(0, 0, 0, 0.07);
         }
+
+        .kpi-tab-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .kpi-tab-btn {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .kpi-tab-btn.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+
+        .kpi-tab-panel {}
     </style>
 </head>
 
@@ -640,7 +666,7 @@
                             <option value="12">Desember</option>
                         </select>
                     </div>
-                    <div class="saklar-field">
+                    {{-- <div class="saklar-field">
                         <label>Tim</label>
                         <select id="fTim">
                             <option value="SEMUA">SEMUA</option>
@@ -648,7 +674,7 @@
                             <option value="PENGAWAS">PENGAWAS</option>
                             <option value="MEDIS">MEDIS</option>
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="saklar-field">
                         <label>Area</label>
                         <select id="fArea">
@@ -670,6 +696,181 @@
                     </div>
                 </div>
                 <div class="periode-aktif-line" id="periodeAktifLine">Memuat periode aktif…</div>
+            </div>
+
+            <!-- MONITORING PER PERSONIL + RINCIAN AKTIVITAS -->
+            {{-- <div>
+                <span class="section-label sl-gold">Monitoring &amp; Rincian per Personil</span>
+                <div class="card-block">
+                    <div class="monitor-grid">
+                        <div>
+                            <div class="personil-select-wrap">
+                                <label>Pilih Nama</label>
+                                <select id="fPersonil"></select>
+                            </div>
+                            <div id="monitoringBox"
+                                style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
+                                <div class="loading-state">Memuat data personil…</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="rtable-wrap">
+                                <table class="rtable">
+                                    <thead>
+                                        <tr>
+                                            <th>Kode</th>
+                                            <th>Nama Aktivitas KPI</th>
+                                            <th>Target/Bulan</th>
+                                            <th>Laporan Disetujui</th>
+                                            <th>Bobot Item (%)</th>
+                                            <th>Kontribusi (%)</th>
+                                            <th>Status Capaian</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rincianBody">
+                                        <tr>
+                                            <td colspan="7" class="loading-state">Memuat rincian aktivitas…</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+
+            <!-- MONITORING PER PERSONIL + RINCIAN AKTIVITAS — PER TIM (TAB) -->
+            <div>
+                <span class="section-label sl-gold">Monitoring &amp; Rincian per Personil</span>
+                <div class="card-block">
+
+                    <div class="kpi-tab-bar">
+                        <button type="button" class="kpi-tab-btn active" data-tim="SAFETY"
+                            onclick="switchTeamTab('SAFETY')">Safety</button>
+                        <button type="button" class="kpi-tab-btn" data-tim="PENGAWAS"
+                            onclick="switchTeamTab('PENGAWAS')">Pengawas</button>
+                        <button type="button" class="kpi-tab-btn" data-tim="MEDIS"
+                            onclick="switchTeamTab('MEDIS')">Medis</button>
+                    </div>
+
+                    <!-- PANEL SAFETY -->
+                    <div class="kpi-tab-panel" data-tim-panel="SAFETY">
+                        <div class="monitor-grid">
+                            <div>
+                                <div class="personil-select-wrap">
+                                    <label>Pilih Nama (Safety)</label>
+                                    <select id="fPersonil_SAFETY"></select>
+                                </div>
+                                <div id="monitoringBox_SAFETY"
+                                    style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
+                                    <div class="loading-state">Memuat data personil…</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="rtable-wrap">
+                                    <table class="rtable">
+                                        <thead>
+                                            <tr>
+                                                <th>Kode</th>
+                                                <th>Nama Aktivitas KPI</th>
+                                                <th>Target/Bulan</th>
+                                                <th>Laporan Disetujui</th>
+                                                <th>Bobot Item (%)</th>
+                                                <th>Kontribusi (%)</th>
+                                                <th>Status Capaian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rincianBody_SAFETY">
+                                            <tr>
+                                                <td colspan="7" class="loading-state">Memuat rincian aktivitas…
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL PENGAWAS -->
+                    <div class="kpi-tab-panel" data-tim-panel="PENGAWAS" style="display:none;">
+                        <div class="monitor-grid">
+                            <div>
+                                <div class="personil-select-wrap">
+                                    <label>Pilih Nama (Pengawas)</label>
+                                    <select id="fPersonil_PENGAWAS"></select>
+                                </div>
+                                <div id="monitoringBox_PENGAWAS"
+                                    style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
+                                    <div class="loading-state">Memuat data personil…</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="rtable-wrap">
+                                    <table class="rtable">
+                                        <thead>
+                                            <tr>
+                                                <th>Kode</th>
+                                                <th>Nama Aktivitas KPI</th>
+                                                <th>Target/Bulan</th>
+                                                <th>Laporan Disetujui</th>
+                                                <th>Bobot Item (%)</th>
+                                                <th>Kontribusi (%)</th>
+                                                <th>Status Capaian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rincianBody_PENGAWAS">
+                                            <tr>
+                                                <td colspan="7" class="loading-state">Memuat rincian aktivitas…
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL MEDIS -->
+                    <div class="kpi-tab-panel" data-tim-panel="MEDIS" style="display:none;">
+                        <div class="monitor-grid">
+                            <div>
+                                <div class="personil-select-wrap">
+                                    <label>Pilih Nama (Medis)</label>
+                                    <select id="fPersonil_MEDIS"></select>
+                                </div>
+                                <div id="monitoringBox_MEDIS"
+                                    style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
+                                    <div class="loading-state">Memuat data personil…</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="rtable-wrap">
+                                    <table class="rtable">
+                                        <thead>
+                                            <tr>
+                                                <th>Kode</th>
+                                                <th>Nama Aktivitas KPI</th>
+                                                <th>Target/Bulan</th>
+                                                <th>Laporan Disetujui</th>
+                                                <th>Bobot Item (%)</th>
+                                                <th>Kontribusi (%)</th>
+                                                <th>Status Capaian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rincianBody_MEDIS">
+                                            <tr>
+                                                <td colspan="7" class="loading-state">Memuat rincian aktivitas…
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <!-- RINGKASAN STATUS DOKUMEN -->
@@ -725,53 +926,16 @@
                     </div>
                 </div>
             </div>
-
-            <!-- MONITORING PER PERSONIL + RINCIAN AKTIVITAS -->
-            <div>
-                <span class="section-label sl-gold">Monitoring &amp; Rincian per Personil</span>
-                <div class="card-block">
-                    <div class="monitor-grid">
-                        <div>
-                            <div class="personil-select-wrap">
-                                <label>Pilih Nama</label>
-                                <select id="fPersonil"></select>
-                            </div>
-                            <div id="monitoringBox"
-                                style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
-                                <div class="loading-state">Memuat data personil…</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="rtable-wrap">
-                                <table class="rtable">
-                                    <thead>
-                                        <tr>
-                                            <th>Kode</th>
-                                            <th>Nama Aktivitas KPI</th>
-                                            <th>Target/Bulan</th>
-                                            <th>Laporan Disetujui</th>
-                                            <th>Bobot Item (%)</th>
-                                            <th>Kontribusi (%)</th>
-                                            <th>Status Capaian</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rincianBody">
-                                        <tr>
-                                            <td colspan="7" class="loading-state">Memuat rincian aktivitas…</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            
         </div>
     </div>
 
     <script>
         const API_URL = "{{ route('dashboard-kpi-k3.api') }}";
+        const TEAMS = ['SAFETY', 'PENGAWAS', 'MEDIS'];
+        let activeTeamTab = 'SAFETY';
+        const teamLoaded = {}; // cache flag per tim
+
         const fmtRp = (n) => n === null || n === undefined ? '—' : 'Rp ' + Number(n).toLocaleString('id-ID');
         const fmtPct = (n) => n === null || n === undefined ? '—' : Number(n).toLocaleString('id-ID', {
             minimumFractionDigits: 1,
@@ -791,13 +955,29 @@
             el.value = current;
         }
 
-        function buildQuery(personilKey) {
+        function baseParams() {
+            return {
+                tahun: document.getElementById('fTahun').value,
+                bulan: document.getElementById('fBulan').value,
+                area: document.getElementById('fArea').value,
+                tampilkan_rupiah: document.getElementById('fRupiah').value,
+            };
+        }
+
+        function buildQueryTop() {
+            return new URLSearchParams({
+                ...baseParams(),
+                tim: 'SEMUA'
+            }).toString();
+        }
+
+        function buildQueryTeam(tim, personilKey) {
             const params = new URLSearchParams({
                 tahun: document.getElementById('fTahun').value,
                 bulan: document.getElementById('fBulan').value,
-                tim: document.getElementById('fTim').value,
                 area: document.getElementById('fArea').value,
                 tampilkan_rupiah: document.getElementById('fRupiah').value,
+                tim,
             });
             if (personilKey) params.set('personil', personilKey);
             return params.toString();
@@ -805,7 +985,7 @@
 
         function renderPeriode(p) {
             document.getElementById('periodeAktifLine').innerHTML =
-                `Periode aktif: <b>${p.periode_mulai}</b> s/d <b>${p.periode_selesai}</b> &nbsp;|&nbsp; <b>${p.bulan_label}</b> &nbsp;·&nbsp; Tim: <b>${p.tim}</b> · Area: <b>${p.area}</b>`;
+                `Periode aktif: <b>${p.periode_mulai}</b> s/d <b>${p.periode_selesai}</b> &nbsp;|&nbsp; <b>${p.bulan_label}</b> &nbsp;·&nbsp; Area: <b>${p.area}</b>`;
         }
 
         function renderRingkasan(r) {
@@ -824,60 +1004,6 @@
             document.getElementById('ikPersonilBaik').textContent = fmtNum(ik.jumlah_personil_baik);
         }
 
-        function kategoriClass(k) {
-            if (k === 'BAIK') return 'kp-baik';
-            if (k === 'CUKUP') return 'kp-cukup';
-            return 'kp-perbaikan';
-        }
-
-        function renderMonitoring(m) {
-            const box = document.getElementById('monitoringBox');
-            if (!m) {
-                box.innerHTML = '<div class="empty-state">Belum ada personil pada filter ini.</div>';
-                return;
-            }
-            box.innerHTML = `
-                <div class="kv-row"><span class="k">Tim / Jenis Petugas</span><span class="v">${m.tim}</span></div>
-                <div class="kv-row"><span class="k">Hari Kerja Efektif</span><span class="v">${fmtNum(m.hari_kerja_efektif)}</span></div>
-                <div class="kv-row"><span class="k">Total Target Laporan (Periode)</span><span class="v">${fmtNum(m.total_target_laporan)}</span></div>
-                <div class="kv-row"><span class="k">Jumlah Laporan Disetujui</span><span class="v">${fmtNum(m.jumlah_laporan_disetujui)}</span></div>
-                <div class="kv-row"><span class="k">Jumlah Laporan Tepat Waktu</span><span class="v">${fmtNum(m.jumlah_laporan_tepat_waktu)}</span></div>
-                <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
-                <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
-                <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v" style="color:var(--blue)">${fmtPct(m.nilai_kpi_final)}</span></div>
-                <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
-                <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
-                <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
-                <div class="kv-row"><span class="k">Kategori Penilaian</span><span class="kategori-pill ${kategoriClass(m.kategori_penilaian)}">${m.kategori_penilaian}</span></div>
-            `;
-        }
-
-        function renderRincian(rows) {
-            const body = document.getElementById('rincianBody');
-            if (!rows || rows.length === 0) {
-                body.innerHTML =
-                    '<tr><td colspan="7" class="empty-state">Tidak ada aktivitas untuk personil/filter ini.</td></tr>';
-                return;
-            }
-            body.innerHTML = rows.map(r => `
-                <tr>
-                    <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
-                    <td>${r.nama_aktivitas}</td>
-                    <td>${fmtNum(r.target_per_bulan)}</td>
-                    <td>${fmtNum(r.laporan_disetujui)}</td>
-                    <td>${fmtPct(r.bobot_item)}</td>
-                    <td>${fmtPct(r.kontribusi)}</td>
-                    <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
-                </tr>
-            `).join('');
-        }
-
-        function renderPersonilOptions(options, selectedKey) {
-            const el = document.getElementById('fPersonil');
-            el.innerHTML = options.map(o => `<option value="${o.key}">${o.label} — ${o.tim}</option>`).join('');
-            if (selectedKey) el.value = selectedKey;
-        }
-
         function renderAreaOptions(areas) {
             const el = document.getElementById('fArea');
             const current = el.value;
@@ -886,31 +1012,132 @@
             el.value = current || 'SEMUA';
         }
 
-        async function loadDashboard(personilKey) {
+        function kategoriClass(k) {
+            if (k === 'BAIK') return 'kp-baik';
+            if (k === 'CUKUP') return 'kp-cukup';
+            return 'kp-perbaikan';
+        }
+
+        function renderMonitoringFor(tim, m) {
+            const box = document.getElementById(`monitoringBox_${tim}`);
+            if (!m) {
+                box.innerHTML = '<div class="empty-state">Belum ada personil pada filter ini.</div>';
+                return;
+            }
+            box.innerHTML = `
+        <div class="kv-row"><span class="k">Tim / Jenis Petugas</span><span class="v">${m.tim}</span></div>
+        <div class="kv-row"><span class="k">Hari Kerja Efektif</span><span class="v">${fmtNum(m.hari_kerja_efektif)}</span></div>
+        <div class="kv-row"><span class="k">Total Target Laporan (Periode)</span><span class="v">${fmtNum(m.total_target_laporan)}</span></div>
+        <div class="kv-row"><span class="k">Jumlah Laporan Disetujui</span><span class="v">${fmtNum(m.jumlah_laporan_disetujui)}</span></div>
+        <div class="kv-row"><span class="k">Jumlah Laporan Tepat Waktu</span><span class="v">${fmtNum(m.jumlah_laporan_tepat_waktu)}</span></div>
+        <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
+        <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
+        <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v" style="color:var(--blue)">${fmtPct(m.nilai_kpi_final)}</span></div>
+        <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
+        <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
+        <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
+        <div class="kv-row"><span class="k">Kategori Penilaian</span><span class="kategori-pill ${kategoriClass(m.kategori_penilaian)}">${m.kategori_penilaian}</span></div>
+    `;
+        }
+
+        function renderRincianFor(tim, rows) {
+            const body = document.getElementById(`rincianBody_${tim}`);
+            if (!rows || rows.length === 0) {
+                body.innerHTML =
+                    '<tr><td colspan="7" class="empty-state">Tidak ada aktivitas untuk personil/filter ini.</td></tr>';
+                return;
+            }
+            body.innerHTML = rows.map(r => `
+        <tr>
+            <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
+            <td>${r.nama_aktivitas}</td>
+            <td>${fmtNum(r.target_per_bulan)}</td>
+            <td>${fmtNum(r.laporan_disetujui)}</td>
+            <td>${fmtPct(r.bobot_item)}</td>
+            <td>${fmtPct(r.kontribusi)}</td>
+            <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
+        </tr>
+    `).join('');
+        }
+
+        function renderPersonilOptionsFor(tim, options, selectedKey) {
+            const el = document.getElementById(`fPersonil_${tim}`);
+            el.innerHTML = options.map(o => `<option value="${o.key}">${o.label}</option>`).join('');
+            if (selectedKey) el.value = selectedKey;
+        }
+
+        async function loadTopData() {
             try {
-                const res = await fetch(`${API_URL}?${buildQuery(personilKey)}`);
+                const res = await fetch(`${API_URL}?${buildQueryTop()}`);
                 if (!res.ok) throw new Error('Gagal memuat data');
                 const json = await res.json();
-
                 renderPeriode(json.periode);
                 renderRingkasan(json.ringkasan_status_dokumen);
                 renderIndikator(json.indikator_kpi);
                 renderAreaOptions(json.area_options || []);
-                renderPersonilOptions(json.personil_options || [], json.personil_terpilih);
-                renderMonitoring(json.monitoring_personil);
-                renderRincian(json.rincian_aktivitas);
             } catch (e) {
                 console.error(e);
-                document.getElementById('monitoringBox').innerHTML =
-                    '<div class="empty-state">Gagal memuat data dashboard.</div>';
             }
         }
 
-        document.getElementById('btnTerapkan').addEventListener('click', () => loadDashboard());
-        document.getElementById('fPersonil').addEventListener('change', (e) => loadDashboard(e.target.value));
+        async function loadTeamData(tim, personilKey) {
+            const box = document.getElementById(`monitoringBox_${tim}`);
+            const body = document.getElementById(`rincianBody_${tim}`);
+            box.innerHTML = '<div class="loading-state">Memuat data personil…</div>';
+            body.innerHTML = '<tr><td colspan="7" class="loading-state">Memuat rincian aktivitas…</td></tr>';
+            try {
+                const res = await fetch(`${API_URL}?${buildQueryTeam(tim, personilKey)}`);
+                if (!res.ok) throw new Error('Gagal memuat data');
+                const json = await res.json();
+
+                // Top panel sekarang ikut personil/tim yang aktif di tab ini
+                renderPeriode(json.periode);
+                renderRingkasan(json.ringkasan_status_dokumen);
+                renderIndikator(json.indikator_kpi);
+                renderAreaOptions(json.area_options || []);
+
+                renderPersonilOptionsFor(tim, json.personil_options || [], json.personil_terpilih);
+                renderMonitoringFor(tim, json.monitoring_personil);
+                renderRincianFor(tim, json.rincian_aktivitas);
+                teamLoaded[tim] = true;
+            } catch (e) {
+                console.error(e);
+                box.innerHTML = '<div class="empty-state">Gagal memuat data tim ini.</div>';
+            }
+        }
+
+        function switchTeamTab(tim) {
+            activeTeamTab = tim;
+            document.querySelectorAll('.kpi-tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tim === tim);
+            });
+            document.querySelectorAll('.kpi-tab-panel').forEach(panel => {
+                panel.style.display = panel.dataset.timPanel === tim ? '' : 'none';
+            });
+            // pindah tab -> top panel ikut ganti ke data tim ini, entah dari cache atau fetch baru
+            if (!teamLoaded[tim]) {
+                loadTeamData(tim);
+            } else {
+                // sudah pernah di-load sebelumnya, tapi top panel bisa saja lagi menampilkan tim lain -> refresh ringan
+                const currentPersonil = document.getElementById(`fPersonil_${tim}`)?.value || null;
+                loadTeamData(tim, currentPersonil);
+            }
+        }
+
+        TEAMS.forEach(tim => {
+            document.getElementById(`fPersonil_${tim}`).addEventListener('change', (e) => {
+                loadTeamData(tim, e.target.value);
+            });
+        });
+
+        document.getElementById('btnTerapkan').addEventListener('click', () => {
+            TEAMS.forEach(t => teamLoaded[t] = false);
+            const currentPersonil = document.getElementById(`fPersonil_${activeTeamTab}`)?.value || null;
+            loadTeamData(activeTeamTab, currentPersonil);
+        });
 
         populateTahun();
-        loadDashboard();
+        loadTeamData('SAFETY'); // tab default saat halaman pertama dibuka
     </script>
 </body>
 

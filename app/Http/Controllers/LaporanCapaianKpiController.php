@@ -202,6 +202,8 @@ class LaporanCapaianKpiController extends Controller
             ];
         }
 
+        $totalRow = $this->hitungTotalTim($hasil, $pengaturan);
+
         return response()->json([
             'periode' => [
                 'mulai' => $periodeMulai->format('d/m/Y'),
@@ -209,8 +211,44 @@ class LaporanCapaianKpiController extends Controller
                 'bulan_label' => Carbon::create($tahun, $bulan, 1)->translatedFormat('F Y'),
             ],
             'tim' => $hasil,
+            'total' => $totalRow,                                          // ⬅️ baru
             'total_tunjangan_seluruh_tim' => collect($hasil)->sum('tunjangan_tim'),
         ]);
+    }
+
+    private function hitungTotalTim(array $hasil, PengaturanKpiK3 $pengaturan): array
+    {
+        $timList = collect($hasil);
+        $jumlahTim = $timList->count();
+
+        if ($jumlahTim === 0) {
+            return [
+                'target_laporan' => 0,
+                'laporan_disetujui' => 0,
+                'pencapaian_persen' => 0.0,
+                'ketepatan_target_persen' => 100.0,
+                'ketepatan_realisasi_persen' => 0.0,
+                'nilai_kpi_final_persen' => 0.0,
+                'tunjangan_tim' => 0,
+                'kategori' => 'PERLU PERBAIKAN',
+            ];
+        }
+
+        $rataPencapaian = round($timList->avg('pencapaian_persen'), 1);
+        $rataKetepatanTarget = round($timList->avg('ketepatan_target_persen'), 1);
+        $rataKetepatanRealisasi = round($timList->avg(fn($t) => $t['ketepatan_realisasi_persen'] ?? 0), 1);
+        $rataNilaiKpiFinal = round($timList->avg('nilai_kpi_final_persen'), 1);
+
+        return [
+            'target_laporan' => (int) $timList->sum('target_laporan'),
+            'laporan_disetujui' => (int) $timList->sum('laporan_disetujui'),
+            'pencapaian_persen' => $rataPencapaian,
+            'ketepatan_target_persen' => $rataKetepatanTarget,
+            'ketepatan_realisasi_persen' => $rataKetepatanRealisasi,
+            'nilai_kpi_final_persen' => $rataNilaiKpiFinal,
+            'tunjangan_tim' => (int) $timList->sum('tunjangan_tim'),
+            'kategori' => $this->kategoriTim($rataPencapaian, $pengaturan),
+        ];
     }
 
     private function resolvePeriode(PengaturanKpiK3 $pengaturan, int $tahun, int $bulan): array
@@ -232,8 +270,19 @@ class LaporanCapaianKpiController extends Controller
             'safety' => Pegawai::where('is_safety_officer', true)->where('is_active', true)
                 ->orderBy('nama')->get(),
 
+            // ⬇️ diperbaiki: roster pengawas diambil dari pengguna_id (si pemeriksa),
+            // bukan pegawai_id (pegawai yang diperiksa)
             'pengawas' => Pegawai::where('is_active', true)
-                ->whereIn('id_api', PengawasPekerjaan::whereNotNull('pegawai_id')->pluck('pegawai_id')->unique())
+                ->whereIn('badge', function ($q) {
+                    $q->select('username')
+                        ->from('pengawas_intra_users')
+                        ->whereNotNull('username')
+                        ->whereIn('id_api', function ($q2) {
+                            $q2->select('pengguna_id')
+                                ->from('pengawas_pekerjaans')
+                                ->whereNotNull('pengguna_id');
+                        });
+                })
                 ->orderBy('nama')->get(),
 
             'medis' => Pegawai::where('is_active', true)

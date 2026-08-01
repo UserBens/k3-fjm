@@ -113,24 +113,19 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{badge}/unassign-tenaga/{pegawaiId}', [SafetyOfficerController::class, 'unassignTenaga'])->name('unassign-tenaga');
     });
 
+    // DATA PELAPORAN
     Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
 
     // KPI
-    // DASHBOARD MONITORING KPI
-    Route::get('dashboard-monitoring-kpi', [DashboardKpiController::class, 'index'])
-        ->name('dashboard-monitoring-kpi.index');
+    // DASHBOARD KPI
+    Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])
+        ->name('dashboard-kpi-k3.index');
+    Route::get('/api/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'api'])
+        ->name('dashboard-kpi-k3.api');
 
-    // Route API/AJAX untuk kebutuhan Dashboard KPI
-    Route::prefix('dashboard-monitoring-kpi')->group(function () {
-        Route::get('/filters', [DashboardKpiController::class, 'filters'])
-            ->name('dashboard-kpi.filters');
-
-        Route::get('/petugas-data', [DashboardKpiController::class, 'petugasData'])
-            ->name('dashboard-kpi.petugas-data');
-
-        Route::get('/tim-summary', [DashboardKpiController::class, 'timSummary'])
-            ->name('dashboard-kpi.tim-summary');
-    });
+    // LAPORAN KPI
+    Route::get('/laporan-capaian-kpi', [LaporanCapaianKpiController::class, 'index'])->name('laporan-capaian-kpi.index');
+    Route::get('/laporan-capaian-kpi/api', [LaporanCapaianKpiController::class, 'api'])->name('laporan-capaian-kpi.api');
 
     // HALAMAN MANAJEMEN MASTER JADWAL SHIFT
     Route::get('master-jadwal-shift', [MasterJadwalShiftController::class, 'index'])
@@ -522,16 +517,4 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::post('/', [PelaporanPengawasController::class, 'store'])->name('store');
         Route::put('/{id}', [PelaporanPengawasController::class, 'update'])->name('update');
     });
-
-
-    // DASHBOARD KPI
-    Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])
-        ->name('dashboard-kpi-k3.index');
-
-    Route::get('/api/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'api'])
-        ->name('dashboard-kpi-k3.api');
-
-    // LAPORAN KPI
-    Route::get('/laporan-capaian-kpi', [LaporanCapaianKpiController::class, 'index'])->name('laporan-capaian-kpi.index');
-    Route::get('/laporan-capaian-kpi/api', [LaporanCapaianKpiController::class, 'api'])->name('laporan-capaian-kpi.api');
 });

@@ -88,6 +88,8 @@ class DashboardKpiK3Controller extends Controller
                 $personilTerpilih = $daftarPersonil->first();
             }
 
+            $filters['personil_terpilih'] = $personilTerpilih;   // ⬅️ tambahkan baris ini
+
             $monitoring = null;
             $rincianAktivitas = [];
             if ($personilTerpilih) {
@@ -110,7 +112,7 @@ class DashboardKpiK3Controller extends Controller
                 ],
                 'ringkasan_status_dokumen' => $this->ringkasanStatusDokumen($filters),
                 'indikator_kpi' => $this->indikatorKpi($daftarPersonil, $pengaturan, $filters, $tampilkanRupiah),
-                'personil_options' => $daftarPersonil->map(fn ($p) => [
+                'personil_options' => $daftarPersonil->map(fn($p) => [
                     'key' => $p['key'],
                     'label' => "{$p['badge']}-{$p['nama']}",
                     'tim' => $p['tim'],
@@ -181,29 +183,59 @@ class DashboardKpiK3Controller extends Controller
         $selesai = $filters['periode_selesai'];
         $tim = $filters['tim'];
         $area = $filters['area'];
+        $personil = $filters['personil_terpilih'] ?? null;   // ⬅️ tambahkan ini
 
         $medis = DB::table('datamedis')->select([
             DB::raw("'MEDIS' as sumber"),
-            'id', 'tanggal_pelaksanaan', 'nama_tenaga as nama_petugas', 'badge_tenaga as badge',
-            'area_kerja', 'unit_kerja', 'keputusan as status', 'waktu_submit',
+            'id',
+            'tanggal_pelaksanaan',
+            'nama_tenaga as nama_petugas',
+            'badge_tenaga as badge',
+            'area_kerja',
+            'unit_kerja',
+            'keputusan as status',
+            'waktu_submit',
         ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]);
 
         $safety = DB::table('data_safety')->select([
             DB::raw("'SAFETY' as sumber"),
-            'id', 'tanggal_pelaksanaan', 'nama_tenaga as nama_petugas', 'badge_tenaga as badge',
-            'area_kerja', 'unit_kerja', 'keputusan as status', 'waktu_submit',
+            'id',
+            'tanggal_pelaksanaan',
+            'nama_tenaga as nama_petugas',
+            'badge_tenaga as badge',
+            'area_kerja',
+            'unit_kerja',
+            'keputusan as status',
+            'waktu_submit',
         ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]);
 
         $pengawas = DB::table('pelaporan_pengawas')->select([
             DB::raw("'PENGAWAS' as sumber"),
-            'id', 'tanggal_pelaksanaan', 'nama_pengawas as nama_petugas', 'badge_pengawas as badge',
-            'area_kerja', 'unit_kerja', 'status', DB::raw('created_at as waktu_submit'),
+            'id',
+            'tanggal_pelaksanaan',
+            'nama_pengawas as nama_petugas',
+            'badge_pengawas as badge',
+            'area_kerja',
+            'unit_kerja',
+            'status',
+            DB::raw('created_at as waktu_submit'),
         ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]);
 
         if ($area && strtoupper($area) !== 'SEMUA') {
             $medis->where('area_kerja', $area);
             $safety->where('area_kerja', $area);
             $pengawas->where('area_kerja', $area);
+        }
+
+        // ⬅️ blok baru: batasi ke badge personil yang sedang dipilih
+        if ($personil) {
+            if ($personil['tim'] === 'MEDIS') {
+                $medis->where('badge_tenaga', $personil['badge']);
+            } elseif ($personil['tim'] === 'SAFETY') {
+                $safety->where('badge_tenaga', $personil['badge']);
+            } elseif ($personil['tim'] === 'PENGAWAS') {
+                $pengawas->where('badge_pengawas', $personil['badge']);
+            }
         }
 
         $parts = [];
@@ -305,11 +337,11 @@ class DashboardKpiK3Controller extends Controller
             ->whereNotNull($namaKol)
             ->distinct()
             ->pluck($namaKol)
-            ->map(fn ($n) => strtolower(trim($n)))
+            ->map(fn($n) => strtolower(trim($n)))
             ->all();
 
         return $semuaAktivitasTim
-            ->filter(fn (AktivitasKpiK3 $a) => in_array(strtolower(trim($a->nama_aktivitas)), $namaAktivitasPernahDilaporkan))
+            ->filter(fn(AktivitasKpiK3 $a) => in_array(strtolower(trim($a->nama_aktivitas)), $namaAktivitasPernahDilaporkan))
             ->values();
     }
 
@@ -379,7 +411,7 @@ class DashboardKpiK3Controller extends Controller
 
         $nilaiKpiFinal = round(
             ($pengaturan->porsi_capaian_aktivitas / 100 * $persentaseCapaianAktivitas)
-            + ($pengaturan->porsi_ketepatan_waktu / 100 * $persentaseKetepatanWaktu),
+                + ($pengaturan->porsi_ketepatan_waktu / 100 * $persentaseKetepatanWaktu),
             1
         );
 
@@ -460,16 +492,29 @@ class DashboardKpiK3Controller extends Controller
     private function indikatorKpi(Collection $daftarPersonil, PengaturanKpiK3 $pengaturan, array $filters, bool $tampilkanRupiah): array
     {
         $ringkasan = $this->ringkasanStatusDokumen($filters);
+        $personil = $filters['personil_terpilih'] ?? null;
 
+        // Ada personil terpilih (kondisi normal di tab Safety/Pengawas/Medis) -> indikator hanya untuk orang itu
+        if ($personil) {
+            $hasil = $this->hitungKpiPersonil($personil, $pengaturan, $filters, true)['monitoring'];
+            return [
+                'total_laporan_disetujui' => $ringkasan['approve'],
+                'rata_rata_skor_akhir' => $hasil['nilai_kpi_final'],
+                'total_tunjangan' => $tampilkanRupiah ? (int) $hasil['tunjangan'] : null,
+                'jumlah_personil_baik' => $hasil['kategori_penilaian'] === 'BAIK' ? 1 : 0,
+            ];
+        }
+
+        // Fallback: tidak ada personil (mis. daftar kosong) -> agregat semua personil di filter ini
         $skorList = [];
         $totalTunjangan = 0;
         $jumlahBaik = 0;
 
         foreach ($daftarPersonil as $p) {
-            $hasil = $this->hitungKpiPersonil($p, $pengaturan, $filters, true)['monitoring'];
-            $skorList[] = $hasil['nilai_kpi_final'];
-            $totalTunjangan += (int) $hasil['tunjangan'];
-            if ($hasil['kategori_penilaian'] === 'BAIK') {
+            $hasilP = $this->hitungKpiPersonil($p, $pengaturan, $filters, true)['monitoring'];
+            $skorList[] = $hasilP['nilai_kpi_final'];
+            $totalTunjangan += (int) $hasilP['tunjangan'];
+            if ($hasilP['kategori_penilaian'] === 'BAIK') {
                 $jumlahBaik++;
             }
         }
