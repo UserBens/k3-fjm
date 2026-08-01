@@ -365,8 +365,8 @@ class DashboardKpiK3Controller extends Controller
         $rincian = [];
         $capaianAktivitasTotal = 0.0;
 
-        $batasAwal = (clone $mulai)->subDays((int) $pengaturan->batas_lapor_lebih_awal);
-        $batasAkhir = (clone $selesai)->addDays((int) $pengaturan->batas_terlambat_lapor);
+        $batasTerlambatLapor = (int) $pengaturan->batas_terlambat_lapor;
+        $batasLaporLebihAwal = (int) $pengaturan->batas_lapor_lebih_awal;
 
         foreach ($aktivitasDitugaskan as $aktivitas) {
             /** @var AktivitasKpiK3 $aktivitas */
@@ -383,13 +383,22 @@ class DashboardKpiK3Controller extends Controller
             $laporanDisetujui += $disetujuiAktivitas;
 
             $tepatWaktuAktivitas = $rows->where($kolomStatus, 'APPROVE')
-                ->filter(function ($r) use ($batasAwal, $batasAkhir) {
-                    $waktu = Carbon::parse($r->waktu_submit ?? $r->created_at ?? $r->tanggal_pelaksanaan);
-                    return $waktu->betweenIncluded($batasAwal, $batasAkhir);
+                ->filter(function ($r) use ($batasTerlambatLapor, $batasLaporLebihAwal) {
+                    $waktuSubmit = $r->waktu_submit ?? $r->created_at ?? null;
+                    $tanggalPelaksanaan = $r->tanggal_pelaksanaan ?? null;
+                    if (!$waktuSubmit || !$tanggalPelaksanaan) {
+                        return false;
+                    }
+                    // selisih = tanggal_pelaksanaan - waktu_submit (hari), disamakan dgn
+                    // LaporanCapaianKpiController::laporanUntukPegawai() supaya konsisten.
+                    $selisih = Carbon::parse($waktuSubmit)->startOfDay()
+                        ->diffInDays(Carbon::parse($tanggalPelaksanaan)->startOfDay(), false);
+                    return $selisih >= -$batasTerlambatLapor && $selisih <= $batasLaporLebihAwal;
                 })->count();
             $laporanTepatWaktu += $tepatWaktuAktivitas;
 
             $bobotItem = ($totalSkorTim > 0) ? round($aktivitas->skor / $totalSkorTim * 100, 1) : 0.0;
+
             $target = (int) $aktivitas->target_per_bulan;
             $rasioCapaian = $target > 0 ? min($disetujuiAktivitas / $target, 1) : ($disetujuiAktivitas > 0 ? 1 : 0);
             $kontribusi = round($rasioCapaian * $bobotItem, 1);
@@ -420,13 +429,24 @@ class DashboardKpiK3Controller extends Controller
             : 0.0;
 
         $skorUntukTunjangan = max($pengaturan->skor_minimum_tunjangan, min($nilaiKpiFinal, $pengaturan->skor_maksimum_tunjangan));
+
         $timDapatTunjangan = match ($personil['tim']) {
             'SAFETY' => (bool) $pengaturan->tim_safety_dapat_tunjangan,
             'PENGAWAS' => (bool) $pengaturan->tim_pengawas_dapat_tunjangan,
             'MEDIS' => (bool) $pengaturan->tim_medis_dapat_tunjangan,
             default => false,
         };
-        $tunjangan = $timDapatTunjangan ? round($pengaturan->tunjangan_penuh * ($skorUntukTunjangan / 100)) : 0;
+
+        $nominalTunjanganTim = match ($personil['tim']) {
+            'SAFETY'   => (int) $pengaturan->tunjangan_safety,
+            'PENGAWAS' => (int) $pengaturan->tunjangan_pengawas,
+            'MEDIS'    => (int) $pengaturan->tunjangan_medis,
+            default    => 0,
+        };
+
+        $tunjangan = $timDapatTunjangan
+            ? round($nominalTunjanganTim * ($skorUntukTunjangan / 100))
+            : 0;
 
         $kategori = $this->kategoriPenilaian($nilaiKpiFinal, $pengaturan);
 

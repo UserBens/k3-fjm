@@ -44,7 +44,7 @@ class LaporanCapaianKpiController extends Controller
      *
      * 5. NILAI KPI FINAL = (kontribusi% × porsi_capaian_aktivitas + ketepatan% × porsi_ketepatan_waktu) / 100
      *
-     * 6. TUNJANGAN = tunjangan_penuh × clamp(nilai_kpi_final, skor_min, skor_max) / skor_maksimum_tunjangan
+     * 6. TUNJANGAN = tunjangan_{safety|pengawas|medis} (sesuai tim) × clamp(nilai_kpi_final, skor_min, skor_max) / skor_maksimum_tunjangan
      *    hanya jika tim_{safety|pengawas|medis}_dapat_tunjangan = true.
      *
      * 7. KATEGORI (BAIK/CUKUP/PERLU PERBAIKAN) ada di LEVEL TIM (Section A), berdasarkan
@@ -131,6 +131,14 @@ class LaporanCapaianKpiController extends Controller
                     'pengawas' => $pengaturan->tim_pengawas_dapat_tunjangan,
                     'medis' => $pengaturan->tim_medis_dapat_tunjangan,
                 };
+
+                $nominalTunjanganTim = match ($flag) {
+                    'safety'   => (float) $pengaturan->tunjangan_safety,
+                    'pengawas' => (float) $pengaturan->tunjangan_pengawas,
+                    'medis'    => (float) $pengaturan->tunjangan_medis,
+                    default    => 0.0,
+                };
+
                 $tunjangan = null;
                 if ($dapatTunjangan) {
                     $clamped = min(
@@ -138,7 +146,7 @@ class LaporanCapaianKpiController extends Controller
                         (float) $pengaturan->skor_maksimum_tunjangan
                     );
                     $tunjangan = (int) round(
-                        (float) $pengaturan->tunjangan_penuh * $clamped / (float) $pengaturan->skor_maksimum_tunjangan
+                        $nominalTunjanganTim * $clamped / (float) $pengaturan->skor_maksimum_tunjangan
                     );
                 }
 
