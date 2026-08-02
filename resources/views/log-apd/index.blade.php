@@ -2487,8 +2487,33 @@
             document.getElementById('fUnitKerja').value = p.unit_kerja;
             document.getElementById('pegawaiPickerInput').value = `${p.nama} (${p.badge})`;
             document.getElementById('pegawaiPickerDropdown').classList.remove('open');
+
+            autoSelectKodeOkFromPegawai(p.kode_ok); // ← BARU
+
             const jenis = document.getElementById('fJenisTransaksi').value;
             if (['TUKAR LAMA', 'TUKAR RUSAK'].includes(jenis)) loadRiwayatTukar();
+        }
+
+        // ══════ BARU — auto-select Kode OK berdasarkan pegawai yang dipilih ══════
+        async function autoSelectKodeOkFromPegawai(kodeOk) {
+            if (!kodeOk) {
+                // pegawai ini tidak punya kode_ok di data master → jangan sentuh field,
+                // biarkan user pilih manual
+                return;
+            }
+
+            await loadKodeOkOptions(); // no-op kalau cache sudah terisi (sudah dipanggil saat openFormModal)
+
+            const match = kodeOkOptionsCache.find(k => k.kode_ok === kodeOk);
+
+            if (match) {
+                selectKodeOk(match);
+            } else {
+                // kode_ok ada di data pegawai, tapi entah kenapa tidak ada/nonaktif di master kode_oks
+                // tetap tampilkan apa adanya supaya user sadar datanya perlu dicek
+                document.getElementById('fKodeOk').value = kodeOk;
+                document.getElementById('kodeOkLabel').textContent = kodeOk;
+            }
         }
 
         // ══════ PICKER PEGAWAI — Diterima Oleh ══════
@@ -2837,10 +2862,11 @@
 
                 document.getElementById('fPernahTukar').value = '1';
                 box.innerHTML = `
-            <div class="info-box-line"><b>Terakhir tukar:</b> ${formatDate(data.tanggal_terakhir)} (${escapeHtml(data.no_dokumen)}, ${escapeHtml(data.jenis_transaksi)})</div>
-            <div class="info-box-line"><b>Kondisi lama saat itu:</b> ${escapeHtml(display(data.kondisi_apd_lama))}</div>
-            <div class="info-box-line"><b>Jadwal tukar selanjutnya:</b> ${data.jadwal_tukar_selanjutnya ? formatDate(data.jadwal_tukar_selanjutnya) : 'Tidak dapat dihitung (masa pakai tidak diketahui)'}</div>
-        `;
+                    <div class="info-box-line"><b>APD:</b> ${escapeHtml(data.jenis_apd || '-')}${data.kode_apd ? ` (${escapeHtml(data.kode_apd)})` : ''}</div>
+                    <div class="info-box-line"><b>Terakhir tukar:</b> ${formatDate(data.tanggal_terakhir)} (${escapeHtml(data.no_dokumen)}, ${escapeHtml(data.jenis_transaksi)})</div>
+                    <div class="info-box-line"><b>Kondisi lama saat itu:</b> ${escapeHtml(display(data.kondisi_apd_lama))}</div>
+                    <div class="info-box-line"><b>Jadwal tukar selanjutnya:</b> ${data.jadwal_tukar_selanjutnya ? formatDate(data.jadwal_tukar_selanjutnya) : 'Tidak dapat dihitung (masa pakai tidak diketahui)'}</div>
+                `;
             } catch (e) {
                 box.innerHTML = `<div class="info-box-line" style="color:#D0021B;">Gagal memuat riwayat tukar.</div>`;
             }

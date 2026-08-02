@@ -12,8 +12,10 @@ class AlatKesehatanPenggunaan extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'tanggal' => 'date',
-        'jumlah_digunakan' => 'integer',
+        'tanggal'               => 'date',
+        'tanggal_pengajuan'     => 'date',   // ← BARU
+        'tanggal_serah_terima'  => 'date',   // ← BARU
+        'jumlah_digunakan'      => 'integer',
     ];
 
     public function alatKesehatan()

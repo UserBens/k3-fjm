@@ -905,6 +905,50 @@
                 grid-column: span 1;
             }
         }
+
+        #wrapKomentarReject {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 4px;
+            /* ← tambahan kecil */
+        }
+
+        #wrapKomentarReject .form-label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #475569;
+            margin: 0;
+        }
+
+        #wrapKomentarReject #detailKomentarInput {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            line-height: 1.5;
+            color: #1E293B;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #wrapKomentarReject #detailKomentarInput:focus {
+            outline: none;
+            border-color: #D0021B;
+            box-shadow: 0 0 0 3px rgba(208, 2, 27, 0.1);
+        }
+
+        #wrapKomentarReject #detailKomentarInput::placeholder {
+            color: #94A3B8;
+            font-size: 12.5px;
+        }
     </style>
 </head>
 
@@ -1035,12 +1079,21 @@
                     <div class="detail-section-title">Ubah Status Keputusan</div>
                     <div class="form-grid">
                         <div class="form-group span-2">
-                            <select id="detailStatusSelect" class="form-select">
+                            <select id="detailStatusSelect" class="form-select" onchange="onStatusSelectChange()">
                                 <option value="PENDING">PENDING</option>
                                 <option value="APPROVE">APPROVE</option>
                                 <option value="REJECT">REJECT</option>
                                 <option value="CANCEL">CANCEL</option>
                             </select>
+                        </div>
+                        <div class="form-group span-2" id="wrapKomentarReject" style="display:none;">
+                            <label class="form-label">Alasan Penolakan (wajib diisi)</label>
+                            <textarea id="detailKomentarInput" class="form-textarea" rows="3"
+                                placeholder="Jelaskan alasan laporan ini ditolak, misal: dokumen tidak sesuai, data tidak lengkap, dsb."></textarea>
+                        </div>
+                        <div class="form-group span-2" id="wrapKomentarLama" style="display:none;">
+                            <label class="form-label">Komentar Admin Sebelumnya</label>
+                            <div class="info-box" id="komentarLamaBox"></div>
                         </div>
                     </div>
                 </div>
@@ -1345,10 +1398,31 @@
                     ).join('');
 
                 document.getElementById('detailStatusSelect').value = currentDetail.status || 'PENDING';
+                onStatusSelectChange(); // ← BARU — sesuaikan tampilan textarea sesuai status saat ini
+                document.getElementById('detailKomentarInput').value = ''; // ← BARU — kosongkan input baru
+                // ← BARU — tampilkan komentar admin sebelumnya kalau ada (misal laporan ini pernah direject lalu diedit ulang)
+                const komentarBox = document.getElementById('komentarLamaBox');
+                const wrapKomentarLama = document.getElementById('wrapKomentarLama');
+                if (currentDetail.komentar_admin) {
+                    wrapKomentarLama.style.display = '';
+                    komentarBox.innerHTML = `
+                    <div class="info-box-line">${escapeHtml(currentDetail.komentar_admin)}</div>
+                    <div class="info-box-line" style="color:#94A3B8; font-size:11px; margin-top:4px;">
+                        ${currentDetail.direview_oleh ? `Oleh: ${escapeHtml(currentDetail.direview_oleh)} · ` : ''}${formatDateTime(currentDetail.direview_at)}
+                    </div>`;
+                } else {
+                    wrapKomentarLama.style.display = 'none';
+                    komentarBox.innerHTML = '';
+                }
                 document.getElementById('detailModalOverlay').classList.add('open');
             } catch (e) {
                 showToast(e.message || 'Gagal memuat detail laporan.', 'error');
             }
+        }
+
+        function onStatusSelectChange() {
+            const status = document.getElementById('detailStatusSelect').value;
+            document.getElementById('wrapKomentarReject').style.display = status === 'REJECT' ? '' : 'none';
         }
 
         function closeDetailModal() {
@@ -1362,12 +1436,19 @@
 
         async function simpanStatus() {
             if (!currentDetail) return;
+
+            const status = document.getElementById('detailStatusSelect').value;
+            const komentar = document.getElementById('detailKomentarInput').value.trim();
+
+            if (status === 'REJECT' && !komentar) {
+                showToast('Alasan penolakan wajib diisi jika status REJECT.', 'error');
+                return;
+            }
+
             const btn = document.getElementById('btnSimpanStatus');
             const originalText = btn.textContent;
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
-
-            const status = document.getElementById('detailStatusSelect').value;
 
             try {
                 const res = await fetch(`${BASE_ENDPOINT}/${currentDetail.sumber}/${currentDetail.id}/status`, {
@@ -1378,11 +1459,15 @@
                         'X-CSRF-TOKEN': CSRF_TOKEN
                     },
                     body: JSON.stringify({
-                        status
-                    }),
+                        status,
+                        komentar: komentar || null
+                    }), // ← BARU
                 });
                 const json = await res.json();
-                if (!res.ok) throw new Error(json.message || `Status ${res.status}`);
+                if (!res.ok) {
+                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
+                    throw new Error(firstError || json.message || `Status ${res.status}`);
+                }
 
                 closeDetailModal();
                 await loadData();

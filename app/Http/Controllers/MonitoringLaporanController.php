@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class MonitoringLaporanController extends Controller
 {
@@ -190,6 +191,9 @@ class MonitoringLaporanController extends Controller
                         'jenis_aktifitas_kpi' => $item->jenis_aktifitas_kpi,
                         'status' => $item->keputusan,
                         'status_pindah' => $item->status_pindah,
+                        'komentar_admin' => $item->komentar_admin,   // ← BARU
+                        'direview_oleh' => $item->direview_oleh,     // ← BARU
+                        'direview_at' => optional($item->direview_at)->toDateTimeString(), // ← BARU
                         'dokumen' => array_filter([
                             'Foto Evidence' => $item->foto_evidence_path ? asset('storage/' . $item->foto_evidence_path) : null,
                             'Formulir Kegiatan' => $item->formulir_kegiatan_path ? asset('storage/' . $item->formulir_kegiatan_path) : null,
@@ -306,7 +310,8 @@ class MonitoringLaporanController extends Controller
     public function updateStatus(Request $request, string $sumber, int $id): JsonResponse
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:' . implode(',', self::STATUS_LIST),
+            'status'   => 'required|string|in:' . implode(',', self::STATUS_LIST),
+            'komentar' => ['nullable', 'string', Rule::requiredIf(fn() => $request->input('status') === 'REJECT')],
         ]);
 
         $sumber = strtoupper($sumber);
@@ -323,7 +328,12 @@ class MonitoringLaporanController extends Controller
 
                 case 'SAFETY':
                     $model = DataSafety::findOrFail($id);
-                    $model->update(['keputusan' => $validated['status']]);
+                    $model->update([
+                        'keputusan'      => $validated['status'],
+                        'komentar_admin' => $validated['komentar'] ?? null,   // ← BARU
+                        'direview_oleh'  => $request->user()->email ?? auth()->user()?->email, // ← BARU
+                        'direview_at'    => now(),                            // ← BARU
+                    ]);
                     $nama = $model->nama_tenaga;
                     break;
 

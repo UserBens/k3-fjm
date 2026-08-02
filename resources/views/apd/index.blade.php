@@ -1307,6 +1307,23 @@
             font-size: 12px;
             color: #94A3B8;
         }
+
+        .ukuran-chip {
+            padding: 5px 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .ukuran-chip.active {
+            background: #2D4B9E;
+            border-color: #2D4B9E;
+            color: #fff;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -1508,15 +1525,16 @@
                             placeholder="ABS/HDPE, class E (≤20kV), impact resistance ANSI Z89.1"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Ukuran Tersedia</label>
-                        <select id="fUkuran" class="form-select">
-                            <option value="">Pilih Ukuran</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="ALL SIZE">ALL SIZE</option>
+                        <label class="form-label">Tipe Ukuran</label>
+                        <select id="fTipeUkuran" class="form-select" onchange="renderUkuranInput()">
+                            <option value="HURUF">Huruf (S/M/L/XL)</option>
+                            <option value="ANGKA">Angka (Sepatu)</option>
+                            <option value="UNIVERSAL">Universal / Tanpa Ukuran</option>
                         </select>
+                    </div>
+                    <div class="form-group" id="ukuranInputWrap">
+                        <label class="form-label">Ukuran Tersedia</label>
+                        <!-- diisi otomatis oleh JS -->
                     </div>
                     <div class="form-group">
                         <label class="form-label">Standar SNI / Regulasi</label>
@@ -1794,6 +1812,11 @@
             selected: null
         };
 
+        const UKURAN_HURUF = ['S', 'M', 'L', 'XL', 'XXL'];
+        const UKURAN_ANGKA = Array.from({
+            length: 46 - 36 + 1
+        }, (_, i) => 36 + i); // 36..46
+
         let searchDebounce = null;
         let filterOptionsLoaded = false;
         let currentEditId = null;
@@ -1920,6 +1943,42 @@
             } else {
                 angkaInput.style.display = 'block';
             }
+        }
+
+        function renderUkuranInput(existingValue = '') {
+            const tipe = document.getElementById('fTipeUkuran').value;
+            const wrap = document.getElementById('ukuranInputWrap');
+            const selected = existingValue ?
+                existingValue.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            if (tipe === 'UNIVERSAL') {
+                wrap.innerHTML = `
+            <label class="form-label">Ukuran Tersedia</label>
+            <input type="text" id="fUkuran" class="form-input" value="ALL SIZE" readonly
+                   style="background:#F1F5F9;color:#64748B;">`;
+                return;
+            }
+
+            const options = tipe === 'ANGKA' ? UKURAN_ANGKA : UKURAN_HURUF;
+
+            wrap.innerHTML = `
+        <label class="form-label">Ukuran Tersedia</label>
+        <div class="ukuran-chip-group" style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${options.map(opt => {
+                const val = String(opt);
+                const active = selected.includes(val);
+                return `<button type="button"
+                                                class="ukuran-chip ${active ? 'active' : ''}"
+                                                data-val="${val}"
+                                                onclick="this.classList.toggle('active')">${val}</button>`;
+            }).join('')}
+        </div>
+        <input type="hidden" id="fUkuran" value="${escapeHtml(selected.join(', '))}">`;
+        }
+
+        function collectUkuranTersedia() {
+            const chips = document.querySelectorAll('.ukuran-chip.active');
+            return Array.from(chips).map(c => c.dataset.val).join(', ');
         }
 
         function renderTable(rows) {
@@ -2384,7 +2443,8 @@
             document.getElementById('fMerk').value = row?.merk_rekomendasi || '';
             // document.getElementById('fFungsi').value = row?.fungsi_sasaran || '';
             document.getElementById('fSpesifikasi').value = row?.spesifikasi_teknis || '';
-            document.getElementById('fUkuran').value = row?.ukuran_tersedia || '';
+            document.getElementById('fTipeUkuran').value = row?.tipe_ukuran || 'HURUF';
+            renderUkuranInput(row?.ukuran_tersedia || '');
             document.getElementById('fStandar').value = row?.standar_regulasi || '';
             document.getElementById('fStokAwal').value = row?.stok_awal ?? 0;
             document.getElementById('fDigunakan').value = row?.digunakan ?? 0;
@@ -2459,7 +2519,8 @@
             formData.append('merk_rekomendasi', document.getElementById('fMerk').value.trim());
             // formData.append('fungsi_sasaran', document.getElementById('fFungsi').value.trim());
             formData.append('spesifikasi_teknis', document.getElementById('fSpesifikasi').value.trim());
-            formData.append('ukuran_tersedia', document.getElementById('fUkuran').value.trim());
+            formData.append('tipe_ukuran', document.getElementById('fTipeUkuran').value);
+            formData.append('ukuran_tersedia', collectUkuranTersedia());
             formData.append('standar_regulasi', document.getElementById('fStandar').value.trim());
             formData.append('stok_awal', document.getElementById('fStokAwal').value || 0);
             formData.append('digunakan', document.getElementById('fDigunakan').value || 0);

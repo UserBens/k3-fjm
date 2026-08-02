@@ -2202,6 +2202,19 @@
                 label: 'Keputusan',
                 el: `<div class="detail-value">${escapeHtml(row.keputusan || '-')}</div>`
             }, ];
+
+            // ← BARU — tampilkan komentar admin kalau statusnya REJECT dan ada komentar
+            if (row.keputusan === 'REJECT' && row.komentar_admin) {
+                arsipFields.push({
+                    label: 'Alasan Penolakan dari Admin',
+                    span: 2,
+                    el: `<div class="detail-value" style="color:#D0021B; white-space:pre-line;">${escapeHtml(row.komentar_admin)}</div>
+             <div class="detail-subtitle" style="margin-top:4px;">
+                 ${row.direview_oleh ? `Oleh: ${escapeHtml(row.direview_oleh)} · ` : ''}${row.direview_at ? new Date(row.direview_at.replace(' ', 'T')).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+             </div>`
+                });
+            }
+
             document.getElementById('detailArsipGrid').innerHTML = arsipFields.map(f =>
                 `<div class="detail-field${f.span ? ' span-' + f.span : ''}"><label>${f.label}</label>${f.el}</div>`
             ).join('');
@@ -2331,7 +2344,9 @@
                     <td>${escapeHtml(row.jenis_aktifitas_kpi || '-')}</td>
                     <td><div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.area_kerja || '-')}</div><div class="td-name-sub">${escapeHtml(row.unit_kerja || '-')}</div></td>
                     <td>${formatDate(row.tanggal_pelaksanaan)}</td>
-                    <td><span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span></td>
+                    <td><span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span>
+                        ${row.keputusan === 'REJECT' && row.komentar_admin ? `<div class="td-name-sub" style="color:#D0021B; margin-top:3px; max-width:160px;">💬 ${escapeHtml(row.komentar_admin.substring(0, 40))}${row.komentar_admin.length > 40 ? '...' : ''}</div>` : ''}
+                    </td>                    
                     <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
@@ -2701,7 +2716,7 @@
                     el.value = '';
                 }
             });
-            
+
             document.querySelectorAll('.form-modal-body input[type="file"]').forEach(el => el.value = '');
             resetFilePreviews();
 

@@ -12,6 +12,9 @@ class StokAPD extends Model
     protected $table = 'stok_apd';
     protected $guarded = ['id'];
 
+    const TIPE_UKURAN_HURUF_OPTIONS = ['S', 'M', 'L', 'XL', 'XXL'];
+    const TIPE_UKURAN_ANGKA_RANGE   = ['min' => 36, 'max' => 46]; // sesuaikan
+    
     protected $casts = [
         'stok_awal'          => 'integer',
         'digunakan'          => 'integer',

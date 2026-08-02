@@ -49,6 +49,8 @@ class AlatKesehatanPenggunaController extends Controller
                     'no' => ($paginator->currentPage() - 1) * $paginator->perPage() + $index + 1,
                     'id' => $item->id,
                     'tanggal' => optional($item->tanggal)->format('Y-m-d'),
+                    'tanggal_pengajuan' => optional($item->tanggal_pengajuan)->format('Y-m-d'),         // ← BARU
+                    'tanggal_serah_terima' => optional($item->tanggal_serah_terima)->format('Y-m-d'),   // ← BARU
                     'id_karyawan' => $item->id_karyawan,
                     'nama_pengguna' => $item->nama_pengguna,
                     'jabatan' => $item->jabatan ?? '-',
@@ -86,11 +88,13 @@ class AlatKesehatanPenggunaController extends Controller
     {
         $validated = $this->validateData($request);
 
+        $blokir = $this->cekAlatBisaDigunakan($validated['stok_alkes_id']);
+        if ($blokir) return $blokir;
+
         try {
             DB::transaction(function () use ($validated, &$penggunaan) {
                 $penggunaan = AlatKesehatanPenggunaan::create($validated);
 
-                // Tambahkan angka "digunakan" pada stok alkes terkait
                 StokAlkes::where('id', $validated['stok_alkes_id'])
                     ->increment('digunakan', $validated['jumlah_digunakan']);
             });
@@ -109,15 +113,19 @@ class AlatKesehatanPenggunaController extends Controller
     {
         $validated = $this->validateData($request);
 
+        // Kalau alat yang dipilih berubah (bukan alat yang sama seperti sebelumnya), cek ulang status kalibrasinya
+        if ($validated['stok_alkes_id'] != $alatKesehatanPenggunaan->stok_alkes_id) {
+            $blokir = $this->cekAlatBisaDigunakan($validated['stok_alkes_id']);
+            if ($blokir) return $blokir;
+        }
+
         try {
             DB::transaction(function () use ($validated, $alatKesehatanPenggunaan) {
-                // Kembalikan dulu jumlah lama ke stok sebelumnya (bisa jadi alatnya beda dari sebelumnya)
                 StokAlkes::where('id', $alatKesehatanPenggunaan->stok_alkes_id)
                     ->decrement('digunakan', $alatKesehatanPenggunaan->jumlah_digunakan);
 
                 $alatKesehatanPenggunaan->update($validated);
 
-                // Terapkan jumlah baru ke stok yang (mungkin) baru dipilih
                 StokAlkes::where('id', $validated['stok_alkes_id'])
                     ->increment('digunakan', $validated['jumlah_digunakan']);
             });
@@ -130,6 +138,24 @@ class AlatKesehatanPenggunaController extends Controller
             Log::error('Gagal memperbarui penggunaan alkes: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Gagal memperbarui data.'], 500);
         }
+    }
+
+    /**
+     * Validasi server-side — pertahanan terakhir kalau JS di client sempat ter-bypass
+     * (mis. data cache lama, akses langsung ke endpoint tanpa lewat UI).
+     */
+    private function cekAlatBisaDigunakan(int $stokAlkesId): ?JsonResponse
+    {
+        $alat = StokAlkes::find($stokAlkesId);
+
+        if ($alat && !$alat->dapat_digunakan) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => "Alat \"{$alat->jenis_alat}\" tidak dapat digunakan: {$alat->alasan_tidak_bisa}. Selesaikan kalibrasi terlebih dahulu sebelum alat ini bisa dipinjam.",
+            ], 422);
+        }
+
+        return null;
     }
 
     public function destroy(AlatKesehatanPenggunaan $alatKesehatanPenggunaan): JsonResponse
@@ -196,6 +222,10 @@ class AlatKesehatanPenggunaController extends Controller
             'type' => $a->type ?? '-',
             'stok_tersedia' => $a->stok_tersedia,
             'kode_ok' => $a->kodeOkRelasi->pluck('kode_ok')->values(),
+            'dapat_digunakan' => $a->dapat_digunakan,      // ← BARU
+            'alasan_tidak_bisa' => $a->alasan_tidak_bisa,  // ← BARU
+            'status_kalibrasi' => $a->status_kalibrasi,    // ← BARU
+            'jadwal_kalibrasi_berikut' => optional($a->jadwal_kalibrasi_berikut)->format('Y-m-d'), // ← BARU
         ]);
 
         return response()->json(['data' => $results]);
@@ -211,15 +241,17 @@ class AlatKesehatanPenggunaController extends Controller
     private function validateData(Request $request): array
     {
         return $request->validate([
-            'tanggal' => 'required|date',
-            'stok_alkes_id' => 'required|exists:stok_alkes,id',
-            'kode_ok' => 'nullable|string|max:50',
-            'id_karyawan' => 'required|string|max:50',
-            'nama_pengguna' => 'required|string|max:255',
-            'jabatan' => 'nullable|string|max:255',
-            'unit_kerja' => 'nullable|string|max:255',
-            'jumlah_digunakan' => 'required|integer|min:1',
-            'keterangan' => 'nullable|string',
+            'tanggal'               => 'required|date',
+            'tanggal_pengajuan'     => 'nullable|date',                                   // ← BARU
+            'tanggal_serah_terima'  => 'nullable|date|after_or_equal:tanggal_pengajuan',   // ← BARU
+            'stok_alkes_id'         => 'required|exists:stok_alkes,id',
+            'kode_ok'               => 'nullable|string|max:50',
+            'id_karyawan'           => 'required|string|max:50',
+            'nama_pengguna'         => 'required|string|max:255',
+            'jabatan'               => 'nullable|string|max:255',
+            'unit_kerja'            => 'nullable|string|max:255',
+            'jumlah_digunakan'      => 'required|integer|min:1',
+            'keterangan'            => 'nullable|string',
         ]);
     }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Penggunaan Alat Kesehatan — PT. Fokus Jasa Mitra</title>
+    <title>LOG ALKES — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -1440,7 +1440,7 @@
                             <span class="pulse-dot"></span>
                             <span class="pg-eyebrow">Master Data · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">PENGGUNAAN <span>ALAT KESEHATAN</span></div>
+                        <div class="pg-title">LOG <span>ALKES</span></div>
                         <div class="pg-sub">Catat pemakaian alat kesehatan oleh tenaga kerja.</div>
                     </div>
                     <div class="pg-actions">
@@ -1554,9 +1554,10 @@
                 <div class="picker-wrap" style="margin-bottom:10px;">
                     <input type="text" id="alatPickerInput" class="form-input"
                         placeholder="Cari jenis alat, merk, atau type..." oninput="onAlatPickerInput()"
-                        autocomplete="off" />
+                        onfocus="onAlatPickerFocus()" autocomplete="off" />
                     <div class="picker-dropdown" id="alatPickerDropdown"></div>
                 </div>
+                <div id="kalibrasiWarningBox" class="info-box" style="display:none; margin-bottom:10px;"></div>
                 <div class="form-grid">
                     <div class="form-group"><label class="form-label">Alat Terpilih</label><input type="text"
                             id="fJenisAlatTerpilih" class="form-input" readonly style="background:#F8FAFC;" /></div>
@@ -1570,6 +1571,14 @@
                     </div>
                     <div class="form-group"><label class="form-label">Tanggal Penggunaan</label><input type="date"
                             id="fTanggal" class="form-input" /></div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Pengajuan</label>
+                        <input type="date" id="fTanggalPengajuan" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Serah Terima</label>
+                        <input type="date" id="fTanggalSerahTerima" class="form-input" />
+                    </div>
                     <div class="form-group"><label class="form-label">Jumlah Digunakan</label><input type="number"
                             min="1" id="fJumlahDigunakan" class="form-input" value="1" /></div>
                     <div class="form-group span-2"><label class="form-label">Keterangan</label>
@@ -1624,11 +1633,15 @@
             page: 1,
             per_page: 10
         };
+
         let searchDebounce = null,
             alatListLoaded = false,
             currentEditId = null,
             currentDeleteId = null;
         let selectedAlatId = null;
+        let selectedAlatDapatDigunakan = true; // ← BARU
+        let alatPickerCache = []; // ← BARU — cache daftar alat, dimuat sekali saat fokus pertama
+        let alatPickerLoaded = false; // ← BARU — INI YANG HILANG
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1891,16 +1904,56 @@
 
         function onAlatPickerInput() {
             clearTimeout(alatPickerDebounce);
-            alatPickerDebounce = setTimeout(searchAlatPicker, 350);
+            const search = document.getElementById('alatPickerInput').value.trim();
+            alatPickerDebounce = setTimeout(() => searchAlatPicker(search), 350);
         }
 
-        async function searchAlatPicker() {
-            const search = document.getElementById('alatPickerInput').value.trim();
+        function pilihAlat(a) {
+            selectedAlatId = a.id;
+            selectedAlatDapatDigunakan = a.dapat_digunakan !== false; // ← penting untuk validasi submit
+
+            document.getElementById('fJenisAlatTerpilih').value = a.jenis_alat;
+            document.getElementById('fStokTersedia').value = a.stok_tersedia;
+            document.getElementById('alatPickerInput').value = `${a.jenis_alat} (${a.merk} ${a.type})`;
+            document.getElementById('alatPickerDropdown').classList.remove('open');
+            populateKodeOkSelect(a.kode_ok || []);
+
+            renderKalibrasiWarning(a);
+        }
+
+        // ← BARU — saat input difokus, tampilkan daftar (dari cache kalau ada, atau fetch dulu)
+        async function onAlatPickerFocus() {
+            if (!alatPickerLoaded) {
+                await loadAlatPickerCache();
+            }
+            renderAlatDropdown(alatPickerCache);
+        }
+
+        async function loadAlatPickerCache() {
+            try {
+                const res = await fetch(`${CARI_ALAT_ENDPOINT}?search=`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                alatPickerCache = json.data || [];
+                alatPickerLoaded = true;
+            } catch (e) {
+                alatPickerCache = [];
+            }
+        }
+
+        async function searchAlatPicker(search) {
             const dropdown = document.getElementById('alatPickerDropdown');
+
+            // Kosong → tampilkan semua alat dari cache (bukan ditutup seperti sebelumnya)
             if (search.length < 1) {
-                dropdown.classList.remove('open');
+                if (!alatPickerLoaded) await loadAlatPickerCache();
+                renderAlatDropdown(alatPickerCache);
                 return;
             }
+
             try {
                 const res = await fetch(`${CARI_ALAT_ENDPOINT}?search=${encodeURIComponent(search)}`, {
                     headers: {
@@ -1908,25 +1961,64 @@
                     }
                 });
                 const json = await res.json();
-                dropdown.innerHTML = (!json.data || json.data.length === 0) ?
-                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada alat ditemukan.</div>` :
-                    json.data.map(a =>
-                        `<div class="picker-item" onclick='pilihAlat(${JSON.stringify(a).replace(/'/g, "&#39;")})'><div class="picker-item-name">${escapeHtml(a.jenis_alat)}</div><div class="picker-item-sub">${escapeHtml(a.merk)} ${escapeHtml(a.type)} · Stok: ${a.stok_tersedia}</div></div>`
-                    ).join('');
-                dropdown.classList.add('open');
+                renderAlatDropdown(json.data || []);
             } catch (e) {
                 dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;
                 dropdown.classList.add('open');
             }
         }
 
-        function pilihAlat(a) {
-            selectedAlatId = a.id;
-            document.getElementById('fJenisAlatTerpilih').value = a.jenis_alat;
-            document.getElementById('fStokTersedia').value = a.stok_tersedia;
-            document.getElementById('alatPickerInput').value = `${a.jenis_alat} (${a.merk} ${a.type})`;
-            document.getElementById('alatPickerDropdown').classList.remove('open');
-            populateKodeOkSelect(a.kode_ok || []);
+        // ← BARU — dipisah jadi fungsi render sendiri, dipakai baik oleh search maupun tampilan awal
+        function renderAlatDropdown(list) {
+            const dropdown = document.getElementById('alatPickerDropdown');
+
+            dropdown.innerHTML = (!list || list.length === 0) ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada alat ditemukan.</div>` :
+                list.map(a => {
+                    const blocked = a.dapat_digunakan === false;
+                    const style = blocked ? 'opacity:0.55; cursor:not-allowed;' : '';
+                    const onclick = blocked ?
+                        `onclick='showToast(${JSON.stringify("Alat ini tidak dapat dipilih: " + (a.alasan_tidak_bisa || "sedang perlu kalibrasi") + ".")}, "error")'` :
+                        `onclick='pilihAlat(${JSON.stringify(a).replace(/'/g, "&#39;")})'`;
+                    return `
+                <div class="picker-item" style="${style}" ${onclick}>
+                    <div class="picker-item-name">
+                        ${escapeHtml(a.jenis_alat)}
+                        ${blocked ? `<span class="status-pill sp-red" style="margin-left:6px;">Perlu Kalibrasi</span>` : ''}
+                    </div>
+                    <div class="picker-item-sub">${escapeHtml(a.merk)} ${escapeHtml(a.type)} · Stok: ${a.stok_tersedia}</div>
+                </div>`;
+                }).join('');
+
+            dropdown.classList.add('open');
+        }
+
+        // ══════ BARU — tampilkan peringatan kalibrasi ══════
+        function renderKalibrasiWarning(a) {
+            const box = document.getElementById('kalibrasiWarningBox');
+
+            if (a.dapat_digunakan === false) {
+                box.style.display = '';
+                box.innerHTML = `
+                    <div class="info-box-line" style="color:#D0021B; font-weight:600;">
+                        ⚠ Alat ini tidak dapat digunakan: ${escapeHtml(a.alasan_tidak_bisa || 'sedang perlu kalibrasi')}.
+                    </div>
+                    ${a.jadwal_kalibrasi_berikut ? `<div class="info-box-line">Jadwal kalibrasi: ${formatDate(a.jadwal_kalibrasi_berikut)}</div>` : ''}
+                `;
+                return;
+            }
+
+            if (a.status_kalibrasi === 'SEGERA') {
+                box.style.display = '';
+                box.innerHTML = `
+                <div class="info-box-line" style="color:#D97706; font-weight:600;">
+                    ⚠ Alat ini masih boleh digunakan, tapi jadwal kalibrasi mendekati (${formatDate(a.jadwal_kalibrasi_berikut)}).
+                </div>`;
+                return;
+            }
+
+            box.style.display = 'none';
+            box.innerHTML = '';
         }
 
         document.addEventListener('click', (e) => {
@@ -1942,6 +2034,7 @@
         function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
             selectedAlatId = row ? row.stok_alkes_id : null;
+            selectedAlatDapatDigunakan = true; // ← BARU
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data Penggunaan' : 'Catat Penggunaan Alat';
 
@@ -1950,7 +2043,9 @@
             document.getElementById('fNamaPengguna').value = row?.nama_pengguna || '';
             document.getElementById('fJabatan').value = row?.jabatan && row.jabatan !== '-' ? row.jabatan : '';
             document.getElementById('fUnitKerja').value = row?.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja : '';
-
+            document.getElementById('fTanggal').value = row?.tanggal || new Date().toISOString().substring(0, 10);
+            document.getElementById('fTanggalPengajuan').value = row?.tanggal_pengajuan || ''; // ← BARU
+            document.getElementById('fTanggalSerahTerima').value = row?.tanggal_serah_terima || ''; // ← BARU
             document.getElementById('alatPickerInput').value = row ? row.jenis_alat : '';
             document.getElementById('fJenisAlatTerpilih').value = row?.jenis_alat || '';
             document.getElementById('fStokTersedia').value = '';
@@ -1967,6 +2062,7 @@
             document.getElementById('formModalOverlay').classList.remove('open');
             currentEditId = null;
             selectedAlatId = null;
+            selectedAlatDapatDigunakan = true; // ← BARU
         }
 
         function closeFormModalOutside(e) {
@@ -1979,6 +2075,11 @@
                 return;
             }
 
+            if (!selectedAlatDapatDigunakan) { // ← BARU
+                showToast('Alat ini sedang perlu kalibrasi dan tidak dapat digunakan. Pilih alat lain.', 'error');
+                return;
+            }
+
             const btn = document.getElementById('btnSubmitForm');
             btn.disabled = true;
             const originalText = btn.textContent;
@@ -1986,6 +2087,8 @@
 
             const payload = {
                 tanggal: document.getElementById('fTanggal').value,
+                tanggal_pengajuan: document.getElementById('fTanggalPengajuan').value || null, // ← BARU
+                tanggal_serah_terima: document.getElementById('fTanggalSerahTerima').value || null, // ← BARU
                 stok_alkes_id: selectedAlatId,
                 kode_ok: document.getElementById('fKodeOk').value || null,
                 id_karyawan: document.getElementById('fIdKaryawan').value,

@@ -152,6 +152,7 @@ class LogApdController extends Controller
                 'nama'       => $p->nama ?? '-',
                 'jabatan'    => $p->jabatan ?? '-',
                 'unit_kerja' => $unitLabel ?: '-',
+                'kode_ok'    => $p->kode_ok, // ← BARU, biarkan null kalau memang kosong
             ];
         });
 
@@ -292,7 +293,7 @@ class LogApdController extends Controller
             'alasan_penggantian' => $row->alasan_penggantian,
             'diterima_oleh'      => $row->diterima_oleh,
             'foto_apd'           => $row->foto_apd,
-            'foto_apd_url'       => $row->foto_apd ? Storage::disk('public')->url($row->foto_apd) : null,
+            'foto_apd_url' => $row->foto_apd ? asset('storage/' . $row->foto_apd) : null,
             'keterangan'         => $row->keterangan,
         ];
     }
@@ -329,6 +330,8 @@ class LogApdController extends Controller
         return response()->json([
             'data' => [
                 'pernah_tukar'             => true,
+                'jenis_apd'                => $last->jenis_apd,      // ← BARU
+                'kode_apd'                 => $last->kode_apd,       // ← BARU
                 'tanggal_terakhir'         => $last->tanggal->format('Y-m-d'),
                 'no_dokumen'               => $last->no_dokumen,
                 'jenis_transaksi'          => $last->jenis_transaksi,

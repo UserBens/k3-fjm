@@ -38,8 +38,39 @@ class StokAlkes extends Model
         'status_kalibrasi',
         'status_kadaluarsa',
         'kode_ok', // ← baru
-
+        'dapat_digunakan',        // ← BARU
+        'alasan_tidak_bisa',      // ← BARU
     ];
+
+    public function getDapatDigunakanAttribute(): bool
+    {
+        if ($this->kondisi === 'Perlu Kalibrasi') {
+            return false;
+        }
+
+        if (in_array($this->status_kalibrasi, ['SEGERA', 'LEWAT'], true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getAlasanTidakBisaAttribute(): ?string
+    {
+        if ($this->kondisi === 'Perlu Kalibrasi') {
+            return 'Kondisi alat ditandai Perlu Kalibrasi';
+        }
+
+        if ($this->status_kalibrasi === 'LEWAT') {
+            return 'Jadwal kalibrasi sudah lewat';
+        }
+
+        if ($this->status_kalibrasi === 'SEGERA') {
+            return 'Jadwal kalibrasi akan segera jatuh tempo (≤30 hari)';
+        }
+
+        return null;
+    }
 
     public function getStokTersediaAttribute(): int
     {
