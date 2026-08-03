@@ -13,4 +13,9 @@ class AksesUser extends Model
         'is_admin' => 'boolean',
         'activated_at' => 'datetime',
     ];
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
 }

@@ -58,6 +58,7 @@ class AktivasiAkunController extends Controller
                         'blokir_erp' => ($item['blokir'] ?? 'N') === 'Y',
                         'is_active' => $akses->is_active ?? false,
                         'is_admin' => $akses->is_admin ?? false,
+                        'role' => $akses->role ?? null, // ← BARU
                         'activated_by' => $akses->activated_by ?? null,
                         'activated_at' => $akses->activated_at ?? null,
                     ];
@@ -97,10 +98,10 @@ class AktivasiAkunController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => 'nullable|string',
             'aktifkan' => 'required|boolean',
+            'role' => 'required_if:aktifkan,true|nullable|in:super_admin,safety,pengawas,medis', // ← BARU
         ]);
 
         try {
-            // Cegah admin menonaktifkan dirinya sendiri secara tidak sengaja
             if (!$validated['aktifkan'] && $username === session('auth_user.username')) {
                 return response()->json([
                     'message' => 'Anda tidak dapat menonaktifkan akun Anda sendiri.',
@@ -112,6 +113,8 @@ class AktivasiAkunController extends Controller
             $akses->is_active = $validated['aktifkan'];
 
             if ($validated['aktifkan']) {
+                $akses->role = $validated['role']; // ← BARU
+                $akses->is_admin = $validated['role'] === 'super_admin'; // ← BARU, is_admin ngikut role
                 $akses->activated_by = session('auth_user.username');
                 $akses->activated_at = now();
             }
@@ -121,12 +124,23 @@ class AktivasiAkunController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => $validated['aktifkan']
-                    ? "Akses login untuk {$username} berhasil diaktifkan."
+                    ? "Akses login untuk {$username} berhasil diaktifkan sebagai " . $this->roleLabel($validated['role']) . "."
                     : "Akses login untuk {$username} berhasil dinonaktifkan.",
             ]);
         } catch (\Throwable $e) {
             Log::error('Gagal mengubah status akses: ' . $e->getMessage());
             return response()->json(['message' => 'Gagal menyimpan perubahan akses.'], 500);
         }
+    }
+
+    private function roleLabel(string $role): string
+    {
+        return match ($role) {
+            'super_admin' => 'Super Admin',
+            'safety' => 'User Safety',
+            'pengawas' => 'User Pengawas',
+            'medis' => 'User Medis',
+            default => $role,
+        };
     }
 }

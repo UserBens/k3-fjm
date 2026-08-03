@@ -264,159 +264,163 @@
     </div>
 
     {{-- DATABASE TENAGA --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Database Tenaga</div>
+    @if (session('auth_user.role') === 'super_admin')
+        <div class="sb-section">
+            <div class="sb-section-label">Database Tenaga</div>
 
-        @php
-            // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $datatenagaActive =
-                request()->routeIs('tenaga.*') ||
-                request()->routeIs('memo-kib.*') ||
-                request()->routeIs('safety-officer.*') ||
-                request()->routeIs('pengawas.*') ||
-                request()->routeIs('kode-ok.*');
-        @endphp
+            @php
+                // Sesuaikan nama route ini dengan yang ada di web.php Anda
+                $datatenagaActive =
+                    request()->routeIs('tenaga.*') ||
+                    request()->routeIs('memo-kib.*') ||
+                    request()->routeIs('safety-officer.*') ||
+                    request()->routeIs('pengawas.*') ||
+                    request()->routeIs('kode-ok.*');
+            @endphp
 
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
-            onclick="toggleDropdown('datatenagaDropdown', this)">
+            <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
+                onclick="toggleDropdown('datatenagaDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="nav-label">Data Tenaga</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $datatenagaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">Data Tenaga</span>
+
+            </a>
+
+            <div id="datatenagaDropdown" class="dropdown-menu {{ $datatenagaActive ? 'show' : '' }}">
+
+                <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}"
+                    href="{{ route('tenaga.index') }}">
+                    <span class="nav-label">Master Tenaga</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
+                    href="{{ route('pengawas.index') }}">
+                    <span class="nav-label">Data Pengawas</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('safety-officer.*') ? 'active' : '' }}"
+                    href="{{ route('safety-officer.index') }}">
+                    <span class="nav-label">Data Safety Officer</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
+                    href="{{ route('kode-ok.index') }}">
+                    <span class="nav-label">Master Kode OK</span>
+                </a>
+
             </div>
-
-            <svg class="dropdown-arrow {{ $datatenagaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="datatenagaDropdown" class="dropdown-menu {{ $datatenagaActive ? 'show' : '' }}">
-
-            <a class="nav-link {{ request()->routeIs('tenaga.*') ? 'active' : '' }}" href="{{ route('tenaga.index') }}">
-                <span class="nav-label">Master Tenaga</span>
-            </a>
-
-            {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
-                <span class="nav-label">Memo KIB</span>
-            </a> --}}
-
-            <a class="nav-link {{ request()->routeIs('pengawas.*') ? 'active' : '' }}"
-                href="{{ route('pengawas.index') }}">
-                <span class="nav-label">Data Pengawas</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('safety-officer.*') ? 'active' : '' }}"
-                href="{{ route('safety-officer.index') }}">
-                <span class="nav-label">Data Safety Officer</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
-                href="{{ route('kode-ok.index') }}">
-                <span class="nav-label">Master Kode OK</span>
-            </a>
-
         </div>
-    </div>
+    @endif
 
     {{-- REGISTRASI TENAGA --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Registrasi Tenaga</div>
+    @if (session('auth_user.role') === 'super_admin')
+        <div class="sb-section">
+            <div class="sb-section-label">Registrasi Tenaga</div>
 
-        @php
-            $registrasitenagaActive =
-                request()->routeIs('memo-kib.*') ||
-                request()->routeIs('pengembalian-kib-apd.*') ||
-                request()->routeIs('registrasi-k3.*'); // BARU: Tambahan active state untuk Registrasi K3
-        @endphp
+            @php
+                $registrasitenagaActive =
+                    request()->routeIs('memo-kib.*') ||
+                    request()->routeIs('pengembalian-kib-apd.*') ||
+                    request()->routeIs('registrasi-k3.*'); // BARU: Tambahan active state untuk Registrasi K3
+            @endphp
 
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $registrasitenagaActive ? 'active' : '' }}"
-            onclick="toggleDropdown('registrasitenagaDropdown', this)">
+            <a href="javascript:void(0)"
+                class="nav-link nav-dropdown-toggle {{ $registrasitenagaActive ? 'active' : '' }}"
+                onclick="toggleDropdown('registrasitenagaDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="nav-label">Registrasi Tenaga</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $registrasitenagaActive ? 'rotate' : '' }}" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">Registrasi Tenaga</span>
-            </div>
-
-            <svg class="dropdown-arrow {{ $registrasitenagaActive ? 'rotate' : '' }}" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-        </a>
-
-        <div id="registrasitenagaDropdown" class="dropdown-menu {{ $registrasitenagaActive ? 'show' : '' }}">
-
-            {{-- MENU BARU REGISTRASI K3 --}}
-            <a class="nav-link {{ request()->routeIs('registrasi-k3.*') ? 'active' : '' }}"
-                href="{{ route('registrasi-k3.index') }}">
-                <span class="nav-label">Registrasi Awal K3</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('pengembalian-kib-apd.*') ? 'active' : '' }}"
-                href="{{ route('pengembalian-kib-apd.index') }}">
-                <span class="nav-label">Pengembalian APD KIB</span>
-            </a>
+            <div id="registrasitenagaDropdown" class="dropdown-menu {{ $registrasitenagaActive ? 'show' : '' }}">
 
-            {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
+                {{-- MENU BARU REGISTRASI K3 --}}
+                <a class="nav-link {{ request()->routeIs('registrasi-k3.*') ? 'active' : '' }}"
+                    href="{{ route('registrasi-k3.index') }}">
+                    <span class="nav-label">Registrasi Awal K3</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('pengembalian-kib-apd.*') ? 'active' : '' }}"
+                    href="{{ route('pengembalian-kib-apd.index') }}">
+                    <span class="nav-label">Pengembalian APD KIB</span>
+                </a>
+
+                {{-- <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}" href="{{ route('memo-kib.index') }}">
                 <span class="nav-label">Memo KIB</span>
             </a> --}}
 
+            </div>
         </div>
-    </div>
+    @endif
 
     {{--  HALAMAN TENAGA AHLI --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Alat Berat All In & On Call</div>
+    @if (session('auth_user.role') === 'super_admin')
+        <div class="sb-section">
+            <div class="sb-section-label">Alat Berat All In & On Call</div>
 
-        @php
-            // Hapus .* agar nama route cocok persis dengan yang ada di web.php
-            $alberActive =
-                request()->routeIs('operator-alat-berat.*') ||
-                request()->routeIs('alber.master-oncall') ||
-                request()->routeIs('alber.master-allin');
-        @endphp
+            @php
+                // Hapus .* agar nama route cocok persis dengan yang ada di web.php
+                $alberActive =
+                    request()->routeIs('operator-alat-berat.*') ||
+                    request()->routeIs('alber.master-oncall') ||
+                    request()->routeIs('alber.master-allin');
+            @endphp
 
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
-            onclick="toggleDropdown('alberDropdown', this)">
+            <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
+                onclick="toggleDropdown('alberDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                    </svg>
+                    <span class="nav-label">Monitoring Operator Alat Berat</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $alberActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">Monitoring Operator Alat Berat</span>
+
+            </a>
+
+            <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
+                <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Dashboard</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('operator-alat-berat.*') ? 'active' : '' }}"
+                    href="{{ route('operator-alat-berat.index') }}">
+                    <span class="nav-label">Master All In</span>
+                </a>
             </div>
-
-            <svg class="dropdown-arrow {{ $alberActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
-            <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Dashboard</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('operator-alat-berat.*') ? 'active' : '' }}"
-                href="{{ route('operator-alat-berat.index') }}">
-                <span class="nav-label">Master All In</span>
-            </a>
         </div>
-    </div>
+    @endif
 
     {{-- KPI --}}
     <div class="sb-section">
@@ -462,349 +466,345 @@
         </a>
 
         <div id="monitoringDropdown" class="dropdown-menu {{ $monitoringActive ? 'show' : '' }}">
+            @if (in_array(session('auth_user.role'), ['super_admin', 'medis', 'pengawas', 'safety']))
+                <a class="nav-link {{ request()->routeIs('dashboard-kpi-k3.*') ? 'active' : '' }}"
+                    href="{{ route('dashboard-kpi-k3.index') }}">
+                    <span class="nav-label">Dashboard Monitoring KPI</span>
+                </a>
+            @endif
 
-            <a class="nav-link {{ request()->routeIs('dashboard-kpi-k3.*') ? 'active' : '' }}"
-                href="{{ route('dashboard-kpi-k3.index') }}">
-                <span class="nav-label">Dashboard Monitoring KPI</span>
-            </a>
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <a class="nav-link {{ request()->routeIs('laporan-capaian-kpi.*') ? 'active' : '' }}"
+                    href="{{ route('laporan-capaian-kpi.index') }}">
+                    <span class="nav-label">Laporan Capaian KPI</span>
+                </a>
+            @endif
 
-            <a class="nav-link {{ request()->routeIs('laporan-capaian-kpi.*') ? 'active' : '' }}"
-                href="{{ route('laporan-capaian-kpi.index') }}">
-                <span class="nav-label">Laporan Capaian KPI</span>
-            </a>
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->
+                <a class="nav-link {{ request()->routeIs('kpi-k3.matriks.*') ? 'active' : '' }}"
+                    href="{{ route('kpi-k3.matriks.index') }}">
+                    <span class="nav-label">Matriks KPI</span>
+                </a>
+            @endif
 
-            <!-- Tambahan Menu KPI K3 Matriks & Pengaturan -->
-            <a class="nav-link {{ request()->routeIs('kpi-k3.matriks.*') ? 'active' : '' }}"
-                href="{{ route('kpi-k3.matriks.index') }}">
-                <span class="nav-label">Matriks KPI</span>
-            </a>
+            {{-- Pelaporan Medis: super_admin + medis --}}
+            @if (in_array(session('auth_user.role'), ['super_admin', 'medis']))
+                <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
+                    href="{{ route('data-medis.index') }}">
+                    <span class="nav-label">Pelaporan Medis</span>
+                </a>
+            @endif
 
-            <a class="nav-link {{ request()->routeIs('data-medis.*') ? 'active' : '' }}"
-                href="{{ route('data-medis.index') }}">
-                <span class="nav-label">Pelaporan Medis</span>
-            </a>
+            {{-- Pelaporan Pengawas: super_admin + pengawas --}}
+            @if (in_array(session('auth_user.role'), ['super_admin', 'pengawas']))
+                <a class="nav-link {{ request()->routeIs('pelaporan-pengawas.*') ? 'active' : '' }}"
+                    href="{{ route('pelaporan-pengawas.index') }}">
+                    <span class="nav-label">Pelaporan Pengawas</span>
+                </a>
+            @endif
 
-            <a class="nav-link {{ request()->routeIs('data-safety.*') ? 'active' : '' }}"
-                href="{{ route('data-safety.index') }}">
-                <span class="nav-label">Pelaporan Safety Officer</span>
-            </a>
+            @if (in_array(session('auth_user.role'), ['super_admin', 'safety']))
+                <a class="nav-link {{ request()->routeIs('data-safety.*') ? 'active' : '' }}"
+                    href="{{ route('data-safety.index') }}">
+                    <span class="nav-label">Pelaporan Safety Officer</span>
+                </a>
+            @endif
 
-            {{-- Added: Menu Pelaporan Pengawas --}}
-            <a class="nav-link {{ request()->routeIs('pelaporan-pengawas.*') ? 'active' : '' }}"
-                href="{{ route('pelaporan-pengawas.index') }}">
-                <span class="nav-label">Pelaporan Pengawas</span>
-            </a>
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}"
+                    href="{{ route('monitoring-laporan.index') }}">
+                    <span class="nav-label">Data Pelaporan</span>
+                </a>
+            @endif
 
-            <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}"
-                href="{{ route('monitoring-laporan.index') }}">
-                <span class="nav-label">Data Pelaporan</span>
-            </a>
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <a class="nav-link {{ request()->routeIs('data-unsafe.*') ? 'active' : '' }}"
+                    href="{{ route('data-unsafe.index') }}">
+                    <span class="nav-label">Data UA/UC</span>
+                </a>
+            @endif
 
-            <a class="nav-link {{ request()->routeIs('data-unsafe.*') ? 'active' : '' }}"
-                href="{{ route('data-unsafe.index') }}">
-                <span class="nav-label">Data UA/UC</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('toolbox-meeting.*') ? 'active' : '' }}"
-                href="{{ route('toolbox-meeting.index') }}">
-                <span class="nav-label">ToolBox Meeting</span>
-            </a>
-            {{-- <a class="nav-link {{ request()->routeIs('data-reject-monitoring.*') ? 'active' : '' }}"
-                href="{{ route('data-reject-monitoring.index') }}">
-                <span class="nav-label">Monitoring Dokumen Reject</span>
-            </a> --}}
-            {{-- <a class="nav-link {{ request()->routeIs('monitoring-laporan-so.*') ? 'active' : '' }}"
-                href="{{ route('monitoring-laporan-so.index') }}">
-                <span class="nav-label">Monitoring SO</span>
-            </a> --}}
-            {{-- <a class="nav-link {{ request()->routeIs('dashboard-individu.*') ? 'active' : '' }}"
-                href="{{ route('dashboard-individu.index') }}">
-                <span class="nav-label">Dashboard Individu</span>
-            </a> --}}
-            {{-- <a class="nav-link {{ request()->routeIs('monitoring-pengawas.*') ? 'active' : '' }}"
-                href="#">
-                <span class="nav-label">Monitoring Pengawas</span>
-            </a> --}}
-            {{-- <a class="nav-link {{ request()->routeIs('rekap-pengawas.*') ? 'active' : '' }}"
-                href="{{ route('rekap-pengawas.index') }}">
-                <span class="nav-label">Rekap Pengawas</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('monitoring-medis.*') ? 'active' : '' }}"
-                href="{{ route('monitoring-medis.index') }}">
-                <span class="nav-label">Monitoring Medis</span>
-            </a> --}}
-            {{-- <a class="nav-link {{ request()->routeIs('rekap-medis.*') ? 'active' : '' }}"
-                href="{{ route('rekap-medis.index') }}">
-                <span class="nav-label">Rekap Medis</span>
-            </a> --}}
-
-            <!-- Jika route pengaturan menggunakan method PUT, Anda bisa meng arahkan ke halaman edit/index yang sesuai, atau sesuaikan jika ada route get-nya -->
-            <!-- Contoh jika diarahkan ke halaman matriks atau pengaturan khusus -->
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <a class="nav-link {{ request()->routeIs('toolbox-meeting.*') ? 'active' : '' }}"
+                    href="{{ route('toolbox-meeting.index') }}">
+                    <span class="nav-label">ToolBox Meeting</span>
+                </a>
+            @endif
 
         </div>
     </div>
 
-    {{-- HSE PERFORMANCE --}}
-    <div class="sb-section">
-        <div class="sb-section-label">HSE Performance</div>
+    @if (session('auth_user.role') === 'super_admin')
+        {{-- HSE PERFORMANCE --}}
+        <div class="sb-section">
+            <div class="sb-section-label">HSE Performance</div>
 
-        @php
-            // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $jkaActive =
-                request()->routeIs('dashboard-insiden.*') ||
-                request()->routeIs('lpi-kejadian.*') ||
-                request()->routeIs('dashboard-jka.*') ||
-                request()->routeIs('leading-dashboard.*') ||
-                request()->routeIs('leading-input.*') ||
-                request()->routeIs('master-jadwal-shift.*') ||
-                request()->routeIs('master-hari-libur.*');
-        @endphp
+            @php
+                // Sesuaikan nama route ini dengan yang ada di web.php Anda
+                $jkaActive =
+                    request()->routeIs('dashboard-insiden.*') ||
+                    request()->routeIs('lpi-kejadian.*') ||
+                    request()->routeIs('dashboard-jka.*') ||
+                    request()->routeIs('leading-dashboard.*') ||
+                    request()->routeIs('leading-input.*') ||
+                    request()->routeIs('master-jadwal-shift.*') ||
+                    request()->routeIs('master-hari-libur.*');
+            @endphp
 
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
-            onclick="toggleDropdown('jkaDropdown', this)">
+            <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
+                onclick="toggleDropdown('jkaDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span class="nav-label">JKA & Record Insiden</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $jkaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">JKA & Record Insiden</span>
+
+            </a>
+
+            <div id="jkaDropdown" class="dropdown-menu {{ $jkaActive ? 'show' : '' }}">
+
+                <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}"
+                    href="{{ route('dashboard-insiden.index') }}">
+                    <span class="nav-label">Dashboard Monitoring Insiden</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('lpi-kejadian.*') ? 'active' : '' }}"
+                    href="{{ route('lpi-kejadian.index') }}">
+                    <span class="nav-label">LPI Insiden</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}"
+                    href="{{ route('dashboard-jka.index') }}">
+                    <span class="nav-label">Dashboard JKA</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('leading-dashboard.*') ? 'active' : '' }}"
+                    href="{{ route('leading-dashboard.index') }}">
+                    <span class="nav-label">Dashboard Leading</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('leading-input.*') ? 'active' : '' }}"
+                    href="{{ route('leading-input.index') }}">
+                    <span class="nav-label">Leading Input</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('master-jadwal-shift.*') ? 'active' : '' }}"
+                    href="{{ route('master-jadwal-shift.index') }}">
+                    <span class="nav-label">Master Jadwal Shift</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('master-hari-libur.*') ? 'active' : '' }}"
+                    href="{{ route('master-hari-libur.index') }}">
+                    <span class="nav-label">Master Hari Libur</span>
+                </a>
+
             </div>
-
-            <svg class="dropdown-arrow {{ $jkaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="jkaDropdown" class="dropdown-menu {{ $jkaActive ? 'show' : '' }}">
-
-            <a class="nav-link {{ request()->routeIs('dashboard-insiden.*') ? 'active' : '' }}"
-                href="{{ route('dashboard-insiden.index') }}">
-                <span class="nav-label">Dashboard Monitoring Insiden</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('lpi-kejadian.*') ? 'active' : '' }}"
-                href="{{ route('lpi-kejadian.index') }}">
-                <span class="nav-label">LPI Insiden</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('dashboard-jka.*') ? 'active' : '' }}"
-                href="{{ route('dashboard-jka.index') }}">
-                <span class="nav-label">Dashboard JKA</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('leading-dashboard.*') ? 'active' : '' }}"
-                href="{{ route('leading-dashboard.index') }}">
-                <span class="nav-label">Dashboard Leading</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('leading-input.*') ? 'active' : '' }}"
-                href="{{ route('leading-input.index') }}">
-                <span class="nav-label">Leading Input</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('master-jadwal-shift.*') ? 'active' : '' }}"
-                href="{{ route('master-jadwal-shift.index') }}">
-                <span class="nav-label">Master Jadwal Shift</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('master-hari-libur.*') ? 'active' : '' }}"
-                href="{{ route('master-hari-libur.index') }}">
-                <span class="nav-label">Master Hari Libur</span>
-            </a>
-
         </div>
-    </div>
+    @endif
 
-    {{-- DOCUMENT CONTROL --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Document Control</div>
+    @if (session('auth_user.role') === 'super_admin')
+        {{-- DOCUMENT CONTROL --}}
+        <div class="sb-section">
+            <div class="sb-section-label">Document Control</div>
 
-        @php
-            // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $documentcontrolActive = request()->routeIs('daftar-induk.*') || request()->routeIs('dashboard-dokumen.*');
-        @endphp
+            @php
+                // Sesuaikan nama route ini dengan yang ada di web.php Anda
+                $documentcontrolActive =
+                    request()->routeIs('daftar-induk.*') || request()->routeIs('dashboard-dokumen.*');
+            @endphp
 
-        <a href="javascript:void(0)"
-            class="nav-link nav-dropdown-toggle {{ $documentcontrolActive ? 'active' : '' }}"
-            onclick="toggleDropdown('documentcontrolDropdown', this)">
+            <a href="javascript:void(0)"
+                class="nav-link nav-dropdown-toggle {{ $documentcontrolActive ? 'active' : '' }}"
+                onclick="toggleDropdown('documentcontrolDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span class="nav-label">Monitoring Dokumen</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $documentcontrolActive ? 'rotate' : '' }}" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">Monitoring Dokumen</span>
+
+            </a>
+
+            <div id="documentcontrolDropdown" class="dropdown-menu {{ $documentcontrolActive ? 'show' : '' }}">
+
+                <a class="nav-link {{ request()->routeIs('daftar-induk.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Daftar Induk Dokumen</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('dashboard-dokumen.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Dashboard Dokumen</span>
+                </a>
+
             </div>
-
-            <svg class="dropdown-arrow {{ $documentcontrolActive ? 'rotate' : '' }}" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="documentcontrolDropdown" class="dropdown-menu {{ $documentcontrolActive ? 'show' : '' }}">
-
-            <a class="nav-link {{ request()->routeIs('daftar-induk.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Daftar Induk Dokumen</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('dashboard-dokumen.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Dashboard Dokumen</span>
-            </a>
-
         </div>
-    </div>
+    @endif
 
-    {{-- MATRIKS TNA --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Training Needs Analysis</div>
+    @if (session('auth_user.role') === 'super_admin')
+        {{-- MATRIKS TNA --}}
+        <div class="sb-section">
+            <div class="sb-section-label">Training Needs Analysis</div>
 
-        @php
-            // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $matriksActive =
-                request()->routeIs('cover.*') ||
-                request()->routeIs('matriks-tna.*') ||
-                request()->routeIs('rencana-pelatihan-k3.*') ||
-                request()->routeIs('dasar-hukum.*') ||
-                request()->routeIs('form-evaluasi.*') ||
-                request()->routeIs('matriks-gap.*') ||
-                request()->routeIs('matriks-prioritas.*');
-        @endphp
+            @php
+                // Sesuaikan nama route ini dengan yang ada di web.php Anda
+                $matriksActive =
+                    request()->routeIs('cover.*') ||
+                    request()->routeIs('matriks-tna.*') ||
+                    request()->routeIs('rencana-pelatihan-k3.*') ||
+                    request()->routeIs('dasar-hukum.*') ||
+                    request()->routeIs('form-evaluasi.*') ||
+                    request()->routeIs('matriks-gap.*') ||
+                    request()->routeIs('matriks-prioritas.*');
+            @endphp
 
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $matriksActive ? 'active' : '' }}"
-            onclick="toggleDropdown('matriksDropdown', this)">
+            <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $matriksActive ? 'active' : '' }}"
+                onclick="toggleDropdown('matriksDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    <span class="nav-label">Matriks Kebutuhan Pelatihan</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $matriksActive ? 'rotate' : '' }}" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">Matriks Kebutuhan Pelatihan</span>
+
+            </a>
+
+            <div id="matriksDropdown" class="dropdown-menu {{ $matriksActive ? 'show' : '' }}">
+
+                <a class="nav-link {{ request()->routeIs('cover.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Cover</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('matriks-tna.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Matriks TNA K3</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('rencana-pelatihan-k3.*') ? 'active' : '' }}"
+                    href="{{ route('rencana-pelatihan-k3.index') }}">
+                    <span class="nav-label">Rencana Implementasi</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('dasar-hukum.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Dasar Hukum K3</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('form-evaluasi.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Form Evaluasi</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('matriks-gap.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Matriks Gap Kompetensi</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('matriks-prioritas.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Matriks Prioritas Pelatihan</span>
+                </a>
+
             </div>
-
-            <svg class="dropdown-arrow {{ $matriksActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="matriksDropdown" class="dropdown-menu {{ $matriksActive ? 'show' : '' }}">
-
-            <a class="nav-link {{ request()->routeIs('cover.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Cover</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('matriks-tna.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks TNA K3</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('rencana-pelatihan-k3.*') ? 'active' : '' }}"
-                href="{{ route('rencana-pelatihan-k3.index') }}">
-                <span class="nav-label">Rencana Implementasi</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('dasar-hukum.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Dasar Hukum K3</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('form-evaluasi.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Form Evaluasi</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('matriks-gap.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks Gap Kompetensi</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('matriks-prioritas.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks Prioritas Pelatihan</span>
-            </a>
-
         </div>
-    </div>
+    @endif
 
-    {{-- Health Performance --}}
-    <div class="sb-section">
-        <div class="sb-section-label">Health Performance</div>
+    @if (session('auth_user.role') === 'super_admin')
+        {{-- Health Performance --}}
+        <div class="sb-section">
+            <div class="sb-section-label">Health Performance</div>
 
-        @php
-            // Sesuaikan nama route ini dengan yang ada di web.php Anda
-            $healthperformanceActive =
-                request()->routeIs('dasboard-he.*') ||
-                request()->routeIs('dcu.*') ||
-                request()->routeIs('matriks-refrensi.*') ||
-                request()->routeIs('matriks-kesehatan.*') ||
-                request()->routeIs('program-kesehatan.*') ||
-                request()->routeIs('rekap-bulanan.*') ||
-                request()->routeIs('form-dcu.*') ||
-                request()->routeIs('lembar-folowup.*');
-        @endphp
+            @php
+                // Sesuaikan nama route ini dengan yang ada di web.php Anda
+                $healthperformanceActive =
+                    request()->routeIs('dasboard-he.*') ||
+                    request()->routeIs('dcu.*') ||
+                    request()->routeIs('matriks-refrensi.*') ||
+                    request()->routeIs('matriks-kesehatan.*') ||
+                    request()->routeIs('program-kesehatan.*') ||
+                    request()->routeIs('rekap-bulanan.*') ||
+                    request()->routeIs('form-dcu.*') ||
+                    request()->routeIs('lembar-folowup.*');
+            @endphp
 
-        <a href="javascript:void(0)"
-            class="nav-link nav-dropdown-toggle {{ $healthperformanceActive ? 'active' : '' }}"
-            onclick="toggleDropdown('healthperformanceDropdown', this)">
+            <a href="javascript:void(0)"
+                class="nav-link nav-dropdown-toggle {{ $healthperformanceActive ? 'active' : '' }}"
+                onclick="toggleDropdown('healthperformanceDropdown', this)">
 
-            <div class="nav-dropdown-left">
-                <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <div class="nav-dropdown-left">
+                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <span class="nav-label">Pemeriksaan Kesehatan & Prokes</span>
+                </div>
+
+                <svg class="dropdown-arrow {{ $healthperformanceActive ? 'rotate' : '' }}" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-                <span class="nav-label">Pemeriksaan Kesehatan & Prokes</span>
+
+            </a>
+
+            <div id="healthperformanceDropdown" class="dropdown-menu {{ $healthperformanceActive ? 'show' : '' }}">
+
+                <a class="nav-link {{ request()->routeIs('dasboard-he.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Dashboard HE</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('data-dcu.*') ? 'active' : '' }}"
+                    href="{{ route('dcu.index') }}">
+                    <span class="nav-label">Data DCU</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('matriks-refrensi.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Matriks Refrensi</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('matriks-kesehatan.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Matriks Kesehatan</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('program-kesehatan.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Program Kesehatan</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('rekap-bulanan.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Rekap Bulanan</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('form-dcu.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Form DCU</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
+                    <span class="nav-label">Lembar Folowup</span>
+                </a>
+
             </div>
-
-            <svg class="dropdown-arrow {{ $healthperformanceActive ? 'rotate' : '' }}" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-
-        </a>
-
-        <div id="healthperformanceDropdown" class="dropdown-menu {{ $healthperformanceActive ? 'show' : '' }}">
-
-            <a class="nav-link {{ request()->routeIs('dasboard-he.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Dashboard HE</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('data-dcu.*') ? 'active' : '' }}"
-                href="{{ route('dcu.index') }}">
-                <span class="nav-label">Data DCU</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('matriks-refrensi.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks Refrensi</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('matriks-kesehatan.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Matriks Kesehatan</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('program-kesehatan.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Program Kesehatan</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('rekap-bulanan.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Rekap Bulanan</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('form-dcu.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Form DCU</span>
-            </a>
-
-            <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Lembar Folowup</span>
-            </a>
-
         </div>
-    </div>
-
+    @endif
+    
     {{-- Assets Management --}}
     <div class="sb-section">
         <div class="sb-section-label">Assets Management</div>

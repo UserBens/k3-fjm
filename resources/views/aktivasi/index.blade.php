@@ -184,6 +184,12 @@
             margin-top: 2px;
         }
 
+        .pg-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .btn-outline {
             padding: 6px 14px;
             border-radius: 8px;
@@ -199,6 +205,26 @@
 
         .btn-outline:hover {
             background: #F0F4FF;
+        }
+
+        .btn-primary {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fff;
+            background: #2D4B9E;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: #1A3C8A;
         }
 
         .pulse-dot {
@@ -270,6 +296,26 @@
             color: #94A3B8;
         }
 
+        .filter-select {
+            height: 36px;
+            padding: 0 30px 0 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 10px center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1A1D2E;
+            cursor: pointer;
+            min-width: 150px;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .filter-select:focus {
+            border-color: #2D4B9E;
+            outline: none;
+        }
+
         .filter-reset {
             height: 36px;
             padding: 0 14px;
@@ -293,7 +339,7 @@
 
         .rtable {
             width: 100%;
-            min-width: 720px;
+            min-width: 980px;
             border-collapse: collapse;
         }
 
@@ -335,7 +381,7 @@
         .td-avatar {
             width: 30px;
             height: 30px;
-            border-radius: 50%;
+            border-radius: 9px;
             background: #E0E7FF;
             display: flex;
             align-items: center;
@@ -374,6 +420,11 @@
             color: #1A7A3C;
         }
 
+        .sp-amber {
+            background: rgba(217, 119, 6, 0.09);
+            color: #D97706;
+        }
+
         .sp-red {
             background: rgba(208, 2, 27, 0.08);
             color: #D0021B;
@@ -387,11 +438,6 @@
         .sp-gray {
             background: rgba(100, 116, 139, 0.09);
             color: #64748B;
-        }
-
-        .sp-amber {
-            background: rgba(217, 119, 6, 0.09);
-            color: #D97706;
         }
 
         .empty-state,
@@ -422,10 +468,6 @@
             font-size: 11.5px;
         }
 
-        .skeleton-row td {
-            padding: 12px 8px;
-        }
-
         .skeleton-bar {
             height: 12px;
             border-radius: 6px;
@@ -442,6 +484,25 @@
             100% {
                 background-position: 0 50%;
             }
+        }
+
+        .link-line {
+            display: block;
+            font-size: 11px;
+            color: #2D4B9E;
+            font-weight: 700;
+            text-decoration: none;
+            margin-bottom: 3px;
+        }
+
+        .link-line:hover {
+            text-decoration: underline;
+        }
+
+        .link-line.empty {
+            color: #CBD5E1;
+            font-weight: 500;
+            text-decoration: none;
         }
 
         .pagination-bar {
@@ -595,6 +656,11 @@
                 align-items: stretch;
             }
 
+            .filter-select {
+                min-width: 0;
+                flex: 1 1 46%;
+            }
+
             .pagination-bar {
                 flex-direction: column;
                 align-items: stretch;
@@ -605,50 +671,135 @@
             }
         }
 
-        .btn-toggle-aktif {
-            display: inline-flex;
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 17, 26, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 100;
             align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 7px;
-            border: 1px solid rgba(26, 122, 60, 0.25);
-            background: rgba(26, 122, 60, 0.08);
-            color: #1A7A3C;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.15s;
-            white-space: nowrap;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            padding: 20px;
         }
 
-        .btn-toggle-aktif:hover {
-            background: rgba(26, 122, 60, 0.16);
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 380px;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.94) translateY(8px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(208, 2, 27, 0.09);
+            color: #D0021B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.02em;
+            color: #1A1D2E;
+            margin-bottom: 8px;
+        }
+
+        .modal-desc {
+            font-size: 12.5px;
+            line-height: 1.55;
+            color: #64748B;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-modal-cancel {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            background: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-modal-cancel:hover {
+            background: #F8F9FF;
+        }
+
+        .btn-modal-confirm {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #2D4B9E;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-modal-confirm:hover {
+            background: #1A3C8A;
         }
 
         .btn-toggle-nonaktif {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 7px;
-            border: 1px solid rgba(208, 2, 27, 0.2);
-            background: rgba(208, 2, 27, 0.06);
-            color: #D0021B;
-            font-size: 11px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #2D4B9E;
+            font-size: 12px;
             font-weight: 700;
+            color: #fff;
             cursor: pointer;
             transition: background 0.15s;
-            white-space: nowrap;
         }
 
         .btn-toggle-nonaktif:hover {
-            background: rgba(208, 2, 27, 0.14);
+            background: #1A3C8A;
         }
 
-        .btn-toggle-aktif:disabled,
-        .btn-toggle-nonaktif:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .btn-modal-danger {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #D0021B;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-modal-danger:hover {
+            background: #A80115;
         }
 
         .toast-container {
@@ -733,6 +884,385 @@
             line-height: 1;
             padding: 2px;
             flex-shrink: 0;
+        }
+
+        .btn-row-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: transparent;
+            cursor: pointer;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 6px;
+            margin-bottom: 4px;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-row-action:hover {
+            background: #F8F9FF;
+        }
+
+        .btn-row-action.approve {
+            color: #1A7A3C;
+            border-color: rgba(26, 122, 60, 0.25);
+            background: rgba(26, 122, 60, 0.06);
+        }
+
+        .btn-row-action.reject {
+            color: #D0021B;
+            border-color: rgba(208, 2, 27, 0.25);
+            background: rgba(208, 2, 27, 0.06);
+        }
+
+        .form-modal-box {
+            width: 640px;
+            max-width: calc(100vw - 32px);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-modal-header {
+            margin-bottom: 14px;
+        }
+
+        .form-modal-body {
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .form-section-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #2D4B9E;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 14px 0 8px;
+        }
+
+        .form-section-title:first-child {
+            margin-top: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 14px;
+        }
+
+        .form-group.span-2 {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            margin-bottom: 5px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            background: #fff;
+            font-size: 12.5px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #1A1D2E;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-input,
+        .form-select {
+            height: 38px;
+        }
+
+        .form-textarea {
+            padding: 8px 12px;
+            resize: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #2D4B9E;
+        }
+
+        .form-select {
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.span-2 {
+                grid-column: span 1;
+            }
+        }
+
+        .detail-modal-box {
+            max-width: 680px;
+            width: 100%;
+        }
+
+        .detail-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .detail-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2D4B9E, #1A1D2E);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .detail-subtitle {
+            font-size: 12.5px;
+            color: #94A3B8;
+            font-weight: 500;
+        }
+
+        .detail-modal-body {
+            max-height: 68vh;
+            overflow-y: auto;
+            padding-top: 4px;
+        }
+
+        .detail-section {
+            margin-bottom: 18px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #E2E8F0;
+        }
+
+        .detail-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-section-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #2D4B9E;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .detail-section-title svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .detail-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+        }
+
+        .detail-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-field.span-2 {
+            grid-column: span 2;
+        }
+
+        .detail-field.span-4 {
+            grid-column: span 4;
+        }
+
+        .detail-field label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94A3B8;
+        }
+
+        .detail-field .detail-value {
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1E293B;
+            min-height: 36px;
+            white-space: pre-line;
+        }
+
+        .detail-field input,
+        .detail-field textarea {
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1E293B;
+            font-family: inherit;
+            resize: none;
+            cursor: default;
+        }
+
+        .detail-field a.detail-link {
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2D4B9E;
+            text-decoration: none;
+            display: block;
+        }
+
+        .detail-field a.detail-link:hover {
+            text-decoration: underline;
+        }
+
+        .detail-empty-note {
+            font-size: 12px;
+            color: #94A3B8;
+            padding: 8px 0;
+        }
+
+        @media (max-width: 640px) {
+            .detail-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-field.span-2 {
+                grid-column: span 1;
+            }
+        }
+
+        .picker-wrap {
+            position: relative;
+        }
+
+        .picker-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            z-index: 20;
+        }
+
+        .picker-dropdown.open {
+            display: block;
+        }
+
+        .picker-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .picker-item:hover {
+            background: #F0F4FF;
+        }
+
+        .picker-item-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-item-sub {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .picker-selected-chip {
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            background: #F0F4FF;
+            font-size: 12px;
+        }
+
+        .picker-selected-chip .chip-name {
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .picker-selected-chip .chip-sub {
+            font-size: 10.5px;
+            color: #64748B;
+        }
+
+        .picker-clear-btn {
+            background: none;
+            border: none;
+            color: #D0021B;
+            cursor: pointer;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .file-current-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #2D4B9E;
+            text-decoration: none;
+        }
+
+        .file-current-link:hover {
+            text-decoration: underline;
+        }
+
+        .category-block {
+            display: none;
+        }
+
+        .category-block.visible {
+            display: block;
+        }
+
+        .category-select-wrap {
+            margin-bottom: 14px;
         }
     </style>
 </head>
@@ -893,6 +1423,54 @@
         </div>
     </div>
 
+    <!-- ══════ MODAL KONFIRMASI AKTIVASI ══════ -->
+    <div id="roleModalOverlay" class="modal-overlay" onclick="closeRoleModalOutside(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="form-modal-header">
+                <div class="modal-title" id="roleModalTitle">Aktifkan Akses Login</div>
+                <div class="pg-sub" style="margin:0;">Untuk <strong id="modalNamaUser"></strong></div>
+            </div>
+
+            <div class="form-modal-body">
+                <div class="form-group">
+                    <label class="form-label">Hak Akses Sebagai</label>
+                    <select id="modalRoleSelect" class="form-input">
+                        <option value="">— Pilih hak akses —</option>
+                        <option value="super_admin">Super Admin</option>
+                        <option value="safety">User Safety</option>
+                        <option value="pengawas">User Pengawas</option>
+                        <option value="medis">User Medis</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closeRoleModal()">Batal</button>
+                <button class="btn-modal-confirm" id="btnKonfirmasiAktivasi"
+                    onclick="konfirmasiAktivasi()">Aktifkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════ MODAL KONFIRMASI NONAKTIFKAN ══════ -->
+    <div id="deactivateModalOverlay" class="modal-overlay" onclick="closeDeactivateModalOutside(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="form-modal-header">
+                <div class="modal-title">Nonaktifkan Akses Login</div>
+                <div class="pg-sub" style="margin:0;">
+                    Yakin ingin menonaktifkan akses login untuk <strong id="deactivateNamaUser"></strong>?
+                    User ini tidak akan bisa masuk ke sistem sampai diaktifkan kembali.
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closeDeactivateModal()">Batal</button>
+                <button class="btn-toggle-nonaktif" id="btnKonfirmasiNonaktif" onclick="konfirmasiNonaktivasi()">Ya,
+                    Nonaktifkan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ══════ TOAST NOTIFIKASI ══════ -->
     <div id="toastContainer" class="toast-container"></div>
 
@@ -907,6 +1485,8 @@
             per_page: 10
         };
         let searchDebounce = null;
+        let pendingDeactivation = null;
+        let pendingActivation = null;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1012,45 +1592,135 @@
                        </button>`;
 
                 return `
-                <tr>
-                    <td>
-                        <div class="td-name-cell">
-                            <div class="td-avatar">${escapeHtml(initials(row.nama_lengkap))}</div>
-                            <div>
-                                <div class="td-name-main">${escapeHtml(row.nama_lengkap)}</div>
-                                <div class="td-name-sub">${escapeHtml(row.username)}${row.is_admin ? ' • Admin' : ''}</div>
+                    <tr>
+                        <td>
+                            <div class="td-name-cell">
+                                <div class="td-avatar">${escapeHtml(initials(row.nama_lengkap))}</div>
+                                <div>
+                                    <div class="td-name-main">${escapeHtml(row.nama_lengkap)}</div>
+                                    <div class="td-name-sub">${escapeHtml(row.username)}</div>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>${escapeHtml(row.person_id)}</td>
-                    <td>${escapeHtml(row.level)}</td>
-                    <td>
-                        <span class="status-pill ${row.blokir_erp ? 'sp-red' : 'sp-green'}">${row.blokir_erp ? 'Diblokir ERP' : 'Normal'}</span>
-                    </td>
-                    <td>
-                        <span class="status-pill ${row.is_active ? 'sp-green' : 'sp-gray'}">${row.is_active ? 'Aktif' : 'Belum Aktif'}</span>
-                    </td>
-                    <td style="text-align:center; white-space:nowrap;">
-                        ${actionBtn}
-                    </td>
-                </tr>`;
+                        </td>
+                        <td>${escapeHtml(row.person_id)}</td>
+                        <td>${escapeHtml(row.level)}</td>
+                        <td>
+                            <span class="status-pill ${row.blokir_erp ? 'sp-red' : 'sp-green'}">${row.blokir_erp ? 'Diblokir ERP' : 'Normal'}</span>
+                        </td>
+                        <td>
+                            <span class="status-pill ${row.is_active ? 'sp-green' : 'sp-gray'}">${row.is_active ? roleLabel(row.role) : 'Belum Aktif'}</span>
+                        </td>
+                       <td style="text-align:center; white-space:nowrap;">
+                            ${row.is_active
+                                ? `<button class="btn-toggle-nonaktif" ${row.username === CURRENT_USERNAME ? 'disabled title="Tidak dapat menonaktifkan akun sendiri"' : ''}
+                                            onclick='bukaModalNonaktivasi("${row.username}", ${JSON.stringify(row.nama_lengkap)})'
+                                            style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
+                                            <svg style="width:14px;height:14px; color:#dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                            </svg>
+                                            Nonaktifkan
+                                    </button>`
+                                : `<button class="btn-toggle-aktif"
+                                            onclick='bukaModalAktivasi("${row.username}", ${JSON.stringify(row.nama_lengkap)})'
+                                            style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
+                                            <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Aktifkan
+                                    </button>`
+                            }
+                        </td>
+                    </tr>`;
             }).join('');
         }
 
+        function roleLabel(role) {
+            const labels = {
+                super_admin: 'Super Admin',
+                safety: 'User Safety',
+                pengawas: 'User Pengawas',
+                medis: 'User Medis',
+            };
+            return labels[role] || 'Aktif';
+        }
+
+        function bukaModalAktivasi(username, namaLengkap) {
+            pendingActivation = {
+                username,
+                namaLengkap
+            };
+            document.getElementById('modalNamaUser').textContent = `${namaLengkap} (${username})`;
+            document.getElementById('modalRoleSelect').value = '';
+            document.getElementById('roleModalOverlay').classList.add('open');
+        }
+
+        function closeRoleModal() {
+            document.getElementById('roleModalOverlay').classList.remove('open');
+            pendingActivation = null;
+        }
+
+        function closeRoleModalOutside(event) {
+            if (event.target.id === 'roleModalOverlay') {
+                closeRoleModal();
+            }
+        }
+
+        async function konfirmasiAktivasi() {
+            const role = document.getElementById('modalRoleSelect').value;
+            if (!role) {
+                showToast('Pilih hak akses terlebih dahulu.', 'error');
+                return;
+            }
+            if (!pendingActivation) return;
+
+            await toggleAkses(pendingActivation.username, pendingActivation.namaLengkap, true, role);
+            closeRoleModal();
+        }
+
+        // ══════ MODAL NONAKTIFKAN ══════
+        function bukaModalNonaktivasi(username, namaLengkap) {
+            pendingDeactivation = {
+                username,
+                namaLengkap
+            };
+            document.getElementById('deactivateNamaUser').textContent = `${namaLengkap} (${username})`;
+            document.getElementById('deactivateModalOverlay').classList.add('open');
+        }
+
+        function closeDeactivateModal() {
+            document.getElementById('deactivateModalOverlay').classList.remove('open');
+            pendingDeactivation = null;
+        }
+
+        function closeDeactivateModalOutside(event) {
+            if (event.target.id === 'deactivateModalOverlay') {
+                closeDeactivateModal();
+            }
+        }
+
+        async function konfirmasiNonaktivasi() {
+            if (!pendingDeactivation) return;
+
+            await toggleAkses(pendingDeactivation.username, pendingDeactivation.namaLengkap, false, null);
+            closeDeactivateModal();
+        }
+
+
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
-        <tr>
-            <td colspan="6">
-                <div class="error-state">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />
-                    </svg>
-                    <div class="error-state-title">Gagal memuat data</div>
-                    <div class="error-state-sub">${escapeHtml(message)}</div>
-                </div>
-            </td>
-        </tr>`;
+            <tr>
+                <td colspan="6">
+                    <div class="error-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />
+                        </svg>
+                        <div class="error-state-title">Gagal memuat data</div>
+                        <div class="error-state-sub">${escapeHtml(message)}</div>
+                    </div>
+                </td>
+            </tr>`;
             document.getElementById('paginationText').textContent = '—';
             document.getElementById('paginationPages').innerHTML = '';
             document.getElementById('dataSummary').textContent = 'Gagal memuat data user.';
@@ -1100,16 +1770,17 @@
             try {
                 const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
                     headers: {
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', // ← BARU
                     },
                 });
 
+                const json = await safeJson(res); // ← BARU, ganti res.json()
+
                 if (!res.ok) {
-                    const errJson = await res.json().catch(() => null);
-                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
+                    throw new Error(json?.message || `Server merespons status ${res.status}`);
                 }
 
-                const json = await res.json();
                 renderTable(json.data);
                 renderPagination(json.meta);
             } catch (e) {
@@ -1117,34 +1788,69 @@
             }
         }
 
-        async function toggleAkses(username, namaLengkap, aktifkan) {
-            const confirmMsg = aktifkan ?
-                `Aktifkan akses login untuk ${namaLengkap} (${username})?` :
-                `Nonaktifkan akses login untuk ${namaLengkap} (${username})?`;
-
-            if (!confirm(confirmMsg)) return;
-
+        async function toggleAkses(username, namaLengkap, aktifkan, role) {
             try {
                 const res = await fetch(`${TOGGLE_BASE}/${encodeURIComponent(username)}/toggle`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', // ← BARU
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
                         nama_lengkap: namaLengkap,
                         aktifkan: aktifkan,
+                        role: role,
                     })
                 });
 
-                const json = await res.json();
+                const json = await safeJson(res); // ← BARU, ganti res.json()
+
                 if (!res.ok) throw new Error(json.message || `Server merespons status ${res.status}`);
 
                 await loadData();
                 showToast(json.message, 'success');
             } catch (e) {
                 showToast(e.message || 'Gagal mengubah status akses.', 'error');
+
+                // Kalau sesi habis, arahkan user balik ke login setelah kasih tahu
+                if (e.message.includes('Sesi Anda') || e.message.includes('login ulang')) {
+                    setTimeout(() => window.location.href = "{{ route('login') }}", 2000);
+                }
+            }
+        }
+
+        async function safeJson(res) {
+            const text = await res.text();
+
+            try {
+                return JSON.parse(text);
+            } catch (err) {
+                // Log detail lengkap ke console supaya gampang di-debug
+                console.error('Respons server bukan JSON.', {
+                    status: res.status,
+                    url: res.url,
+                    body: text.slice(0, 1000),
+                });
+
+                // Terjemahkan jadi pesan yang gampang dipahami user
+                if (res.status === 419) {
+                    throw new Error('Sesi Anda telah berakhir. Silakan muat ulang halaman (F5) lalu login kembali.');
+                }
+                if (res.status === 401 || res.redirected || text.includes('Silakan Login') || text.toLowerCase()
+                    .includes('<title>login')) {
+                    throw new Error('Anda tidak sedang login atau sesi telah berakhir. Silakan login ulang.');
+                }
+                if (res.status === 403) {
+                    throw new Error('Anda tidak memiliki izin untuk melakukan aksi ini.');
+                }
+                if (res.status >= 500) {
+                    throw new Error(
+                        'Terjadi kesalahan pada server. Error sudah tercatat di log sistem, silakan hubungi admin/IT.'
+                    );
+                }
+                throw new Error(`Server memberikan respons yang tidak terduga (status ${res.status}).`);
             }
         }
 

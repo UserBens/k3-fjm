@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.custom' => \App\Http\Middleware\EnsureUserIsAuthenticated::class,
             'admin.custom' => \App\Http\Middleware\EnsureUserIsAdmin::class, // BARU
+            'role.custom' => \App\Http\Middleware\CheckRole::class,
 
         ]);
     })

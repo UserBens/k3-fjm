@@ -61,57 +61,171 @@ Route::middleware(['auth.custom'])->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // ══════ AKTIVASI AKUN — KHUSUS ADMIN ══════
-    Route::middleware(['admin.custom'])->group(function () {
+    // ROLE SUPER ADMIN
+    Route::middleware(['role.custom:super_admin'])->group(function () {
+        // ══════ AKTIVASI AKUN — KHUSUS ADMIN ══════
         Route::get('/aktivasi-akun', [AktivasiAkunController::class, 'index'])->name('aktivasi.index');
         Route::get('/aktivasi-akun/data', [AktivasiAkunController::class, 'data'])->name('aktivasi.data');
         Route::post('/aktivasi-akun/{username}/toggle', [AktivasiAkunController::class, 'toggle'])->name('aktivasi.toggle');
+
+
+        // DATA TENAGA
+        Route::get('tenaga', [TenagaController::class, 'index'])->name('tenaga.index');
+        Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
+        Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
+        Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
+
+        // MASTER KODE OK
+        Route::prefix('kode-ok')->name('kode-ok.')->group(function () {
+            Route::get('/', [KodeOkController::class, 'index'])->name('index');
+            Route::get('/data', [KodeOkController::class, 'apiIndex'])->name('api');
+            Route::get('/options', [KodeOkController::class, 'options'])->name('options'); // ← BARU
+            Route::post('/sync', [KodeOkController::class, 'sync'])->name('sync');
+            Route::post('/', [KodeOkController::class, 'store'])->name('store');
+            Route::get('/{kodeOk}', [KodeOkController::class, 'show'])->name('show');
+            Route::put('/{kodeOk}', [KodeOkController::class, 'update'])->name('update');
+            Route::delete('/{kodeOk}', [KodeOkController::class, 'destroy'])->name('destroy');
+        });
+
+        // DATA PENGAWAS
+        Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
+        Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
+        Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
+
+        // DATA SAFETY OFFICER
+        Route::prefix('safety-officer')->name('safety-officer.')->group(function () {
+            Route::get('/', [SafetyOfficerController::class, 'index'])->name('index');
+            Route::get('/data', [SafetyOfficerController::class, 'data'])->name('data');
+            Route::get('/{badge}/tenaga', [SafetyOfficerController::class, 'tenagaBinaan'])->name('tenaga');
+
+            // Manajemen (Tab 2)
+            Route::get('/list-so', [SafetyOfficerController::class, 'listSO'])->name('list-so');
+            Route::get('/cari-pegawai-so', [SafetyOfficerController::class, 'cariPegawaiUntukSO'])->name('cari-pegawai-so');
+            Route::post('/tetapkan', [SafetyOfficerController::class, 'tetapkanSO'])->name('tetapkan');
+            Route::delete('/{badge}/lepas', [SafetyOfficerController::class, 'lepasSO'])->name('lepas');
+
+            Route::get('/{badge}/cari-tenaga', [SafetyOfficerController::class, 'cariTenaga'])->name('cari-tenaga');
+            Route::post('/{badge}/assign-tenaga', [SafetyOfficerController::class, 'assignTenaga'])->name('assign-tenaga');
+            Route::delete('/{badge}/unassign-tenaga/{pegawaiId}', [SafetyOfficerController::class, 'unassignTenaga'])->name('unassign-tenaga');
+        });
+
+        // KPI 
+        // MATRIKS AKTIVITAS KPI K3 & PENGATURAN
+        Route::prefix('kpi-k3/matriks')->name('kpi-k3.matriks.')->group(function () {
+            Route::get('/', [KpiK3MatriksController::class, 'index'])->name('index');
+            Route::get('/api', [KpiK3MatriksController::class, 'api'])->name('api');
+            Route::post('/', [KpiK3MatriksController::class, 'store'])->name('store');
+            Route::put('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'update'])->name('update');
+            Route::delete('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::put('kpi-k3/pengaturan', [KpiK3MatriksController::class, 'updatePengaturan'])->name('kpi-k3.pengaturan.update');
+
+        // MONITORING LAPORAN (Medis, Safety, Pengawas)
+        Route::prefix('monitoring-laporan')->name('monitoring-laporan.')->group(function () {
+            Route::get('/', [MonitoringLaporanController::class, 'index'])->name('index');
+            Route::get('/data', [MonitoringLaporanController::class, 'data'])->name('data');
+            Route::get('/{sumber}/{id}', [MonitoringLaporanController::class, 'detail'])
+                ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
+                ->name('detail');
+            Route::patch('/{sumber}/{id}/status', [MonitoringLaporanController::class, 'updateStatus'])
+                ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
+                ->name('update-status');
+        });
+
+        // UA/UC
+        Route::get('/data-unsafe', [DataUnsafeController::class, 'index'])->name('data-unsafe.index');
+        Route::get('/data-unsafe/data', [DataUnsafeController::class, 'data'])->name('data-unsafe.data');
+        Route::post('/data-unsafe', [DataUnsafeController::class, 'store'])->name('data-unsafe.store');
+        Route::put('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'update'])->name('data-unsafe.update');
+        Route::delete('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'destroy'])->name('data-unsafe.destroy');
+        Route::get('/data-unsafe/cari-so', [DataUnsafeController::class, 'cariSafetyOfficer'])->name('data-unsafe.cari-so');
+
+        // TBM
+        Route::get('/toolbox-meeting', [ToolboxMeetingController::class, 'index'])->name('toolbox-meeting.index');
+        Route::get('/toolbox-meeting/data', [ToolboxMeetingController::class, 'data'])->name('tbm.data');
+        Route::post('/toolbox-meeting', [ToolboxMeetingController::class, 'store'])->name('tbm.store');
+        Route::put('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'update'])->name('tbm.update');
+        Route::delete('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'destroy'])->name('tbm.destroy');
+        Route::get('/toolbox-meeting/cari-so', [ToolboxMeetingController::class, 'cariSafetyOfficer'])->name('tbm.cari-so');
+
+        // JKA
+        // LPI KEJADIAN
+        Route::get('/lpi-kejadian', [LpiKejadianController::class, 'index'])->name('lpi-kejadian.index');
+        Route::get('/lpi-kejadian/data', [LpiKejadianController::class, 'data'])->name('lpi-kejadian.data');
+        Route::get('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'show'])->name('lpi-kejadian.show');
+        Route::get('/lpi-kejadian/{lpiKejadian}/detail', [LpiKejadianController::class, 'detail'])->name('lpi-kejadian.detail');
+        Route::post('/lpi-kejadian', [LpiKejadianController::class, 'store'])->name('lpi-kejadian.store');
+        Route::put('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'update'])->name('lpi-kejadian.update');
+        Route::delete('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'destroy'])->name('lpi-kejadian.destroy');
+
+        // LPI KORBAN
+        Route::get('/lpi-kejadian/{lpiKejadian}/korban', [LpiKorbanController::class, 'data'])->name('lpi-korban.data');
+        Route::post('/lpi-kejadian/{lpiKejadian}/korban', [LpiKorbanController::class, 'store'])->name('lpi-korban.store');
+        Route::put('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'update'])->name('lpi-korban.update');
+        Route::delete('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'destroy'])->name('lpi-korban.destroy');
+        Route::get('/lpi-korban/cari-karyawan', [LpiKorbanController::class, 'cariKaryawan'])->name('lpi-korban.cari-karyawan');
+
+        // APD
+        Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
+            Route::get('/', [StokAPDController::class, 'index'])->name('index');
+            Route::get('/data', [StokAPDController::class, 'data'])->name('data');
+            Route::get('/kode-ok-options', [StokAPDController::class, 'kodeOkOptions'])->name('kode-ok-options'); // baru
+            Route::get('/supplier-options', [StokAPDController::class, 'supplierOptions'])->name('supplier-options');
+            Route::post('/', [StokAPDController::class, 'store'])->name('store');
+            Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
+            Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
+        });
+
+        // PEMETAAN APD TENAGA KERJA
+        Route::prefix('pemetaan-apd')->name('pemetaan-apd.')->group(function () {
+            Route::get('/', [ManajemenApdPegawaiController::class, 'index'])->name('index');
+            Route::get('/data', [ManajemenApdPegawaiController::class, 'data'])->name('data');
+            Route::get('/{id}', [ManajemenApdPegawaiController::class, 'show'])->name('show');
+        });
+
+        // LOG APD
+        Route::prefix('log-apd')->name('log-apd.')->group(function () {
+            Route::get('/', [LogApdController::class, 'index'])->name('index');
+            Route::get('/data', [LogApdController::class, 'data'])->name('data');
+            Route::get('/export', [LogApdController::class, 'export'])->name('export'); // baru
+            Route::get('/apd-options', [LogApdController::class, 'apdOptions'])->name('apd-options');
+            Route::get('/kode-ok-options', [LogApdController::class, 'kodeOkOptions'])->name('kode-ok-options');
+            Route::get('/riwayat-tukar', [LogApdController::class, 'riwayatTukar'])->name('riwayat-tukar'); // baru
+            Route::get('/cari-pegawai', [LogApdController::class, 'cariPegawai'])->name('cari-pegawai');
+            Route::post('/', [LogApdController::class, 'store'])->name('store');
+            Route::put('/{logApd}', [LogApdController::class, 'update'])->name('update');
+            Route::delete('/{logApd}', [LogApdController::class, 'destroy'])->name('destroy');
+        });
+
+        // ALKES
+        Route::prefix('master-stok-alkes')->name('master-stok-alkes.')->group(function () {
+            Route::get('/', [StokAlkesController::class, 'index'])->name('index');
+            Route::get('/data', [StokAlkesController::class, 'data'])->name('data');
+            Route::get('/supplier-options', [StokAlkesController::class, 'supplierOptions'])->name('supplier-options');
+            Route::get('/kode-ok-options', [StokAlkesController::class, 'kodeOkOptions'])->name('kode-ok-options'); // ← baru
+            Route::post('/', [StokAlkesController::class, 'store'])->name('store');
+            Route::put('/{stokAlkes}', [StokAlkesController::class, 'update'])->name('update');
+            Route::delete('/{stokAlkes}', [StokAlkesController::class, 'destroy'])->name('destroy');
+        });
+
+        // LOG ALKES
+        Route::prefix('penggunaan-alkes')->name('penggunaan-alkes.')->group(function () {
+            Route::get('/', [AlatKesehatanPenggunaController::class, 'index'])->name('index');
+            Route::get('/data', [AlatKesehatanPenggunaController::class, 'data'])->name('data');
+            Route::post('/', [AlatKesehatanPenggunaController::class, 'store'])->name('store');
+            Route::put('/{alatKesehatanPenggunaan}', [AlatKesehatanPenggunaController::class, 'update'])->name('update');
+            Route::delete('/{alatKesehatanPenggunaan}', [AlatKesehatanPenggunaController::class, 'destroy'])->name('destroy');
+            Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
+            Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
+            Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
+        });
     });
 
-    // DATA TENAGA
-    Route::get('tenaga', [TenagaController::class, 'index'])->name('tenaga.index');
-    Route::get('/tenaga/api', [TenagaController::class, 'api'])->name('tenaga.api');
-    Route::post('/tenaga/sync', [TenagaController::class, 'sync'])->name('tenaga.sync');
-    Route::put('/tenaga/{id}', [TenagaController::class, 'update'])->name('tenaga.update');
+
 
     Route::get('/memo-kib', [MemoKibController::class, 'index'])->name('memo-kib.index');
     Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
-
-    // MASTER KODE OK
-    Route::prefix('kode-ok')->name('kode-ok.')->group(function () {
-        Route::get('/', [KodeOkController::class, 'index'])->name('index');
-        Route::get('/data', [KodeOkController::class, 'apiIndex'])->name('api');
-        Route::get('/options', [KodeOkController::class, 'options'])->name('options'); // ← BARU
-        Route::post('/sync', [KodeOkController::class, 'sync'])->name('sync');
-        Route::post('/', [KodeOkController::class, 'store'])->name('store');
-        Route::get('/{kodeOk}', [KodeOkController::class, 'show'])->name('show');
-        Route::put('/{kodeOk}', [KodeOkController::class, 'update'])->name('update');
-        Route::delete('/{kodeOk}', [KodeOkController::class, 'destroy'])->name('destroy');
-    });
-
-    Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
-    Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
-    Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
-
-    // Route::get('/safety-officer', [SafetyOfficerController::class, 'index'])->name('safety-officer.index');
-    // Route::get('/safety-officer/data', [SafetyOfficerController::class, 'data'])->name('safety-officer.data');
-    // Route::delete('/safety-officer/{pegawai}', [SafetyOfficerController::class, 'destroy'])->name('safety-officer.destroy');
-
-    Route::prefix('safety-officer')->name('safety-officer.')->group(function () {
-        Route::get('/', [SafetyOfficerController::class, 'index'])->name('index');
-        Route::get('/data', [SafetyOfficerController::class, 'data'])->name('data');
-        Route::get('/{badge}/tenaga', [SafetyOfficerController::class, 'tenagaBinaan'])->name('tenaga');
-
-        // Manajemen (Tab 2)
-        Route::get('/list-so', [SafetyOfficerController::class, 'listSO'])->name('list-so');
-        Route::get('/cari-pegawai-so', [SafetyOfficerController::class, 'cariPegawaiUntukSO'])->name('cari-pegawai-so');
-        Route::post('/tetapkan', [SafetyOfficerController::class, 'tetapkanSO'])->name('tetapkan');
-        Route::delete('/{badge}/lepas', [SafetyOfficerController::class, 'lepasSO'])->name('lepas');
-
-        Route::get('/{badge}/cari-tenaga', [SafetyOfficerController::class, 'cariTenaga'])->name('cari-tenaga');
-        Route::post('/{badge}/assign-tenaga', [SafetyOfficerController::class, 'assignTenaga'])->name('assign-tenaga');
-        Route::delete('/{badge}/unassign-tenaga/{pegawaiId}', [SafetyOfficerController::class, 'unassignTenaga'])->name('unassign-tenaga');
-    });
 
     // DATA PELAPORAN
     Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');
@@ -161,19 +275,23 @@ Route::middleware(['auth.custom'])->group(function () {
 
     Route::get('data-pengawas', [MonitoringkpiController::class, 'indexDataPengawas'])->name('data-pengawas.index');
 
-    // DATA MEDIS
-    Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
-    Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
-    Route::get('/data-medis/jenis-aktivitas-options', [DataMedisController::class, 'jenisAktivitasOptions'])->name('data-medis.jenis-aktivitas-options'); // ← BARU
-    Route::get('/data-medis/lokasi-kerja-options', [DataMedisController::class, 'lokasiKerjaOptions'])->name('data-medis.lokasi-kerja-options'); // ← BARU
-    Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
-    Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
-    Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
-    Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
-    Route::get('/data-medis/cari-tenaga', [DataMedisController::class, 'cariTenagaMedis'])->name('data-medis.cari-tenaga');
+    // ROLE MEDIS
+    Route::middleware(['role.custom:medis'])->group(function () {
+        // DATA MEDIS
+        Route::get('/data-medis', [DataMedisController::class, 'index'])->name('data-medis.index');
+        Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
+        Route::get('/data-medis/jenis-aktivitas-options', [DataMedisController::class, 'jenisAktivitasOptions'])->name('data-medis.jenis-aktivitas-options'); // ← BARU
+        Route::get('/data-medis/lokasi-kerja-options', [DataMedisController::class, 'lokasiKerjaOptions'])->name('data-medis.lokasi-kerja-options'); // ← BARU
+        Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
+        Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
+        Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');
+        Route::patch('/data-medis/{id}/keputusan', [DataMedisController::class, 'updateKeputusan'])->name('laporan-kpi.keputusan');
+        Route::get('/data-medis/cari-tenaga', [DataMedisController::class, 'cariTenagaMedis'])->name('data-medis.cari-tenaga');
+    });
 
-    // DATA SAFETY
-    Route::prefix('data-safety')->name('data-safety.')->group(function () {
+    // ROLE SAFETY
+    Route::middleware(['role.custom:safety'])->prefix('data-safety')->name('data-safety.')->group(function () {
+        // DATA SAFETY
         Route::get('/', [DataSafetyController::class, 'index'])->name('index');
         Route::get('/data', [DataSafetyController::class, 'data'])->name('data');
         Route::get('/lokasi-kerja-options', [DataSafetyController::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options'); // ← BARU
@@ -184,24 +302,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/cari-tenaga', [DataSafetyController::class, 'cariTenaga'])->name('cari-tenaga');
     });
 
-    // Route::get('data-safety', [MonitoringkpiController::class, 'indexDataSafety'])->name('data-safety.index');
-    //    DATA UNSAFE
-    Route::get('/data-unsafe', [DataUnsafeController::class, 'index'])->name('data-unsafe.index');
-    Route::get('/data-unsafe/data', [DataUnsafeController::class, 'data'])->name('data-unsafe.data');
-    Route::post('/data-unsafe', [DataUnsafeController::class, 'store'])->name('data-unsafe.store');
-    Route::put('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'update'])->name('data-unsafe.update');
-    Route::delete('/data-unsafe/{dataUnsafe}', [DataUnsafeController::class, 'destroy'])->name('data-unsafe.destroy');
-    Route::get('/data-unsafe/cari-so', [DataUnsafeController::class, 'cariSafetyOfficer'])->name('data-unsafe.cari-so');
 
-    // TBM
-    Route::get('/toolbox-meeting', [ToolboxMeetingController::class, 'index'])->name('toolbox-meeting.index');
-    Route::get('/toolbox-meeting/data', [ToolboxMeetingController::class, 'data'])->name('tbm.data');
-    Route::post('/toolbox-meeting', [ToolboxMeetingController::class, 'store'])->name('tbm.store');
-    Route::put('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'update'])->name('tbm.update');
-    Route::delete('/toolbox-meeting/{toolboxMeeting}', [ToolboxMeetingController::class, 'destroy'])->name('tbm.destroy');
-    Route::get('/toolbox-meeting/cari-so', [ToolboxMeetingController::class, 'cariSafetyOfficer'])->name('tbm.cari-so');
-
-    // Route::get('cetak-uauc', [MonitoringkpiController::class, 'indexCetakuauc'])->name('cetak-uauc.index');
     Route::get('/data-reject-monitoring', [DataRejectMonitoringController::class, 'index'])->name('data-reject-monitoring.index');
     Route::get('/data-reject-monitoring/data', [DataRejectMonitoringController::class, 'data'])->name('data-reject-monitoring.data');
     Route::post('/data-reject-monitoring', [DataRejectMonitoringController::class, 'store'])->name('data-reject-monitoring.store');
@@ -209,8 +310,6 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::delete('/data-reject-monitoring/{dataRejectMonitoring}', [DataRejectMonitoringController::class, 'destroy'])->name('data-reject-monitoring.destroy');
     Route::get('/data-reject-monitoring/cari-pelapor', [DataRejectMonitoringController::class, 'cariPelapor'])->name('data-reject-monitoring.cari-pelapor');
 
-    // Route::get('dokumen-reject', [MonitoringkpiController::class, 'indexDokumenReject'])->name('dokumen-reject.index');
-    // Route::get('monitoring-so', [MonitoringkpiController::class, 'indexMonitoringSO'])->name('monitoring-so.index');
     Route::prefix('monitoring-laporan-so')->name('monitoring-laporan-so.')->group(function () {
         Route::get('/', [MonitoringLaporanSoController::class, 'index'])->name('index');
         Route::get('/data', [MonitoringLaporanSoController::class, 'data'])->name('data');
@@ -237,17 +336,6 @@ Route::middleware(['auth.custom'])->group(function () {
                 ->name('data');
         });
 
-    // MONITORING LAPORAN (Medis, Safety, Pengawas)
-    Route::prefix('monitoring-laporan')->name('monitoring-laporan.')->group(function () {
-        Route::get('/', [MonitoringLaporanController::class, 'index'])->name('index');
-        Route::get('/data', [MonitoringLaporanController::class, 'data'])->name('data');
-        Route::get('/{sumber}/{id}', [MonitoringLaporanController::class, 'detail'])
-            ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
-            ->name('detail');
-        Route::patch('/{sumber}/{id}/status', [MonitoringLaporanController::class, 'updateStatus'])
-            ->where(['sumber' => 'medis|safety|pengawas|MEDIS|SAFETY|PENGAWAS', 'id' => '[0-9]+'])
-            ->name('update-status');
-    });
 
     Route::get('rekap-pengawas', [MonitoringkpiController::class, 'indexRekapPengawas'])->name('rekap-pengawas.index');
     Route::get('monitoring-medis', [MonitoringkpiController::class, 'indexMonitoringMedis'])->name('monitoring-medis.index');
@@ -255,22 +343,6 @@ Route::middleware(['auth.custom'])->group(function () {
 
     // JKA & RECORD INSIDEN
     Route::get('dashboard-insiden', [JKARecordInsidenController::class, 'indexDashboardInsiden'])->name('dashboard-insiden.index');
-
-    // LPI KEJADIAN
-    Route::get('/lpi-kejadian', [LpiKejadianController::class, 'index'])->name('lpi-kejadian.index');
-    Route::get('/lpi-kejadian/data', [LpiKejadianController::class, 'data'])->name('lpi-kejadian.data');
-    Route::get('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'show'])->name('lpi-kejadian.show');
-    Route::get('/lpi-kejadian/{lpiKejadian}/detail', [LpiKejadianController::class, 'detail'])->name('lpi-kejadian.detail');
-    Route::post('/lpi-kejadian', [LpiKejadianController::class, 'store'])->name('lpi-kejadian.store');
-    Route::put('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'update'])->name('lpi-kejadian.update');
-    Route::delete('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'destroy'])->name('lpi-kejadian.destroy');
-
-    // LPI KORBAN
-    Route::get('/lpi-kejadian/{lpiKejadian}/korban', [LpiKorbanController::class, 'data'])->name('lpi-korban.data');
-    Route::post('/lpi-kejadian/{lpiKejadian}/korban', [LpiKorbanController::class, 'store'])->name('lpi-korban.store');
-    Route::put('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'update'])->name('lpi-korban.update');
-    Route::delete('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'destroy'])->name('lpi-korban.destroy');
-    Route::get('/lpi-korban/cari-karyawan', [LpiKorbanController::class, 'cariKaryawan'])->name('lpi-korban.cari-karyawan');
 
     Route::get('dashboard-jka', [JKARecordInsidenController::class, 'indexDashboardJKA'])->name('dashboard-jka.index');
     Route::get('dashboard-leading', [JKARecordInsidenController::class, 'indexDashboardLeading'])->name('dashboard-leading.index');
@@ -318,60 +390,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/dashboard-apd-alkes/data', [DashboardApdAlkesController::class, 'data'])
         ->name('dashboard-apd-alkes.data');
 
-    // APD
-    Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
-        Route::get('/', [StokAPDController::class, 'index'])->name('index');
-        Route::get('/data', [StokAPDController::class, 'data'])->name('data');
-        Route::get('/kode-ok-options', [StokAPDController::class, 'kodeOkOptions'])->name('kode-ok-options'); // baru
-        Route::get('/supplier-options', [StokAPDController::class, 'supplierOptions'])->name('supplier-options');
-        Route::post('/', [StokAPDController::class, 'store'])->name('store');
-        Route::put('/{stokApd}', [StokAPDController::class, 'update'])->name('update');
-        Route::delete('/{stokApd}', [StokAPDController::class, 'destroy'])->name('destroy');
-    });
 
-    // PEMETAAN APD TENAGA KERJA
-    Route::prefix('pemetaan-apd')->name('pemetaan-apd.')->group(function () {
-        Route::get('/', [ManajemenApdPegawaiController::class, 'index'])->name('index');
-        Route::get('/data', [ManajemenApdPegawaiController::class, 'data'])->name('data');
-        Route::get('/{id}', [ManajemenApdPegawaiController::class, 'show'])->name('show');
-    });
-
-    // LOG APD
-    Route::prefix('log-apd')->name('log-apd.')->group(function () {
-        Route::get('/', [LogApdController::class, 'index'])->name('index');
-        Route::get('/data', [LogApdController::class, 'data'])->name('data');
-        Route::get('/export', [LogApdController::class, 'export'])->name('export'); // baru
-        Route::get('/apd-options', [LogApdController::class, 'apdOptions'])->name('apd-options');
-        Route::get('/kode-ok-options', [LogApdController::class, 'kodeOkOptions'])->name('kode-ok-options');
-        Route::get('/riwayat-tukar', [LogApdController::class, 'riwayatTukar'])->name('riwayat-tukar'); // baru
-        Route::get('/cari-pegawai', [LogApdController::class, 'cariPegawai'])->name('cari-pegawai');
-        Route::post('/', [LogApdController::class, 'store'])->name('store');
-        Route::put('/{logApd}', [LogApdController::class, 'update'])->name('update');
-        Route::delete('/{logApd}', [LogApdController::class, 'destroy'])->name('destroy');
-    });
-
-    // ALKES
-    Route::prefix('master-stok-alkes')->name('master-stok-alkes.')->group(function () {
-        Route::get('/', [StokAlkesController::class, 'index'])->name('index');
-        Route::get('/data', [StokAlkesController::class, 'data'])->name('data');
-        Route::get('/supplier-options', [StokAlkesController::class, 'supplierOptions'])->name('supplier-options');
-        Route::get('/kode-ok-options', [StokAlkesController::class, 'kodeOkOptions'])->name('kode-ok-options'); // ← baru
-        Route::post('/', [StokAlkesController::class, 'store'])->name('store');
-        Route::put('/{stokAlkes}', [StokAlkesController::class, 'update'])->name('update');
-        Route::delete('/{stokAlkes}', [StokAlkesController::class, 'destroy'])->name('destroy');
-    });
-
-    // LOG ALKES
-    Route::prefix('penggunaan-alkes')->name('penggunaan-alkes.')->group(function () {
-        Route::get('/', [AlatKesehatanPenggunaController::class, 'index'])->name('index');
-        Route::get('/data', [AlatKesehatanPenggunaController::class, 'data'])->name('data');
-        Route::post('/', [AlatKesehatanPenggunaController::class, 'store'])->name('store');
-        Route::put('/{alatKesehatanPenggunaan}', [AlatKesehatanPenggunaController::class, 'update'])->name('update');
-        Route::delete('/{alatKesehatanPenggunaan}', [AlatKesehatanPenggunaController::class, 'destroy'])->name('destroy');
-        Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
-        Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
-        Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
-    });
 
     // KARTU STOK
     Route::prefix('kartu-stok')->name('kartu-stok.')->group(function () {
@@ -437,6 +456,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{matriksApdJabatan}', [MatriksApdJabatanController::class, 'destroy'])->name('destroy');
     });
 
+    // PERMINTAAN PEMBELIAN
     Route::prefix('permintaan-pembelian')->name('permintaan-pembelian.')->group(function () {
         Route::get('/', [PermintaanPembelianController::class, 'index'])->name('index');
         Route::get('/data', [PermintaanPembelianController::class, 'data'])->name('data');
@@ -495,19 +515,10 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::delete('/{pengembalianKibApd}', [PengembalianKibApdController::class, 'destroy'])->name('destroy');
     });
 
-    // MATRIKS AKTIVITAS KPI K3 & PENGATURAN
-    Route::prefix('kpi-k3/matriks')->name('kpi-k3.matriks.')->group(function () {
-        Route::get('/', [KpiK3MatriksController::class, 'index'])->name('index');
-        Route::get('/api', [KpiK3MatriksController::class, 'api'])->name('api');
-        Route::post('/', [KpiK3MatriksController::class, 'store'])->name('store');
-        Route::put('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'update'])->name('update');
-        Route::delete('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'destroy'])->name('destroy');
-    });
 
-    Route::put('kpi-k3/pengaturan', [KpiK3MatriksController::class, 'updatePengaturan'])->name('kpi-k3.pengaturan.update');
 
-    // PELAPORAN PENGAWAS
-    Route::prefix('pelaporan-pengawas')->name('pelaporan-pengawas.')->group(function () {
+    // ROLE PENGAWAS
+    Route::middleware(['role.custom:pengawas'])->prefix('pelaporan-pengawas')->name('pelaporan-pengawas.')->group(function () {
         Route::get('/', [PelaporanPengawasController::class, 'index'])->name('index');
         Route::get('/data', [PelaporanPengawasController::class, 'data'])->name('data');
         Route::get('/lokasi-kerja-options', [PelaporanPengawasController::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options');

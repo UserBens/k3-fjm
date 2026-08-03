@@ -87,6 +87,12 @@ class LoginController extends Controller
                 ]);
             }
 
+            if (empty($akses->role)) { // ← BARU
+                throw ValidationException::withMessages([
+                    'username' => 'Akun Anda belum memiliki hak akses. Silakan hubungi admin.',
+                ]);
+            }
+
             // Login berhasil — simpan data user ke session
             $request->session()->regenerate(); // cegah session fixation
 
@@ -103,6 +109,7 @@ class LoginController extends Controller
                     'phone' => $matched['phone'] ?? null,
                     'image' => $matched['image'] ?? null,
                     'is_admin' => $akses->is_admin, // BARU
+                    'role' => $akses->role, // ← BARU
 
                 ],
                 'auth_login_at' => now(),
