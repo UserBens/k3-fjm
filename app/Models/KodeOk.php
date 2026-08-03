@@ -37,4 +37,17 @@ class KodeOk extends Model
     {
         return $this->belongsToMany(Kualifikasi::class, 'kode_ok_kualifikasi')->withTimestamps();
     }
+
+    public function stokApdKodeRelasi()
+    {
+        // relasi berbasis kecocokan string kode_ok (bukan FK id),
+        // karena stok_apd_kodes.kode_ok menyimpan teks, bukan id
+        return $this->hasMany(StokApdKode::class, 'kode_ok', 'kode_ok');
+    }
+
+    public function stokAlkesRelasi()
+    {
+        return $this->belongsToMany(StokAlkes::class, 'alkes_kode_ok', 'kode_ok_id', 'stok_alkes_id')
+            ->withTimestamps();
+    }
 }

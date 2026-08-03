@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Operator Alat Berat — PT. Fokus Jasa Mitra</title>
+    <title>Data Master Tenaga Ahli — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -1647,8 +1647,8 @@
                             <span class="pulse-dot"></span>
                             <span class="pg-eyebrow">Database K3 · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">MASTER OPERATOR <span>ALAT BERAT</span></div>
-                        <div class="pg-sub">Kelola data operator, KIB, SIO, dan status monitoring.</div>
+                        <div class="pg-title">MASTER <span>TENAGA AHLI</span></div>
+                        <div class="pg-sub">Kelola data master tenaga ahli dan monitoring data tenaga ahli.</div>
                     </div>
                     <div class="pg-actions">
                         <button type="button" class="btn-primary" onclick="openFormModal()">
@@ -1657,7 +1657,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Tambah Operator
+                            Tambah Tenaga
                         </button>
                     </div>
                 </div>
@@ -1688,13 +1688,13 @@
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset</button>
                 </div>
 
-                <div class="data-summary" id="dataSummary">Memuat data operator...</div>
+                <div class="data-summary" id="dataSummary">Memuat data tenaga ahli...</div>
 
                 <div class="rtable-wrap">
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th class="px-6 py-3 text-left">Operator</th>
+                                <th class="px-6 py-3 text-left">Tenaga Ahli</th>
                                 <th class="px-6 py-3 text-left">Area & Unit</th>
                                 <th class="px-6 py-3 text-left">Status KIB</th>
                                 <th class="px-6 py-3 text-left">Status SIO</th>
@@ -1746,7 +1746,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            Data Operator
+                            Data Tenaga Ahli
                         </div>
                         <div class="grid-3">
                             <div class="form-group span-3">
@@ -1911,8 +1911,8 @@
     <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
         <div class="modal-box form-modal-box" style="width:880px; max-width:96%;" onclick="event.stopPropagation()">
             <div class="form-modal-header">
-                <div class="modal-title">Detail Operator</div>
-                <div class="detail-subtitle mb-2">Informasi lengkap data operator alat berat.</div>
+                <div class="modal-title">Detail Tenaga Ahli</div>
+                <div class="detail-subtitle mb-2">Informasi lengkap data tenaga ahli.</div>
             </div>
 
             <div class="form-modal-body" style="max-height:68vh; overflow-y:auto; padding-right:6px;">
@@ -1923,7 +1923,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
-                        Data Operator
+                        Data Tenaga Ahli
                     </div>
                     <div class="grid-3">
                         <div class="form-group span-3"><label class="form-label">Nama Lengkap</label>

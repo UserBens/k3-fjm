@@ -53,9 +53,15 @@ class HiradcDocument extends Model
     {
         return $this->disahkan_ttd ? Storage::disk('public')->url($this->disahkan_ttd) : null;
     }
-    
+
     public function kodeOk()
     {
         return $this->belongsTo(KodeOk::class, 'kode_ok_id');
+    }
+
+    public function apdList()
+    {
+        return $this->belongsToMany(StokAPD::class, 'hiradc_document_apd', 'hiradc_document_id', 'stok_apd_id')
+            ->withTimestamps();
     }
 }

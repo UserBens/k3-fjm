@@ -807,333 +807,7 @@
         .btn-row-action:hover {
             background: #F8F9FF;
         }
-    </style>
-</head>
 
-<body class="flex h-screen overflow-hidden">
-
-    @include('partials.sidebar')
-    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <div id="main-content">
-        @include('partials.topbar')
-
-        <div id="page-content">
-            <div class="page-hdr" style="margin-bottom:16px;">
-                <div class="page-hdr-top">
-                    <div>
-                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                            <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">HSE &middot; Manajemen Risiko</span>
-                        </div>
-                        <div class="pg-title">DATA <span>HIRADC</span></div>
-                        <div class="pg-sub">Hazard Identification, Risk Assessment and Determining Control — per
-                            dokumen pekerjaan.</div>
-                    </div>
-                    <div style="display:flex;gap:8px;">
-                        <button class="btn-primary" onclick="openBuilderModal()">
-                            <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            Tambah Dokumen HIRADC
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div class="filter-bar">
-                    <div class="filter-search">
-                        <svg class="search-icon" style="width:14px;height:14px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="fSearch"
-                            placeholder="Cari departemen, bagian, pekerjaan, no HIRADC..." oninput="onFilterChange()" />
-                    </div>
-                    <button class="btn-outline" onclick="resetFilter()">Reset</button>
-                </div>
-
-                <div class="data-summary">Menampilkan <strong id="sumShowing">0</strong> dari <strong
-                        id="sumTotal">0</strong> dokumen HIRADC</div>
-
-                <div class="rtable-wrap">
-                    <table class="rtable">
-                        <thead>
-                            <tr>
-                                <th style="width:32px;">No</th>
-                                <th>No. HIRADC</th>
-                                <th>Departemen</th>
-                                <th>Bagian</th>
-                                <th>Pekerjaan</th>
-                                <th>Revisi</th>
-                                <th>Tanggal</th>
-                                <th>Jml Aktivitas</th>
-                                <th style="text-align:center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <tr>
-                                <td colspan="9">
-                                    <div class="skeleton-bar" style="width:100%;height:36px;"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-bar">
-                    <div class="pagination-info">
-                        <span>Baris per halaman</span>
-                        <select id="perPage" class="per-page-select" onchange="onPerPageChange()">
-                            <option value="10">10</option>
-                            <option value="25" selected>25</option>
-                            <option value="50">50</option>
-                        </select>
-                    </div>
-                    <div class="pagination-pages" id="paginationPages"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL DETAIL (tabel Excel, read-only) ══════ -->
-    <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box" style="max-width:98vw;width:1500px;max-height:94vh;overflow:auto;"
-            onclick="event.stopPropagation()">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-                <div>
-                    <div class="modal-title" id="detailTitle">Detail HIRADC</div>
-                    <div style="font-size:12.5px;color:#94A3B8;" id="detailSub"></div>
-                </div>
-                <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
-            </div>
-            <div id="detailHeaderInfo" style="margin-bottom:12px;font-size:12.5px;"></div>
-
-            <div class="hx-wrap">
-                <table class="hx-table" id="detailTable">
-                    <caption class="hx-caption">HAZARD IDENTIFICATION, RISK ASSESSMENT AND DETERMINING CONTROL [HIRADC]
-                    </caption>
-                    <thead>
-                        <tr>
-                            <th rowspan="2" style="min-width:36px;">NO</th>
-                            <th rowspan="2" style="min-width:170px;">AKTIVITAS<br><span
-                                    class="hx-sub">(ACTIVITY)</span></th>
-                            <th colspan="2">SUMBER BAHAYA<br><span class="hx-sub">(HAZARD SOURCE)</span></th>
-                            <th rowspan="2">N/A/E</th>
-                            <th colspan="3">IDENTIFIKASI RISIKO<br><span class="hx-sub">(RISK
-                                    IDENTIFICATION)</span></th>
-                            <th colspan="4">RISIKO AWAL<br><span class="hx-sub">(INHERENT RISK)</span></th>
-                            <th rowspan="2" style="min-width:200px;">PENGENDALIAN EXISTING<br><span
-                                    class="hx-sub">(EXISTING CONTROL)</span></th>
-                            <th colspan="4">RISIKO SISA<br><span class="hx-sub">(RESIDUAL RISK)</span></th>
-                            <th rowspan="2">R/O</th>
-                            <th rowspan="2" style="min-width:160px;">ADDITIONAL CONTROL FOR RISK / OPPORTUNITY</th>
-                            <th colspan="2">TINDAK LANJUT<br><span class="hx-sub">(ACTION PLAN)</span></th>
-                            <th rowspan="2" style="min-width:150px;">KESIMPULAN KEBUTUHAN APD</th>
-                        </tr>
-                        <tr>
-                            <th>Hazard Register</th>
-                            <th>Sub Hazard Register</th>
-                            <th style="min-width:170px;">DESKRIPSI<br><span class="hx-sub">(DESCRIPTION)</span></th>
-                            <th>DAMPAK<br><span class="hx-sub">(CONSEQUENCE)</span></th>
-                            <th>DETAIL</th>
-                            <th>L</th>
-                            <th>C</th>
-                            <th>RR</th>
-                            <th>Cat</th>
-                            <th>L</th>
-                            <th>C</th>
-                            <th>RR</th>
-                            <th>Cat</th>
-                            <th>PIC</th>
-                            <th>DUE DATE</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detailTableBody"></tbody>
-                </table>
-            </div>
-
-            <div class="hx-legend">
-                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-l"></span> L — Low (1–4)</span>
-                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-m"></span> M — Moderate (5–9)</span>
-                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-h"></span> H — High (10–16)</span>
-                <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-e"></span> E — Extreme (20–25)</span>
-            </div>
-
-            <div id="detailSignBlock" class="hx-sign-block"></div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL BUILDER (Tambah/Edit) — input gaya spreadsheet ══════ -->
-    <div id="itemModalOverlay" class="modal-overlay" onclick="closeItemModalOutside(event)">
-        <div class="modal-box form-modal-box" style="max-width:98vw;width:1600px;max-height:94vh;overflow:auto;"
-            onclick="event.stopPropagation()">
-            <div style="margin-bottom:14px;">
-                <div class="modal-title" id="itemModalTitle">Tambah Dokumen HIRADC</div>
-                <div style="font-size:12.5px;color:#94A3B8;">Lengkapi header dokumen, lalu isi tabel aktivitas &amp;
-                    hazard seperti lembar kerja Excel.</div>
-            </div>
-
-            <div class="form-modal-body">
-                <div class="form-section-title">Header Dokumen</div>
-                <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">Kode OK</label>
-                        <div class="multi-picker" data-picker="kodeOk">
-                            <div class="picker-chips" id="chips-kodeOk"></div>
-                            <input type="text" class="form-input" id="kodeOkSearchInput"
-                                placeholder="Cari kode OK atau uraian kerja..." autocomplete="off"
-                                oninput="pickerSearchKodeOk(this.value)" onfocus="pickerOpenKodeOk()" />
-                            <div class="picker-dropdown" id="dropdown-kodeOk">
-                                <div class="picker-options" id="options-kodeOk"></div>
-                                <div class="picker-dropdown-footer">
-                                    <span class="picker-selected-count" id="count-kodeOk">0 dipilih</span>
-                                    <button type="button" class="picker-done-btn"
-                                        onclick="pickerCloseKodeOk()">Selesai</button>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" id="fKodeOkId" />
-                    </div>
-                    <div class="form-group"><label class="form-label">Departemen</label><input type="text"
-                            id="fDepartemen" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Bagian</label><input type="text"
-                            id="fBagian" class="form-input" /></div>
-                    <div class="form-group span-2"><label class="form-label">Pekerjaan</label><input type="text"
-                            id="fPekerjaan" class="form-input" /></div>
-
-                    <div class="form-group"><label class="form-label">No. HIRADC</label><input type="text"
-                            id="fNoHiradc" class="form-input" placeholder="01-00" /></div>
-                    <div class="form-group"><label class="form-label">Revisi</label><input type="text"
-                            id="fRevisi" class="form-input" /></div>
-                    <div class="form-group"><label class="form-label">Tanggal</label><input type="date"
-                            id="fTanggal" class="form-input" /></div>
-                </div>
-
-                <!-- ══ Pengesahan & Tanda Tangan — terpisah dari header, TTD berupa upload gambar ══ -->
-                <div class="form-section-title">Pengesahan (Disiapkan Oleh)</div>
-                <div class="hx-sign-grid" style="grid-template-columns: 1fr; max-width: 400px;">
-                    <div class="hx-sign-card">
-                        <div class="hx-sign-title">Disiapkan</div>
-                        <div class="form-group">
-                            <label class="form-label">Nama</label>
-                            <input type="text" id="fDisiapkanNama" class="form-input" />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Tanggal</label>
-                            <input type="date" id="fDisiapkanTanggal" class="form-input" />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Tanda Tangan (gambar)</label>
-                            <input type="file" id="fDisiapkanTtd" class="form-input" accept="image/*"
-                                onchange="previewTtd('disiapkan', this)" />
-                            <div class="hx-ttd-preview-wrap">
-                                <img id="ttdPreviewDisiapkan" class="hx-ttd-preview" style="display:none;" />
-                                <span id="ttdExistingDisiapkan" style="font-size:11px;color:#94A3B8;"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section-title"
-                    style="display:flex;justify-content:space-between;align-items:center;">
-                    <span>Tabel Aktivitas &amp; Hazard</span>
-                    <button type="button" class="btn-outline" style="padding:4px 10px;font-size:12px;"
-                        onclick="addGroup()">+ Tambah Grup</button>
-                </div>
-
-                <div class="hx-wrap" id="builderTableWrap">
-                    <table class="hx-table hx-table-edit" id="builderTable">
-                        <thead>
-                            <tr>
-                                <th rowspan="2" style="min-width:34px;">NO</th>
-                                <th rowspan="2" style="min-width:170px;">AKTIVITAS<br><span
-                                        class="hx-sub">(ACTIVITY)</span></th>
-                                <th colspan="2">SUMBER BAHAYA<br><span class="hx-sub">(HAZARD SOURCE)</span></th>
-                                <th rowspan="2">N/A/E</th>
-                                <th colspan="3">IDENTIFIKASI RISIKO</th>
-                                <th colspan="4">RISIKO AWAL</th>
-                                <th rowspan="2" style="min-width:190px;">PENGENDALIAN EXISTING</th>
-                                <th colspan="4">RISIKO SISA</th>
-                                <th rowspan="2">R/O</th>
-                                <th rowspan="2" style="min-width:150px;">ADDITIONAL CONTROL</th>
-                                <th colspan="2">TINDAK LANJUT</th>
-                                <th rowspan="2" style="min-width:140px;">KESIMPULAN APD</th>
-                                <th rowspan="2" style="width:28px;"></th>
-                            </tr>
-                            <tr>
-                                <th>Hazard Register</th>
-                                <th>Sub Hazard Reg.</th>
-                                <th style="min-width:150px;">Deskripsi</th>
-                                <th>Dampak</th>
-                                <th>Detail</th>
-                                <th>L</th>
-                                <th>C</th>
-                                <th>RR</th>
-                                <th>Cat</th>
-                                <th>L</th>
-                                <th>C</th>
-                                <th>RR</th>
-                                <th>Cat</th>
-                                <th>PIC</th>
-                                <th>Due</th>
-                            </tr>
-                        </thead>
-                        <tbody id="builderTableBody"></tbody>
-                    </table>
-                </div>
-
-                <div class="hx-legend">
-                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-l"></span> L — Low (1–4)</span>
-                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-m"></span> M — Moderate
-                        (5–9)</span>
-                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-h"></span> H — High (10–16)</span>
-                    <span class="hx-legend-item"><span class="hx-legend-dot hx-cat-e"></span> E — Extreme
-                        (20–25)</span>
-                </div>
-
-                <!-- ══ Lampiran opsional — TERPISAH dari Pengesahan, bukan bagian dari lembar HIRADC ══ -->
-                <details class="hx-attachment-panel">
-                    <summary>Lampiran Dokumen Pendukung (opsional, PDF)</summary>
-                    <div class="form-group" style="margin-top:8px;">
-                        <input type="file" id="fDokumen" class="form-input" accept="application/pdf" />
-                        <div id="dokumenExisting" style="font-size:12px;color:#94A3B8;margin-top:4px;"></div>
-                    </div>
-                </details>
-            </div>
-
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeItemModal()">Batal</button>
-                <button class="btn-modal-confirm" id="btnSubmit" onclick="submitDocument()">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL HAPUS -->
-    <div id="deleteConfirmOverlay" class="modal-overlay" onclick="closeDeleteModalOutside(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-icon-wrap">
-                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </div>
-            <div class="modal-title">Hapus Dokumen HIRADC?</div>
-            <div class="modal-desc" id="deleteModalDesc">Data yang dihapus tidak dapat dikembalikan.</div>
-            <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
-                <button class="btn-modal-danger" onclick="confirmDelete()">Ya, Hapus</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toastContainer" class="toast-container"></div>
-
-    <style>
         .kode-ok-row {
             display: flex;
             align-items: center;
@@ -1731,14 +1405,475 @@
             color: #475569;
             font-size: 11px;
         }
+
+        .custom-dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            /* Batas tinggi scroll */
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+            margin-top: 4px;
+        }
+
+        .custom-dropdown-item {
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .custom-dropdown-item:hover {
+            background-color: #F1F5F9;
+            color: #0F172A;
+        }
+
+        .custom-dropdown-empty {
+            padding: 10px 12px;
+            font-size: 12px;
+            color: #94A3B8;
+            text-align: center;
+        }
     </style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+    @include('partials.sidebar')
+    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div id="main-content">
+        @include('partials.topbar')
+
+        <div id="page-content">
+            <div class="page-hdr" style="margin-bottom:16px;">
+                <div class="page-hdr-top">
+                    <div>
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                            <span class="pulse-dot"></span>
+                            <span class="pg-eyebrow">HSE &middot; Manajemen Risiko</span>
+                        </div>
+                        <div class="pg-title">DATA <span>HIRADC</span></div>
+                        <div class="pg-sub">Hazard Identification, Risk Assessment and Determining Control — per
+                            dokumen pekerjaan.</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn-primary" onclick="openBuilderModal()">
+                            <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Tambah Dokumen HIRADC
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="filter-bar">
+                    <div class="filter-search">
+                        <svg class="search-icon" style="width:14px;height:14px" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" id="fSearch"
+                            placeholder="Cari departemen, bagian, pekerjaan, no HIRADC..." oninput="onFilterChange()" />
+                    </div>
+                    <button class="btn-outline" onclick="resetFilter()">Reset</button>
+                </div>
+
+                <div class="data-summary">Menampilkan <strong id="sumShowing">0</strong> dari <strong
+                        id="sumTotal">0</strong> dokumen HIRADC</div>
+
+                <div class="rtable-wrap">
+                    <table class="rtable">
+                        <thead>
+                            <tr>
+                                <th style="width:38px; text-align:center;">No</th>
+                                <th>No. HIRADC</th>
+                                <th>Kode OK</th>
+                                <th>Pekerjaan</th>
+                                <th>Departemen</th>
+                                <th>Area Kerja</th>
+                                <th>Jabatan</th>
+                                <th>Tanggal</th>
+                                <th>APD</th>
+                                <th style="text-align:center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="10">
+                                    <div class="skeleton-bar" style="width:100%;height:36px;"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+
+            <div class="pagination-bar">
+                <div class="pagination-info">
+                    <span>Baris per halaman</span>
+                    <select id="perPage" class="per-page-select" onchange="onPerPageChange()">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                <div class="pagination-pages" id="paginationPages"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ══════ MODAL DETAIL (tabel Excel, read-only) ══════ -->
+    <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
+        <div class="modal-box" style="max-width:640px;" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                <div>
+                    <div class="modal-title" id="detailTitle">Detail HIRADC</div>
+                    <div style="font-size:12.5px;color:#94A3B8;" id="detailSub"></div>
+                </div>
+                <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
+            </div>
+            <div id="detailHeaderInfo" style="font-size:12.5px;margin-bottom:10px;"></div>
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">Checklist APD</div>
+                <div class="detail-tags-wrap" id="detailApdTags"></div>
+            </div>
+            <div class="form-group" style="margin-top:10px;">
+                <label class="form-label">Kesimpulan</label>
+                <div style="font-size:12.5px;white-space:pre-wrap;" id="detailKesimpulan">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════ MODAL BUILDER (Tambah/Edit) — input gaya spreadsheet ══════ -->
+    <div id="itemModalOverlay" class="modal-overlay" onclick="closeItemModalOutside(event)">
+        <div class="modal-box form-modal-box" style="max-width:98vw;width:1600px;max-height:94vh;overflow:auto;"
+            onclick="event.stopPropagation()">
+            <div style="margin-bottom:14px;">
+                <div class="modal-title" id="itemModalTitle">Tambah Dokumen HIRADC</div>
+                <div style="font-size:12.5px;color:#94A3B8;">Lengkapi header dokumen, lalu isi tabel aktivitas &amp;
+                    hazard seperti lembar kerja Excel.</div>
+            </div>
+
+            <div class="form-modal-body">
+                <div class="form-section-title">Data HIRADC</div>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label class="form-label">Kode OK</label>
+                        <div class="multi-picker" data-picker="kodeOk">
+                            <div class="picker-chips" id="chips-kodeOk"></div>
+                            <input type="text" class="form-input" id="kodeOkSearchInput"
+                                placeholder="Cari kode OK atau uraian kerja..." autocomplete="off"
+                                oninput="pickerSearchKodeOk(this.value)" onfocus="pickerOpenKodeOk()" />
+                            <div class="picker-dropdown" id="dropdown-kodeOk">
+                                <div class="picker-options" id="options-kodeOk"></div>
+                                <div class="picker-dropdown-footer">
+                                    <span class="picker-selected-count" id="count-kodeOk">0 dipilih</span>
+                                    <button type="button" class="picker-done-btn"
+                                        onclick="pickerCloseKodeOk()">Selesai</button>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="fKodeOkId" />
+                    </div>
+
+                    <!-- Custom Searchable Dropdown: Departemen / Unit Kerja -->
+                    <div class="form-group" style="position: relative;">
+                        <label class="form-label">Departemen/Unit Kerja</label>
+                        <input type="text" id="fDepartemen" class="form-input"
+                            placeholder="Pilih / Cari Unit Kerja..." autocomplete="off"
+                            onfocus="openCustomDropdown('dept')" oninput="filterCustomDropdown('dept')" />
+                        <div id="dropdown-dept" class="custom-dropdown-list" style="display:none;"></div>
+                    </div>
+
+                    <!-- Custom Searchable Dropdown: Area Kerja -->
+                    <div class="form-group" style="position: relative;">
+                        <label class="form-label">Area Kerja</label>
+                        <input type="text" id="fAreaKerja" class="form-input"
+                            placeholder="Pilih / Cari Area Kerja..." autocomplete="off"
+                            onfocus="openCustomDropdown('area')" oninput="filterCustomDropdown('area')" />
+                        <div id="dropdown-area" class="custom-dropdown-list" style="display:none;"></div>
+                    </div>
+
+                    <!-- Custom Searchable Dropdown: Jabatan -->
+                    <div class="form-group" style="position: relative;">
+                        <label class="form-label">Jabatan</label>
+                        <input type="text" id="fKualifikasi" class="form-input"
+                            placeholder="Pilih / Cari Jabatan..." autocomplete="off"
+                            onfocus="openCustomDropdown('jabatan')" oninput="filterCustomDropdown('jabatan')" />
+                        <div id="dropdown-jabatan" class="custom-dropdown-list" style="display:none;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">No. HIRADC</label>
+                        <input type="text" id="fNoHiradc" class="form-input" placeholder="01-00" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" id="fTanggal" class="form-input" />
+                    </div>
+                </div>
+
+                <div class="form-section-title">Checklist APD</div>
+                <div class="form-group">
+                    <label class="form-label">APD yang Dibutuhkan</label>
+                    <div class="multi-picker" data-picker="apd">
+                        <div class="picker-chips" id="chips-apd"></div>
+                        <input type="text" class="form-input" placeholder="Cari APD..."
+                            oninput="pickerSearch('apd', this.value)" onfocus="pickerOpen('apd')"
+                            autocomplete="off" />
+                        <div class="picker-dropdown" id="dropdown-apd">
+                            <div class="picker-options" id="options-apd"></div>
+                            <div class="picker-dropdown-footer">
+                                <span class="picker-selected-count" id="count-apd">0 dipilih</span>
+                                <button type="button" class="picker-done-btn"
+                                    onclick="pickerClose('apd')">Selesai</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Kesimpulan</div>
+                <div class="form-group">
+                    <label class="form-label">Kesimpulan Kebutuhan APD / Catatan</label>
+                    <textarea id="fKesimpulan" class="form-input" rows="4" placeholder="Tuliskan kesimpulan..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closeItemModal()">Batal</button>
+                <button class="btn-modal-confirm" id="btnSubmit" onclick="submitDocument()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HAPUS -->
+    <div id="deleteConfirmOverlay" class="modal-overlay" onclick="closeDeleteModalOutside(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-icon-wrap">
+                <svg style="width:22px;height:22px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <div class="modal-title">Hapus Dokumen HIRADC?</div>
+            <div class="modal-desc" id="deleteModalDesc">Data yang dihapus tidak dapat dikembalikan.</div>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
+                <button class="btn-modal-danger" onclick="confirmDelete()">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+    <!-- taruh di akhir modal builder, sekali saja -->
+    <datalist id="dl_unit_kerja"></datalist>
+    <datalist id="dl_area_kerja"></datalist>
+    <datalist id="dl_jabatan"></datalist>
 
     <script>
         const DATA_ENDPOINT = "{{ route('hiradc.data') }}";
         const STORE_ENDPOINT = "{{ route('hiradc.store') }}";
         const BASE_ENDPOINT = "{{ url('/hiradc') }}";
         const KODE_OK_OPTIONS_ENDPOINT = "{{ route('hiradc.kodeOk.options') }}";
+        const APD_OPTIONS_ENDPOINT = "{{ route('hiradc.apd.options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
+        const pickerData = {
+            apd: {
+                all: [],
+                selected: new Map()
+            }
+        };
+        const UNIT_KERJA_OPTIONS = [
+            "GLOBAL", "ADMINISTRASI BISNIS", "ADMINISTRASI PEMASARAN & PENJUALAN", "AGRO SOLUTION", "AKUNTANSI BIAYA",
+            "ALAT BERAT ALL IN", "ALAT BERAT EXISTING", "ALAT BERAT ON CALL", "ALF III", "AMONIA I-A", "AMONIA I-B",
+            "AUDIT OPERASI & PRODUKSI", "BAHAN BAKU DAN BAHAN KEMAS", "BARANG REJECT", "BENGKEL FABRIKASI",
+            "BONGKAR MUAT",
+            "BUNCOB", "CANDAL HAR I", "CANDAL HAR II", "CANDAL HAR III", "CANDAL PRODUKSI", "CCTPC",
+            "DEP. PEMELIHARAAN I",
+            "DEP. PRODUKSI I-B", "DEP. PRODUKSI II-A", "GUDANG & PENGANTONGAN AREA I", "GUDANG & PENGANTONGAN AREA II",
+            "GUDANG & PENGANTONGAN AREA III", "HARPRAS", "HELPDESK IT", "HUKUM & SEKRETARIAT", "INFORMASI & KOMUNIKASI",
+            "INSPEKSI TEKNIK ROTATING", "INSPEKSI TEKNIK STATIK", "INSTRUMENT I", "INSTRUMENT II", "INSTRUMENT III",
+            "INTERKONEKSI LISTRIK", "INVESTASI RUTIN & EPC", "JASA", "JASA PELAYANAN PABRIK", "K3", "KEAMANAN",
+            "KELLAS I",
+            "KELLAS II-A", "KELLAS II-B", "KELLAS III", "KELSIN I", "KELSIN II", "KELSIN III", "KEUANGAN",
+            "KEUANGAN DAN UMUM",
+            "KK PABRIK I", "KK PABRIK II", "KK PABRIK III", "LAB", "LAB I-A", "LAB I-B", "LAB II-A", "LAB II-B",
+            "LAB III-A",
+            "LAB III-B", "LAB PENELITIAN", "LAB QUALITY ASSURANCE", "LAB. BIOPROSES", "LAB. FORMULASI",
+            "LAB. FORMULASI PUPUK",
+            "LAB. KULTUR INVITRO", "LAB. MIKROBIOLOGI", "LABORATORIUM", "LISTRIK I", "LISTRIK II", "LISTRIK III",
+            "MANAJEMEN ASET", "MANAJEMEN DAN PENGEMBANGAN SDM", "MANAJEMEN PRODUK BARU", "MANAJEMEN RESIKO",
+            "MASJID NURUL JANNAH", "MEKANIK I", "MEKANIK II-A", "MEKANIK II-B", "MEKANIK III", "MEKANIKAL POMPA",
+            "MITRA BISNIS KORPORASI", "NON LOGAM II-A", "NON LOGAM II-B", "NON LOGAM III", "NPK I", "NPK II", "NPK III",
+            "NPK IV", "O&M CSU", "O&M O&M PURIFIKASI II", "O&M PURIFIKASI I", "O&M PURIFIKASI I & II", "O&M TK 1400",
+            "OPERASIONAL KBL", "OPERASIONAL SDM", "PA GUNUNGSARI", "PA I", "PA II", "PA II & UBB",
+            "PELAPORAN KEUANGAN & MANAJEMEN", "PELAYANAN UMUM", "PEMELIHARAAN II", "PEMELIHARAAN III",
+            "PEMELIHARAAN KAWASAN", "PENELITIAN & PENGEMBANGAN USAHA", "PENGADAAN BARANG", "PENGADAAN JASA", "PENGAWAS",
+            "PENGELOLAAN & PEMELIHARAAN", "PENGELOLAAN PELABUHAN", "PENGELOLAAN PELANGGAN",
+            "PENGELOLAAN PERSEDIAAN SUKU CADANG & BAHAN BAKU", "PENGELOLAAN PRODUK", "PENGELOLAAN TRANSFORMASI BISNIS",
+            "PENGEMBANGAN KOMPETENSI", "PENGEMBANGAN SISTEM & PROSEDUR", "PENGENDALIAN LINGKUNGAN",
+            "PERENCANAAN & PENGENDALIAN", "PERENCANAAN & PENGENDALIAN PRODUKSI", "PERENCANAAN & PENGENDALIAN TA I",
+            "PERENCANAAN & PENGENDALIAN TA II", "PERENCANAAN & PENGENDALIAN TA III", "PERSEDIAAN BAHAN BAKU",
+            "PETROMART",
+            "PHONSKA I", "PHONSKA II", "PHONSKA III", "PHONSKA IV", "PHONSKA V", "PIKPG", "PMK", "PORTFOLIO BISNIS",
+            "PREVENTIVE CONVEYOR", "PROCESS SAFETY MANAGEMENT", "PRODUKSI I-B", "PRODUKSI II-A", "PRODUKSI II-B",
+            "PRODUKSI III-A", "PROJECT MANAJER RETAIL MANAJEMEN", "PROJECT PP", "PROSES & PENGENDALIAN ENERGI",
+            "PROTOKOL",
+            "PROYEK INFRASTRUKTUR", "PUPUK ORGANIK & TANAH", "RANCANG BANGUN", "RELIABILITY", "RENDAL & ANGGARAN",
+            "REWINDING MOTOR", "RHI", "RISET TEKNOLOGI", "SA / SU I", "SA / SU II", "SARANA & PERLENGKAPAN", "SDM",
+            "SERVICE AC", "SIPIL I", "SIPIL II-A", "SIPIL II-B", "SIPIL III", "SISTEM & KESEHATAN KERJA", "SKPG",
+            "STALIR BABAT", "STALIR GUNUNG SARI", "SUKU CADANG", "TANGGUNG JAWAB SOSIAL & LINGKUNGAN",
+            "TEKNOLOGI INFORMASI", "TRANSPORT", "UBB", "UREA I", "UREA II", "UTILITAS I-A", "UTILITAS I-B",
+            "UTILITAS II",
+            "ZA I / III", "ZA II", "ZK", "RSPG"
+        ];
+
+        const AREA_KERJA_OPTIONS = [
+            "FASILITAS UMUM", "GBB, GMG & GUDANG PPSB", "GEDUNG ADMINISTRASI", "GEDUNG CANGUN", "GEDUNG DIKLAT",
+            "GEDUNG GRAHA", "GEDUNG INFRASTRUKTUR & DERMAGA A", "GEDUNG JPP", "GEDUNG LOLA MITRA", "GEDUNG PPBJ",
+            "GEDUNG PUTIH", "GEDUNG RISET & KEBUN PERCOBAAN", "GEDUNG TRANSPORT PG", "KANTOR FJM", "KAWASAN",
+            "PA BABAT",
+            "PA GUNUNGSARI", "PABRIK I", "PABRIK I-A", "PABRIK I-B", "PABRIK II", "PABRIK II-A", "PABRIK II-B",
+            "PABRIK III",
+            "PABRIK III-A", "PABRIK III-B", "PELABUHAN", "PERGUDANGAN", "PERUMAHAN DINAS", "RSPG",
+            "SEMUA AREA PABRIK PG", "SOR"
+        ];
+
+        const JABATAN_OPTIONS = [
+            "ADMINISTRASI", "AKUNTANSI", "ANALIS", "ANALIS LABORATORIUM", "ASISTEN INSPECTOR",
+            "ASSISTANT ACCOUNT EXECUTIVE", "CHECKER", "CLEANING AREA", "CLEANING SERVICE", "DRAFTER", "DRIVER",
+            "DRIVER SIPIL", "DRIVER TRUCK SOLAR", "FITTER", "GROUP LEADER", "HELP DESK", "HELPDESK IT", "HELPER",
+            "HOUSEKEEPING", "INCOMING QUALITY CONTROL (IQC)", "INFORMASI & KOMUNIKASI", "INFRASTRUKTUR", "INSPECTOR",
+            "INSTRUMENT", "JOIN COST", "JURU GAMBAR", "KEAMANAN", "KEAMANAN LAUT", "KONSULTAN", "KOORDINATOR DRIVER",
+            "KOORDINATOR SIPIL", "LAB", "LAS ALAT BERAT", "LEADER PA BABAT", "LEADMAN", "LIFTING ENGINEERING",
+            "LISTMEN",
+            "LISTRIK ALAT BERAT", "LOGISISTIK PSO & RETAIL", "LOKET", "MAGANG PG", "MAINTENANCE", "MARKETING SUPPORT",
+            "MEDIA", "MEKANIK", "MEKANIK ALAT BERAT", "MEKANIKAL POMPA", "MESIN FABRIKASI", "MULTIMEDIA", "O&M CSU",
+            "OPERATOR", "OPERATOR BS & CONVEYOR SYSTEM", "OPERATOR BULK STORAGE DAN CONVEYOR SYSTEM",
+            "OPERATOR BULLDOZER", "OPERATOR CONVEYOR", "OPERATOR CONVEYOR & CHECKER", "OPERATOR CRANE", "OPERATOR CSU",
+            "OPERATOR EXCA & WLD", "OPERATOR EXCAVATOR", "OPERATOR FLT & WLD", "OPERATOR FORKLIFT", "OPERATOR HANDLING",
+            "OPERATOR JEMBATAN TIMBANG", "OPERATOR PA BABAT", "OPERATOR PANEL", "OPERATOR PARABOLA", "OPERATOR PR",
+            "OPERATOR PRODUKSI", "OPERATOR PUMP HOUSE PA BABAT", "OPERATOR PURIFIKASI", "OPERATOR TELPON",
+            "OPERATOR TIMBANGAN", "OPERATOR WHEEL LOADER", "PA II", "PAM", "PEMADAM KEBAKARAN", "PEMBANTU ANALIS",
+            "PEMBANTU MEKANIK", "PEMBANTU OPERATOR", "PEMBANTU TUKANG", "PEMBANTU TUKANG INSTRUMENT",
+            "PEMBANTU TUKANG LAS", "PEMBANTU TUKANG LISTRIK", "PEMBANTU TUKANG MEKANIK", "PEMELIHARAAN AC",
+            "PEMELIHARAAN KAWASAN", "PENGAWAS", "PENGAWAS ALAT BERAT ALL IN", "PENGAWAS ANGGARAN",
+            "PENGAWAS CLEANING SERVICE", "PENGAWAS DISPOSAL", "PENGAWAS PROYEK", "PENGAWAS PROYEK LISTRIK",
+            "PENGAWAS PROYEK SIPIL", "PENGEMBANGAN KOMPETENSI", "PENGHIJAUAN", "PENYUSUN ANGGARAN", "PERAMBUAN",
+            "PETROMART", "PETUGAS SAMPLING", "PROGRAMMER", "PROJECT CONTROL", "PROSES", "PROTOKOL",
+            "PROYEKSI & PENGENDALIAN HPP", "QUALITY CONTROL", "REPAIR PENGELASAN POMPA", "REWINDING MOTOR",
+            "RUBBER LINING", "SAFETY INSPECTOR", "SAFETY KOORDINATOR", "SAFETY MAN", "SAFETY OFFICER", "SATPAM",
+            "SATPAM PARKIR", "SEKRETARIS", "SEKRETARIS DIREKTUR", "SEKRETARIS KEAMANAN", "SEKRETARIS VP",
+            "SPAREPART MANAGEMENT", "STAF DIGITALISASI", "STAF LAYANAN", "STAF PELAPORAN & ALOKASI BIAYA",
+            "STAF PERENCANAAN & TATA KELOLA", "SUPERVISOR", "TENAGA KERJA BONGKAR MUAT", "TUKANG", "TUKANG AC",
+            "TUKANG ANDANG", "TUKANG BATU", "TUKANG BUBUT", "TUKANG CAT", "TUKANG FRP", "TUKANG INSTRUMENT",
+            "TUKANG ISOLASI", "TUKANG KAYU", "TUKANG LAS", "TUKANG LAS MEKANIK", "TUKANG LISTRIK",
+            "TUKANG LISTRIK KELLAS I", "TUKANG LUKIS BALIHO", "TUKANG MEKANIK", "TUKANG PIPA", "TUKANG RUBBER LINING",
+            "TUKANG SANDBLASTING", "TUKANG SIPIL", "TUKANG TAMAN"
+        ];
+
+        const CUSTOM_DROPDOWNS = {
+            dept: {
+                inputId: 'fDepartemen',
+                dropdownId: 'dropdown-dept',
+                options: UNIT_KERJA_OPTIONS
+            },
+            area: {
+                inputId: 'fAreaKerja',
+                dropdownId: 'dropdown-area',
+                options: AREA_KERJA_OPTIONS
+            },
+            jabatan: {
+                inputId: 'fKualifikasi',
+                dropdownId: 'dropdown-jabatan',
+                options: JABATAN_OPTIONS
+            }
+        };
+
+        function renderCustomDropdownOptions(type, keyword = '') {
+            const config = CUSTOM_DROPDOWNS[type];
+            const container = document.getElementById(config.dropdownId);
+            const kw = keyword.trim().toLowerCase();
+
+            const filtered = config.options.filter(item => item.toLowerCase().includes(kw));
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="custom-dropdown-empty">Tidak ditemukan</div>`;
+            } else {
+                container.innerHTML = filtered.map(item => `
+            <div class="custom-dropdown-item" onclick="selectCustomDropdownItem('${type}', '${escapeHtml(item)}')">
+                ${escapeHtml(item)}
+            </div>
+        `).join('');
+            }
+        }
+
+        // Buka dropdown saat input diklik/fokus
+        function openCustomDropdown(type) {
+            // Tutup dropdown lain yang sedang terbuka
+            closeAllCustomDropdowns();
+
+            const config = CUSTOM_DROPDOWNS[type];
+            const inputVal = document.getElementById(config.inputId).value;
+
+            renderCustomDropdownOptions(type, inputVal);
+            document.getElementById(config.dropdownId).style.display = 'block';
+        }
+
+        // Filter opsi saat user mengetik
+        function filterCustomDropdown(type) {
+            const config = CUSTOM_DROPDOWNS[type];
+            const inputVal = document.getElementById(config.inputId).value;
+
+            renderCustomDropdownOptions(type, inputVal);
+            document.getElementById(config.dropdownId).style.display = 'block';
+        }
+
+        // Pilih item dari dropdown
+        function selectCustomDropdownItem(type, value) {
+            const config = CUSTOM_DROPDOWNS[type];
+            document.getElementById(config.inputId).value = value;
+            closeAllCustomDropdowns();
+        }
+
+        // Tutup semua dropdown
+        function closeAllCustomDropdowns() {
+            Object.keys(CUSTOM_DROPDOWNS).forEach(key => {
+                document.getElementById(CUSTOM_DROPDOWNS[key].dropdownId).style.display = 'none';
+            });
+        }
+
+        // Event listener untuk menutup dropdown saat klik di luar area input/dropdown
+        document.addEventListener('click', (e) => {
+            Object.keys(CUSTOM_DROPDOWNS).forEach(key => {
+                const config = CUSTOM_DROPDOWNS[key];
+                const inputEl = document.getElementById(config.inputId);
+                const dropdownEl = document.getElementById(config.dropdownId);
+
+                if (inputEl && dropdownEl) {
+                    if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
+                        dropdownEl.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
 
         let allData = [];
         let filteredData = [];
@@ -1748,6 +1883,7 @@
         let currentDeleteId = null;
         let kodeOkSearchTimeout = null;
         let selectedKodeOk = null;
+        let apdOptionsLoaded = false;
 
         // groups: [{ nama, items:[{no,aktivitas,kesimpulan_apd,hazards:[{...}]}], children:[{nama, items:[...]}] }]
         let formState = {
@@ -1805,6 +1941,104 @@
                 setTimeout(() => toast.remove(), 250);
             }, 4000);
         }
+
+        async function ensureApdOptionsLoaded() {
+            if (apdOptionsLoaded) return;
+            try {
+                const res = await fetch(APD_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                pickerData.apd.all = json.data || [];
+                apdOptionsLoaded = true;
+            } catch (e) {
+                showToast('Gagal memuat data APD.', 'error');
+            }
+        }
+
+        function pickerLabel(type, item) {
+            return `${item.kode_apd} — ${item.jenis_apd}`;
+        }
+
+        function resetPicker(type) {
+            pickerData[type].selected = new Map();
+            document.getElementById(`chips-${type}`).innerHTML = '';
+            document.getElementById(`dropdown-${type}`).classList.remove('open');
+        }
+
+        function renderChips(type) {
+            const wrap = document.getElementById(`chips-${type}`);
+            const items = Array.from(pickerData[type].selected.values());
+            wrap.innerHTML = items.map(item => `
+        <span class="picker-chip">
+            ${escapeHtml(pickerLabel(type, item))}
+            <button type="button" onclick="pickerRemove('${type}', ${item.id})">✕</button>
+        </span>
+    `).join('');
+        }
+
+        function renderDropdown(type, keyword = '') {
+            const optionsWrap = document.getElementById(`options-${type}`);
+            const kw = keyword.trim().toLowerCase();
+            const list = pickerData[type].all.filter(item => pickerLabel(type, item).toLowerCase().includes(kw));
+
+            optionsWrap.innerHTML = list.length === 0 ?
+                `<div class="picker-empty">Tidak ada data cocok.</div>` :
+                list.slice(0, 50).map(item => {
+                    const checked = pickerData[type].selected.has(item.id);
+                    return `
+                <div class="picker-option ${checked ? 'checked' : ''}" onclick="pickerToggle('${type}', ${item.id})">
+                    <span class="picker-option-check">${checked ? '✓' : ''}</span>
+                    <span>${escapeHtml(pickerLabel(type, item))}</span>
+                </div>`;
+                }).join('');
+
+            document.getElementById(`count-${type}`).textContent = `${pickerData[type].selected.size} dipilih`;
+        }
+
+        function pickerOpen(type) {
+            renderDropdown(type);
+            document.getElementById(`dropdown-${type}`).classList.add('open');
+        }
+
+        function pickerClose(type) {
+            document.getElementById(`dropdown-${type}`).classList.remove('open');
+        }
+
+        function pickerSearch(type, keyword) {
+            renderDropdown(type, keyword);
+            document.getElementById(`dropdown-${type}`).classList.add('open');
+        }
+
+        function pickerToggle(type, id) {
+            const item = pickerData[type].all.find(i => i.id === id);
+            if (!item) return;
+            if (pickerData[type].selected.has(id)) pickerData[type].selected.delete(id);
+            else pickerData[type].selected.set(id, item);
+            renderChips(type);
+            renderDropdown(type);
+        }
+
+        function pickerRemove(type, id) {
+            pickerData[type].selected.delete(id);
+            renderChips(type);
+            renderDropdown(type);
+        }
+
+        function pickerSetSelected(type, ids) {
+            const items = (ids || []).map(id => pickerData[type].all.find(i => i.id === id)).filter(Boolean);
+            pickerData[type].selected = new Map(items.map(i => [i.id, i]));
+            renderChips(type);
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('dropdown-apd');
+            if (!dropdown.classList.contains('open')) return;
+            const wrap = document.querySelector('[data-picker="apd"]');
+            if (wrap && !wrap.contains(e.target)) pickerClose('apd');
+        });
 
         // Sama persis dengan HiradcHazard::tingkatRisiko() di backend:
         // L 1-4 (hijau) · M 5-9 (kuning) · H 10-16 (merah gelap) · E 20-25 (merah terang)
@@ -1928,8 +2162,8 @@
                         </button>
                     `;
 
-                                        if (row.status === 'draft') {
-                                            actionButtons += `
+                    if (row.status === 'draft') {
+                        actionButtons += `
                             <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">
                                 <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1949,8 +2183,8 @@
                                 Hapus
                             </button>
                         `;
-                                        } else if (row.status === 'diperiksa') {
-                                            actionButtons += `
+                    } else if (row.status === 'diperiksa') {
+                        actionButtons += `
                             <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan Dokumen">
                                 <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -2058,145 +2292,25 @@
         function renderDetail(doc) {
             document.getElementById('detailTitle').textContent = `${doc.no_hiradc || '-'} — ${doc.pekerjaan}`;
             document.getElementById('detailSub').textContent =
-                `${doc.departemen} / ${doc.bagian} · Revisi ${display(doc.revisi)} · ${display(doc.tanggal)}`;
+                `${doc.departemen || '-'} / ${doc.area_kerja || '-'} · ${display(doc.tanggal)}`;
             document.getElementById('detailHeaderInfo').innerHTML = `
-              <strong>Kode OK:</strong> ${escapeHtml(display(doc.kode_ok?.kode_ok))}<br>
-            <strong>Disiapkan:</strong> ${escapeHtml(display(doc.disiapkan_nama))} (${escapeHtml(display(doc.disiapkan_tanggal))}) &nbsp;|&nbsp;
-            <strong>Diperiksa:</strong> ${escapeHtml(display(doc.diperiksa_nama))} (${escapeHtml(display(doc.diperiksa_tanggal))}) &nbsp;|&nbsp;
-            <strong>Disahkan:</strong> ${escapeHtml(display(doc.disahkan_nama))} (${escapeHtml(display(doc.disahkan_tanggal))})
-        `;
-
-            const signHtml = (label, nama, tanggal, ttdUrl) => `
-            <div class="hx-sign-view">
-                <div><strong>${label}</strong></div>
-                ${ttdUrl ? `<img src="${ttdUrl}" alt="TTD ${label}" />` : `<div style="height:40px;display:flex;align-items:center;justify-content:center;color:#475569;">(belum ada ttd)</div>`}
-                <div>${escapeHtml(display(nama))}</div>
-                <div>${escapeHtml(display(tanggal))}</div>
-            </div>
-        `;
-            document.getElementById('detailSignBlock').innerHTML =
-                signHtml('Disiapkan', doc.disiapkan_nama, doc.disiapkan_tanggal, doc.disiapkan_ttd_url) +
-                signHtml('Diperiksa', doc.diperiksa_nama, doc.diperiksa_tanggal, doc.diperiksa_ttd_url) +
-                signHtml('Disahkan', doc.disahkan_nama, doc.disahkan_tanggal, doc.disahkan_ttd_url);
-
-            let rows = '';
-            const COLSPAN = 21;
-
-            function renderGroup(group) {
-                rows += `<tr class="hx-group-row"><td colspan="${COLSPAN}">${escapeHtml(group.nama)}</td></tr>`;
-                (group.items || []).forEach(item => {
-                    const hazards = item.hazards && item.hazards.length ? item.hazards : [{}];
-                    hazards.forEach((h, hIdx) => {
-                        rows += '<tr>';
-                        if (hIdx === 0) {
-                            rows +=
-                                `<td rowspan="${hazards.length}" style="text-align:center;">${display(item.no)}</td>`;
-                            rows += `<td rowspan="${hazards.length}">${escapeHtml(item.aktivitas)}</td>`;
-                        }
-                        rows += `<td>${escapeHtml(display(h.hazard_register))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.sub_hazard_register))}</td>`;
-                        rows += `<td style="text-align:center;">${escapeHtml(display(h.na_e))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.deskripsi))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.dampak_kategori))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.detail))}</td>`;
-                        rows += `<td class="hx-lc">${display(h.l_awal)}</td>`;
-                        rows += `<td class="hx-lc">${display(h.c_awal)}</td>`;
-                        rows += catCell(HiradcRisk(h.l_awal, h.c_awal));
-                        rows += `<td>${escapeHtml(display(h.pengendalian_existing))}</td>`;
-                        rows += `<td class="hx-lc">${display(h.l_sisa)}</td>`;
-                        rows += `<td class="hx-lc">${display(h.c_sisa)}</td>`;
-                        rows += catCell(HiradcRisk(h.l_sisa, h.c_sisa));
-                        rows += `<td style="text-align:center;">${escapeHtml(display(h.r_o))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.additional_control))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.pic))}</td>`;
-                        rows += `<td>${escapeHtml(display(h.due_date))}</td>`;
-                        if (hIdx === 0) {
-                            rows +=
-                                `<td rowspan="${hazards.length}" class="hx-apd-cell">${escapeHtml(display(item.kesimpulan_apd))}</td>`;
-                        }
-                        rows += '</tr>';
-                    });
-                });
-                rows += `<tr class="hx-sep-row"><td colspan="${COLSPAN}"></td></tr>`;
-                (group.children || []).forEach(child => renderGroup(child));
-            }
-            (doc.groups || []).forEach(g => renderGroup(g));
-            document.getElementById('detailTableBody').innerHTML = rows ||
-                `<tr><td colspan="${COLSPAN}">Belum ada aktivitas.</td></tr>`;
+        <strong>Kode OK:</strong> ${escapeHtml(display(doc.kode_ok?.kode_ok))}<br>
+        <strong>Jabatan:</strong> ${escapeHtml(display(doc.kualifikasi))}
+    `;
+            const apdWrap = document.getElementById('detailApdTags');
+            apdWrap.innerHTML = (doc.apd_list || []).length ?
+                doc.apd_list.map(a =>
+                    `<span class="status-pill sp-green">${escapeHtml(a.kode_apd)} — ${escapeHtml(a.jenis_apd)}</span>`)
+                .join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada APD dipilih.</span>`;
+            document.getElementById('detailKesimpulan').textContent = doc.kesimpulan || '-';
         }
 
         // ══════ MODAL BUILDER (Tambah/Edit) ══════
-        function emptyHazard() {
-            return {
-                hazard_register: '',
-                sub_hazard_register: '',
-                na_e: 'N',
-                deskripsi: '',
-                dampak_kategori: '',
-                detail: '',
-                l_awal: '',
-                c_awal: '',
-                pengendalian_existing: '',
-                l_sisa: '',
-                c_sisa: '',
-                r_o: 'R',
-                additional_control: '',
-                pic: '',
-                due_date: ''
-            };
-        }
-
-        function emptyItem() {
-            return {
-                no: '',
-                aktivitas: '',
-                kesimpulan_apd: '',
-                hazards: [emptyHazard()]
-            };
-        }
-
-        function emptyGroup() {
-            return {
-                nama: '',
-                items: [emptyItem()],
-                children: []
-            };
-        }
-
-        function resetTtdInputs() {
-            SIGN_KEYS.forEach(key => {
-                const Key = key.charAt(0).toUpperCase() + key.slice(1);
-                document.getElementById(`f${Key}Ttd`).value = '';
-                const img = document.getElementById(`ttdPreview${Key}`);
-                img.style.display = 'none';
-                img.src = '';
-                document.getElementById(`ttdExisting${Key}`).textContent = '';
-            });
-        }
-
-        function previewTtd(key, input) {
-            const Key = key.charAt(0).toUpperCase() + key.slice(1);
-            const file = input.files[0];
-            const img = document.getElementById(`ttdPreview${Key}`);
-            if (!file) {
-                img.style.display = 'none';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = e => {
-                img.src = e.target.result;
-                img.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-
         async function openBuilderModal(id = null) {
             currentEditId = id;
-            document.getElementById('fDokumen').value = '';
-            document.getElementById('dokumenExisting').textContent = '';
-            resetTtdInputs();
-
-            await ensureKodeOkOptionsLoaded(); // ← baru, load sekali saja
+            await ensureKodeOkOptionsLoaded();
+            await ensureApdOptionsLoaded();
 
             if (id) {
                 document.getElementById('itemModalTitle').textContent = 'Edit Dokumen HIRADC';
@@ -2210,20 +2324,9 @@
                     if (!res.ok) throw new Error(json.message || `Status ${res.status}`);
                     const doc = json.data;
                     fillHeaderForm(doc);
-                    resetKodeOkPicker(doc.kode_ok || null); // ← baru
-                    formState = {
-                        groups: (doc.groups && doc.groups.length) ? doc.groups : [emptyGroup()]
-                    };
-                    if (doc.dokumen_hiradc) {
-                        document.getElementById('dokumenExisting').textContent =
-                            `File saat ini: ${doc.dokumen_hiradc} (biarkan kosong jika tidak ingin ganti)`;
-                    }
-                    SIGN_KEYS.forEach(key => {
-                        const Key = key.charAt(0).toUpperCase() + key.slice(1);
-                        const url = doc[`${key}_ttd_url`];
-                        if (url) document.getElementById(`ttdExisting${Key}`).textContent =
-                            'TTD sudah ada (biarkan kosong jika tidak ingin ganti)';
-                    });
+                    resetKodeOkPicker(doc.kode_ok || null);
+                    resetPicker('apd');
+                    pickerSetSelected('apd', doc.apd_ids || []);
                 } catch (e) {
                     showToast(e.message || 'Gagal memuat data.', 'error');
                     return;
@@ -2231,14 +2334,12 @@
             } else {
                 document.getElementById('itemModalTitle').textContent = 'Tambah Dokumen HIRADC';
                 fillHeaderForm({});
-                resetKodeOkPicker(null); // ← baru
-                formState = {
-                    groups: [emptyGroup()]
-                };
+                resetKodeOkPicker(null);
+                resetPicker('apd');
             }
-            renderGroupsBuilder();
             document.getElementById('itemModalOverlay').classList.add('open');
         }
+
 
         function renderKodeOkInfo(k) {
             // Info Pengawas, Unit Kerja, Kualifikasi tidak lagi ditampilkan
@@ -2247,16 +2348,11 @@
 
         function fillHeaderForm(doc) {
             document.getElementById('fDepartemen').value = doc.departemen || '';
-            document.getElementById('fBagian').value = doc.bagian || '';
-            document.getElementById('fPekerjaan').value = doc.pekerjaan || '';
-            // Kode OK di-set terpisah di openBuilderModal
+            document.getElementById('fAreaKerja').value = doc.area_kerja || '';
+            document.getElementById('fKualifikasi').value = doc.kualifikasi || ''; // dipakai sebagai Jabatan
             document.getElementById('fNoHiradc').value = doc.no_hiradc || '';
-            document.getElementById('fRevisi').value = doc.revisi || '';
             document.getElementById('fTanggal').value = doc.tanggal || '';
-
-            // Hanya sisakan input disiapkan
-            document.getElementById('fDisiapkanNama').value = doc.disiapkan_nama || '';
-            document.getElementById('fDisiapkanTanggal').value = doc.disiapkan_tanggal || '';
+            document.getElementById('fKesimpulan').value = doc.kesimpulan || '';
         }
 
         function closeItemModal() {
@@ -2521,58 +2617,45 @@
         }
 
         async function submitDocument() {
-            const pekerjaan = document.getElementById('fPekerjaan').value.trim();
-            if (!pekerjaan) {
-                showToast('Pekerjaan wajib diisi.', 'error');
+            const kodeOkId = document.getElementById('fKodeOkId').value;
+
+            if (!kodeOkId || !pickerKodeOk.selected) {
+                showToast('Kode OK wajib dipilih.', 'error');
                 return;
             }
+
+            // Ambil nilai pekerjaan langsung dari uraian_kerja milik Kode OK yang dipilih
+            const pekerjaan = pickerKodeOk.selected.uraian_kerja || '';
 
             const btn = document.getElementById('btnSubmit');
             const original = btn.textContent;
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const fd = new FormData();
-            fd.append('departemen', document.getElementById('fDepartemen').value.trim());
-            fd.append('bagian', document.getElementById('fBagian').value.trim());
-            fd.append('pekerjaan', pekerjaan);
-            fd.append('kode_ok_id', document.getElementById('fKodeOkId').value);
-            fd.append('no_hiradc', document.getElementById('fNoHiradc').value.trim());
-            fd.append('revisi', document.getElementById('fRevisi').value.trim());
-            fd.append('tanggal', document.getElementById('fTanggal').value);
+            const payload = {
+                kode_ok_id: kodeOkId,
+                departemen: document.getElementById('fDepartemen').value.trim(),
+                area_kerja: document.getElementById('fAreaKerja').value.trim(),
+                kualifikasi: document.getElementById('fKualifikasi').value.trim(), // Jabatan
+                pekerjaan: pekerjaan, // Otomatis terisi dari Kode OK
+                no_hiradc: document.getElementById('fNoHiradc').value.trim(),
+                tanggal: document.getElementById('fTanggal').value,
+                kesimpulan: document.getElementById('fKesimpulan').value.trim(),
+                apd_ids: Array.from(pickerData.apd.selected.keys()),
+            };
 
-            // Hanya append 'disiapkan' sesuai dengan yang ada di HTML Modal
-            fd.append('disiapkan_nama', document.getElementById('fDisiapkanNama').value.trim());
-            fd.append('disiapkan_tanggal', document.getElementById('fDisiapkanTanggal').value);
-
-            // BARIS DI BAWAH INI DIHAPUS KARENA ELEMENNYA TIDAK ADA DI DOM
-            // fd.append('diperiksa_nama', document.getElementById('fDiperiksaNama').value.trim());
-            // fd.append('diperiksa_tanggal', document.getElementById('fDiperiksaTanggal').value);
-            // fd.append('disahkan_nama', document.getElementById('fDisahkanNama').value.trim());
-            // fd.append('disahkan_tanggal', document.getElementById('fDisahkanTanggal').value);
-
-            SIGN_KEYS.forEach(key => {
-                const Key = key.charAt(0).toUpperCase() + key.slice(1);
-                const file = document.getElementById(`f${Key}Ttd`).files[0];
-                if (file) fd.append(`${key}_ttd`, file);
-            });
-
-            const dokumenFile = document.getElementById('fDokumen').files[0];
-            if (dokumenFile) fd.append('dokumen', dokumenFile);
-
-            appendGroupsToFormData(fd, formState.groups);
-
-            const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
-            if (currentEditId) fd.append('_method', 'PUT');
+            const isEdit = currentEditId !== null;
+            const url = isEdit ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
 
             try {
                 const res = await fetch(url, {
-                    method: 'POST',
+                    method: isEdit ? 'PUT' : 'POST',
                     headers: {
                         'Accept': 'application/json',
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN
                     },
-                    body: fd
+                    body: JSON.stringify(payload)
                 });
                 const json = await res.json();
                 if (!res.ok) {
@@ -2654,6 +2737,7 @@
             return item.uraian_kerja ? `${item.kode_ok} — ${item.uraian_kerja}` : item.kode_ok;
         }
 
+
         function renderKodeOkChip() {
             const wrap = document.getElementById('chips-kodeOk');
             if (!pickerKodeOk.selected) {
@@ -2698,6 +2782,9 @@
             renderKodeOkChip();
             pickerCloseKodeOk();
             document.getElementById('kodeOkSearchInput').value = '';
+
+            // Hanya isi Pekerjaan otomatis dari uraian kerja Kode OK.
+            // Unit Kerja / Area Kerja / Jabatan sekarang dipilih manual dari daftar tetap.
         }
 
         function kodeOkClear() {

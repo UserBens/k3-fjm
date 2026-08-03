@@ -1298,6 +1298,11 @@
             font-size: 12px;
             color: #94A3B8;
         }
+
+        .sp-purple {
+            background: rgba(139, 92, 246, 0.09);
+            color: #7c3aed;
+        }
     </style>
 </head>
 
@@ -1379,6 +1384,8 @@
                                 <th>Jml Pegawai</th>
                                 <th>Unit Kerja</th>
                                 <th>Kualifikasi</th>
+                                <th>APD</th>
+                                <th>Alkes</th>
                                 <th>Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -1592,6 +1599,24 @@
                     <span class="detail-summary-label">Kualifikasi</span>
                     <span class="detail-summary-value" id="detailJumlahKualifikasi">0</span>
                 </div>
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">APD</span>
+                    <span class="detail-summary-value" id="detailJumlahApd">0</span>
+                </div>
+                <div class="detail-summary-item">
+                    <span class="detail-summary-label">Alkes</span>
+                    <span class="detail-summary-value" id="detailJumlahAlkes">0</span>
+                </div>
+            </div>
+
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">APD Terkait</div>
+                <div class="detail-tags-wrap" id="detailApdTags"></div>
+            </div>
+
+            <div class="detail-tags-block">
+                <div class="detail-tags-label">Alkes Terkait</div>
+                <div class="detail-tags-wrap" id="detailAlkesTags"></div>
             </div>
 
             <div class="detail-tags-block">
@@ -1753,6 +1778,8 @@
                     <td style="font-weight:700;">${row.jumlah_pegawai}</td>
                     <td>${renderBadgeList(row.unit_kerja_list, 'sp-blue')}</td>
                     <td>${renderBadgeList(row.kualifikasi_list, 'sp-amber')}</td>
+                    <td>${renderBadgeList(row.apd_list.map(a => a.jenis_apd), 'sp-green')}</td>
+                    <td>${renderBadgeList(row.alkes_list.map(a => a.jenis_alat), 'sp-purple')}</td>
                     <td>${statusPill(row.status)}</td>
                     <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-row-action" onclick="openDetailModal(${row.id})">Detail</button>
@@ -2190,6 +2217,8 @@
             document.getElementById('detailJumlahPegawai').textContent = row.jumlah_pegawai;
             document.getElementById('detailJumlahUnitKerja').textContent = (row.unit_kerja_list || []).length;
             document.getElementById('detailJumlahKualifikasi').textContent = (row.kualifikasi_list || []).length;
+            document.getElementById('detailJumlahApd').textContent = row.jumlah_apd;
+            document.getElementById('detailJumlahAlkes').textContent = row.jumlah_alkes;
 
             const unitTagsWrap = document.getElementById('detailUnitKerjaTags');
             unitTagsWrap.innerHTML = (row.unit_kerja_list || []).length ?
@@ -2213,6 +2242,20 @@
             `).join('') : `
                 <tr><td colspan="4" style="text-align:center;color:#94A3B8;padding:24px 0;">Belum ada pegawai di kode OK ini.</td></tr>
             `;
+
+            const apdTagsWrap = document.getElementById('detailApdTags');
+            apdTagsWrap.innerHTML = (row.apd_list || []).length ?
+                row.apd_list.map(a =>
+                    `<span class="status-pill sp-green">${escapeHtml(a.kode_apd)} — ${escapeHtml(a.jenis_apd)}</span>`)
+                .join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada APD terkait.</span>`;
+
+            const alkesTagsWrap = document.getElementById('detailAlkesTags');
+            alkesTagsWrap.innerHTML = (row.alkes_list || []).length ?
+                row.alkes_list.map(a =>
+                    `<span class="status-pill sp-purple">${escapeHtml(a.kode_alkes || '-')} — ${escapeHtml(a.jenis_alat)}</span>`
+                ).join('') :
+                `<span style="font-size:11px;color:#CBD5E1;">Belum ada Alkes terkait.</span>`;
 
             document.getElementById('detailModalOverlay').classList.add('open');
         }

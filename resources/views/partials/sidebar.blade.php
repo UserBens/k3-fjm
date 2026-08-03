@@ -266,7 +266,7 @@
     {{-- DATABASE TENAGA --}}
     @if (session('auth_user.role') === 'super_admin')
         <div class="sb-section">
-            <div class="sb-section-label">Database Tenaga</div>
+            <div class="sb-section-label">Database</div>
 
             @php
                 // Sesuaikan nama route ini dengan yang ada di web.php Anda
@@ -275,7 +275,9 @@
                     request()->routeIs('memo-kib.*') ||
                     request()->routeIs('safety-officer.*') ||
                     request()->routeIs('pengawas.*') ||
-                    request()->routeIs('kode-ok.*');
+                    request()->routeIs('kode-ok.*') ||
+                    request()->routeIs('operator-alat-berat.*');
+
             @endphp
 
             <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
@@ -287,7 +289,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    <span class="nav-label">Data Tenaga</span>
+                    <span class="nav-label">Master Data</span>
                 </div>
 
                 <svg class="dropdown-arrow {{ $datatenagaActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
@@ -317,6 +319,11 @@
                 <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
                     href="{{ route('kode-ok.index') }}">
                     <span class="nav-label">Master Kode OK</span>
+                </a>
+
+                <a class="nav-link {{ request()->routeIs('operator-alat-berat.*') ? 'active' : '' }}"
+                    href="{{ route('operator-alat-berat.index') }}">
+                    <span class="nav-label">Master Tenaga Ahli</span>
                 </a>
 
             </div>
@@ -376,7 +383,7 @@
     @endif
 
     {{--  HALAMAN TENAGA AHLI --}}
-    @if (session('auth_user.role') === 'super_admin')
+    {{-- @if (session('auth_user.role') === 'super_admin')
         <div class="sb-section">
             <div class="sb-section-label">Alat Berat All In & On Call</div>
 
@@ -385,7 +392,6 @@
                 $alberActive =
                     request()->routeIs('operator-alat-berat.*') ||
                     request()->routeIs('alber.master-oncall') ||
-                    request()->routeIs('alber.master-allin');
             @endphp
 
             <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
@@ -414,13 +420,10 @@
                     <span class="nav-label">Dashboard</span>
                 </a>
 
-                <a class="nav-link {{ request()->routeIs('operator-alat-berat.*') ? 'active' : '' }}"
-                    href="{{ route('operator-alat-berat.index') }}">
-                    <span class="nav-label">Master All In</span>
-                </a>
+
             </div>
         </div>
-    @endif
+    @endif --}}
 
     {{-- KPI --}}
     <div class="sb-section">
@@ -804,7 +807,7 @@
             </div>
         </div>
     @endif
-    
+
     {{-- Assets Management --}}
     <div class="sb-section">
         <div class="sb-section-label">Assets Management</div>

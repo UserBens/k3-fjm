@@ -29,6 +29,8 @@ class KodeOkController extends Controller
             'pegawaiRelasi.kualifikasi',
             'unitKerjaRelasi',
             'kualifikasiRelasi',
+            'stokApdKodeRelasi.stokApd',   // ← baru
+            'stokAlkesRelasi',             // ← baru
         ]);
 
         if ($request->filled('search')) {
@@ -83,6 +85,24 @@ class KodeOkController extends Controller
 
     protected function transform(KodeOk $kodeOk): array
     {
+        // ambil StokAPD unik dari relasi kode (satu APD bisa punya beberapa baris kode_ok)
+        $apdList = $kodeOk->stokApdKodeRelasi
+            ->pluck('stokApd')
+            ->filter()
+            ->unique('id')
+            ->map(fn($apd) => [
+                'id' => $apd->id,
+                'kode_apd' => $apd->kode_apd,
+                'jenis_apd' => $apd->jenis_apd,
+            ])
+            ->values();
+
+        $alkesList = $kodeOk->stokAlkesRelasi->map(fn($alkes) => [
+            'id' => $alkes->id,
+            'kode_alkes' => $alkes->kode_alkes,
+            'jenis_alat' => $alkes->jenis_alat,
+        ])->values();
+
         return [
             'id' => $kodeOk->id,
             'kode_ok' => $kodeOk->kode_ok,
@@ -96,6 +116,12 @@ class KodeOkController extends Controller
 
             'kualifikasi_list' => $kodeOk->kualifikasiRelasi->pluck('nama_kualifikasi')->values(),
             'kualifikasi_ids' => $kodeOk->kualifikasiRelasi->pluck('id')->values(),
+
+            // ← BARU
+            'apd_list' => $apdList,
+            'jumlah_apd' => $apdList->count(),
+            'alkes_list' => $alkesList,
+            'jumlah_alkes' => $alkesList->count(),
 
             'pegawai_list' => $kodeOk->pegawaiRelasi->map(fn($p) => [
                 'id' => $p->id,
@@ -134,7 +160,14 @@ class KodeOkController extends Controller
         $kodeOk->unitKerjaRelasi()->sync($validated['unit_kerja_ids'] ?? []);
         $kodeOk->kualifikasiRelasi()->sync($validated['kualifikasi_ids'] ?? []);
 
-        $kodeOk->load(['pegawaiRelasi.unitKerja', 'pegawaiRelasi.kualifikasi', 'unitKerjaRelasi', 'kualifikasiRelasi']);
+        $kodeOk->load([
+            'pegawaiRelasi.unitKerja',
+            'pegawaiRelasi.kualifikasi',
+            'unitKerjaRelasi',
+            'kualifikasiRelasi',
+            'stokApdKodeRelasi.stokApd', // ← baru
+            'stokAlkesRelasi',           // ← baru
+        ]);
 
         return response()->json([
             'message' => "Kode OK #{$kodeOk->kode_ok} berhasil ditambahkan.",
@@ -165,8 +198,15 @@ class KodeOkController extends Controller
         $kodeOk->unitKerjaRelasi()->sync($validated['unit_kerja_ids'] ?? []);
         $kodeOk->kualifikasiRelasi()->sync($validated['kualifikasi_ids'] ?? []);
 
-        $kodeOk->load(['pegawaiRelasi.unitKerja', 'pegawaiRelasi.kualifikasi', 'unitKerjaRelasi', 'kualifikasiRelasi']);
-
+        $kodeOk->load([
+            'pegawaiRelasi.unitKerja',
+            'pegawaiRelasi.kualifikasi',
+            'unitKerjaRelasi',
+            'kualifikasiRelasi',
+            'stokApdKodeRelasi.stokApd', // ← baru
+            'stokAlkesRelasi',           // ← baru
+        ]);
+        
         return response()->json([
             'message' => "Kode OK #{$kodeOk->kode_ok} berhasil diperbarui.",
             'data' => $this->transform($kodeOk),

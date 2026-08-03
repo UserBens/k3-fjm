@@ -439,6 +439,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/', [HiradcController::class, 'index'])->name('index');
         Route::get('/data', [HiradcController::class, 'data'])->name('data');
         Route::get('/kode-ok/options', [HiradcController::class, 'kodeOkOptions'])->name('kodeOk.options'); // ← diganti
+        Route::get('/apd/options', [HiradcController::class, 'apdOptions'])->name('apd.options'); // ← baru
         Route::get('/{hiradc}', [HiradcController::class, 'show'])->name('show');
         Route::post('/', [HiradcController::class, 'store'])->name('store');
         Route::put('/{hiradc}', [HiradcController::class, 'update'])->name('update');
