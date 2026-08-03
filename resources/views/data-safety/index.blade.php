@@ -1367,7 +1367,12 @@
                 </div>
 
                 <div class="picker-wrap" style="margin-bottom:10px;">
-                    <label class="form-label">Nama Safety Officer</label>
+                    <label class="form-label">
+                        Nama Safety Officer
+                        @if (session('auth_user.role') === 'safety')
+                            <span style="font-weight:400; color:#94A3B8; font-size:11px;">(otomatis — akun Anda)</span>
+                        @endif
+                    </label>
 
                     <input type="text" id="tenagaPickerInput" class="form-input"
                         placeholder="Cari nama atau badge tenaga..." oninput="onTenagaPickerInput()"
@@ -1375,7 +1380,6 @@
 
                     <div class="picker-dropdown" id="tenagaPickerDropdown"></div>
 
-                    <!-- Hidden input -->
                     <input type="hidden" id="fBadgeTenaga">
                     <input type="hidden" id="fNamaTenaga">
                 </div>
@@ -1707,6 +1711,10 @@
         const JENIS_AKTIVITAS_OPTIONS_ENDPOINT = "{{ route('data-safety.jenis-aktivitas-options') }}";
         const LOKASI_KERJA_OPTIONS_ENDPOINT = "{{ route('data-safety.lokasi-kerja-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
+
+        const CURRENT_USER_ROLE = "{{ session('auth_user.role') }}";
+        const CURRENT_USER_BADGE = "{{ session('auth_user.username') }}";
+        const CURRENT_USER_NAMA = "{{ session('auth_user.nama_lengkap') }}";
 
         const state = {
             search: '',
@@ -2406,6 +2414,7 @@
         let tenagaPickerDebounce = null;
 
         function onTenagaPickerInput() {
+            if (CURRENT_USER_ROLE === 'safety') return; // ← BARU — safety tidak boleh cari tenaga lain
             clearTimeout(tenagaPickerDebounce);
             tenagaPickerDebounce = setTimeout(searchTenagaPicker, 350);
         }
@@ -2720,8 +2729,18 @@
             document.querySelectorAll('.form-modal-body input[type="file"]').forEach(el => el.value = '');
             resetFilePreviews();
 
-            document.getElementById('tenagaPickerInput').value = row ?
-                `${row.nama_tenaga || ''} (${row.badge_tenaga || ''})` : '';
+            // ← BARU — untuk role safety, badge/nama otomatis terkunci ke akun sendiri
+            if (CURRENT_USER_ROLE === 'safety') {
+                document.getElementById('tenagaPickerInput').value = `${CURRENT_USER_NAMA} (${CURRENT_USER_BADGE})`;
+                document.getElementById('fBadgeTenaga').value = CURRENT_USER_BADGE;
+                document.getElementById('fNamaTenaga').value = CURRENT_USER_NAMA;
+                document.getElementById('tenagaPickerInput').readOnly = true;
+                document.getElementById('tenagaPickerInput').style.background = '#F1F5F9';
+                document.getElementById('tenagaPickerInput').style.cursor = 'not-allowed';
+            } else {
+                document.getElementById('tenagaPickerInput').value = row ?
+                    `${row.nama_tenaga || ''} (${row.badge_tenaga || ''})` : '';
+            }
 
             Object.entries(TEXT_FIELDS).forEach(([elId, fieldName]) => {
                 const el = document.getElementById(elId);

@@ -60,6 +60,12 @@ class DataSafetyController extends Controller
         try {
             $query = DataSafety::search($request->query('search'));
 
+            // ← BARU — batasi data untuk role 'safety': hanya lihat data miliknya sendiri
+            $userRole = session('auth_user.role');
+            if ($userRole === 'safety') {
+                $query->where('badge_tenaga', session('auth_user.username'));
+            }
+
             if ($jenis = $request->query('jenis_aktifitas_kpi')) {
                 $query->where('jenis_aktifitas_kpi', $jenis);
             }
@@ -109,6 +115,10 @@ class DataSafetyController extends Controller
         $validated = $this->validateData($request);
 
         try {
+            // ← BARU — paksa badge_tenaga = username sendiri untuk role safety
+            if (session('auth_user.role') === 'safety') {
+                $validated['badge_tenaga'] = session('auth_user.username');
+            }
             $validated['waktu_submit'] = now();
             $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING';
             $validated['kategori_form'] = $this->resolveKategoriForm($validated['jenis_aktifitas_kpi'] ?? '');
@@ -133,6 +143,11 @@ class DataSafetyController extends Controller
 
     public function update(Request $request, DataSafety $dataSafety): JsonResponse
     {
+        // ← BARU — user safety hanya boleh update datanya sendiri
+        if (session('auth_user.role') === 'safety' && $dataSafety->badge_tenaga !== session('auth_user.username')) {
+            return response()->json(['message' => 'Anda tidak memiliki izin untuk mengubah data ini.'], 403);
+        }
+
         $validated = $this->validateData($request);
         $validated['kategori_form'] = $this->resolveKategoriForm($validated['jenis_aktifitas_kpi'] ?? '');
 
@@ -160,6 +175,11 @@ class DataSafetyController extends Controller
 
     public function destroy(DataSafety $dataSafety): JsonResponse
     {
+        // ← BARU — user safety hanya boleh hapus datanya sendiri
+        if (session('auth_user.role') === 'safety' && $dataSafety->badge_tenaga !== session('auth_user.username')) {
+            return response()->json(['message' => 'Anda tidak memiliki izin untuk menghapus data ini.'], 403);
+        }
+
         try {
             foreach ($this->fileFields as [$column, $folder]) {
                 $this->deleteFileIfExists($dataSafety->{$column});
