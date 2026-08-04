@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hiradc;
-use App\Models\HiradcDocument;
 use App\Models\HiradcGroup;
 use App\Models\HiradcItem;
 use App\Models\KodeOk;
@@ -27,7 +26,7 @@ class HiradcController extends Controller
     public function data(Request $request)
     {
         try {
-            $documents = HiradcDocument::with([
+            $documents = Hiradc::with([
                 'kodeOk.unitKerjaRelasi',
                 'kodeOk.kualifikasiRelasi',
                 'apdList',
@@ -41,10 +40,10 @@ class HiradcController extends Controller
         }
     }
 
-    public function show(HiradcDocument $hiradc)
+    public function show(Hiradc $hiradc)
     {
         try {
-            $documents = HiradcDocument::with([
+            $documents = Hiradc::with([
                 'kodeOk.unitKerjaRelasi',
                 'kodeOk.kualifikasiRelasi',
                 'apdList',
@@ -60,13 +59,21 @@ class HiradcController extends Controller
 
     public function store(Request $request)
     {
+        Log::info('Cek Request Header Content-Type:', [$request->header('Content-Type')]);
+        Log::info('Cek File Dokumen:', ['ada_file' => $request->hasFile('dokumen')]);
         try {
             $validated = $this->validatedDocument($request);
             $apdIds = $validated['apd_ids'] ?? [];
             unset($validated['apd_ids']);
 
+            if ($request->hasFile('dokumen')) {
+                $validated['dokumen'] = $request->file('dokumen')->store('hiradc/dokumen', 'public');
+            } else {
+                unset($validated['dokumen']);
+            }
+
             $document = DB::transaction(function () use ($validated, $apdIds) {
-                $document = HiradcDocument::create($validated);
+                $document = Hiradc::create($validated);
                 $document->apdList()->sync($apdIds);
                 return $document;
             });
@@ -86,12 +93,21 @@ class HiradcController extends Controller
         }
     }
 
-    public function update(Request $request, HiradcDocument $hiradc)
+    public function update(Request $request, Hiradc $hiradc)
     {
         try {
             $validated = $this->validatedDocument($request);
             $apdIds = $validated['apd_ids'] ?? [];
             unset($validated['apd_ids']);
+
+            if ($request->hasFile('dokumen')) {
+                if ($hiradc->dokumen) {
+                    Storage::disk('public')->delete($hiradc->dokumen);
+                }
+                $validated['dokumen'] = $request->file('dokumen')->store('hiradc/dokumen', 'public');
+            } else {
+                unset($validated['dokumen']); // jangan timpa dokumen lama kalau tidak upload baru
+            }
 
             DB::transaction(function () use ($hiradc, $validated, $apdIds) {
                 $hiradc->update($validated);
@@ -113,20 +129,17 @@ class HiradcController extends Controller
         }
     }
 
-    public function destroy(HiradcDocument $hiradc)
+    public function destroy(Hiradc $hiradc)
     {
         try {
-            foreach (['dokumen', 'disiapkan_ttd', 'diperiksa_ttd', 'disahkan_ttd'] as $field) {
-                if ($hiradc->{$field}) {
-                    Storage::disk('public')->delete($hiradc->{$field});
-                }
+            if ($hiradc->dokumen) {
+                Storage::disk('public')->delete($hiradc->dokumen);
             }
-            $hiradc->delete(); // cascade ke groups/items/hazards
+            $hiradc->delete();
 
             return response()->json(['message' => 'Data HIRADC berhasil dihapus.']);
         } catch (Throwable $e) {
             $this->logError('destroy', $e, null, $hiradc->id);
-
             return response()->json(['message' => 'Terjadi kesalahan saat menghapus data.'], 500);
         }
     }
@@ -140,7 +153,7 @@ class HiradcController extends Controller
             return response()->json(['message' => 'Anda harus login terlebih dahulu.'], 401);
         }
 
-        $hiradc = HiradcDocument::find($id);
+        $hiradc = Hiradc::find($id);
 
         $hiradc->diperiksa_nama = $authUser['nama_lengkap'];
         $hiradc->diperiksa_tanggal = now();
@@ -161,7 +174,7 @@ class HiradcController extends Controller
             return response()->json(['message' => 'Anda harus login terlebih dahulu.'], 401);
         }
 
-        $hiradc = HiradcDocument::find($id);
+        $hiradc = Hiradc::find($id);
 
         $hiradc->disahkan_nama = $authUser['nama_lengkap'];
         $hiradc->disahkan_tanggal = now();
@@ -177,15 +190,15 @@ class HiradcController extends Controller
     /**
      * Ubah struktur Eloquent jadi bentuk datar+bersarang yang gampang dipakai frontend.
      */
-    private function transformDocument(HiradcDocument $d): array
+    private function transformDocument(Hiradc $d): array
     {
         return [
             'id' => $d->id,
             'departemen' => $d->departemen,
             'area_kerja' => $d->area_kerja,
-            'sub_area' => $d->sub_area,   // ← BARU
+            'sub_area' => $d->sub_area,
             'kualifikasi' => $d->kualifikasi,
-            'pekerjaan' => $d->pekerjaan,   // <-- TAMBAHKAN INI
+            'pekerjaan' => $d->pekerjaan,
             'kode_ok_id' => $d->kode_ok_id,
             'kode_ok' => $d->kodeOk ? [
                 'id' => $d->kodeOk->id,
@@ -196,6 +209,12 @@ class HiradcController extends Controller
             'no_hiradc' => $d->no_hiradc,
             'tanggal' => optional($d->tanggal)->format('Y-m-d'),
             'kesimpulan' => $d->kesimpulan,
+
+            // ← BARU: info dokumen untuk preview
+            'dokumen' => $d->dokumen,
+            'dokumen_url' => $d->dokumen_url,
+            'dokumen_nama' => $d->dokumen ? basename($d->dokumen) : null,
+            'dokumen_ext' => $d->dokumen ? strtolower(pathinfo($d->dokumen, PATHINFO_EXTENSION)) : null,
 
             'apd_list' => $d->apdList->map(fn($a) => [
                 'id' => $a->id,
@@ -216,16 +235,17 @@ class HiradcController extends Controller
     {
         return $request->validate([
             'kode_ok_id'  => 'required|exists:kode_oks,id',
-            'departemen'  => 'nullable|string|max:200',   // Unit Kerja
-            'area_kerja'  => 'nullable|string|max:200',   // Area Kerja
-            'sub_area'    => 'nullable|string|max:200',   // ← BARU
-            'kualifikasi' => 'nullable|string|max:200',  // Jabatan
-            'pekerjaan'   => 'nullable|string',          // Menerima uraian_kerja dari Kode OK
+            'departemen'  => 'nullable|string|max:200',
+            'area_kerja'  => 'nullable|string|max:200',
+            'sub_area'    => 'nullable|string|max:200',
+            'kualifikasi' => 'nullable|string|max:200',
+            'pekerjaan'   => 'nullable|string',
             'no_hiradc'   => 'nullable|string|max:50',
             'tanggal'     => 'nullable|date',
             'kesimpulan'  => 'nullable|string',
             'apd_ids'     => 'nullable|array',
             'apd_ids.*'   => 'exists:stok_apd,id',
+            'dokumen'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240', // maks 10MB
         ]);
     }
 

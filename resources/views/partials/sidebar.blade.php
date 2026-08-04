@@ -382,49 +382,6 @@
         </div>
     @endif
 
-    {{--  HALAMAN TENAGA AHLI --}}
-    {{-- @if (session('auth_user.role') === 'super_admin')
-        <div class="sb-section">
-            <div class="sb-section-label">Alat Berat All In & On Call</div>
-
-            @php
-                // Hapus .* agar nama route cocok persis dengan yang ada di web.php
-                $alberActive =
-                    request()->routeIs('operator-alat-berat.*') ||
-                    request()->routeIs('alber.master-oncall') ||
-            @endphp
-
-            <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $alberActive ? 'active' : '' }}"
-                onclick="toggleDropdown('alberDropdown', this)">
-
-                <div class="nav-dropdown-left">
-                    <svg class="nav-icon" style="width:16px;height:16px" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                    </svg>
-                    <span class="nav-label">Monitoring Operator Alat Berat</span>
-                </div>
-
-                <svg class="dropdown-arrow {{ $alberActive ? 'rotate' : '' }}" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-
-            </a>
-
-            <div id="alberDropdown" class="dropdown-menu {{ $alberActive ? 'show' : '' }}">
-                <a class="nav-link {{ request()->routeIs('alber.master-allin') ? 'active' : '' }}" href="#">
-                    <span class="nav-label">Dashboard</span>
-                </a>
-
-
-            </div>
-        </div>
-    @endif --}}
-
     {{-- KPI --}}
     <div class="sb-section">
         <div class="sb-section-label">Key Performance Indicator</div>
@@ -908,10 +865,10 @@
                 <span class="nav-label">Pusat Reminder</span>
             </a>
 
-            <a class="nav-link {{ request()->routeIs('matriks-apd-jabatan.*') ? 'active' : '' }}"
+            {{-- <a class="nav-link {{ request()->routeIs('matriks-apd-jabatan.*') ? 'active' : '' }}"
                 href="{{ route('matriks-apd-jabatan.index') }}">
                 <span class="nav-label">Matriks APD Jabatan</span>
-            </a>
+            </a> --}}
 
             <a class="nav-link {{ request()->routeIs('hiradc.*') ? 'active' : '' }}"
                 href="{{ route('hiradc.index') }}">

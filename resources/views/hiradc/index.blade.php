@@ -1547,7 +1547,8 @@
 
     <!-- ══════ MODAL DETAIL (mengikuti layout modal Edit) ══════ -->
     <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box form-modal-box" style="max-width:900px;" onclick="event.stopPropagation()">
+        <div class="modal-box form-modal-box" style="max-width:1100px;width:92vw;max-height:90vh;overflow:auto;"
+            onclick="event.stopPropagation()">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
                 <div>
                     <div class="modal-title" id="detailTitle">Detail Dokumen HIRADC</div>
@@ -1562,22 +1563,18 @@
                         <label class="form-label">Kode OK</label>
                         <div class="detail-view-text" id="dKodeOk">-</div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Departemen/Unit Kerja</label>
-                        <div class="detail-view-text" id="dDepartemen">-</div>
-                    </div>
-
                     <div class="form-group">
                         <label class="form-label">Area Kerja</label>
                         <div class="detail-view-text" id="dAreaKerja">-</div>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">Sub Area</label>
                         <div class="detail-view-text" id="dSubArea">-</div>
                     </div>
-
+                    <div class="form-group">
+                        <label class="form-label">Departemen/Unit Kerja</label>
+                        <div class="detail-view-text" id="dDepartemen">-</div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Jabatan</label>
                         <div class="detail-view-text" id="dKualifikasi">-</div>
@@ -1592,7 +1589,10 @@
                         <label class="form-label">Tanggal</label>
                         <div class="detail-view-text" id="dTanggal">-</div>
                     </div>
-
+                    <div class="form-group span-2">
+                        <label class="form-label">Dokumen HIRADC (PDF/Gambar)</label>
+                        <div id="detailDokumenWrap"></div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Status</label>
                         <div class="detail-view-text" id="dStatus">-</div>
@@ -1651,16 +1651,6 @@
                         </div>
                         <input type="hidden" id="fKodeOkId" />
                     </div>
-
-                    <!-- Custom Searchable Dropdown: Departemen / Unit Kerja -->
-                    <div class="form-group" style="position: relative;">
-                        <label class="form-label">Departemen/Unit Kerja</label>
-                        <input type="text" id="fDepartemen" class="form-input"
-                            placeholder="Pilih / Cari Unit Kerja..." autocomplete="off"
-                            onfocus="openCustomDropdown('dept')" oninput="filterCustomDropdown('dept')" />
-                        <div id="dropdown-dept" class="custom-dropdown-list" style="display:none;"></div>
-                    </div>
-
                     <!-- Custom Searchable Dropdown: Area Kerja -->
                     <div class="form-group" style="position: relative;">
                         <label class="form-label">Area Kerja</label>
@@ -1669,7 +1659,6 @@
                             onfocus="openCustomDropdown('area')" oninput="filterCustomDropdown('area')" />
                         <div id="dropdown-area" class="custom-dropdown-list" style="display:none;"></div>
                     </div>
-
                     <!-- Custom Searchable Dropdown: Sub Area (BARU) -->
                     <div class="form-group" style="position: relative;">
                         <label class="form-label">Sub Area</label>
@@ -1678,7 +1667,14 @@
                             onfocus="openCustomDropdown('subArea')" oninput="filterCustomDropdown('subArea')" />
                         <div id="dropdown-subArea" class="custom-dropdown-list" style="display:none;"></div>
                     </div>
-
+                    <!-- Custom Searchable Dropdown: Departemen / Unit Kerja -->
+                    <div class="form-group" style="position: relative;">
+                        <label class="form-label">Departemen/Unit Kerja</label>
+                        <input type="text" id="fDepartemen" class="form-input"
+                            placeholder="Pilih / Cari Unit Kerja..." autocomplete="off"
+                            onfocus="openCustomDropdown('dept')" oninput="filterCustomDropdown('dept')" />
+                        <div id="dropdown-dept" class="custom-dropdown-list" style="display:none;"></div>
+                    </div>
                     <!-- Custom Searchable Dropdown: Jabatan -->
                     <div class="form-group" style="position: relative;">
                         <label class="form-label">Jabatan</label>
@@ -1721,6 +1717,15 @@
                 <div class="form-group">
                     <label class="form-label">Kesimpulan Kebutuhan APD / Catatan</label>
                     <textarea id="fKesimpulan" class="form-input" rows="4" placeholder="Tuliskan kesimpulan..."></textarea>
+                </div>
+
+                <div class="form-section-title">Dokumen HIRADC</div>
+                <div class="form-group">
+                    <label class="form-label">Dokumen HIRADC (PDF/Gambar)</label>
+                    <input type="file" id="fDokumen" class="form-input" accept=".pdf,.jpg,.jpeg,.png"
+                        onchange="onDokumenSelected(this)" />
+                    <div id="dokumenExistingWrap" style="margin-top:6px;font-size:12px;"></div>
+                    <div id="dokumenPreviewWrap" style="margin-top:8px;"></div>
                 </div>
             </div>
 
@@ -1769,69 +1774,270 @@
             }
         };
         const UNIT_KERJA_OPTIONS = [
-            "UTILITAS I A", "ZA 1/3", "AMMONIA I A", "UREA I A", "INSPEKSI TEKNIK", "CANDAL RUTIN",
-            "CANDAL PRODUKSI I", "RANCANG BANGUN", "TRANSPORT", "ARSIP", "ZA 2", "BENGKEL LAS I",
-            "BENGKEL SIPIL I A", "BENGKEL MESIN I", "BENGKEL MEKANIK I A", "LISTRIK", "INSTRUMEN",
-            "LAB I A", "LOADING AMMONIA", "PEMADAM KEBAKARAN", "K3", "PPP", "PPE", "REALIBILITY",
-            "MANAJEMEN ASET", "AUDIT KEUANGAN & UMUM", "PERGUDANGAN & PENGANTONGAN",
-            "AUDIT OPERASI & PRODUKSI", "LINGKUNGAN", "TEKNOLOGI INFORMASI", "PPBJ", "PPSB",
-            "INOVASI SISTEM MANAJEMEN", "OPERASIONAL SDM", "MANAJEMEN PENGEMBANGAN SUMBER DAYA MANUSIA",
-            "UTILITAS I B", "AMMONIA I B", "UREA I B", "BENGKEL SIPIL I B", "BENGKEL MEKANIK I B",
-            "LAB I B", "PHONSKA I", "GUDANG 02.650", "GUDANG 02.600", "GUDANG 02.200",
-            "BENGKEL LAS IIA", "MEKANIK IIA", "LABORATORIUM II", "INSPEKSI TEKNIK II", "PHONSKA II",
-            "PHONSKA III", "PHONSKA IV", "UTILLITAS II A", "EQUALIZER", "TANK YARD UTILLITAS IIB",
-            "ZK", "NPK", "NPK II, III, IV", "GUDANG 03.200", "BENGKEL LAS IIB", "BENGKEL SIPIL II",
-            "NON LOGAM II", "INSTRUMEN II", "LISTRIK II", "BENGKEL MESIN", "FABRIKASI", "SA/SU I",
-            "PA I", "GUDANG 50.000", "DEMIN 3A", "GUDANG ALF3", "EFLUENT TREATMENT III A",
-            "BENGKEL SIPIL III A", "BENGKEL LAS III A", "BENGKEL MESIN III A", "NON LOGAM", "LAB III A",
-            "INSTRUMEN III A", "SA/SU II", "PA II", "PURIFIKASI GYPSUM I", "PURIFIKASI GYPSUM II",
-            "ALF3", "DEMIN III B", "EFLUENT TREATMENT III B", "UTILITAS BATU BARA",
-            "BENGKEL SIPIL III B", "BENGKEL LAS III B", "LAB III B", "INSTRUMEN III B", "ALAT BERAT",
-            "TK-1400", "GUDANG UREA I", "GUDANG UREA II", "GUDANG ZA", "GUDANG NON PUPUK CAIR",
-            "GUDANG PUPUK PENGEMBANGAN", "GUDANG PHONSKA 2,3,5", "GUDANG PHONSKA 4", "GUDANG PHONSKA 1",
-            "GUDANG 50.000 TON", "GUDANG MULTIGUNA 1 & 2", "GUDANG ALF 3", "GUDANG BAGING NPK 2,3,4",
-            "GUDANG BS UREA 1", "GUDANG BS UREA 2", "GUDANG BS ZA 1/3", "GUDANG BS ZA 2",
-            "GUDANG BS 02-U400", "GUDANG BS U02-500", "GUDANG BS U03-500", "GUDANG KIG Q",
-            "GUDANG 34-U2000", "PENGANTONGAN PHONSKA 1", "PENGANTONGAN PHONSKA 2,3,5",
-            "PENGANTONGAN PHONSKA 4", "JEMBATAN TIMBANG 1", "JEMBATAN TIMBANG 2", "JEMBATAN TIMBANG 3",
-            "JEMBATAN TIMBANG 4", "JEMBATAN TIMBANG 5", "COMMAND CENTER", "PA BABAT", "PA GUNUNGSARI",
-            "ADM & KEUANGAN", "ADMINISTRASI & PENJUALAN", "ADMINISTRASI BISNIS", "AGRO SOLUTION",
-            "AKUNTANSI", "BARANG REJECT", "HUKUM & SEKRETARIAT", "KEUANGAN", "KOMUNIKASI KORPORAT",
-            "PELAPORAN KEUANGAN & MANAJEMEN", "MITRA BISNIS PEMASARAN RETAIL", "PENGADAAN BARANG",
-            "PENGADAAN DAN PENGEMBANGAN BISNIS", "PENGADAAN JASA", "PENGELOLAAN PELANGGAN",
-            "PENGELOLAAN TRANSFORMASI BISNIS", "PENGEMBANGAN KORPORAT", "PORTFOLIO BISNIS",
-            "PROYEK MANAJEMEN PRODUK BARU", "PROJECT MANAJER RETAIL MANAJEMEN",
-            "TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN", "TATA KELOLA PERUSAHAAN & MANAJEMEN RISIKO",
-            "RENDAL & ANGGARAN", "PENGELOLAAN MITRA", "RISET", "TEKNIK & BISNIS",
-            "PROYEK INFRASTRUKTUR", "PENGHIJAUAN", "HARSAN", "HK", "CSU I", "CSU II", "KC", "KELLAS",
-            "SIPIL", "HOUSEKEEPING", "WASBONG", "CANDAL PELABUHAN", "PROYEK INFRASTRUKTUR DERMAGA A"
+            "ADMIN BISNIS",
+            "ALF3",
+            "ALAT BERAT",
+            "AMMONIA I A",
+            "AMMONIA I B",
+            "ARSIP",
+            "AUDIT KEUANGAN & UMUM",
+            "AUDIT OPERASI & PRODUKSI",
+            "BENGKEL LAS I",
+            "BENGKEL LAS IIA",
+            "BENGKEL LAS IIB",
+            "BENGKEL LAS III A",
+            "BENGKEL LAS III B",
+            "BENGKEL MEKANIK I A",
+            "BENGKEL MEKANIK I B",
+            "BENGKEL MESIN",
+            "BENGKEL MESIN I",
+            "BENGKEL MESIN III A",
+            "BENGKEL SIPIL I A",
+            "BENGKEL SIPIL I B",
+            "BENGKEL SIPIL II",
+            "BENGKEL SIPIL III A",
+            "BENGKEL SIPIL III B",
+            "CANDAL PELABUHAN",
+            "CANDAL PRODUKSI I",
+            "CANDAL RUTIN",
+            "COMMAND CENTER",
+            "CSU I",
+            "CSU II",
+            "DEMIN 3A",
+            "DEMIN III B",
+            "DEP. ADM & KEUANGAN",
+            "DEP. ADMINISTRASI & PENJUALAN",
+            "DEP. ADMINISTRASI BISNIS",
+            "DEP. AGRO SOLUTION",
+            "DEP. AKUNTANSI",
+            "DEP. BARANG REJECT",
+            "DEP. HUKUM & SEKRETARIAT",
+            "DEP. KEUANGAN",
+            "DEP. KOMUNIKASI KORPORAT",
+            "DEP. MITRA BISNIS PEMASARAN RETAIL",
+            "DEP. PELAPORAN KEUANGAN & MANAJEMEN",
+            "DEP. PENGADAAN BARANG",
+            "DEP. PENGADAAN DAN PENGEMBANGAN BISNIS",
+            "DEP. PENGADAAN JASA",
+            "DEP. PENGELOLAAN MITRA",
+            "DEP. PENGELOLAAN PELANGGAN",
+            "DEP. PENGELOLAAN TRANSFORMASI BISNIS",
+            "DEP. PENGEMBANGAN KORPORAT",
+            "DEP. PORTOFOLIO BISNIS",
+            "DEP. PROJECT MANAJER RETAIL MANAJEMEN",
+            "DEP. PROYEK MANAJEMEN PRODUK BARU",
+            "DEP. RISET",
+            "DEP. TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
+            "DEP. TATA KELOLA PERUSAHAAN & MANAJEMEN RESIKO",
+            "DEP. TEKNIK & BISNIS",
+            "DIKLAT",
+            "EFLUENT TREATMENT III A",
+            "EFLUENT TREATMENT III B",
+            "EQUALIZER",
+            "FABRIKASI",
+            "FABRIKASI DAN ALAT BERAT",
+            "GEDUNG ADMINISTRASI",
+            "GM. RENDAL & ANGGARAN",
+            "GUDANG 02.200",
+            "GUDANG 02.600",
+            "GUDANG 02.650",
+            "GUDANG 03.200",
+            "GUDANG 34-U2000",
+            "GUDANG 50.000",
+            "GUDANG 50.000 TON",
+            "GUDANG ALF 3",
+            "GUDANG ALF3",
+            "GUDANG BAGING NPK 2,3,4",
+            "GUDANG BS 02-U400",
+            "GUDANG BS U02-500",
+            "GUDANG BS U03-500",
+            "GUDANG BS UREA 1",
+            "GUDANG BS UREA 2",
+            "GUDANG BS ZA 1/3",
+            "GUDANG BS ZA 2",
+            "GUDANG KIG Q",
+            "GUDANG MULTIGUNA 1 & 2",
+            "GUDANG NON PUPUK CAIR",
+            "GUDANG PHONSKA 1",
+            "GUDANG PHONSKA 2,3,5",
+            "GUDANG PHONSKA 4",
+            "GUDANG PUPUK PENGEMBANGAN",
+            "GUDANG UREA I",
+            "GUDANG UREA II",
+            "GUDANG ZA",
+            "HAR I A",
+            "HAR I B",
+            "HAR II",
+            "HAR III A",
+            "HAR III B",
+            "HOUSEKEEPING",
+            "INOVASI SISTEM MANAJEMEN",
+            "INSPEKSI TEKNIK",
+            "INSPEKSI TEKNIK II",
+            "INSTRUMEN",
+            "INSTRUMEN II",
+            "INSTRUMEN III A",
+            "INSTRUMEN III B",
+            "JEMBATAN TIMBANG 1",
+            "JEMBATAN TIMBANG 2",
+            "JEMBATAN TIMBANG 3",
+            "JEMBATAN TIMBANG 4",
+            "JEMBATAN TIMBANG 5",
+            "K3",
+            "KC",
+            "KELLAS",
+            "LAB I A",
+            "LAB I B",
+            "LAB III A",
+            "LAB III B",
+            "LABORATORIUM",
+            "LABORATORIUM II",
+            "LINGKUNGAN",
+            "LISTRIK",
+            "LISTRIK II",
+            "LOADING AMMONIA",
+            "MANAJEMEN ASET",
+            "MANAJEMEN PENGEMBANGAN SUMBER DAYA MANUSIA",
+            "MEKANIK IIA",
+            "NON LOGAM",
+            "NON LOGAM II",
+            "NPK",
+            "NPK II, III, IV",
+            "OPERASIONAL PELABUHAN",
+            "OPERASIONAL SDM",
+            "PA I",
+            "PA II",
+            "PEMADAM KEBAKARAN",
+            "PEMELIHARAAN PELABUHAN",
+            "PELAYANAN UMUM",
+            "PENGANTONGAN PHONSKA 1",
+            "PENGANTONGAN PHONSKA 2,3,5",
+            "PENGANTONGAN PHONSKA 4",
+            "PERGUDANGAN DAN PENGANTONGAN",
+            "PHONSKA I",
+            "PHONSKA II",
+            "PHONSKA III",
+            "PHONSKA IV",
+            "PM. AGRO SOLUTION",
+            "PPBJ",
+            "PPSB",
+            "PPP",
+            "PPE",
+            "PRODUKSI I",
+            "PRODUKSI IA",
+            "PRODUKSI II A",
+            "PRODUKSI II B",
+            "PRODUKSI III",
+            "PRODUKSI III A",
+            "PRODUKSI III B",
+            "PROYEK INFRASTRUKUR",
+            "PROYEK INFRASTRUKTUR DERMAGA A",
+            "PROYEK PENGEMBANGAN",
+            "PURIFIKASI GYPSUM I",
+            "PURIFIKASI GYPSUM II",
+            "RANCANG BANGUN",
+            "REALIBILITY",
+            "RENSTRAHAR",
+            "SA/SU I",
+            "SA/SU II",
+            "SIPIL",
+            "TANK YARD UTILLITAS IIB",
+            "TEKNOLOGI INFORMASI",
+            "TK-1400",
+            "TRANSPORT",
+            "UREA I A",
+            "UREA I B",
+            "UTILLITAS II A",
+            "UTILITAS I A",
+            "UTILITAS I B",
+            "UTILITAS BATU BARA",
+            "WASBONG",
+            "ZA 1/3",
+            "ZA 2",
+            "ZK"
+
         ];
 
         // ── Data tambahan Area Kerja ──
         const AREA_KERJA_OPTIONS = [
-            "PABRIK I A", "PABRIK I B", "PABRIK II A", "PABRIK II B", "PABRIK III A", "PABRIK III B",
-            "DIKLAT", "BUNCOP", "GUDANG MULTI GUNA (GMG)", "KIG", "PA BABAT", "PA GUNUNGSARI",
-            "GEDUNG GRAHA", "PERUMAHAN DINAS", "SOR", "JETTY I, II, III", "DERMAGA A"
+            "BUNCOP",
+            "DERMAGA A",
+            "DIKLAT",
+            "GEDUNG GRAHA",
+            "GUDANG MULTI GUNA (GMG)",
+            "JETTY I, II, III",
+            "KIG",
+            "PA BABAT",
+            "PA GUNUNGSARI",
+            "PABRIK I A",
+            "PABRIK I B",
+            "PABRIK II A",
+            "PABRIK II B",
+            "PABRIK III A",
+            "PABRIK III B",
+            "PERUMAHAN DINAS",
+            "SOR"
         ];
 
         // ── Data Sub Area (baru) ──
         const SUB_AREA_OPTIONS = [
-            "PRODUKSI I", "HAR I A", "RENSTRAHAR", "PELAYANAN UMUM", "ADMIN BISNIS", "PRODUKSI III",
-            "LABORATORIUM", "PEMADAM KEBAKARAN", "GEDUNG ADMINISTRASI", "PPBJ", "PPSB", "DIKLAT",
-            "HAR I B", "PRODUKSI II A", "HAR II", "PRODUKSI II B", "PRODUKSI III A", "HAR III A",
-            "PRODUKSI III B", "HAR III B", "FABRIKASI DAN ALAT BERAT", "PERGUDANGAN DAN PENGANTONGAN",
-            "PRODUKSI IA", "DEP. ADM & KEUANGAN", "DEP. ADMINISTRASI & PENJUALAN",
-            "DEP. ADMINISTRASI BISNIS", "DEP. AGRO SOLUTION", "DEP. AKUNTANSI", "DEP. BARANG REJECT",
-            "DEP. HUKUM & SEKRETARIAT", "DEP. KEUANGAN", "DEP. KOMUNIKASI KORPORAT",
-            "DEP. PELAPORAN KEUANGAN & MANAJEMEN", "DEP. MITRA BISNIS PEMASARAN RETAIL",
-            "DEP. PENGADAAN BARANG", "DEP. PENGADAAN DAN PENGEMBANGAN BISNIS", "DEP. PENGADAAN JASA",
-            "DEP. PENGELOLAAN PELANGGAN", "DEP. PENGELOLAAN TRANSFORMASI BISNIS",
-            "DEP. PENGEMBANGAN KORPORAT", "DEP. PORTOFOLIO BISNIS", "DEP. PROYEK MANAJEMEN PRODUK BARU",
-            "DEP. PROJECT MANAJER RETAIL MANAJEMEN", "DEP. TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
-            "DEP. TATA KELOLA PERUSAHAAN & MANAJEMEN RESIKO", "GM. RENDAL & ANGGARAN",
-            "PM. AGRO SOLUTION", "DEP. PENGELOLAAN MITRA", "DEP. RISET", "DEP. TEKNIK & BISNIS",
-            "PROYEK INFRASTRUKUR", "PEMELIHARAAN PELABUHAN", "OPERASIONAL PELABUHAN",
-            "PROYEK PENGEMBANGAN"
+            "ADM & KEUANGAN",
+            "ADMIN BISNIS",
+            "ADMINISTRASI & PENJUALAN",
+            "ADMINISTRASI BISNIS",
+            "AGRO SOLUTION",
+            "AKUNTANSI",
+            "BARANG REJECT",
+            "DIKLAT",
+            "FABRIKASI DAN ALAT BERAT",
+            "GEDUNG ADMINISTRASI",
+            "HAR I A",
+            "HAR I B",
+            "HAR II",
+            "HAR III A",
+            "HAR III B",
+            "HARSAN",
+            "HK",
+            "HUKUM & SEKRETARIAT",
+            "KEUANGAN",
+            "KOMUNIKASI KORPORAT",
+            "LABORATORIUM",
+            "MITRA BISNIS PEMASARAN RETAIL",
+            "OPERASIONAL PELABUHAN",
+            "PA BABAT",
+            "PA GUNUNGSARI",
+            "PELAPORAN KEUANGAN & MANAJEMEN",
+            "PELAYANAN UMUM",
+            "PEMADAM KEBAKARAN",
+            "PEMELIHARAAN PELABUHAN",
+            "PENGADAAN BARANG",
+            "PENGADAAN DAN PENGEMBANGAN BISNIS",
+            "PENGADAAN JASA",
+            "PENGELOLAAN MITRA",
+            "PENGELOLAAN PELANGGAN",
+            "PENGELOLAAN TRANSFORMASI BISNIS",
+            "PENGEMBANGAN KORPORAT",
+            "PENGHIJAUAN",
+            "PERGUDANGAN DAN PENGANTONGAN",
+            "PORTFOLIO BISNIS",
+            "PPBJ",
+            "PPSB",
+            "PRODUKSI I",
+            "PRODUKSI II A",
+            "PRODUKSI II B",
+            "PRODUKSI III",
+            "PRODUKSI III A",
+            "PRODUKSI III B",
+            "PROJECT MANAJER RETAIL MANAJEMEN",
+            "PROYEK INFRASTRUKTUR",
+            "PROYEK MANAJEMEN PRODUK BARU",
+            "PROYEK PENGEMBANGAN",
+            "RENDAL & ANGGARAN",
+            "RENSTRAHAR",
+            "RISET",
+            "TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
+            "TATA KELOLA PERUSAHAAN & MANAJEMEN RISIKO",
+            "TEKNIK & BISNIS"
         ];
 
         const JABATAN_OPTIONS = [
@@ -2403,6 +2609,8 @@
                 `<span style="font-size:11px;color:#CBD5E1;">Belum ada APD dipilih.</span>`;
 
             document.getElementById('detailKesimpulan').textContent = doc.kesimpulan || '-';
+            renderDokumenDetail(doc); // ← tambahkan baris ini
+
         }
 
         // ══════ MODAL BUILDER (Tambah/Edit) ══════
@@ -2433,8 +2641,14 @@
             } else {
                 document.getElementById('itemModalTitle').textContent = 'Tambah Dokumen HIRADC';
                 fillHeaderForm({});
+                document.getElementById('dokumenExistingWrap').innerHTML = '';
+                document.getElementById('dokumenPreviewWrap').innerHTML = '';
+                document.getElementById('fDokumen').value = '';
                 resetKodeOkPicker(null);
                 resetPicker('apd');
+                renderExistingDokumen({
+                    dokumen_url: null
+                });
             }
             document.getElementById('itemModalOverlay').classList.add('open');
         }
@@ -2724,7 +2938,6 @@
                 return;
             }
 
-            // Ambil nilai pekerjaan langsung dari uraian_kerja milik Kode OK yang dipilih
             const pekerjaan = pickerKodeOk.selected.uraian_kerja || '';
 
             const btn = document.getElementById('btnSubmit');
@@ -2732,31 +2945,37 @@
             btn.disabled = true;
             btn.textContent = 'Menyimpan...';
 
-            const payload = {
-                kode_ok_id: kodeOkId,
-                departemen: document.getElementById('fDepartemen').value.trim(),
-                area_kerja: document.getElementById('fAreaKerja').value.trim(),
-                sub_area: document.getElementById('fSubArea').value.trim(), // ← BARU
-                kualifikasi: document.getElementById('fKualifikasi').value.trim(),
-                pekerjaan: pekerjaan,
-                no_hiradc: document.getElementById('fNoHiradc').value.trim(),
-                tanggal: document.getElementById('fTanggal').value,
-                kesimpulan: document.getElementById('fKesimpulan').value.trim(),
-                apd_ids: Array.from(pickerData.apd.selected.keys()),
-            };
+            const fd = new FormData();
+            fd.append('kode_ok_id', kodeOkId);
+            fd.append('departemen', document.getElementById('fDepartemen').value.trim());
+            fd.append('area_kerja', document.getElementById('fAreaKerja').value.trim());
+            fd.append('sub_area', document.getElementById('fSubArea').value.trim());
+            fd.append('kualifikasi', document.getElementById('fKualifikasi').value.trim());
+            fd.append('pekerjaan', pekerjaan);
+            fd.append('no_hiradc', document.getElementById('fNoHiradc').value.trim());
+            fd.append('tanggal', document.getElementById('fTanggal').value);
+            fd.append('kesimpulan', document.getElementById('fKesimpulan').value.trim());
+
+            Array.from(pickerData.apd.selected.keys()).forEach(id => fd.append('apd_ids[]', id));
+
+            const fileInput = document.getElementById('fDokumen');
+            if (fileInput.files[0]) {
+                fd.append('dokumen', fileInput.files[0]);
+            }
 
             const isEdit = currentEditId !== null;
             const url = isEdit ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
+            if (isEdit) fd.append('_method', 'PUT'); // method spoofing, wajib untuk PUT + file
 
             try {
                 const res = await fetch(url, {
-                    method: isEdit ? 'PUT' : 'POST',
+                    method: 'POST', // selalu POST, spoofing lewat _method
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN
+                        // JANGAN set Content-Type manual — biarkan browser set boundary multipart
                     },
-                    body: JSON.stringify(payload)
+                    body: fd
                 });
                 const json = await res.json();
                 if (!res.ok) {
@@ -2771,6 +2990,66 @@
             } finally {
                 btn.disabled = false;
                 btn.textContent = original;
+            }
+        }
+
+        // ── Preview file yang baru dipilih (sebelum submit) ──
+        function onDokumenSelected(input) {
+            const wrap = document.getElementById('dokumenPreviewWrap');
+            const file = input.files[0];
+            if (!file) {
+                wrap.innerHTML = '';
+                return;
+            }
+
+            const url = URL.createObjectURL(file);
+
+            wrap.innerHTML = `
+        <a href="${url}" target="_blank" style="font-size:12px;color:#2D4B9E;">
+            📄 ${escapeHtml(file.name)} — buka di tab baru ↗
+        </a>
+    `;
+        }
+
+        // ── Tampilkan dokumen yang sudah tersimpan saat modal Edit dibuka ──
+        function renderExistingDokumen(doc) {
+            const wrap = document.getElementById('dokumenExistingWrap');
+            document.getElementById('dokumenPreviewWrap').innerHTML = '';
+            document.getElementById('fDokumen').value = '';
+
+            if (!doc.dokumen_url) {
+                wrap.innerHTML = '';
+                return;
+            }
+            wrap.innerHTML = `
+        <a href="${doc.dokumen_url}" target="_blank" style="color:#2D4B9E;">
+            📄 ${escapeHtml(doc.dokumen_nama || 'Lihat dokumen saat ini')} — buka di tab baru ↗
+        </a>
+        <span style="color:#94A3B8;"> (pilih file baru untuk mengganti)</span>
+    `;
+        }
+
+        // ── Preview di modal Detail ──
+        function renderDokumenDetail(doc) {
+            const wrap = document.getElementById('detailDokumenWrap');
+            if (!doc.dokumen_url) {
+                wrap.innerHTML = `<span style="font-size:11px;color:#94A3B8;">Belum ada dokumen diunggah.</span>`;
+                return;
+            }
+            if (doc.dokumen_ext === 'pdf') {
+                wrap.innerHTML = `
+            <iframe src="${doc.dokumen_url}" style="width:100%;height:400px;border:1px solid #E2E8F0;border-radius:8px;"></iframe>
+            <div style="margin-top:6px;"><a href="${doc.dokumen_url}" target="_blank" style="font-size:12px;color:#2D4B9E;">Buka di tab baru ↗</a></div>
+        `;
+            } else if (['jpg', 'jpeg', 'png'].includes(doc.dokumen_ext)) {
+                wrap.innerHTML = `
+            <a href="${doc.dokumen_url}" target="_blank">
+                <img src="${doc.dokumen_url}" style="max-width:100%;max-height:400px;border-radius:8px;border:1px solid #E2E8F0;" />
+            </a>
+        `;
+            } else {
+                wrap.innerHTML =
+                    `<a href="${doc.dokumen_url}" target="_blank" style="font-size:12px;color:#2D4B9E;">📄 ${escapeHtml(doc.dokumen_nama)}</a>`;
             }
         }
 
