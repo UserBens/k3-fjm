@@ -55,8 +55,7 @@
 
         #page-content {
             padding: 20px 20px 32px;
-            max-width: 1280px;
-            margin: 0 auto;
+            max-width: 100%;
         }
 
         /* HEADER */
@@ -466,6 +465,65 @@
             font-weight: 800;
             border-top: 2px solid #94A3B8;
         }
+
+        .page-hdr {
+            margin-bottom: 16px;
+        }
+
+        .page-hdr-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pg-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .pg-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 30px;
+            color: #1A1D2E;
+            letter-spacing: 0.02em;
+            line-height: 1;
+        }
+
+        .pg-title span {
+            color: #2D4B9E;
+        }
+
+        .pg-sub {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
+        .pg-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-hdr-top {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #D0021B;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 
@@ -480,9 +538,17 @@
 
         <div id="page-content" class="overflow-y-auto">
 
-            <div class="k3-header">
-                <h1>Laporan Capaian KPI K3</h1>
-                <p>PT. Fokus Jasa Mitra — Departemen K3 &amp; Operasional</p>
+            <div class="page-hdr">
+                <div class="page-hdr-top">
+                    <div>
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                            <span class="pulse-dot"></span>
+                            <span class="pg-eyebrow">Laporan Capaian KPI K3 · PT. Fokus Jasa Mitra</span>
+                        </div>
+                        <div class="pg-title">lAPORAN CAPAIAN KPI <span>K3</span></div>
+                        <div class="pg-sub">Keselamatan &amp; Kesehatan Kerja — Departemen K3 &amp; Operasional.</div>
+                    </div>
+                </div>
             </div>
 
             <!-- PANEL SAKLAR -->

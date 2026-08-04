@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AktivitasKpiK3Seeder::class,
             PengaturanKpiK3Seeder::class,
+            StokApdSeeder::class,
         ]);
     }
 }

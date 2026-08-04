@@ -295,6 +295,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/', [DataSafetyController::class, 'index'])->name('index');
         Route::get('/data', [DataSafetyController::class, 'data'])->name('data');
         Route::get('/lokasi-kerja-options', [DataSafetyController::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options'); // ← BARU
+        Route::get('/sub-area-options', [DataSafetyController::class, 'subAreaOptions'])->name('sub-area-options'); // ← BARU
         Route::get('/jenis-aktivitas-options', [DataSafetyController::class, 'jenisAktivitasOptions'])->name('jenis-aktivitas-options');
         Route::post('/', [DataSafetyController::class, 'store'])->name('store');
         Route::put('/{dataSafety}', [DataSafetyController::class, 'update'])->name('update');

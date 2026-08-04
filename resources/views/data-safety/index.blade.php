@@ -1404,6 +1404,17 @@
                         </div>
                         <input type="hidden" id="fAreaKerja">
                     </div>
+                    <!-- ══════ BARU: SUB AREA ══════ -->
+                    <div class="form-group">
+                        <label class="form-label">Sub Area</label>
+                        <div class="picker-wrap">
+                            <input type="text" id="subAreaInput" class="form-input"
+                                placeholder="Pilih / Cari Sub Area..." oninput="onSubAreaPickerInput()"
+                                onfocus="onSubAreaPickerFocus()" autocomplete="off" />
+                            <div class="picker-dropdown" id="subAreaDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fSubArea">
+                    </div>
                     <div class="form-group"><label class="form-label">Tanggal Pelaksanaan</label><input
                             type="date" id="fTanggalPelaksanaan" class="form-input" /></div>
                 </div>
@@ -1709,6 +1720,7 @@
         const BASE_ENDPOINT = "{{ url('/data-safety') }}";
         const CARI_TENAGA_ENDPOINT = "{{ route('data-safety.cari-tenaga') }}";
         const JENIS_AKTIVITAS_OPTIONS_ENDPOINT = "{{ route('data-safety.jenis-aktivitas-options') }}";
+        const SUB_AREA_OPTIONS_ENDPOINT = "{{ route('data-safety.sub-area-options') }}";
         const LOKASI_KERJA_OPTIONS_ENDPOINT = "{{ route('data-safety.lokasi-kerja-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
@@ -1731,46 +1743,143 @@
         let jenisAktivitasOptionsCache = [];
         let jenisAktivitasDebounce = null;
         let lokasiKerjaOptionsCache = [];
+        let subAreaOptionsCache = [];
 
+        // Tambahkan ke UNIT_KERJA_OPTIONS
         const UNIT_KERJA_OPTIONS = [
-            'GLOBAL', 'ADMINISTRASI BISNIS', 'ADMINISTRASI PEMASARAN & PENJUALAN', 'AGRO SOLUTION',
-            'AKUNTANSI BIAYA', 'ALAT BERAT ALL IN', 'ALAT BERAT EXISTING', 'ALAT BERAT ON CALL', 'ALF III',
-            'AMONIA I-A', 'AMONIA I-B', 'AUDIT OPERASI & PRODUKSI', 'BAHAN BAKU DAN BAHAN KEMAS',
-            'BARANG REJECT', 'BENGKEL FABRIKASI', 'BONGKAR MUAT', 'BUNCOB', 'CANDAL HAR I', 'CANDAL HAR II',
-            'CANDAL HAR III', 'CANDAL PRODUKSI', 'CCTPC', 'DEP. PEMELIHARAAN I', 'DEP. PRODUKSI I-B',
-            'DEP. PRODUKSI II-A', 'GUDANG & PENGANTONGAN AREA I', 'GUDANG & PENGANTONGAN AREA II',
-            'GUDANG & PENGANTONGAN AREA III', 'HARPRAS', 'HELPDESK IT', 'HUKUM & SEKRETARIAT',
-            'INFORMASI & KOMUNIKASI', 'INSPEKSI TEKNIK ROTATING', 'INSPEKSI TEKNIK STATIK', 'INSTRUMENT I',
-            'INSTRUMENT II', 'INSTRUMENT III', 'INTERKONEKSI LISTRIK', 'INVESTASI RUTIN & EPC', 'JASA',
-            'JASA PELAYANAN PABRIK', 'K3', 'KEAMANAN', 'KELLAS I', 'KELLAS II-A', 'KELLAS II-B', 'KELLAS III',
-            'KELSIN I', 'KELSIN II', 'KELSIN III', 'KEUANGAN', 'KEUANGAN DAN UMUM', 'KK PABRIK I',
-            'KK PABRIK II', 'KK PABRIK III', 'LAB', 'LAB I-A', 'LAB I-B', 'LAB II-A', 'LAB II-B', 'LAB III-A',
-            'LAB III-B', 'LAB PENELITIAN', 'LAB QUALITY ASSURANCE', 'LAB. BIOPROSES', 'LAB. FORMULASI',
-            'LAB. FORMULASI PUPUK', 'LAB. KULTUR INVITRO', 'LAB. MIKROBIOLOGI', 'LABORATORIUM', 'LISTRIK I',
-            'LISTRIK II', 'LISTRIK III', 'MANAJEMEN ASET', 'MANAJEMEN DAN PENGEMBANGAN SDM',
-            'MANAJEMEN PRODUK BARU', 'MANAJEMEN RESIKO', 'MASJID NURUL JANNAH', 'MEKANIK I', 'MEKANIK II-A',
-            'MEKANIK II-B', 'MEKANIK III', 'MEKANIKAL POMPA', 'MITRA BISNIS KORPORASI', 'NON LOGAM II-A',
-            'NON LOGAM II-B', 'NON LOGAM III', 'NPK I', 'NPK II', 'NPK III', 'NPK IV', 'O&M CSU',
-            'O&M O&M PURIFIKASI II', 'O&M PURIFIKASI I', 'O&M PURIFIKASI I & II', 'O&M TK 1400',
-            'OPERASIONAL KBL', 'OPERASIONAL SDM', 'PA GUNUNGSARI', 'PA I', 'PA II', 'PA II & UBB',
-            'PELAPORAN KEUANGAN & MANAJEMEN', 'PELAYANAN UMUM', 'PEMELIHARAAN II', 'PEMELIHARAAN III',
-            'PEMELIHARAAN KAWASAN', 'PENELITIAN & PENGEMBANGAN USAHA', 'PENGADAAN BARANG', 'PENGADAAN JASA',
-            'PENGAWAS', 'PENGELOLAAN & PEMELIHARAAN', 'PENGELOLAAN PELABUHAN', 'PENGELOLAAN PELANGGAN',
-            'PENGELOLAAN PERSEDIAAN SUKU CADANG & BAHAN BAKU', 'PENGELOLAAN PRODUK',
-            'PENGELOLAAN TRANSFORMASI BISNIS', 'PENGEMBANGAN KOMPETENSI', 'PENGEMBANGAN SISTEM & PROSEDUR',
-            'PENGENDALIAN LINGKUNGAN', 'PERENCANAAN & PENGENDALIAN', 'PERENCANAAN & PENGENDALIAN PRODUKSI',
-            'PERENCANAAN & PENGENDALIAN TA I', 'PERENCANAAN & PENGENDALIAN TA II',
-            'PERENCANAAN & PENGENDALIAN TA III', 'PERSEDIAAN BAHAN BAKU', 'PETROMART', 'PHONSKA I',
-            'PHONSKA II', 'PHONSKA III', 'PHONSKA IV', 'PHONSKA V', 'PIKPG', 'PMK', 'PORTFOLIO BISNIS',
-            'PREVENTIVE CONVEYOR', 'PROCESS SAFETY MANAGEMENT', 'PRODUKSI I-B', 'PRODUKSI II-A',
-            'PRODUKSI II-B', 'PRODUKSI III-A', 'PROJECT MANAJER RETAIL MANAJEMEN', 'PROJECT PP',
-            'PROSES & PENGENDALIAN ENERGI', 'PROTOKOL', 'PROYEK INFRASTRUKTUR', 'PUPUK ORGANIK & TANAH',
-            'RANCANG BANGUN', 'RELIABILITY', 'RENDAL & ANGGARAN', 'REWINDING MOTOR', 'RHI',
-            'RISET TEKNOLOGI', 'SA / SU I', 'SA / SU II', 'SARANA & PERLENGKAPAN', 'SDM', 'SERVICE AC',
-            'SIPIL I', 'SIPIL II-A', 'SIPIL II-B', 'SIPIL III', 'SISTEM & KESEHATAN KERJA', 'SKPG',
-            'STALIR BABAT', 'STALIR GUNUNG SARI', 'SUKU CADANG', 'TANGGUNG JAWAB SOSIAL & LINGKUNGAN',
-            'TEKNOLOGI INFORMASI', 'TRANSPORT', 'UBB', 'UREA I', 'UREA II', 'UTILITAS I-A', 'UTILITAS I-B',
-            'UTILITAS II', 'ZA I / III', 'ZA II', 'ZK', 'RSPG'
+            'UTILITAS I A',
+            'ZA 1/3',
+            'AMMONIA I A',
+            'UREA I A',
+            'INSPEKSI TEKNIK',
+            'CANDAL RUTIN',
+            'CANDAL PRODUKSI I',
+            'ARSIP',
+            'ZA 2',
+            'BENGKEL LAS I',
+            'BENGKEL SIPIL I A',
+            'BENGKEL MESIN I',
+            'BENGKEL MEKANIK I A',
+            'LISTRIK',
+            'INSTRUMEN',
+            'LAB I A',
+            'LOADING AMMONIA',
+            'PEMADAM KEBAKARAN',
+            'PPP',
+            'PPE',
+            'REALIBILITY',
+            'PERGUDANGAN & PENGANTONGAN',
+            'LINGKUNGAN',
+            'PPBJ',
+            'PPSB',
+            'INOVASI SISTEM MANAJEMEN',
+            'MANAJEMEN PENGEMBANGAN SUMBER DAYA MANUSIA',
+            'UTILITAS I B',
+            'AMMONIA I B',
+            'UREA I B',
+            'BENGKEL SIPIL I B',
+            'BENGKEL MEKANIK I B',
+            'LAB I B',
+            'GUDANG 02.650',
+            'GUDANG 02.600',
+            'GUDANG 02.200',
+            'BENGKEL LAS IIA',
+            'MEKANIK IIA',
+            'LABORATORIUM II',
+            'INSPEKSI TEKNIK II',
+            'UTILLITAS II A',
+            'EQUALIZER',
+            'TANK YARD UTILLITAS IIB',
+            'NPK',
+            'NPK II, III, IV',
+            'GUDANG 03.200',
+            'BENGKEL LAS IIB',
+            'BENGKEL SIPIL II',
+            'NON LOGAM II',
+            'INSTRUMEN II',
+            'LISTRIK II',
+            'BENGKEL MESIN',
+            'FABRIKASI',
+            'SA/SU I',
+            'GUDANG 50.000',
+            'DEMIN 3A',
+            'GUDANG ALF3',
+            'EFLUENT TREATMENT III A',
+            'BENGKEL SIPIL III A',
+            'BENGKEL LAS III A',
+            'BENGKEL MESIN III A',
+            'NON LOGAM',
+            'LAB III A',
+            'INSTRUMEN III A',
+            'SA/SU II',
+            'PURIFIKASI GYPSUM I',
+            'PURIFIKASI GYPSUM II',
+            'ALF3',
+            'DEMIN III B',
+            'EFLUENT TREATMENT III B',
+            'UTILITAS BATU BARA',
+            'BENGKEL SIPIL III B',
+            'BENGKEL LAS III B',
+            'LAB III B',
+            'INSTRUMEN III B',
+            'ALAT BERAT',
+            'TK-1400',
+            'GUDANG UREA I',
+            'GUDANG UREA II',
+            'GUDANG ZA',
+            'GUDANG NON PUPUK CAIR',
+            'GUDANG PUPUK PENGEMBANGAN',
+            'GUDANG PHONSKA 2,3,5',
+            'GUDANG PHONSKA 4',
+            'GUDANG PHONSKA 1',
+            'GUDANG 50.000 TON',
+            'GUDANG MULTIGUNA 1 & 2',
+            'GUDANG ALF 3',
+            'GUDANG BAGING NPK 2,3,4',
+            'GUDANG BS UREA 1',
+            'GUDANG BS UREA 2',
+            'GUDANG BS ZA 1/3',
+            'GUDANG BS ZA 2',
+            'GUDANG BS 02-U400',
+            'GUDANG BS U02-500',
+            'GUDANG BS U03-500',
+            'GUDANG KIG Q',
+            'GUDANG 34-U2000',
+            'PENGANTONGAN PHONSKA 1',
+            'PENGANTONGAN PHONSKA 2,3,5',
+            'PENGANTONGAN PHONSKA 4',
+            'JEMBATAN TIMBANG 1',
+            'JEMBATAN TIMBANG 2',
+            'JEMBATAN TIMBANG 3',
+            'JEMBATAN TIMBANG 4',
+            'JEMBATAN TIMBANG 5',
+            'COMMAND CENTER',
+            'PA BABAT',
+            'ADM & KEUANGAN',
+            'AKUNTANSI',
+            'KOMUNIKASI KORPORAT',
+            'MITRA BISNIS PEMASARAN RETAIL',
+            'PENGADAAN DAN PENGEMBANGAN BISNIS',
+            'PENGEMBANGAN KORPORAT',
+            'PORTFOLIO BISNIS',
+            'PROYEK MANAJEMEN PRODUK BARU',
+            'TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN',
+            'TATA KELOLA PERUSAHAAN & MANAJEMEN RISIKO',
+            'PENGELOLAAN MITRA',
+            'RISET',
+            'TEKNIK & BISNIS',
+            'PENGHIJAUAN',
+            'HARSAN',
+            'HK',
+            'CSU I',
+            'CSU II',
+            'KC',
+            'KELLAS',
+            'SIPIL',
+            'HOUSEKEEPING',
+            'WASBONG',
+            'CANDAL PELABUHAN',
+            'PROYEK INFRASTRUKTUR DERMAGA A'
         ];
 
         function renderUnitKerjaDropdown(keyword = '') {
@@ -1816,6 +1925,7 @@
             fNamaTenaga: 'nama_tenaga',
             fTanggalPelaksanaan: 'tanggal_pelaksanaan',
             fAreaKerja: 'area_kerja',
+            fSubArea: 'sub_area', // ← BARU
             fUnitKerja: 'unit_kerja',
             fJenisAktifitas: 'jenis_aktifitas_kpi',
             fKategoriPeralatan: 'kategori_peralatan',
@@ -2184,6 +2294,11 @@
                     value: row.area_kerja || '-'
                 },
                 {
+                    label: 'Sub Area',
+                    value: row.sub_area || '-'
+                }, // ← BARU
+
+                {
                     label: 'Unit Kerja',
                     value: row.unit_kerja || '-'
                 },
@@ -2211,15 +2326,23 @@
                 el: `<div class="detail-value">${escapeHtml(row.keputusan || '-')}</div>`
             }, ];
 
-            // ← BARU — tampilkan komentar admin kalau statusnya REJECT dan ada komentar
+            // ← BARU — tampilkan info revisi kalau data ini pernah direvisi (revisi_ke > 0)
+            if (row.revisi_ke > 0) {
+                arsipFields.push({
+                    label: 'Status Revisi',
+                    el: `<div class="detail-value" style="color:#4338CA;font-weight:600;">Revisi ke-${row.revisi_ke}</div>`
+                });
+            }
+
+            // tampilkan komentar admin kalau statusnya REJECT dan ada komentar
             if (row.keputusan === 'REJECT' && row.komentar_admin) {
                 arsipFields.push({
                     label: 'Alasan Penolakan dari Admin',
                     span: 2,
                     el: `<div class="detail-value" style="color:#D0021B; white-space:pre-line;">${escapeHtml(row.komentar_admin)}</div>
-             <div class="detail-subtitle" style="margin-top:4px;">
-                 ${row.direview_oleh ? `Oleh: ${escapeHtml(row.direview_oleh)} · ` : ''}${row.direview_at ? new Date(row.direview_at.replace(' ', 'T')).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
-             </div>`
+                    <div class="detail-subtitle" style="margin-top:4px;">
+                        ${row.direview_oleh ? `Oleh: ${escapeHtml(row.direview_oleh)} · ` : ''}${row.direview_at ? new Date(row.direview_at.replace(' ', 'T')).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                    </div>`
                 });
             }
 
@@ -2352,9 +2475,11 @@
                     <td>${escapeHtml(row.jenis_aktifitas_kpi || '-')}</td>
                     <td><div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.area_kerja || '-')}</div><div class="td-name-sub">${escapeHtml(row.unit_kerja || '-')}</div></td>
                     <td>${formatDate(row.tanggal_pelaksanaan)}</td>
-                    <td><span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span>
+                    <td>
+                        <span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span>
+                        ${row.revisi_ke > 0 ? `<span class="status-pill" style="background:#EEF2FF;color:#4338CA;margin-left:4px;">Revisi ke-${row.revisi_ke}</span>` : ''}
                         ${row.keputusan === 'REJECT' && row.komentar_admin ? `<div class="td-name-sub" style="color:#D0021B; margin-top:3px; max-width:160px;">💬 ${escapeHtml(row.komentar_admin.substring(0, 40))}${row.komentar_admin.length > 40 ? '...' : ''}</div>` : ''}
-                    </td>                    
+                    </td>
                     <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
@@ -2575,6 +2700,59 @@
             }
         });
 
+        async function loadSubAreaOptions() {
+            if (subAreaOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(SUB_AREA_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                subAreaOptionsCache = json.data || [];
+            } catch (e) {
+                /* diamkan */
+            }
+        }
+
+        function renderSubAreaDropdown(keyword = '') {
+            const dropdown = document.getElementById('subAreaDropdown');
+            const filtered = keyword ?
+                subAreaOptionsCache.filter(v => v.toLowerCase().includes(keyword.toLowerCase())) :
+                subAreaOptionsCache;
+
+            dropdown.innerHTML = filtered.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada data ditemukan.</div>` :
+                filtered.map(v =>
+                    `<div class="picker-item" onclick="pilihSubArea('${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`
+                ).join('');
+
+            dropdown.classList.add('open');
+        }
+
+        function onSubAreaPickerInput() {
+            document.getElementById('fSubArea').value = '';
+            renderSubAreaDropdown(document.getElementById('subAreaInput').value.trim());
+        }
+
+        async function onSubAreaPickerFocus() {
+            if (subAreaOptionsCache.length === 0) await loadSubAreaOptions();
+            renderSubAreaDropdown(document.getElementById('subAreaInput').value.trim());
+        }
+
+        function pilihSubArea(value) {
+            document.getElementById('subAreaInput').value = value;
+            document.getElementById('fSubArea').value = value;
+            document.getElementById('subAreaDropdown').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('subAreaInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('subAreaDropdown')?.classList.remove('open');
+            }
+        });
+
         // ══════ SISTEM PREVIEW FILE GENERIK (image + dokumen) ══════
         // Berlaku otomatis untuk SEMUA <input type="file"> di dalam .form-modal-body,
         // baik saat memilih file baru (Tambah/Edit) maupun menampilkan file lama (Edit).
@@ -2716,12 +2894,14 @@
             document.getElementById('formModalTitle').textContent = row ? 'Edit Data Safety' : 'Tambah Data Safety';
 
             await loadLokasiKerjaOptions();
+            await loadSubAreaOptions(); // ← BARU
 
             document.querySelectorAll(
                 '.form-modal-body input[type="text"], .form-modal-body input[type="date"], .form-modal-body textarea, .form-modal-body select'
             ).forEach(el => {
                 if (el.id !== 'fJenisAktifitas' && el.id !== 'jenisAktifitasPickerInput' && el.id !==
-                    'areaKerjaInput' && el.id !== 'unitKerjaInput') { // ⬅️ tambahkan ini
+                    'areaKerjaInput' && el.id !== 'unitKerjaInput' && el.id !== 'subAreaInput'
+                ) { // ⬅️ tambahkan subAreaInput
                     el.value = '';
                 }
             });
@@ -2750,6 +2930,8 @@
             document.getElementById('areaKerjaInput').value = row?.area_kerja || '';
             document.getElementById('fAreaKerja').value = row?.area_kerja || '';
             document.getElementById('unitKerjaInput').value = row?.unit_kerja || '';
+            document.getElementById('subAreaInput').value = row?.sub_area || ''; // ← BARU
+            document.getElementById('fSubArea').value = row?.sub_area || ''; // ← BARU
             document.getElementById('fUnitKerja').value = row?.unit_kerja || '';
             document.getElementById('jenisAktifitasPickerInput').value = row ? (row.jenis_aktifitas_kpi || '') : '';
             document.getElementById('fJenisAktifitas').value = row ? (row.jenis_aktifitas_kpi || '') : '';

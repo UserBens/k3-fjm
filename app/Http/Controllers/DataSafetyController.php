@@ -72,6 +72,9 @@ class DataSafetyController extends Controller
             if ($areaKerja = $request->query('area_kerja')) {
                 $query->where('area_kerja', $areaKerja);
             }
+            if ($subArea = $request->query('sub_area')) {          // ← BARU
+                $query->where('sub_area', $subArea);
+            }
             if ($statusPindah = $request->query('status_pindah')) {
                 $query->where('status_pindah', $statusPindah);
             }
@@ -86,6 +89,7 @@ class DataSafetyController extends Controller
                 'area_kerja' => DataSafety::whereNotNull('area_kerja')->distinct()->orderBy('area_kerja')->pluck('area_kerja'),
                 'status_pindah' => ['SUKSES', 'GAGAL', 'PENDING'],
                 'keputusan' => ['APPROVE', 'REJECT', 'PENDING'],
+                'sub_area' => DataSafety::whereNotNull('sub_area')->distinct()->orderBy('sub_area')->pluck('sub_area'),
             ];
 
             $perPage = (int) $request->query('per_page', 10);
@@ -143,13 +147,22 @@ class DataSafetyController extends Controller
 
     public function update(Request $request, DataSafety $dataSafety): JsonResponse
     {
-        // ← BARU — user safety hanya boleh update datanya sendiri
+        // ← user safety hanya boleh update datanya sendiri
         if (session('auth_user.role') === 'safety' && $dataSafety->badge_tenaga !== session('auth_user.username')) {
             return response()->json(['message' => 'Anda tidak memiliki izin untuk mengubah data ini.'], 403);
         }
 
         $validated = $this->validateData($request);
         $validated['kategori_form'] = $this->resolveKategoriForm($validated['jenis_aktifitas_kpi'] ?? '');
+
+        // ← BARU — jika data ini sebelumnya REJECT dan sekarang direvisi ulang,
+        // otomatis kembalikan status ke PENDING dan naikkan penghitung revisi.
+        // waktu_submit TIDAK diubah — tetap memakai waktu submit pertama kali.
+        $wasRejected = $dataSafety->keputusan === 'REJECT';
+        if ($wasRejected) {
+            $validated['keputusan'] = 'PENDING';
+            $validated['revisi_ke'] = $dataSafety->revisi_ke + 1;
+        }
 
         try {
             foreach ($this->fileFields as $formField => [$column, $folder]) {
@@ -164,7 +177,9 @@ class DataSafetyController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Data safety berhasil diperbarui.',
+                'message' => $wasRejected
+                    ? 'Data safety berhasil diperbarui dan diajukan kembali sebagai revisi ke-' . $validated['revisi_ke'] . '.'
+                    : 'Data safety berhasil diperbarui.',
                 'data' => $this->transform($dataSafety->fresh()),
             ]);
         } catch (\Throwable $e) {
@@ -257,18 +272,88 @@ class DataSafetyController extends Controller
             'PABRIK III B',
             'PELABUHAN',
             'PERGUDANGAN',
+            'DIKLAT',
+            'BUNCOP',
+            'GUDANG MULTI GUNA',
+            'KIG',
+            'PA BABAT',
+            'PA GUNUNG SARI',
+            'GEDUNG GRAHA',
+            'PERUMAHAN DINAS',
+            'SOR',
+            'JETTY 1, 2, 3',
+            'DERMAGA',
         ];
 
-        $fromMaster = LokasiKerja::query()
-            ->select('nama_lokasi')
-            ->whereNotNull('nama_lokasi')
-            ->where('nama_lokasi', '!=', '')
-            ->distinct()
-            ->pluck('nama_lokasi')
-            ->all();
+        $items = collect($staticOptions)
+            ->unique()
+            ->sort(SORT_STRING)
+            ->values();
+
+        return response()->json(['data' => $items]);
+    }
+
+    // Dropdown/picker "Sub Area" — daftar tetap.
+    public function subAreaOptions(): JsonResponse
+    {
+        $staticOptions = [
+            'PRODUKSI I',
+            'HAR I A',
+            'RENSTRAHAR',
+            'PELAYANAN UMUM',
+            'ADMIN BISNIS',
+            'PRODUKSI III',
+            'LABORATORIUM',
+            'PEMADAM KEBAKARAN',
+            'GEDUNG ADMINISTRASI',
+            'PPBJ',
+            'PPSB',
+            'DIKLAT',
+            'HAR I B',
+            'PRODUKSI II A',
+            'HAR II',
+            'PRODUKSI II B',
+            'PRODUKSI III A',
+            'HAR III A',
+            'PRODUKSI III B',
+            'HAR III B',
+            'FABRIKASI DAN ALAT BERAT',
+            'PERGUDANGAN DAN PENGANTONGAN',
+            'PRODUKSI IA',
+            'DEP. ADM & KEUANGAN',
+            'DEP. ADMINISTRASI & PENJUALAN',
+            'DEP. ADMINISTRASI BISNIS',
+            'DEP. AGRO SOLUTION',
+            'DEP. AKUNTANSI',
+            'DEP. BARANG REJECT',
+            'DEP. HUKUM & SEKRETARIAT',
+            'DEP. KEUANGAN',
+            'DEP. KOMUNIKASI KORPORAT',
+            'DEP. PELAPORAN KEUANGAN & MANAJEMEN',
+            'DEP. MITRA BISNIS PEMASARAN RETAIL',
+            'DEP. PENGADAAN BARANG',
+            'DEP. PENGADAAN DAN PENGEMBANGAN BISNIS',
+            'DEP. PENGADAAN JASA',
+            'DEP. PENGELOLAAN PELANGGAN',
+            'DEP. PENGELOLAAN TRANSFORMASI BISNIS',
+            'DEP. PENGEMBANGAN KORPORAT',
+            'DEP. PORTOFOLIO BISNIS',
+            'DEP. PROYEK MANAJEMEN PRODUK BARU',
+            'DEP. PROJECT MANAJER RETAIL MANAJEMEN',
+            'DEP. TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN',
+            'DEP. TATA KELOLA PERUSAHAAN & MANAJEMEN RESIKO',
+            'GM. RENDAL & ANGGARAN',
+            'PM. AGRO SOLUTION',
+            'DEP. PENGELOLAAN MITRA',
+            'DEP. RISET',
+            'DEP. TEKNIK & BISNIS',
+            'PROYEK INFRASTRUKUR',
+            'PEMELIHARAAN PELABUHAN',
+            'OPERASIONAL PELABUHAN',
+            'PROYEK PENGEMBANGAN',
+        ];
 
         $items = collect($staticOptions)
-            ->merge($fromMaster)
             ->unique()
             ->sort(SORT_STRING)
             ->values();
@@ -344,6 +429,7 @@ class DataSafetyController extends Controller
             'badge_tenaga' => 'nullable|string|max:50',
             'nama_tenaga' => 'nullable|string|max:255',
             'area_kerja' => 'nullable|string|max:150',
+            'sub_area' => 'nullable|string|max:150',   // ← BARU
             'unit_kerja' => 'nullable|string|max:150',
             'jenis_aktifitas_kpi' => 'required|string|max:150',
 

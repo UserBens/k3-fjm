@@ -1441,6 +1441,16 @@
             color: #94A3B8;
             text-align: center;
         }
+
+        .detail-view-text {
+            font-size: 13px;
+            color: #000000;
+            /* background: #1E293B; */
+            border: 1px solid rgba(0, 0, 0, .09);
+            border-radius: 8px;
+            padding: 8px 10px;
+            min-height: 20px;
+        }
     </style>
 </head>
 
@@ -1501,9 +1511,9 @@
                                 <th style="width:38px; text-align:center;">No</th>
                                 <th>No. HIRADC</th>
                                 <th>Kode OK</th>
-                                <th>Pekerjaan</th>
-                                <th>Departemen</th>
+                                <th>Departemen/UNIT KERJA</th>
                                 <th>Area Kerja</th>
+                                <th>Sub Area</th>
                                 <th>Jabatan</th>
                                 <th>Tanggal</th>
                                 <th>APD</th>
@@ -1518,49 +1528,102 @@
                             </tr>
                         </tbody>
                     </table>
-            </div>
-
-            <div class="pagination-bar">
-                <div class="pagination-info">
-                    <span>Baris per halaman</span>
-                    <select id="perPage" class="per-page-select" onchange="onPerPageChange()">
-                        <option value="10">10</option>
-                        <option value="25" selected>25</option>
-                        <option value="50">50</option>
-                    </select>
                 </div>
-                <div class="pagination-pages" id="paginationPages"></div>
+
+                <div class="pagination-bar">
+                    <div class="pagination-info">
+                        <span>Baris per halaman</span>
+                        <select id="perPage" class="per-page-select" onchange="onPerPageChange()">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <div class="pagination-pages" id="paginationPages"></div>
+                </div>
             </div>
         </div>
     </div>
-    </div>
 
-    <!-- ══════ MODAL DETAIL (tabel Excel, read-only) ══════ -->
+    <!-- ══════ MODAL DETAIL (mengikuti layout modal Edit) ══════ -->
     <div id="detailModalOverlay" class="modal-overlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box" style="max-width:640px;" onclick="event.stopPropagation()">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div class="modal-box form-modal-box" style="max-width:900px;" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
                 <div>
-                    <div class="modal-title" id="detailTitle">Detail HIRADC</div>
-                    <div style="font-size:12.5px;color:#94A3B8;" id="detailSub"></div>
+                    <div class="modal-title" id="detailTitle">Detail Dokumen HIRADC</div>
+                    <div style="font-size:12.5px;color:#94A3B8;">Detail data HIRADC yang telah diinput</div>
                 </div>
-                <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
             </div>
-            <div id="detailHeaderInfo" style="font-size:12.5px;margin-bottom:10px;"></div>
-            <div class="detail-tags-block">
-                <div class="detail-tags-label">Checklist APD</div>
-                <div class="detail-tags-wrap" id="detailApdTags"></div>
+
+            <div class="form-modal-body">
+                <div class="form-section-title">Data HIRADC</div>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label class="form-label">Kode OK</label>
+                        <div class="detail-view-text" id="dKodeOk">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Departemen/Unit Kerja</label>
+                        <div class="detail-view-text" id="dDepartemen">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Area Kerja</label>
+                        <div class="detail-view-text" id="dAreaKerja">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Sub Area</label>
+                        <div class="detail-view-text" id="dSubArea">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Jabatan</label>
+                        <div class="detail-view-text" id="dKualifikasi">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">No. HIRADC</label>
+                        <div class="detail-view-text" id="dNoHiradc">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tanggal</label>
+                        <div class="detail-view-text" id="dTanggal">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <div class="detail-view-text" id="dStatus">-</div>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Checklist APD</div>
+                <div class="form-group">
+                    <label class="form-label">APD yang Dibutuhkan</label>
+                    <div class="detail-tags-wrap" id="detailApdTags"></div>
+                </div>
+
+                <div class="form-section-title">Kesimpulan</div>
+                <div class="form-group">
+                    <label class="form-label">Kesimpulan Kebutuhan APD / Catatan</label>
+                    <div class="detail-view-text" style="min-height:60px;white-space:pre-wrap;"
+                        id="detailKesimpulan">-</div>
+                </div>
             </div>
-            <div class="form-group" style="margin-top:10px;">
-                <label class="form-label">Kesimpulan</label>
-                <div style="font-size:12.5px;white-space:pre-wrap;" id="detailKesimpulan">-</div>
+
+            <div class="modal-actions" style="margin-top:16px;">
+                <button class="btn-modal-cancel" onclick="closeDetailModal()">Tutup</button>
             </div>
         </div>
     </div>
 
     <!-- ══════ MODAL BUILDER (Tambah/Edit) — input gaya spreadsheet ══════ -->
     <div id="itemModalOverlay" class="modal-overlay" onclick="closeItemModalOutside(event)">
-        <div class="modal-box form-modal-box" style="max-width:98vw;width:1600px;max-height:94vh;overflow:auto;"
+        <div class="modal-box form-modal-box" style="max-width:700px;width:90vw;max-height:90vh;overflow:auto;"
             onclick="event.stopPropagation()">
+
             <div style="margin-bottom:14px;">
                 <div class="modal-title" id="itemModalTitle">Tambah Dokumen HIRADC</div>
                 <div style="font-size:12.5px;color:#94A3B8;">Lengkapi header dokumen, lalu isi tabel aktivitas &amp;
@@ -1605,6 +1668,15 @@
                             placeholder="Pilih / Cari Area Kerja..." autocomplete="off"
                             onfocus="openCustomDropdown('area')" oninput="filterCustomDropdown('area')" />
                         <div id="dropdown-area" class="custom-dropdown-list" style="display:none;"></div>
+                    </div>
+
+                    <!-- Custom Searchable Dropdown: Sub Area (BARU) -->
+                    <div class="form-group" style="position: relative;">
+                        <label class="form-label">Sub Area</label>
+                        <input type="text" id="fSubArea" class="form-input"
+                            placeholder="Pilih / Cari Sub Area..." autocomplete="off"
+                            onfocus="openCustomDropdown('subArea')" oninput="filterCustomDropdown('subArea')" />
+                        <div id="dropdown-subArea" class="custom-dropdown-list" style="display:none;"></div>
                     </div>
 
                     <!-- Custom Searchable Dropdown: Jabatan -->
@@ -1697,59 +1769,69 @@
             }
         };
         const UNIT_KERJA_OPTIONS = [
-            "GLOBAL", "ADMINISTRASI BISNIS", "ADMINISTRASI PEMASARAN & PENJUALAN", "AGRO SOLUTION", "AKUNTANSI BIAYA",
-            "ALAT BERAT ALL IN", "ALAT BERAT EXISTING", "ALAT BERAT ON CALL", "ALF III", "AMONIA I-A", "AMONIA I-B",
-            "AUDIT OPERASI & PRODUKSI", "BAHAN BAKU DAN BAHAN KEMAS", "BARANG REJECT", "BENGKEL FABRIKASI",
-            "BONGKAR MUAT",
-            "BUNCOB", "CANDAL HAR I", "CANDAL HAR II", "CANDAL HAR III", "CANDAL PRODUKSI", "CCTPC",
-            "DEP. PEMELIHARAAN I",
-            "DEP. PRODUKSI I-B", "DEP. PRODUKSI II-A", "GUDANG & PENGANTONGAN AREA I", "GUDANG & PENGANTONGAN AREA II",
-            "GUDANG & PENGANTONGAN AREA III", "HARPRAS", "HELPDESK IT", "HUKUM & SEKRETARIAT", "INFORMASI & KOMUNIKASI",
-            "INSPEKSI TEKNIK ROTATING", "INSPEKSI TEKNIK STATIK", "INSTRUMENT I", "INSTRUMENT II", "INSTRUMENT III",
-            "INTERKONEKSI LISTRIK", "INVESTASI RUTIN & EPC", "JASA", "JASA PELAYANAN PABRIK", "K3", "KEAMANAN",
-            "KELLAS I",
-            "KELLAS II-A", "KELLAS II-B", "KELLAS III", "KELSIN I", "KELSIN II", "KELSIN III", "KEUANGAN",
-            "KEUANGAN DAN UMUM",
-            "KK PABRIK I", "KK PABRIK II", "KK PABRIK III", "LAB", "LAB I-A", "LAB I-B", "LAB II-A", "LAB II-B",
-            "LAB III-A",
-            "LAB III-B", "LAB PENELITIAN", "LAB QUALITY ASSURANCE", "LAB. BIOPROSES", "LAB. FORMULASI",
-            "LAB. FORMULASI PUPUK",
-            "LAB. KULTUR INVITRO", "LAB. MIKROBIOLOGI", "LABORATORIUM", "LISTRIK I", "LISTRIK II", "LISTRIK III",
-            "MANAJEMEN ASET", "MANAJEMEN DAN PENGEMBANGAN SDM", "MANAJEMEN PRODUK BARU", "MANAJEMEN RESIKO",
-            "MASJID NURUL JANNAH", "MEKANIK I", "MEKANIK II-A", "MEKANIK II-B", "MEKANIK III", "MEKANIKAL POMPA",
-            "MITRA BISNIS KORPORASI", "NON LOGAM II-A", "NON LOGAM II-B", "NON LOGAM III", "NPK I", "NPK II", "NPK III",
-            "NPK IV", "O&M CSU", "O&M O&M PURIFIKASI II", "O&M PURIFIKASI I", "O&M PURIFIKASI I & II", "O&M TK 1400",
-            "OPERASIONAL KBL", "OPERASIONAL SDM", "PA GUNUNGSARI", "PA I", "PA II", "PA II & UBB",
-            "PELAPORAN KEUANGAN & MANAJEMEN", "PELAYANAN UMUM", "PEMELIHARAAN II", "PEMELIHARAAN III",
-            "PEMELIHARAAN KAWASAN", "PENELITIAN & PENGEMBANGAN USAHA", "PENGADAAN BARANG", "PENGADAAN JASA", "PENGAWAS",
-            "PENGELOLAAN & PEMELIHARAAN", "PENGELOLAAN PELABUHAN", "PENGELOLAAN PELANGGAN",
-            "PENGELOLAAN PERSEDIAAN SUKU CADANG & BAHAN BAKU", "PENGELOLAAN PRODUK", "PENGELOLAAN TRANSFORMASI BISNIS",
-            "PENGEMBANGAN KOMPETENSI", "PENGEMBANGAN SISTEM & PROSEDUR", "PENGENDALIAN LINGKUNGAN",
-            "PERENCANAAN & PENGENDALIAN", "PERENCANAAN & PENGENDALIAN PRODUKSI", "PERENCANAAN & PENGENDALIAN TA I",
-            "PERENCANAAN & PENGENDALIAN TA II", "PERENCANAAN & PENGENDALIAN TA III", "PERSEDIAAN BAHAN BAKU",
-            "PETROMART",
-            "PHONSKA I", "PHONSKA II", "PHONSKA III", "PHONSKA IV", "PHONSKA V", "PIKPG", "PMK", "PORTFOLIO BISNIS",
-            "PREVENTIVE CONVEYOR", "PROCESS SAFETY MANAGEMENT", "PRODUKSI I-B", "PRODUKSI II-A", "PRODUKSI II-B",
-            "PRODUKSI III-A", "PROJECT MANAJER RETAIL MANAJEMEN", "PROJECT PP", "PROSES & PENGENDALIAN ENERGI",
-            "PROTOKOL",
-            "PROYEK INFRASTRUKTUR", "PUPUK ORGANIK & TANAH", "RANCANG BANGUN", "RELIABILITY", "RENDAL & ANGGARAN",
-            "REWINDING MOTOR", "RHI", "RISET TEKNOLOGI", "SA / SU I", "SA / SU II", "SARANA & PERLENGKAPAN", "SDM",
-            "SERVICE AC", "SIPIL I", "SIPIL II-A", "SIPIL II-B", "SIPIL III", "SISTEM & KESEHATAN KERJA", "SKPG",
-            "STALIR BABAT", "STALIR GUNUNG SARI", "SUKU CADANG", "TANGGUNG JAWAB SOSIAL & LINGKUNGAN",
-            "TEKNOLOGI INFORMASI", "TRANSPORT", "UBB", "UREA I", "UREA II", "UTILITAS I-A", "UTILITAS I-B",
-            "UTILITAS II",
-            "ZA I / III", "ZA II", "ZK", "RSPG"
+            "UTILITAS I A", "ZA 1/3", "AMMONIA I A", "UREA I A", "INSPEKSI TEKNIK", "CANDAL RUTIN",
+            "CANDAL PRODUKSI I", "RANCANG BANGUN", "TRANSPORT", "ARSIP", "ZA 2", "BENGKEL LAS I",
+            "BENGKEL SIPIL I A", "BENGKEL MESIN I", "BENGKEL MEKANIK I A", "LISTRIK", "INSTRUMEN",
+            "LAB I A", "LOADING AMMONIA", "PEMADAM KEBAKARAN", "K3", "PPP", "PPE", "REALIBILITY",
+            "MANAJEMEN ASET", "AUDIT KEUANGAN & UMUM", "PERGUDANGAN & PENGANTONGAN",
+            "AUDIT OPERASI & PRODUKSI", "LINGKUNGAN", "TEKNOLOGI INFORMASI", "PPBJ", "PPSB",
+            "INOVASI SISTEM MANAJEMEN", "OPERASIONAL SDM", "MANAJEMEN PENGEMBANGAN SUMBER DAYA MANUSIA",
+            "UTILITAS I B", "AMMONIA I B", "UREA I B", "BENGKEL SIPIL I B", "BENGKEL MEKANIK I B",
+            "LAB I B", "PHONSKA I", "GUDANG 02.650", "GUDANG 02.600", "GUDANG 02.200",
+            "BENGKEL LAS IIA", "MEKANIK IIA", "LABORATORIUM II", "INSPEKSI TEKNIK II", "PHONSKA II",
+            "PHONSKA III", "PHONSKA IV", "UTILLITAS II A", "EQUALIZER", "TANK YARD UTILLITAS IIB",
+            "ZK", "NPK", "NPK II, III, IV", "GUDANG 03.200", "BENGKEL LAS IIB", "BENGKEL SIPIL II",
+            "NON LOGAM II", "INSTRUMEN II", "LISTRIK II", "BENGKEL MESIN", "FABRIKASI", "SA/SU I",
+            "PA I", "GUDANG 50.000", "DEMIN 3A", "GUDANG ALF3", "EFLUENT TREATMENT III A",
+            "BENGKEL SIPIL III A", "BENGKEL LAS III A", "BENGKEL MESIN III A", "NON LOGAM", "LAB III A",
+            "INSTRUMEN III A", "SA/SU II", "PA II", "PURIFIKASI GYPSUM I", "PURIFIKASI GYPSUM II",
+            "ALF3", "DEMIN III B", "EFLUENT TREATMENT III B", "UTILITAS BATU BARA",
+            "BENGKEL SIPIL III B", "BENGKEL LAS III B", "LAB III B", "INSTRUMEN III B", "ALAT BERAT",
+            "TK-1400", "GUDANG UREA I", "GUDANG UREA II", "GUDANG ZA", "GUDANG NON PUPUK CAIR",
+            "GUDANG PUPUK PENGEMBANGAN", "GUDANG PHONSKA 2,3,5", "GUDANG PHONSKA 4", "GUDANG PHONSKA 1",
+            "GUDANG 50.000 TON", "GUDANG MULTIGUNA 1 & 2", "GUDANG ALF 3", "GUDANG BAGING NPK 2,3,4",
+            "GUDANG BS UREA 1", "GUDANG BS UREA 2", "GUDANG BS ZA 1/3", "GUDANG BS ZA 2",
+            "GUDANG BS 02-U400", "GUDANG BS U02-500", "GUDANG BS U03-500", "GUDANG KIG Q",
+            "GUDANG 34-U2000", "PENGANTONGAN PHONSKA 1", "PENGANTONGAN PHONSKA 2,3,5",
+            "PENGANTONGAN PHONSKA 4", "JEMBATAN TIMBANG 1", "JEMBATAN TIMBANG 2", "JEMBATAN TIMBANG 3",
+            "JEMBATAN TIMBANG 4", "JEMBATAN TIMBANG 5", "COMMAND CENTER", "PA BABAT", "PA GUNUNGSARI",
+            "ADM & KEUANGAN", "ADMINISTRASI & PENJUALAN", "ADMINISTRASI BISNIS", "AGRO SOLUTION",
+            "AKUNTANSI", "BARANG REJECT", "HUKUM & SEKRETARIAT", "KEUANGAN", "KOMUNIKASI KORPORAT",
+            "PELAPORAN KEUANGAN & MANAJEMEN", "MITRA BISNIS PEMASARAN RETAIL", "PENGADAAN BARANG",
+            "PENGADAAN DAN PENGEMBANGAN BISNIS", "PENGADAAN JASA", "PENGELOLAAN PELANGGAN",
+            "PENGELOLAAN TRANSFORMASI BISNIS", "PENGEMBANGAN KORPORAT", "PORTFOLIO BISNIS",
+            "PROYEK MANAJEMEN PRODUK BARU", "PROJECT MANAJER RETAIL MANAJEMEN",
+            "TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN", "TATA KELOLA PERUSAHAAN & MANAJEMEN RISIKO",
+            "RENDAL & ANGGARAN", "PENGELOLAAN MITRA", "RISET", "TEKNIK & BISNIS",
+            "PROYEK INFRASTRUKTUR", "PENGHIJAUAN", "HARSAN", "HK", "CSU I", "CSU II", "KC", "KELLAS",
+            "SIPIL", "HOUSEKEEPING", "WASBONG", "CANDAL PELABUHAN", "PROYEK INFRASTRUKTUR DERMAGA A"
         ];
 
+        // ── Data tambahan Area Kerja ──
         const AREA_KERJA_OPTIONS = [
-            "FASILITAS UMUM", "GBB, GMG & GUDANG PPSB", "GEDUNG ADMINISTRASI", "GEDUNG CANGUN", "GEDUNG DIKLAT",
-            "GEDUNG GRAHA", "GEDUNG INFRASTRUKTUR & DERMAGA A", "GEDUNG JPP", "GEDUNG LOLA MITRA", "GEDUNG PPBJ",
-            "GEDUNG PUTIH", "GEDUNG RISET & KEBUN PERCOBAAN", "GEDUNG TRANSPORT PG", "KANTOR FJM", "KAWASAN",
-            "PA BABAT",
-            "PA GUNUNGSARI", "PABRIK I", "PABRIK I-A", "PABRIK I-B", "PABRIK II", "PABRIK II-A", "PABRIK II-B",
-            "PABRIK III",
-            "PABRIK III-A", "PABRIK III-B", "PELABUHAN", "PERGUDANGAN", "PERUMAHAN DINAS", "RSPG",
-            "SEMUA AREA PABRIK PG", "SOR"
+            "PABRIK I A", "PABRIK I B", "PABRIK II A", "PABRIK II B", "PABRIK III A", "PABRIK III B",
+            "DIKLAT", "BUNCOP", "GUDANG MULTI GUNA (GMG)", "KIG", "PA BABAT", "PA GUNUNGSARI",
+            "GEDUNG GRAHA", "PERUMAHAN DINAS", "SOR", "JETTY I, II, III", "DERMAGA A"
+        ];
+
+        // ── Data Sub Area (baru) ──
+        const SUB_AREA_OPTIONS = [
+            "PRODUKSI I", "HAR I A", "RENSTRAHAR", "PELAYANAN UMUM", "ADMIN BISNIS", "PRODUKSI III",
+            "LABORATORIUM", "PEMADAM KEBAKARAN", "GEDUNG ADMINISTRASI", "PPBJ", "PPSB", "DIKLAT",
+            "HAR I B", "PRODUKSI II A", "HAR II", "PRODUKSI II B", "PRODUKSI III A", "HAR III A",
+            "PRODUKSI III B", "HAR III B", "FABRIKASI DAN ALAT BERAT", "PERGUDANGAN DAN PENGANTONGAN",
+            "PRODUKSI IA", "DEP. ADM & KEUANGAN", "DEP. ADMINISTRASI & PENJUALAN",
+            "DEP. ADMINISTRASI BISNIS", "DEP. AGRO SOLUTION", "DEP. AKUNTANSI", "DEP. BARANG REJECT",
+            "DEP. HUKUM & SEKRETARIAT", "DEP. KEUANGAN", "DEP. KOMUNIKASI KORPORAT",
+            "DEP. PELAPORAN KEUANGAN & MANAJEMEN", "DEP. MITRA BISNIS PEMASARAN RETAIL",
+            "DEP. PENGADAAN BARANG", "DEP. PENGADAAN DAN PENGEMBANGAN BISNIS", "DEP. PENGADAAN JASA",
+            "DEP. PENGELOLAAN PELANGGAN", "DEP. PENGELOLAAN TRANSFORMASI BISNIS",
+            "DEP. PENGEMBANGAN KORPORAT", "DEP. PORTOFOLIO BISNIS", "DEP. PROYEK MANAJEMEN PRODUK BARU",
+            "DEP. PROJECT MANAJER RETAIL MANAJEMEN", "DEP. TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
+            "DEP. TATA KELOLA PERUSAHAAN & MANAJEMEN RESIKO", "GM. RENDAL & ANGGARAN",
+            "PM. AGRO SOLUTION", "DEP. PENGELOLAAN MITRA", "DEP. RISET", "DEP. TEKNIK & BISNIS",
+            "PROYEK INFRASTRUKUR", "PEMELIHARAAN PELABUHAN", "OPERASIONAL PELABUHAN",
+            "PROYEK PENGEMBANGAN"
         ];
 
         const JABATAN_OPTIONS = [
@@ -1785,16 +1867,27 @@
             "TUKANG SANDBLASTING", "TUKANG SIPIL", "TUKANG TAMAN"
         ];
 
+        const UNIT_KERJA_OPTIONS_FINAL = Array.from(new Set([...UNIT_KERJA_OPTIONS, ...UNIT_KERJA_OPTIONS]))
+            .sort();
+        const AREA_KERJA_OPTIONS_FINAL = Array.from(new Set([...AREA_KERJA_OPTIONS, ...AREA_KERJA_OPTIONS]))
+            .sort();
+        const SUB_AREA_OPTIONS_FINAL = Array.from(new Set(SUB_AREA_OPTIONS)).sort();
+
         const CUSTOM_DROPDOWNS = {
             dept: {
                 inputId: 'fDepartemen',
                 dropdownId: 'dropdown-dept',
-                options: UNIT_KERJA_OPTIONS
+                options: UNIT_KERJA_OPTIONS_FINAL // ← diganti
             },
             area: {
                 inputId: 'fAreaKerja',
                 dropdownId: 'dropdown-area',
-                options: AREA_KERJA_OPTIONS
+                options: AREA_KERJA_OPTIONS_FINAL // ← diganti
+            },
+            subArea: { // ← BARU
+                inputId: 'fSubArea',
+                dropdownId: 'dropdown-subArea',
+                options: SUB_AREA_OPTIONS_FINAL
             },
             jabatan: {
                 inputId: 'fKualifikasi',
@@ -2092,7 +2185,7 @@
                 applyFilter();
             } catch (e) {
                 document.getElementById('tableBody').innerHTML =
-                    `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-title">Gagal memuat data</div><div class="empty-state-sub">${escapeHtml(e.message)}</div></div></td></tr>`;
+                    `<tr><td colspan="12"><div class="empty-state"><div class="empty-state-title">Gagal memuat data</div><div class="empty-state-sub">${escapeHtml(e.message)}</div></div></td></tr>`;
             }
         }
 
@@ -2121,8 +2214,15 @@
             const search = document.getElementById('fSearch').value.toLowerCase().trim();
             filteredData = allData.filter(row => {
                 if (!search) return true;
-                return [row.no_hiradc, row.departemen, row.bagian, row.pekerjaan].join(' ').toLowerCase().includes(
-                    search);
+                return [
+                    row.no_hiradc,
+                    row.departemen,
+                    row.area_kerja,
+                    row.sub_area, // ← BARU
+                    row.kualifikasi,
+                    row.pekerjaan,
+                    row.kode_ok?.kode_ok
+                ].join(' ').toLowerCase().includes(search);
             });
             render();
         }
@@ -2139,19 +2239,9 @@
             const tbody = document.getElementById('tableBody');
             if (pageRows.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-title">Belum ada data</div><div class="empty-state-sub">Klik "Tambah Dokumen HIRADC" untuk mulai.</div></div></td></tr>`;
+                    `<tr><td colspan="12"><div class="empty-state"><div class="empty-state-title">Belum ada data</div><div class="empty-state-sub">Klik "Tambah Dokumen HIRADC" untuk mulai.</div></div></td></tr>`;
             } else {
                 tbody.innerHTML = pageRows.map((row, idx) => {
-                    // Tentukan Badge Status
-                    let statusHtml = '';
-                    if (row.status === 'disahkan') statusHtml =
-                        `<span style="background:#16a34a;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold;">Disahkan</span>`;
-                    else if (row.status === 'diperiksa') statusHtml =
-                        `<span style="background:#2D6CDF;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold;">Diperiksa</span>`;
-                    else statusHtml =
-                        `<span style="background:#64748B;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:bold;">Draft</span>`;
-
-                    // Logika Tombol Aksi berdasarkan status
                     let actionButtons = `
                         <button class="btn-row-action" onclick="openDetailModal(${row.id})" title="Detail">
                             <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2170,13 +2260,7 @@
                                 </svg>
                                 Edit
                             </button>
-                            <button class="btn-row-action" style="color:#2D6CDF" onclick="confirmAction(${row.id}, 'periksa')" title="Periksa Dokumen">
-                                <svg style="width:14px;height:14px; color:#2D6CDF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Periksa
-                            </button>
-                            <button class="btn-row-action" style="color:#D0021B;" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.pekerjaan)}')" title="Hapus">
+                            <button class="btn-row-action" style="color:#D0021B;" onclick="openDeleteModal(${row.id}, '${escapeHtml(row.no_hiradc || '')}')" title="Hapus">
                                 <svg style="width:14px;height:14px; color:#D0021B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
@@ -2185,31 +2269,33 @@
                         `;
                     } else if (row.status === 'diperiksa') {
                         actionButtons += `
-                            <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan Dokumen">
+                            <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan">
                                 <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                                 Sahkan
                             </button>
                         `;
                     }
 
+                    const apdBadge = (row.apd_list && row.apd_list.length) ?
+                        `<span title="${row.apd_list.map(a => escapeHtml(a.kode_apd)).join(', ')}">${row.apd_list.length} item</span>` :
+                        `<span style="color:#94A3B8;">-</span>`;
+
                     return `
                         <tr>
                             <td>${start + idx + 1}</td>
                             <td>${escapeHtml(display(row.no_hiradc))}</td>
-                            <td>${escapeHtml(row.departemen)}</td>
-                            <td>${escapeHtml(row.bagian)}</td>
-                            <td style="max-width:220px;white-space:normal;">${escapeHtml(row.pekerjaan)}</td>
-                            <td>${escapeHtml(display(row.revisi))}</td>
+                            <td>${escapeHtml(display(row.kode_ok?.kode_ok))}</td>
+                            <td>${escapeHtml(display(row.departemen))}</td>
+                            <td>${escapeHtml(display(row.area_kerja))}</td>
+                            <td>${escapeHtml(display(row.sub_area))}</td>
+                            <td>${escapeHtml(display(row.kualifikasi))}</td>
                             <td>${escapeHtml(display(row.tanggal))}</td>
-                            <td>${countItems(row)}</td>
-                            <td>${statusHtml}</td>
-                            <td style="text-align:center;white-space:nowrap; gap:6px;">
-                                ${actionButtons}
-                            </td>
+                            <td>${apdBadge}</td>
+                            <td style="text-align:center;white-space:nowrap;">${actionButtons}</td>
                         </tr>
-                        `;
+                    `;
                 }).join('');
             }
             renderPagination(totalPages);
@@ -2290,19 +2376,32 @@
         }
 
         function renderDetail(doc) {
-            document.getElementById('detailTitle').textContent = `${doc.no_hiradc || '-'} — ${doc.pekerjaan}`;
-            document.getElementById('detailSub').textContent =
-                `${doc.departemen || '-'} / ${doc.area_kerja || '-'} · ${display(doc.tanggal)}`;
-            document.getElementById('detailHeaderInfo').innerHTML = `
-        <strong>Kode OK:</strong> ${escapeHtml(display(doc.kode_ok?.kode_ok))}<br>
-        <strong>Jabatan:</strong> ${escapeHtml(display(doc.kualifikasi))}
-    `;
+            document.getElementById('detailTitle').textContent = `Hiradc — ${display(doc.no_hiradc)}`;
+
+            document.getElementById('dKodeOk').textContent =
+                doc.kode_ok ?
+                (doc.kode_ok.uraian_kerja ? `${doc.kode_ok.kode_ok} — ${doc.kode_ok.uraian_kerja}` : doc.kode_ok.kode_ok) :
+                '-';
+            document.getElementById('dDepartemen').textContent = display(doc.departemen);
+            document.getElementById('dAreaKerja').textContent = display(doc.area_kerja);
+            document.getElementById('dSubArea').textContent = display(doc.sub_area); // ← BARU
+            document.getElementById('dKualifikasi').textContent = display(doc.kualifikasi);
+            document.getElementById('dNoHiradc').textContent = display(doc.no_hiradc);
+            document.getElementById('dTanggal').textContent = display(doc.tanggal);
+
+            let statusLabel = '-';
+            if (doc.status === 'disahkan') statusLabel = 'Disahkan';
+            else if (doc.status === 'diperiksa') statusLabel = 'Diperiksa';
+            else if (doc.status === 'draft') statusLabel = 'Draft';
+            document.getElementById('dStatus').textContent = statusLabel;
+
             const apdWrap = document.getElementById('detailApdTags');
             apdWrap.innerHTML = (doc.apd_list || []).length ?
                 doc.apd_list.map(a =>
                     `<span class="status-pill sp-green">${escapeHtml(a.kode_apd)} — ${escapeHtml(a.jenis_apd)}</span>`)
                 .join('') :
                 `<span style="font-size:11px;color:#CBD5E1;">Belum ada APD dipilih.</span>`;
+
             document.getElementById('detailKesimpulan').textContent = doc.kesimpulan || '-';
         }
 
@@ -2349,6 +2448,7 @@
         function fillHeaderForm(doc) {
             document.getElementById('fDepartemen').value = doc.departemen || '';
             document.getElementById('fAreaKerja').value = doc.area_kerja || '';
+            document.getElementById('fSubArea').value = doc.sub_area || ''; // ← BARU
             document.getElementById('fKualifikasi').value = doc.kualifikasi || ''; // dipakai sebagai Jabatan
             document.getElementById('fNoHiradc').value = doc.no_hiradc || '';
             document.getElementById('fTanggal').value = doc.tanggal || '';
@@ -2636,8 +2736,9 @@
                 kode_ok_id: kodeOkId,
                 departemen: document.getElementById('fDepartemen').value.trim(),
                 area_kerja: document.getElementById('fAreaKerja').value.trim(),
-                kualifikasi: document.getElementById('fKualifikasi').value.trim(), // Jabatan
-                pekerjaan: pekerjaan, // Otomatis terisi dari Kode OK
+                sub_area: document.getElementById('fSubArea').value.trim(), // ← BARU
+                kualifikasi: document.getElementById('fKualifikasi').value.trim(),
+                pekerjaan: pekerjaan,
                 no_hiradc: document.getElementById('fNoHiradc').value.trim(),
                 tanggal: document.getElementById('fTanggal').value,
                 kesimpulan: document.getElementById('fKesimpulan').value.trim(),

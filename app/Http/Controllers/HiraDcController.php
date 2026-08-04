@@ -181,9 +181,11 @@ class HiradcController extends Controller
     {
         return [
             'id' => $d->id,
-            'departemen' => $d->departemen,   // Unit Kerja
-            'area_kerja' => $d->area_kerja,   // baru
-            'kualifikasi' => $d->kualifikasi, // dipakai sebagai Jabatan
+            'departemen' => $d->departemen,
+            'area_kerja' => $d->area_kerja,
+            'sub_area' => $d->sub_area,   // ← BARU
+            'kualifikasi' => $d->kualifikasi,
+            'pekerjaan' => $d->pekerjaan,   // <-- TAMBAHKAN INI
             'kode_ok_id' => $d->kode_ok_id,
             'kode_ok' => $d->kodeOk ? [
                 'id' => $d->kodeOk->id,
@@ -216,6 +218,7 @@ class HiradcController extends Controller
             'kode_ok_id'  => 'required|exists:kode_oks,id',
             'departemen'  => 'nullable|string|max:200',   // Unit Kerja
             'area_kerja'  => 'nullable|string|max:200',   // Area Kerja
+            'sub_area'    => 'nullable|string|max:200',   // ← BARU
             'kualifikasi' => 'nullable|string|max:200',  // Jabatan
             'pekerjaan'   => 'nullable|string',          // Menerima uraian_kerja dari Kode OK
             'no_hiradc'   => 'nullable|string|max:50',
