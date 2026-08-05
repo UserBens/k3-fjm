@@ -105,7 +105,6 @@ class LaporanCapaianKpiController extends Controller
                 $disetujui = $laporan->where('is_approved', true)->count();
                 $tepatWaktu = $laporan->where('is_approved', true)->where('tepat_waktu', true)->count();
 
-                // Kontribusi% berbasis bobot aktivitas yang benar-benar dilaporkan (lihat catatan #3)
                 $kontribusiPersen = 0.0;
                 if ($totalSkorTim > 0) {
                     $grup = $laporan->where('is_approved', true)->groupBy('aktivitas_id');
@@ -115,14 +114,20 @@ class LaporanCapaianKpiController extends Controller
                             continue;
                         }
                         $bobotAktivitas = $akt->skor / $totalSkorTim * 100;
-                        $kontribusiPersen += ($items->count() / $akt->target_per_bulan) * $bobotAktivitas;
+                        $rasioCapaian = min($items->count() / $akt->target_per_bulan, 1);
+                        $kontribusiPersen += $rasioCapaian * $bobotAktivitas;
                     }
                 }
 
-                $ketepatanPersen = $disetujui > 0 ? round($tepatWaktu / $disetujui * 100, 1) : null;
+                // 1. Samakan pembulatan komponen dengan di Dashboard
+                $persentaseCapaianAktivitas = round($kontribusiPersen, 1);
+                $persentaseKetepatanWaktu = $disetujui > 0 ? round($tepatWaktu / $disetujui * 100, 1) : 0.0;
+                $ketepatanPersenTampil = $disetujui > 0 ? ($tepatWaktu / $disetujui * 100) : null;
+
+                // 2. Hitung nilai akhir dan langsung bulatkan 1 desimal persis seperti di Dashboard
                 $nilaiKpiFinal = round(
-                    ($kontribusiPersen * (float) $pengaturan->porsi_capaian_aktivitas
-                        + ($ketepatanPersen ?? 0) * (float) $pengaturan->porsi_ketepatan_waktu) / 100,
+                    ($persentaseCapaianAktivitas * (float) $pengaturan->porsi_capaian_aktivitas / 100)
+                        + ($persentaseKetepatanWaktu * (float) $pengaturan->porsi_ketepatan_waktu / 100),
                     1
                 );
 
@@ -141,12 +146,14 @@ class LaporanCapaianKpiController extends Controller
 
                 $tunjangan = null;
                 if ($dapatTunjangan) {
-                    $clamped = min(
-                        max($nilaiKpiFinal, (float) $pengaturan->skor_minimum_tunjangan),
-                        (float) $pengaturan->skor_maksimum_tunjangan
+                    // 3. Gunakan $nilaiKpiFinal (yang SUDAH DIBULATKAN) untuk clamp & hitung tunjangan
+                    $skorUntukTunjangan = max(
+                        (float) $pengaturan->skor_minimum_tunjangan,
+                        min($nilaiKpiFinal, (float) $pengaturan->skor_maksimum_tunjangan)
                     );
+
                     $tunjangan = (int) round(
-                        $nominalTunjanganTim * $clamped / (float) $pengaturan->skor_maksimum_tunjangan
+                        $nominalTunjanganTim * ($skorUntukTunjangan / 100)
                     );
                 }
 
@@ -155,10 +162,10 @@ class LaporanCapaianKpiController extends Controller
                     'nama' => $pegawai->nama,
                     'terkirim' => $terkirim,
                     'disetujui' => $disetujui,
-                    'capaian_persen' => round($kontribusiPersen, 1),
-                    'ketepatan_waktu_persen' => $ketepatanPersen,
+                    'capaian_persen' => $persentaseCapaianAktivitas,
+                    'ketepatan_waktu_persen' => $ketepatanPersenTampil,
                     'nilai_kpi_final' => $nilaiKpiFinal,
-                    'standby' => 'N', // tidak ada sumber datanya di skema saat ini
+                    'standby' => 'N',
                     'hari_kerja_efektif' => $flag === 'pengawas'
                         ? $pengaturan->hari_kerja_efektif_p2k3
                         : $pengaturan->hari_kerja_efektif_manajer,
@@ -315,7 +322,7 @@ class LaporanCapaianKpiController extends Controller
             $selisih = $createdAt && $tanggalPelaksanaan
                 ? Carbon::parse($createdAt)->startOfDay()->diffInDays(Carbon::parse($tanggalPelaksanaan)->startOfDay(), false)
                 : null;
-            // selisih negatif = submit setelah tanggal pelaksanaan (terlambat)
+
             $tepatWaktu = $selisih === null
                 ? false
                 : ($selisih >= -$batasTerlambat && $selisih <= $batasAwal);
@@ -340,17 +347,25 @@ class LaporanCapaianKpiController extends Controller
         }
 
         $model = $flag === 'safety' ? DataSafety::class : Datamedis::class;
-        $aktivitasByNama = AktivitasKpiK3::pluck('id', 'nama_aktivitas');
+
+        // Ambil pemetaan aktivitas berdasarkan KODE dan NAMA AKTIVITAS
+        $aktivitasAktif = AktivitasKpiK3::all();
+        $mapKodeId = $aktivitasAktif->pluck('id', 'kode');
+        $mapNamaId = $aktivitasAktif->pluck('id', 'nama_aktivitas');
 
         return $model::where('badge_tenaga', $pegawai->badge)
             ->whereBetween('tanggal_pelaksanaan', [$mulai, $selesai])
             ->get()
-            ->map(fn($d) => $normalisasi(
-                $d->tanggal_pelaksanaan,
-                $d->created_at,
-                $aktivitasByNama[$d->jenis_aktifitas_kpi] ?? null,
-                $d->keputusan === 'APPROVE'
-            ));
+            ->map(function ($d) use ($mapKodeId, $mapNamaId, $normalisasi) {
+                $aktId = $mapKodeId[$d->jenis_aktifitas_kpi] ?? ($mapNamaId[$d->jenis_aktifitas_kpi] ?? null);
+
+                return $normalisasi(
+                    $d->tanggal_pelaksanaan,
+                    $d->created_at,
+                    $aktId,
+                    $d->keputusan === 'APPROVE'
+                );
+            });
     }
 
     private function hitungDisetujuiAktivitas(string $flag, AktivitasKpiK3 $akt, Collection $roster, Carbon $mulai, Carbon $selesai): int
@@ -370,7 +385,11 @@ class LaporanCapaianKpiController extends Controller
 
         $model = $flag === 'safety' ? DataSafety::class : Datamedis::class;
 
-        return $model::where('jenis_aktifitas_kpi', $akt->nama_aktivitas)
+        // Mendukung pencarian berdasarkan kode aktivitas (misal: C.2) atau nama aktivitas
+        return $model::where(function ($query) use ($akt) {
+            $query->where('jenis_aktifitas_kpi', $akt->kode)
+                ->orWhere('jenis_aktifitas_kpi', $akt->nama_aktivitas);
+        })
             ->where('keputusan', 'APPROVE')
             ->whereIn('badge_tenaga', $badges)
             ->whereBetween('tanggal_pelaksanaan', [$mulai, $selesai])
