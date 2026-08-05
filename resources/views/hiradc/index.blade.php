@@ -1593,10 +1593,10 @@
                         <label class="form-label">Dokumen HIRADC (PDF/Gambar)</label>
                         <div id="detailDokumenWrap"></div>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label class="form-label">Status</label>
                         <div class="detail-view-text" id="dStatus">-</div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="form-section-title">Checklist APD</div>
@@ -1621,7 +1621,7 @@
 
     <!-- ══════ MODAL BUILDER (Tambah/Edit) — input gaya spreadsheet ══════ -->
     <div id="itemModalOverlay" class="modal-overlay" onclick="closeItemModalOutside(event)">
-        <div class="modal-box form-modal-box" style="max-width:700px;width:90vw;max-height:90vh;overflow:auto;"
+        <div class="modal-box form-modal-box" style="max-width:1100px;width:92vw;max-height:90vh;overflow:auto;"
             onclick="event.stopPropagation()">
 
             <div style="margin-bottom:14px;">
@@ -2275,7 +2275,7 @@
             ${escapeHtml(pickerLabel(type, item))}
             <button type="button" onclick="pickerRemove('${type}', ${item.id})">✕</button>
         </span>
-    `).join('');
+        `).join('');
         }
 
         function renderDropdown(type, keyword = '') {
@@ -2456,11 +2456,7 @@
                             </svg>
                             Detail
                         </button>
-                    `;
-
-                    if (row.status === 'draft') {
-                        actionButtons += `
-                            <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">
+                          <button class="btn-row-action" onclick="openBuilderModal(${row.id})" title="Edit">
                                 <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
@@ -2472,17 +2468,7 @@
                                 </svg>
                                 Hapus
                             </button>
-                        `;
-                    } else if (row.status === 'diperiksa') {
-                        actionButtons += `
-                            <button class="btn-row-action" style="color:#16a34a" onclick="confirmAction(${row.id}, 'sahkan')" title="Sahkan">
-                                <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Sahkan
-                            </button>
-                        `;
-                    }
+                    `;
 
                     const apdBadge = (row.apd_list && row.apd_list.length) ?
                         `<span title="${row.apd_list.map(a => escapeHtml(a.kode_apd)).join(', ')}">${row.apd_list.length} item</span>` :
@@ -2599,7 +2585,7 @@
             if (doc.status === 'disahkan') statusLabel = 'Disahkan';
             else if (doc.status === 'diperiksa') statusLabel = 'Diperiksa';
             else if (doc.status === 'draft') statusLabel = 'Draft';
-            document.getElementById('dStatus').textContent = statusLabel;
+            // document.getElementById('dStatus').textContent = statusLabel;
 
             const apdWrap = document.getElementById('detailApdTags');
             apdWrap.innerHTML = (doc.apd_list || []).length ?
@@ -2634,21 +2620,11 @@
                     resetKodeOkPicker(doc.kode_ok || null);
                     resetPicker('apd');
                     pickerSetSelected('apd', doc.apd_ids || []);
+                    renderExistingDokumen(doc); // ← TAMBAHKAN INI
                 } catch (e) {
                     showToast(e.message || 'Gagal memuat data.', 'error');
                     return;
                 }
-            } else {
-                document.getElementById('itemModalTitle').textContent = 'Tambah Dokumen HIRADC';
-                fillHeaderForm({});
-                document.getElementById('dokumenExistingWrap').innerHTML = '';
-                document.getElementById('dokumenPreviewWrap').innerHTML = '';
-                document.getElementById('fDokumen').value = '';
-                resetKodeOkPicker(null);
-                resetPicker('apd');
-                renderExistingDokumen({
-                    dokumen_url: null
-                });
             }
             document.getElementById('itemModalOverlay').classList.add('open');
         }
@@ -3008,9 +2984,10 @@
         <a href="${url}" target="_blank" style="font-size:12px;color:#2D4B9E;">
             📄 ${escapeHtml(file.name)} — buka di tab baru ↗
         </a>
-    `;
+      `;
         }
 
+        // ── Tampilkan dokumen yang sudah tersimpan saat modal Edit dibuka ──
         // ── Tampilkan dokumen yang sudah tersimpan saat modal Edit dibuka ──
         function renderExistingDokumen(doc) {
             const wrap = document.getElementById('dokumenExistingWrap');
@@ -3021,11 +2998,28 @@
                 wrap.innerHTML = '';
                 return;
             }
+
+            let previewHtml = '';
+            if (doc.dokumen_ext === 'pdf') {
+                previewHtml = `
+            <iframe src="${doc.dokumen_url}" style="width:100%;height:300px;border:1px solid #E2E8F0;border-radius:8px;"></iframe>
+        `;
+            } else if (['jpg', 'jpeg', 'png'].includes(doc.dokumen_ext)) {
+                previewHtml = `
+            <a href="${doc.dokumen_url}" target="_blank">
+                <img src="${doc.dokumen_url}" style="max-width:100%;max-height:300px;border-radius:8px;border:1px solid #E2E8F0;" />
+            </a>
+        `;
+            }
+
             wrap.innerHTML = `
-        <a href="${doc.dokumen_url}" target="_blank" style="color:#2D4B9E;">
-            📄 ${escapeHtml(doc.dokumen_nama || 'Lihat dokumen saat ini')} — buka di tab baru ↗
-        </a>
-        <span style="color:#94A3B8;"> (pilih file baru untuk mengganti)</span>
+        ${previewHtml}
+        <div style="margin-top:6px;">
+            <a href="${doc.dokumen_url}" target="_blank" style="color:#2D4B9E;">
+                📄 ${escapeHtml(doc.dokumen_nama || 'Lihat dokumen saat ini')} — buka di tab baru ↗
+            </a>
+            <span style="color:#94A3B8;"> (pilih file baru untuk mengganti)</span>
+        </div>
     `;
         }
 
