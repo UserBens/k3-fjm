@@ -257,39 +257,67 @@ class DashboardKpiK3Controller extends Controller
 
     private function daftarPersonil(array $filters): Collection
     {
-        $mulai = $filters['periode_mulai']->toDateString();
-        $selesai = $filters['periode_selesai']->toDateString();
         $tim = $filters['tim'];
-        $area = $filters['area'];
-
         $out = collect();
 
-        $ambil = function (string $table, string $badgeCol, string $namaCol, string $timLabel) use (&$out, $mulai, $selesai, $area) {
-            $q = DB::table($table)
-                ->select($badgeCol . ' as badge', $namaCol . ' as nama')
-                ->whereNotNull($badgeCol)
-                ->where($badgeCol, '!=', '')
-                ->whereBetween('tanggal_pelaksanaan', [$mulai, $selesai])
-                ->distinct();
-
-            if ($area && strtoupper($area) !== 'SEMUA') {
-                $q->where('area_kerja', $area);
-            }
-
-            foreach ($q->get() as $row) {
-                $key = "{$timLabel}|{$row->badge}|{$row->nama}";
-                $out->put($key, ['key' => $key, 'badge' => $row->badge, 'nama' => $row->nama, 'tim' => $timLabel]);
-            }
-        };
-
+        // ── 1. TIM SAFETY (Master Table: safety_officers) ──
         if (!$tim || $tim === 'SEMUA' || $tim === 'SAFETY') {
-            $ambil('data_safety', 'badge_tenaga', 'nama_tenaga', 'SAFETY');
+            $safetyOfficers = \App\Models\SafetyOfficer::with('pegawai')
+                ->where('is_active', true)
+                ->get();
+
+            foreach ($safetyOfficers as $so) {
+                $nama = $so->pegawai ? $so->pegawai->nama : 'Tanpa Nama';
+                $badge = $so->badge;
+
+                if ($badge) {
+                    $key = "SAFETY|{$badge}|{$nama}";
+                    $out->put($key, [
+                        'key' => $key,
+                        'badge' => $badge,
+                        'nama' => $nama,
+                        'tim' => 'SAFETY',
+                    ]);
+                }
+            }
         }
-        if (!$tim || $tim === 'SEMUA' || $tim === 'MEDIS') {
-            $ambil('datamedis', 'badge_tenaga', 'nama_tenaga', 'MEDIS');
-        }
+
+        // ── 2. TIM PENGAWAS (Meniru Logic Subquery LaporanCapaianKpiController) ──
         if (!$tim || $tim === 'SEMUA' || $tim === 'PENGAWAS') {
-            $ambil('pelaporan_pengawas', 'badge_pengawas', 'nama_pengawas', 'PENGAWAS');
+            $pengawasList = \App\Models\Pegawai::where('is_active', true)
+                ->whereIn('badge', function ($q) {
+                    $q->select('username')
+                        ->from('pengawas_intra_users')
+                        ->whereNotNull('username')
+                        ->whereIn('id_api', function ($q2) {
+                            $q2->select('pengguna_id')
+                                ->from('pengawas_pekerjaans')
+                                ->whereNotNull('pengguna_id');
+                        });
+                })
+                ->orderBy('nama')
+                ->get();
+
+            foreach ($pengawasList as $p) {
+                $key = "PENGAWAS|{$p->badge}|{$p->nama}";
+                $out->put($key, [
+                    'key' => $key,
+                    'badge' => $p->badge,
+                    'nama' => $p->nama,
+                    'tim' => 'PENGAWAS',
+                ]);
+            }
+        }
+
+        // ── 3. TIM MEDIS (Hardcode 1 Personil Utama) ──
+        if (!$tim || $tim === 'SEMUA' || $tim === 'MEDIS') {
+            $keyMedis = "MEDIS|K.250455|MUHAMMAD HAFIZ MAULANA";
+            $out->put($keyMedis, [
+                'key' => $keyMedis,
+                'badge' => 'K.250455',
+                'nama' => 'MUHAMMAD HAFIZ MAULANA',
+                'tim' => 'MEDIS',
+            ]);
         }
 
         return $out->values()->sortBy('nama')->values();
@@ -310,39 +338,34 @@ class DashboardKpiK3Controller extends Controller
 
     private function aktivitasDitugaskan(array $personil): Collection
     {
-        $tim = strtolower($personil['tim']); // safety | medis | pengawas
-        $timKolom = $tim === 'medis' ? 'medis' : ($tim === 'pengawas' ? 'pengawas' : 'safety');
+        $tim = strtolower($personil['tim']);
 
-        $semuaAktivitasTim = AktivitasKpiK3::aktif()->where($timKolom, true)->orderBy('kode')->get();
+        // ── SAFETY: Ambil dari relasi pivot (aktivitasKpi) milik SafetyOfficer ──
+        if ($tim === 'safety') {
+            $so = \App\Models\SafetyOfficer::with(['aktivitasKpi' => function ($q) {
+                $q->where('status', 'AKTIF');
+            }])->where('badge', $personil['badge'])->first();
 
-        $tabel = match ($personil['tim']) {
-            'SAFETY' => ['data_safety', 'badge_tenaga', 'jenis_aktifitas_kpi'],
-            'MEDIS' => ['datamedis', 'badge_tenaga', 'jenis_aktifitas_kpi'],
-            default => ['pelaporan_pengawas', 'badge_pengawas', null],
-        };
-
-        if ($personil['tim'] === 'PENGAWAS') {
-            // Pelaporan Pengawas relasi ke aktivitas via FK aktivitas_kpi_k3_id, bukan string nama.
-            $idAktivitasPernahDilaporkan = DB::table('pelaporan_pengawas')
-                ->where('badge_pengawas', $personil['badge'])
-                ->distinct()
-                ->pluck('aktivitas_kpi_k3_id');
-
-            return $semuaAktivitasTim->whereIn('id', $idAktivitasPernahDilaporkan)->values();
+            return $so ? $so->aktivitasKpi : collect();
         }
 
-        [$table, $badgeCol, $namaKol] = $tabel;
-        $namaAktivitasPernahDilaporkan = DB::table($table)
-            ->where($badgeCol, $personil['badge'])
-            ->whereNotNull($namaKol)
-            ->distinct()
-            ->pluck($namaKol)
-            ->map(fn($n) => strtolower(trim($n)))
-            ->all();
+        // ── PENGAWAS: Ambil semua Aktivitas KPI Aktif untuk Tim Pengawas ──
+        if ($tim === 'pengawas') {
+            return AktivitasKpiK3::aktif()
+                ->where('pengawas', true)
+                ->orderBy('kode')
+                ->get();
+        }
 
-        return $semuaAktivitasTim
-            ->filter(fn(AktivitasKpiK3 $a) => in_array(strtolower(trim($a->nama_aktivitas)), $namaAktivitasPernahDilaporkan))
-            ->values();
+        // ── MEDIS: Ambil semua Aktivitas KPI Aktif untuk Tim Medis ──
+        if ($tim === 'medis') {
+            return AktivitasKpiK3::aktif()
+                ->where('medis', true)
+                ->orderBy('kode')
+                ->get();
+        }
+
+        return collect();
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -375,7 +398,11 @@ class DashboardKpiK3Controller extends Controller
             if ($personil['tim'] === 'PENGAWAS') {
                 $q->where('aktivitas_kpi_k3_id', $aktivitas->id);
             } else {
-                $q->whereRaw('LOWER(TRIM(' . $kolomAktivitas . ')) = ?', [strtolower(trim($aktivitas->nama_aktivitas))]);
+                // Memeriksa apakah kolom menyimpan KODE (C.2) atau NAMA AKTIVITAS (Laporan Temuan UA/UC)
+                $q->where(function ($sub) use ($kolomAktivitas, $aktivitas) {
+                    $sub->whereRaw('LOWER(TRIM(' . $kolomAktivitas . ')) = ?', [strtolower(trim($aktivitas->kode))])
+                        ->orWhereRaw('LOWER(TRIM(' . $kolomAktivitas . ')) = ?', [strtolower(trim($aktivitas->nama_aktivitas))]);
+                });
             }
 
             $rows = $q->get();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
+use App\Models\SafetyOfficer;
 use App\Models\SafetyOfficerPegawai;
 use App\Models\UnitKerja;
 use Illuminate\Http\JsonResponse;
@@ -181,9 +182,23 @@ class SafetyOfficerController extends Controller
                 return response()->json(['message' => 'Pegawai ini sudah berstatus Safety Officer.'], 422);
             }
 
+            if (empty($pegawai->badge)) {
+                return response()->json(['message' => 'Pegawai ini belum memiliki badge, tidak bisa dijadikan Safety Officer.'], 422);
+            }
+
             $pegawai->is_safety_officer = true;
             $pegawai->safety_officer_since = now();
             $pegawai->save();
+
+            // ✅ Sinkronkan ke tabel safety_officers (buat baru kalau belum ada, aktifkan kalau sudah pernah ada)
+            SafetyOfficer::updateOrCreate(
+                ['badge' => $pegawai->badge],
+                [
+                    'assigned_at' => now(),
+                    'assigned_by' => session('auth_user.username') ?? 'system:manual',
+                    'is_active'   => true,
+                ]
+            );
 
             return response()->json([
                 'status' => 'success',
@@ -210,6 +225,9 @@ class SafetyOfficerController extends Controller
             $pegawai->is_safety_officer = false;
             $pegawai->safety_officer_since = null;
             $pegawai->save();
+
+            // ✅ Nonaktifkan (bukan hapus) baris di safety_officers
+            SafetyOfficer::where('badge', $badge)->update(['is_active' => false]);
 
             return response()->json([
                 'status' => 'success',
