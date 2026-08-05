@@ -27,7 +27,7 @@ class PengaturanKpiK3Seeder extends Seeder
 
                 // 2 · KETEPATAN WAKTU
                 'batas_terlambat_lapor' => 7,
-                'batas_lapor_lebih_awal' => 1,
+                'batas_lapor_lebih_awal' => 0,
 
                 // 3 · BOBOT PENILAIAN
                 'porsi_capaian_aktivitas' => 90,

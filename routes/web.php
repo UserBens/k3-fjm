@@ -118,7 +118,10 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::put('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'update'])->name('update');
             Route::delete('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'destroy'])->name('destroy');
         });
-
+        Route::get('kpi-k3/matriks/safety-officers', [KpiK3MatriksController::class, 'safetyOfficerOptions'])
+            ->name('kpi-k3.matriks.safety-officers');
+        Route::get('kpi-k3/matriks/rekap-safety-officer', [KpiK3MatriksController::class, 'rekapSafetyOfficer'])
+            ->name('kpi-k3.matriks.rekap-so');
         Route::put('kpi-k3/pengaturan', [KpiK3MatriksController::class, 'updatePengaturan'])->name('kpi-k3.pengaturan.update');
 
         // MONITORING LAPORAN (Medis, Safety, Pengawas)

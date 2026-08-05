@@ -63,4 +63,17 @@ class AktivitasKpiK3 extends Model
             default => '-',
         };
     }
+
+    // AktivitasKpiK3.php
+    public function safetyOfficers()
+    {
+        return $this->belongsToMany(
+            SafetyOfficer::class,
+            'aktivitas_kpi_k3_safety_officer',
+            'aktivitas_kpi_k3_id',
+            'badge_safety_officer',
+            'id',
+            'badge'
+        )->withTimestamps();
+    }
 }

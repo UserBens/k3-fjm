@@ -1230,6 +1230,94 @@
             margin-top: 4px;
             display: block;
         }
+
+        .rekap-check {
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .rekap-check.yes {
+            color: #1A7A3C;
+        }
+
+        .rekap-check.no {
+            color: #cbd5e1;
+        }
+
+        .rekap-total-col {
+            background: #f8fafc;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        #soAssignmentList label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 4px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+        }
+
+        #soAssignmentList label:last-child {
+            border-bottom: none;
+        }
+
+        #soAssignmentList label:hover {
+            background: #f8fafc;
+        }
+
+        #soAssignmentList input[type="checkbox"] {
+            width: 15px !important;
+            height: 15px;
+            flex-shrink: 0;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        #soAssignmentList span {
+            font-size: 12.5px;
+            color: #1e293b;
+        }
+
+        #soAssignmentList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2px 16px;
+        }
+
+        #soAssignmentList label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 4px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+        }
+
+        #soAssignmentList label:hover {
+            background: #f8fafc;
+        }
+
+        #soAssignmentList input[type="checkbox"] {
+            width: 15px !important;
+            height: 15px;
+            flex-shrink: 0;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        #soAssignmentList .so-name {
+            font-size: 12.5px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        #soAssignmentList .so-badge {
+            font-size: 10.5px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -1507,12 +1595,43 @@
                     </table>
                 </div>
             </div>
+
+            <!-- ══════ REKAP PENUGASAN SAFETY OFFICER ══════ -->
+            <div class="section-card" style="margin-bottom:14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer;"
+                    onclick="toggleRekapSoPanel()">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <svg style="width:16px;height:16px;color:#2563eb;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-8 0" />
+                        </svg>
+                        <span style="font-size:14px;font-weight:700;color:#1e293b;">Rekap Penugasan Safety
+                            Officer</span>
+                    </div>
+                    <svg id="rekapSoChevron" style="width:16px;height:16px;color:#64748b;transition:transform .2s;"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+
+                <div id="rekapSoBody" style="display:none;">
+                    <div class="data-summary" id="rekapSoSummary">Memuat rekap...</div>
+                    <div class="rtable-wrap">
+                        <table class="rtable" id="rekapSoTable">
+                            <thead id="rekapSoHead"></thead>
+                            <tbody id="rekapSoBodyTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ══════ MODAL TAMBAH / EDIT AKTIVITAS ══════ -->
     <div class="modal-overlay" id="aktivitasModalOverlay" onclick="closeAktivitasModalOutside(event)">
-        <div class="modal-box" style="width:640px;max-width:95%;padding:24px;" onclick="event.stopPropagation()">
+        <div class="modal-box form-modal-box"
+            style="max-width:1100px;width:92vw;max-height:90vh;overflow:auto; onclick="event.stopPropagation()">
 
             <div class="detail-modal-header"
                 style="border-bottom:1px solid #e2e8f0;padding-bottom:14px;margin-bottom:16px;">
@@ -1591,7 +1710,7 @@
                         </select>
                     </div>
 
-                    <div class="detail-field" style="grid-column:span 3;">
+                    <div class="detail-field" style="grid-column: 1 / -1;">
                         <label>Tim Terkait</label>
                         <div style="display:flex;gap:18px;margin-top:4px;">
                             <label
@@ -1609,6 +1728,18 @@
                         </div>
                         <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Bobot % akan otomatis dihitung ulang
                             berdasarkan total skor tim yang dipilih.</div>
+                    </div>
+
+                    <div class="detail-field" id="soAssignmentSection" style="grid-column: 1 / -1; display:none;">
+                        <label>Pilih Safety Officer yang mendapatkan aktivitas ini</label>
+                        <div id="soAssignmentList"
+                            style="border:1px solid #e2e8f0;border-radius:6px;padding:10px;max-height:260px;overflow-y:auto;">
+
+                            <div style="color:#94a3b8;font-size:12px;">Memuat daftar safety officer...</div>
+                        </div>
+                        <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
+                            Skor tugas & bobot % dihitung otomatis dari skor aktivitas ini dan total skor tim Safety.
+                        </div>
                     </div>
                 </div>
 
@@ -1756,6 +1887,8 @@
         const STORE_ENDPOINT = "{{ route('kpi-k3.matriks.store') }}";
         const UPDATE_ENDPOINT_BASE = "{{ url('kpi-k3/matriks') }}";
         const PENGATURAN_ENDPOINT = "{{ route('kpi-k3.pengaturan.update') }}";
+        const SO_OPTIONS_ENDPOINT = "{{ route('kpi-k3.matriks.safety-officers') }}";
+        const REKAP_SO_ENDPOINT = "{{ route('kpi-k3.matriks.rekap-so') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1765,6 +1898,8 @@
         };
         let searchDebounce = null;
         let latestSummary = null;
+        let cachedSafetyOfficers = null;
+        let rekapSoLoaded = false;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1997,6 +2132,11 @@
             }
 
             updatePreviewSkor();
+
+            toggleSoAssignmentSection();
+            renderSoAssignmentList(row?.safety_officers || []);
+
+            updatePreviewSkor();
             document.getElementById('aktivitasModalOverlay').classList.add('open');
         }
 
@@ -2027,6 +2167,7 @@
                 pengawas: document.getElementById('aPengawas').checked,
                 medis: document.getElementById('aMedis').checked,
                 status: document.getElementById('aStatus').value,
+                safety_officer_badges: collectSafetyOfficerPayload(),
             };
 
             const url = id ? `${UPDATE_ENDPOINT_BASE}/${id}` : STORE_ENDPOINT;
@@ -2155,6 +2296,119 @@
                 showToast(e.message || 'Terjadi kesalahan', 'error');
             }
             return false;
+        }
+
+        async function loadSafetyOfficerOptions() {
+            if (cachedSafetyOfficers) return cachedSafetyOfficers;
+            const res = await fetch(SO_OPTIONS_ENDPOINT, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            cachedSafetyOfficers = await res.json();
+            return cachedSafetyOfficers;
+        }
+
+        function toggleSoAssignmentSection() {
+            document.getElementById('soAssignmentSection').style.display =
+                document.getElementById('aSafety').checked ? 'block' : 'none';
+        }
+        document.getElementById('aSafety').addEventListener('change', toggleSoAssignmentSection);
+
+        async function renderSoAssignmentList(assigned = []) {
+            const options = await loadSafetyOfficerOptions();
+            const assignedBadges = new Set(assigned.map(a => a.badge));
+            const list = document.getElementById('soAssignmentList');
+
+            if (!options.length) {
+                list.innerHTML =
+                    '<div style="color:#94a3b8;font-size:12px;grid-column:1/-1;">Belum ada safety officer aktif.</div>';
+                return;
+            }
+
+            list.innerHTML = options.map(so => `
+                <label>
+                    <input type="checkbox" class="so-check" value="${so.badge}" ${assignedBadges.has(so.badge) ? 'checked' : ''}>
+                    <span>
+                        <span class="so-name">${escapeHtml(so.nama)}</span><br>
+                        <span class="so-badge">${escapeHtml(so.badge)}</span>
+                    </span>
+                </label>
+            `).join('');
+        }
+
+        function collectSafetyOfficerPayload() {
+            return Array.from(document.querySelectorAll('#soAssignmentList .so-check:checked')).map(chk => chk.value);
+        }
+
+        function toggleRekapSoPanel() {
+            const body = document.getElementById('rekapSoBody');
+            const chevron = document.getElementById('rekapSoChevron');
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'block' : 'none';
+            chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+            if (isHidden && !rekapSoLoaded) {
+                loadRekapSafetyOfficer();
+                rekapSoLoaded = true;
+            }
+        }
+
+        async function loadRekapSafetyOfficer() {
+            try {
+                const res = await fetch(REKAP_SO_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!res.ok) throw new Error('Gagal mengambil rekap');
+                const json = await res.json();
+                renderRekapSoTable(json);
+            } catch (e) {
+                document.getElementById('rekapSoBodyTable').innerHTML =
+                    `<tr><td colspan="99" style="text-align:center;color:red;">Error memuat rekap</td></tr>`;
+            }
+        }
+
+        function renderRekapSoTable(json) {
+            const {
+                aktivitas,
+                officers,
+                total_skor_tim
+            } = json;
+
+            document.getElementById('rekapSoSummary').innerHTML =
+                `<strong>${officers.length}</strong> safety officer aktif · Total skor tim: <strong>${total_skor_tim}</strong>`;
+
+            // Header: Nama + kolom per aktivitas + kolom total
+            const head = document.getElementById('rekapSoHead');
+            head.innerHTML = `
+        <tr>
+            <th class="px-6 py-3 text-left" style="min-width:180px;">Safety Officer</th>
+            ${aktivitas.map(a => `<th class="px-6 py-3 text-center" title="${escapeHtml(a.nama)} (skor ${a.skor})" style="min-width:44px;">${escapeHtml(a.kode)}</th>`).join('')}
+            <th class="px-6 py-3 text-center rekap-total-col">Σ Skor Tugas</th>
+            <th class="px-6 py-3 text-center rekap-total-col">Bobot Ditugaskan</th>
+            <th class="px-6 py-3 text-center rekap-total-col">Jumlah Tugas</th>
+        </tr>`;
+
+            // Body
+            const body = document.getElementById('rekapSoBodyTable');
+            if (!officers.length) {
+                body.innerHTML =
+                    `<tr><td colspan="${aktivitas.length + 4}" style="text-align:center;padding:20px;color:#64748b;">Belum ada safety officer aktif</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = officers.map(so => `
+        <tr>
+            <td>${escapeHtml(so.nama)}</td>
+            ${aktivitas.map(a => {
+                const checked = so.checklist[a.kode];
+                return `<td class="rekap-check ${checked ? 'yes' : 'no'}">${checked ? '✓' : '–'}</td>`;
+            }).join('')}
+            <td class="rekap-total-col" style="color:#2563eb;">${so.skor_tugas}</td>
+            <td class="rekap-total-col">${so.bobot_ditugaskan}%</td>
+            <td class="rekap-total-col">${so.jumlah_tugas}</td>
+        </tr>`).join('');
         }
 
         document.addEventListener('DOMContentLoaded', loadData);

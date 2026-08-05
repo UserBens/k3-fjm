@@ -8,6 +8,7 @@ use App\Models\LokasiKerja;
 use App\Models\Pegawai;
 use App\Models\PengawasIntraUser;
 use App\Models\PengawasPekerjaan;
+use App\Models\SafetyOfficer;
 use App\Models\Subkon;
 use App\Models\UnitKerja;
 use Carbon\Carbon;
@@ -437,9 +438,6 @@ class SyncPegawaiCommand extends Command
         $this->info('Menetapkan status Safety Officer berdasarkan daftar badge (mode tambah saja, tidak mereset)...');
 
         try {
-            // BARU — TIDAK ADA LAGI reset ke false di sini.
-            // Penghapusan status SO sekarang murni dikelola manual lewat halaman Manajemen Safety Officer.
-
             $existing = Pegawai::where('is_safety_officer', true)->pluck('badge')->all();
             $toActivate = array_diff($this->safetyOfficerBadges, $existing);
 
@@ -449,6 +447,18 @@ class SyncPegawaiCommand extends Command
                     'is_safety_officer' => true,
                     'safety_officer_since' => Carbon::now(),
                 ]);
+            }
+
+            // ── BARU: masukkan juga ke tabel master safety_officers ──
+            foreach ($this->safetyOfficerBadges as $badge) {
+                SafetyOfficer::firstOrCreate(
+                    ['badge' => $badge],
+                    [
+                        'assigned_at' => Carbon::now(),
+                        'assigned_by' => 'system:sync',
+                        'is_active' => true,
+                    ]
+                );
             }
 
             $matchedBadges = Pegawai::whereIn('badge', $this->safetyOfficerBadges)->pluck('badge');

@@ -54,4 +54,9 @@ class Pegawai extends Model
         return $this->hasOne(SafetyOfficerPegawai::class, 'pegawai_id', 'id_api')
             ->latestOfMany(); // ambil assignment terbaru kalau ada lebih dari satu baris
     }
+
+    public function safetyOfficerRecord()
+    {
+        return $this->hasOne(SafetyOfficer::class, 'badge', 'badge');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AktivitasKpiK3;
 use App\Models\PengaturanKpiK3;
+use App\Models\SafetyOfficer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +22,7 @@ class KpiK3MatriksController extends Controller
      */
     public function api(Request $request)
     {
-        $query = AktivitasKpiK3::query();
+        $query = AktivitasKpiK3::with('safetyOfficers.pegawai:badge,nama');
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
@@ -49,6 +50,7 @@ class KpiK3MatriksController extends Controller
         $totalSkorMedis    = AktivitasKpiK3::aktif()->where('medis', true)->sum('skor');
 
         $data = $rows->map(function (AktivitasKpiK3 $row) use ($totalSkorSafety, $totalSkorPengawas, $totalSkorMedis) {
+
             $aktif = $row->status === 'AKTIF';
 
             return [
@@ -76,6 +78,11 @@ class KpiK3MatriksController extends Controller
                     ? round($row->skor / $totalSkorPengawas * 100, 1) : 0,
                 'bobot_medis'       => ($aktif && $row->medis && $totalSkorMedis > 0)
                     ? round($row->skor / $totalSkorMedis * 100, 1) : 0,
+
+                'safety_officers' => $row->safetyOfficers->map(fn($so) => [
+                    'badge' => $so->badge,
+                    'nama'  => $so->pegawai->nama ?? $so->badge,
+                ])->values(),
             ];
         });
 
@@ -97,23 +104,33 @@ class KpiK3MatriksController extends Controller
     {
         $validated = $this->validateAktivitas($request);
         $row = AktivitasKpiK3::create($validated);
+        $this->syncSafetyOfficers($row, $request->input('safety_officer_badges', []));
 
         return response()->json([
             'message' => "Aktivitas {$row->kode} berhasil ditambahkan.",
-            'data' => $row,
+            'data' => $row->load('safetyOfficers.pegawai'),
         ]);
     }
 
-    /** Update aktivitas (dari modal Edit). */
     public function update(Request $request, AktivitasKpiK3 $aktivitasKpiK3)
     {
         $validated = $this->validateAktivitas($request, $aktivitasKpiK3->id);
         $aktivitasKpiK3->update($validated);
+        $this->syncSafetyOfficers($aktivitasKpiK3, $request->input('safety_officer_badges', []));
 
         return response()->json([
             'message' => "Aktivitas {$aktivitasKpiK3->kode} berhasil diperbarui.",
-            'data' => $aktivitasKpiK3,
+            'data' => $aktivitasKpiK3->load('safetyOfficers.pegawai'),
         ]);
+    }
+
+    private function syncSafetyOfficers(AktivitasKpiK3 $row, array $badges): void
+    {
+        if (! $row->safety) {
+            $row->safetyOfficers()->sync([]);
+            return;
+        }
+        $row->safetyOfficers()->sync($badges);
     }
 
     /** Hapus aktivitas. */
@@ -181,8 +198,63 @@ class KpiK3MatriksController extends Controller
             'pengawas' => 'required|boolean',
             'medis' => 'required|boolean',
             'status' => 'required|in:AKTIF,NONAKTIF',
+            'safety_officer_badges'   => 'nullable|array',
+            'safety_officer_badges.*' => 'string|exists:safety_officers,badge',
         ]);
 
         return $validator->validate();
+    }
+
+    public function safetyOfficerOptions()
+    {
+        $officers = SafetyOfficer::where('is_active', true)
+            ->with('pegawai:badge,nama')
+            ->get()
+            ->map(fn($so) => [
+                'badge' => $so->badge,
+                'nama'  => $so->pegawai->nama ?? $so->badge,
+            ])
+            ->values();
+
+        return response()->json($officers);
+    }
+
+    public function rekapSafetyOfficer()
+    {
+        $aktivitasList = AktivitasKpiK3::aktif()->where('safety', true)->orderBy('kode')->get();
+        $totalSkorTim  = $aktivitasList->sum('skor');
+
+        $officers = SafetyOfficer::where('is_active', true)
+            ->with([
+                'pegawai:badge,nama',
+                'aktivitasKpi' => fn($q) => $q->where('status', 'AKTIF')->where('safety', true),
+            ])
+            ->get();
+
+        $data = $officers->map(function (SafetyOfficer $so) use ($aktivitasList, $totalSkorTim) {
+            $assignedIds = $so->aktivitasKpi->pluck('id')->all();
+            $skorTugas   = $so->aktivitasKpi->sum('skor');
+
+            return [
+                'badge'            => $so->badge,
+                'nama'             => $so->pegawai->nama ?? $so->badge,
+                'checklist'        => $aktivitasList->mapWithKeys(
+                    fn($a) => [$a->kode => in_array($a->id, $assignedIds)]
+                ),
+                'skor_tugas'       => $skorTugas,
+                'bobot_ditugaskan' => $totalSkorTim > 0 ? round($skorTugas / $totalSkorTim * 100, 1) : 0,
+                'jumlah_tugas'     => count($assignedIds),
+            ];
+        })->sortByDesc('skor_tugas')->values();
+
+        return response()->json([
+            'aktivitas'      => $aktivitasList->map(fn($a) => [
+                'kode' => $a->kode,
+                'nama' => $a->nama_aktivitas,
+                'skor' => $a->skor,
+            ]),
+            'officers'       => $data,
+            'total_skor_tim' => $totalSkorTim,
+        ]);
     }
 }
