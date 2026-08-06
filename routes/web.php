@@ -235,14 +235,16 @@ Route::middleware(['auth.custom'])->group(function () {
 
     // KPI
     // DASHBOARD KPI
-    Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])
-        ->name('dashboard-kpi-k3.index');
-    Route::get('/api/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'api'])
-        ->name('dashboard-kpi-k3.api');
+    Route::middleware(['role.custom:safety,pengawas,medis,super_admin'])
+        ->group(function () {
+            Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])->name('dashboard-kpi-k3.index');
+            Route::get('/dashboard-kpi-k3/api', [DashboardKpiK3Controller::class, 'api'])->name('dashboard-kpi-k3.api');
+        });
 
     // LAPORAN KPI
     Route::get('/laporan-capaian-kpi', [LaporanCapaianKpiController::class, 'index'])->name('laporan-capaian-kpi.index');
     Route::get('/laporan-capaian-kpi/api', [LaporanCapaianKpiController::class, 'api'])->name('laporan-capaian-kpi.api');
+    Route::get('/laporan-capaian-kpi/export', [LaporanCapaianKpiController::class, 'export'])->name('laporan-capaian-kpi.export');
 
     // HALAMAN MANAJEMEN MASTER JADWAL SHIFT
     Route::get('master-jadwal-shift', [MasterJadwalShiftController::class, 'index'])

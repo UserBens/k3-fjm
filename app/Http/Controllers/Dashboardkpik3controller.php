@@ -48,7 +48,18 @@ class DashboardKpiK3Controller extends Controller
 {
     public function index()
     {
-        return view('dashboard-kpi.index');
+        $userRole = session('auth_user.role');
+        $username = session('auth_user.username'); // sesuaikan key session hasil login kamu
+
+        // super_admin tetap bebas lihat semua tim & personil
+        $lockedTim = in_array($userRole, ['safety', 'pengawas', 'medis'], true)
+            ? strtoupper($userRole)
+            : null;
+
+        return view('dashboard-kpi.index', [
+            'lockedTim'   => $lockedTim,
+            'lockedBadge' => $lockedTim ? $username : null,
+        ]);
     }
 
     /**
@@ -60,13 +71,22 @@ class DashboardKpiK3Controller extends Controller
     {
         try {
             $pengaturan = PengaturanKpiK3::current();
+            $userRole   = session('auth_user.role');
+            $username   = session('auth_user.username');
+            $isTerbatas = in_array($userRole, ['safety', 'pengawas', 'medis'], true);
 
             $tahun = (int) $request->query('tahun', $pengaturan->tahun_aktif);
             $bulan = (int) $request->query('bulan', $pengaturan->bulan_aktif);
-            $tim = strtoupper((string) $request->query('tim', 'SEMUA'));   // SEMUA | SAFETY | PENGAWAS | MEDIS
-            $area = (string) $request->query('area', 'SEMUA');
+            $tim   = strtoupper((string) $request->query('tim', 'SEMUA'));
+            $area  = (string) $request->query('area', 'SEMUA');
             $tampilkanRupiah = filter_var($request->query('tampilkan_rupiah', true), FILTER_VALIDATE_BOOLEAN);
-            $personilKey = $request->query('personil'); // format: "{tim}|{badge}|{nama}"
+            $personilKey = $request->query('personil');
+
+            // 🔒 Non-admin: abaikan tim/personil dari request, paksa ke milik sendiri
+            if ($isTerbatas) {
+                $tim = strtoupper($userRole);
+                $personilKey = null; // dihitung ulang di bawah, jangan andalkan input user
+            }
 
             [$periodeMulai, $periodeSelesai] = $this->hitungRentangPeriode($pengaturan, $tahun, $bulan);
 
@@ -81,6 +101,13 @@ class DashboardKpiK3Controller extends Controller
 
             $daftarPersonil = $this->daftarPersonil($filters);
 
+            // 🔒 Non-admin: potong daftar personil supaya cuma berisi dirinya sendiri
+            if ($isTerbatas) {
+                $daftarPersonil = $daftarPersonil
+                    ->filter(fn($p) => $p['badge'] === $username)
+                    ->values();
+            }
+
             $personilTerpilih = null;
             if ($personilKey) {
                 $personilTerpilih = $daftarPersonil->firstWhere('key', $personilKey) ?? $daftarPersonil->first();
@@ -88,7 +115,7 @@ class DashboardKpiK3Controller extends Controller
                 $personilTerpilih = $daftarPersonil->first();
             }
 
-            $filters['personil_terpilih'] = $personilTerpilih;   // ⬅️ tambahkan baris ini
+            $filters['personil_terpilih'] = $personilTerpilih;
 
             $monitoring = null;
             $rincianAktivitas = [];
@@ -121,6 +148,7 @@ class DashboardKpiK3Controller extends Controller
                 'monitoring_personil' => $monitoring,
                 'rincian_aktivitas' => $rincianAktivitas,
                 'area_options' => $this->areaOptions(),
+                'locked' => $isTerbatas, // ⬅️ beri tahu frontend bahwa ini mode terkunci
             ]);
         } catch (\Throwable $e) {
             Log::error('Gagal memuat data Dashboard KPI K3: ' . $e->getMessage());

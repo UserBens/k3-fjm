@@ -524,6 +524,51 @@
             display: inline-block;
             animation: pulse 2s infinite;
         }
+
+        .btn-outline {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #2D4B9E;
+            background: #fff;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+            display: inline-flex;
+            /* Mengubah tombol menjadi container flex */
+            align-items: center;
+            /* Menyejajarkan ikon dan teks tepat di tengah secara vertikal */
+            justify-content: center;
+            /* Mengatur posisi konten di tengah secara horizontal */
+            gap: 8px;
+            /* Memberikan jarak yang rapi antara ikon dan teks */
+        }
+
+        .btn-outline:hover {
+            background: #F0F4FF;
+        }
+
+        .btn-primary {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fff;
+            background: #2D4B9E;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: #1A3C8A;
+        }
     </style>
 </head>
 
@@ -548,6 +593,16 @@
                         <div class="pg-title">lAPORAN CAPAIAN KPI <span>K3</span></div>
                         <div class="pg-sub">Keselamatan &amp; Kesehatan Kerja — Departemen K3 &amp; Operasional.</div>
                     </div>
+                    {{-- <div class="pg-actions" style="display:flex; gap:8px;">
+                        <button class="btn-outline" onclick="exportExcel()">
+                            <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                            </svg>
+                            Export Data
+                        </button>
+                    </div> --}}
                 </div>
             </div>
 
@@ -558,6 +613,7 @@
                         <label>Tahun</label>
                         <select id="fTahun"></select>
                     </div>
+
                     <div class="saklar-field">
                         <label>Bulan</label>
                         <select id="fBulan">
@@ -575,12 +631,28 @@
                             <option value="12">Desember</option>
                         </select>
                     </div>
-                    <div class="saklar-field flex items-end">
+
+                    <!-- Kolom Aksi (Terapkan & Export Data) digabung menggunakan Flexbox -->
+                    <div class="saklar-field flex items-end" style="display:flex; gap:8px;">
                         <button id="btnTerapkan" type="button"
                             style="width:100%;height:34px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;">
                             Terapkan
                         </button>
+
+                        <!-- Tombol Export Data -->
+                        <div class="pg-actions" style="display:flex;">
+                            <button class="btn-outline" onclick="exportExcel()"
+                                style="height:34px; display:flex; align-items:center; gap:6px; padding:0 12px; border-radius:8px; border:1px solid #ccc; background:#fff; cursor:pointer; white-space:nowrap; font-size:11.5px; font-weight:600;">
+                                <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                                </svg>
+                                Export Data
+                            </button>
+                        </div>
                     </div>
+
                 </div>
                 <div class="periode-aktif-line" id="periodeAktifLine">Memuat periode aktif…</div>
             </div>
@@ -680,6 +752,7 @@
 
     <script>
         const API_URL = "{{ route('laporan-capaian-kpi.api') }}";
+        const EXPORT_URL = "{{ route('laporan-capaian-kpi.export') }}";
         const fmtRp = (n) => n === null || n === undefined || n === 0 ? '-' : 'Rp ' + Number(n).toLocaleString('id-ID');
         const fmtPct = (n) => n === null || n === undefined ? '-' : Number(n).toLocaleString('id-ID', {
             minimumFractionDigits: 1,
@@ -703,6 +776,14 @@
                 el.appendChild(opt);
             }
             el.value = current;
+        }
+
+        function exportExcel() {
+            const params = new URLSearchParams({
+                tahun: document.getElementById('fTahun').value,
+                bulan: document.getElementById('fBulan').value,
+            });
+            window.location.href = `${EXPORT_URL}?${params.toString()}`;
         }
 
         function buildQuery() {

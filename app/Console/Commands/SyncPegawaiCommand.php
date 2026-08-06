@@ -20,22 +20,24 @@ use Illuminate\Support\Facades\Http;
 class SyncPegawaiCommand extends Command
 {
     protected array $safetyOfficerBadges = [
-        'K.202737', // ARI ANGGI WICAKSONO
-        'K.240394', // GLADIOL QUEEN DANATAMA
+        'K.200384', // MUKHLISIN
+        'K.202860', // SYAFRIZAL FIRDAUS
         'K.210050', // RAHMAT BUDI PRASETYO
-        'K.230218', // YOGA PRASETYA BHASKARA
-        'K.210838', // A. SULTHONI MAHFUD
-        'K.210283', // ABDUL HAMID JUNAIDI
-        'K.240385', // ERINA AVIDAH AULIA
-        'K.250351', // AYU PUSPA ARUM M.K.W
         'K.210112', // M FARIZ ALEXFAN
         'K.210282', // FUADUR ZAKKI KURNIAWAN
-        'K.210837', // MUHAMMAD SYAMSUL HUDA
-        'K.230219', // RICKO ADISETYO
         'K.210835', // ADITYA PRADANA PUTRA
-        'K.200384', // MUKHLISIN
+        'K.210836', // LUKI NURDIANSYAH
+        'K.210837', // MUHAMMAD SYAMSUL HUDA
+        'K.230218', // YOGA PRASETYA BHASKARA
+        'K.230219', // RICKO ADISETYO
         'K.230229', // GIGIH PRILLA ADITAMA
-        'K.202860', // SYAFRIZAL FIRDAUS
+        'K.210283', // ABDUL HAMID JUNAIDI
+        'K.240394', // GLADIOL QUEEN DANATAMA
+        'K.250351', // AYU PUSPA ARUM M.K.W
+        'K.230205', // ANANG ALAMSYAH
+        'K.230200', // MOCHAMMAD YUSUF FERDIANSYAH
+        'K.260061', // DWI ELLA MAGAREZA
+        'K.210462', // RIZKI IRVAN
     ];
     protected $signature = 'sync:pegawai';
     protected $description = 'Sinkronisasi data master pegawai (beserta unit kerja) dari API ERP ke database lokal K3';

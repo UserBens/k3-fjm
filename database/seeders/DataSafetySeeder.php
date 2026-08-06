@@ -41,7 +41,7 @@ class DataSafetySeeder extends Seeder
                 'foto_temuan_uauc_path' => 'uploads/safety/c2/foto_temuan_1.jpg',
                 'formulir_kegiatan_inspeksi_area_kerja_path' => 'uploads/safety/c2/form_inspeksi_1.pdf',
 
-                'keputusan' => 'APPROVED',
+                'keputusan' => 'APPROVE',
                 'direview_oleh' => 'Admin K3',
                 'direview_at' => current_time_for_seeder(),
                 'created_at' => now(),
@@ -88,7 +88,7 @@ class DataSafetySeeder extends Seeder
                 'foto_daftar_hadir_briefing_path' => 'uploads/safety/d2/absensi_briefing_1.jpg',
                 'formulir_kegiatan_safety_briefing_path' => 'uploads/safety/d2/form_briefing_1.pdf',
 
-                'keputusan' => 'APPROVED',
+                'keputusan' => 'APPROVE',
                 'direview_oleh' => 'Admin K3',
                 'direview_at' => current_time_for_seeder(),
                 'created_at' => now(),

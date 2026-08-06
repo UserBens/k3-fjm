@@ -65,16 +65,184 @@ class LaporanCapaianKpiController extends Controller
         return view('laporan-capaian-kpi.index');
     }
 
+    // public function api(Request $request): JsonResponse
+    // {
+    //     $pengaturan = PengaturanKpiK3::current();
+
+    //     $tahun = (int) ($request->query('tahun') ?: $pengaturan->tahun_aktif);
+    //     $bulan = (int) ($request->query('bulan') ?: $pengaturan->bulan_aktif);
+
+    //     // Periode cut-off: default pakai periode_manajer_* pada pengaturan aktif.
+    //     // Kalau user pilih tahun/bulan lain, kita rekonstruksi periode secara sederhana
+    //     // (26 bulan lalu s/d 25 bulan berjalan) mengikuti tanggal_cutoff_manajer.
+    //     [$periodeMulai, $periodeSelesai] = $this->resolvePeriode($pengaturan, $tahun, $bulan);
+
+    //     $aktivitasAktif = AktivitasKpiK3::aktif()
+    //         ->where('mulai_berlaku', '<=', $tahun)
+    //         ->where(function ($q) use ($tahun) {
+    //             $q->whereNull('akhir_berlaku')->orWhere('akhir_berlaku', '>=', $tahun);
+    //         })
+    //         ->get();
+
+    //     $hasil = [];
+    // foreach (['safety' => 'SAFETY', 'pengawas' => 'PENGAWAS', 'medis' => 'MEDIS'] as $flag => $timLabel) {
+    //     $aktivitasTim = $aktivitasAktif->where($flag, true)->values();
+    //     $totalSkorTim = (int) $aktivitasTim->sum('skor');
+    //     $targetTim = (int) $aktivitasTim->sum('target_per_bulan');
+
+    //     $roster = $this->rosterUntukTim($flag);
+
+    //     $petugasRows = [];
+    //     $disetujuiTim = 0;
+    //     $terkirimTim = 0;
+    //     $kontribusiTimPersen = 0.0;
+    //     $tepatWaktuTim = 0;
+
+    //     foreach ($roster as $pegawai) {
+    //         $laporan = $this->laporanUntukPegawai($flag, $pegawai, $periodeMulai, $periodeSelesai);
+
+    //         $terkirim = $laporan->count();
+    //         $disetujui = $laporan->where('is_approved', true)->count();
+    //         $tepatWaktu = $laporan->where('is_approved', true)->where('tepat_waktu', true)->count();
+
+    //         $kontribusiPersen = 0.0;
+    //         if ($totalSkorTim > 0) {
+    //             $grup = $laporan->where('is_approved', true)->groupBy('aktivitas_id');
+    //             foreach ($grup as $aktivitasId => $items) {
+    //                 $akt = $aktivitasTim->firstWhere('id', $aktivitasId);
+    //                 if (!$akt || (int) $akt->target_per_bulan <= 0) {
+    //                     continue;
+    //                 }
+    //                 $bobotAktivitas = $akt->skor / $totalSkorTim * 100;
+    //                 $rasioCapaian = min($items->count() / $akt->target_per_bulan, 1);
+    //                 $kontribusiPersen += $rasioCapaian * $bobotAktivitas;
+    //             }
+    //         }
+
+    //         // 1. Samakan pembulatan komponen dengan di Dashboard
+    //         $persentaseCapaianAktivitas = round($kontribusiPersen, 1);
+    //         $persentaseKetepatanWaktu = $disetujui > 0 ? round($tepatWaktu / $disetujui * 100, 1) : 0.0;
+    //         $ketepatanPersenTampil = $disetujui > 0 ? ($tepatWaktu / $disetujui * 100) : null;
+
+    //         // 2. Hitung nilai akhir dan langsung bulatkan 1 desimal persis seperti di Dashboard
+    //         $nilaiKpiFinal = round(
+    //             ($persentaseCapaianAktivitas * (float) $pengaturan->porsi_capaian_aktivitas / 100)
+    //                 + ($persentaseKetepatanWaktu * (float) $pengaturan->porsi_ketepatan_waktu / 100),
+    //             1
+    //         );
+
+    //         $dapatTunjangan = match ($flag) {
+    //             'safety' => $pengaturan->tim_safety_dapat_tunjangan,
+    //             'pengawas' => $pengaturan->tim_pengawas_dapat_tunjangan,
+    //             'medis' => $pengaturan->tim_medis_dapat_tunjangan,
+    //         };
+
+    //         $nominalTunjanganTim = match ($flag) {
+    //             'safety'   => (float) $pengaturan->tunjangan_safety,
+    //             'pengawas' => (float) $pengaturan->tunjangan_pengawas,
+    //             'medis'    => (float) $pengaturan->tunjangan_medis,
+    //             default    => 0.0,
+    //         };
+
+    //         $tunjangan = null;
+    //         if ($dapatTunjangan) {
+    //             // 3. Gunakan $nilaiKpiFinal (yang SUDAH DIBULATKAN) untuk clamp & hitung tunjangan
+    //             $skorUntukTunjangan = max(
+    //                 (float) $pengaturan->skor_minimum_tunjangan,
+    //                 min($nilaiKpiFinal, (float) $pengaturan->skor_maksimum_tunjangan)
+    //             );
+
+    //             $tunjangan = (int) round(
+    //                 $nominalTunjanganTim * ($skorUntukTunjangan / 100)
+    //             );
+    //         }
+
+    //         $petugasRows[] = [
+    //             'badge' => $pegawai->badge,
+    //             'nama' => $pegawai->nama,
+    //             'terkirim' => $terkirim,
+    //             'disetujui' => $disetujui,
+    //             'capaian_persen' => $persentaseCapaianAktivitas,
+    //             'ketepatan_waktu_persen' => $ketepatanPersenTampil,
+    //             'nilai_kpi_final' => $nilaiKpiFinal,
+    //             'standby' => 'N',
+    //             'hari_kerja_efektif' => $flag === 'pengawas'
+    //                 ? $pengaturan->hari_kerja_efektif_p2k3
+    //                 : $pengaturan->hari_kerja_efektif_manajer,
+    //             'tunjangan' => $tunjangan,
+    //         ];
+
+    //         $terkirimTim += $terkirim;
+    //         $disetujuiTim += $disetujui;
+    //         $tepatWaktuTim += $tepatWaktu;
+    //         $kontribusiTimPersen += $kontribusiPersen;
+    //     }
+
+    //     $ketepatanTimPersen = $disetujuiTim > 0 ? round($tepatWaktuTim / $disetujuiTim * 100, 1) : null;
+    //     $pencapaianTimPersen = round($kontribusiTimPersen, 1);
+    //     $nilaiKpiFinalTim = round(
+    //         ($pencapaianTimPersen * (float) $pengaturan->porsi_capaian_aktivitas
+    //             + ($ketepatanTimPersen ?? 0) * (float) $pengaturan->porsi_ketepatan_waktu) / 100,
+    //         1
+    //     );
+
+    //     $kategori = $this->kategoriTim($pencapaianTimPersen, $pengaturan);
+
+    //     $rincianAktivitas = $aktivitasTim->map(function (AktivitasKpiK3 $akt) use ($flag, $roster, $periodeMulai, $periodeSelesai, $totalSkorTim) {
+    //         $disetujui = $this->hitungDisetujuiAktivitas($flag, $akt, $roster, $periodeMulai, $periodeSelesai);
+    //         return [
+    //             'kode' => $akt->kode,
+    //             'nama_aktivitas' => $akt->nama_aktivitas,
+    //             'bobot_persen' => $totalSkorTim > 0 ? round($akt->skor / $totalSkorTim * 100, 1) : 0,
+    //             'target_periode' => $akt->target_per_bulan,
+    //             'disetujui' => $disetujui,
+    //             'aktual_pencapaian_persen' => $akt->target_per_bulan > 0
+    //                 ? round($disetujui / $akt->target_per_bulan * 100, 1)
+    //                 : null,
+    //         ];
+    //     })->values();
+
+    //     $hasil[$flag] = [
+    //         'label' => $timLabel,
+    //         'target_laporan' => $targetTim,
+    //         'laporan_disetujui' => $disetujuiTim,
+    //         'pencapaian_persen' => $pencapaianTimPersen,
+    //         'ketepatan_target_persen' => 100.0, // konstan sesuai contoh sheet Anda
+    //         'ketepatan_realisasi_persen' => $ketepatanTimPersen,
+    //         'nilai_kpi_final_persen' => $nilaiKpiFinalTim,
+    //         'tunjangan_tim' => collect($petugasRows)->sum('tunjangan'),
+    //         'kategori' => $kategori,
+    //         'rincian_aktivitas' => $rincianAktivitas,
+    //         'petugas' => $petugasRows,
+    //     ];
+    // }
+
+    //     $totalRow = $this->hitungTotalTim($hasil, $pengaturan);
+
+    //     return response()->json([
+    //         'periode' => [
+    //             'mulai' => $periodeMulai->format('d/m/Y'),
+    //             'selesai' => $periodeSelesai->format('d/m/Y'),
+    //             'bulan_label' => Carbon::create($tahun, $bulan, 1)->translatedFormat('F Y'),
+    //         ],
+    //         'tim' => $hasil,
+    //         'total' => $totalRow,                                          // ⬅️ baru
+    //         'total_tunjangan_seluruh_tim' => collect($hasil)->sum('tunjangan_tim'),
+    //     ]);
+    // }
+
     public function api(Request $request): JsonResponse
+    {
+        $tahun = (int) ($request->query('tahun') ?: PengaturanKpiK3::current()->tahun_aktif);
+        $bulan = (int) ($request->query('bulan') ?: PengaturanKpiK3::current()->bulan_aktif);
+
+        return response()->json($this->hitungLaporan($tahun, $bulan));
+    }
+
+    private function hitungLaporan(int $tahun, int $bulan): array
     {
         $pengaturan = PengaturanKpiK3::current();
 
-        $tahun = (int) ($request->query('tahun') ?: $pengaturan->tahun_aktif);
-        $bulan = (int) ($request->query('bulan') ?: $pengaturan->bulan_aktif);
-
-        // Periode cut-off: default pakai periode_manajer_* pada pengaturan aktif.
-        // Kalau user pilih tahun/bulan lain, kita rekonstruksi periode secara sederhana
-        // (26 bulan lalu s/d 25 bulan berjalan) mengikuti tanggal_cutoff_manajer.
         [$periodeMulai, $periodeSelesai] = $this->resolvePeriode($pengaturan, $tahun, $bulan);
 
         $aktivitasAktif = AktivitasKpiK3::aktif()
@@ -86,149 +254,446 @@ class LaporanCapaianKpiController extends Controller
 
         $hasil = [];
         foreach (['safety' => 'SAFETY', 'pengawas' => 'PENGAWAS', 'medis' => 'MEDIS'] as $flag => $timLabel) {
-            $aktivitasTim = $aktivitasAktif->where($flag, true)->values();
-            $totalSkorTim = (int) $aktivitasTim->sum('skor');
-            $targetTim = (int) $aktivitasTim->sum('target_per_bulan');
+            foreach (['safety' => 'SAFETY', 'pengawas' => 'PENGAWAS', 'medis' => 'MEDIS'] as $flag => $timLabel) {
+                $aktivitasTim = $aktivitasAktif->where($flag, true)->values();
+                $totalSkorTim = (int) $aktivitasTim->sum('skor');
+                $targetTim = (int) $aktivitasTim->sum('target_per_bulan');
 
-            $roster = $this->rosterUntukTim($flag);
+                $roster = $this->rosterUntukTim($flag);
 
-            $petugasRows = [];
-            $disetujuiTim = 0;
-            $terkirimTim = 0;
-            $kontribusiTimPersen = 0.0;
-            $tepatWaktuTim = 0;
+                $petugasRows = [];
+                $disetujuiTim = 0;
+                $terkirimTim = 0;
+                $kontribusiTimPersen = 0.0;
+                $tepatWaktuTim = 0;
 
-            foreach ($roster as $pegawai) {
-                $laporan = $this->laporanUntukPegawai($flag, $pegawai, $periodeMulai, $periodeSelesai);
+                foreach ($roster as $pegawai) {
+                    $laporan = $this->laporanUntukPegawai($flag, $pegawai, $periodeMulai, $periodeSelesai);
 
-                $terkirim = $laporan->count();
-                $disetujui = $laporan->where('is_approved', true)->count();
-                $tepatWaktu = $laporan->where('is_approved', true)->where('tepat_waktu', true)->count();
+                    $terkirim = $laporan->count();
+                    $disetujui = $laporan->where('is_approved', true)->count();
+                    $tepatWaktu = $laporan->where('is_approved', true)->where('tepat_waktu', true)->count();
 
-                $kontribusiPersen = 0.0;
-                if ($totalSkorTim > 0) {
-                    $grup = $laporan->where('is_approved', true)->groupBy('aktivitas_id');
-                    foreach ($grup as $aktivitasId => $items) {
-                        $akt = $aktivitasTim->firstWhere('id', $aktivitasId);
-                        if (!$akt || (int) $akt->target_per_bulan <= 0) {
-                            continue;
+                    $kontribusiPersen = 0.0;
+                    if ($totalSkorTim > 0) {
+                        $grup = $laporan->where('is_approved', true)->groupBy('aktivitas_id');
+                        foreach ($grup as $aktivitasId => $items) {
+                            $akt = $aktivitasTim->firstWhere('id', $aktivitasId);
+                            if (!$akt || (int) $akt->target_per_bulan <= 0) {
+                                continue;
+                            }
+                            $bobotAktivitas = $akt->skor / $totalSkorTim * 100;
+                            $rasioCapaian = min($items->count() / $akt->target_per_bulan, 1);
+                            $kontribusiPersen += $rasioCapaian * $bobotAktivitas;
                         }
-                        $bobotAktivitas = $akt->skor / $totalSkorTim * 100;
-                        $rasioCapaian = min($items->count() / $akt->target_per_bulan, 1);
-                        $kontribusiPersen += $rasioCapaian * $bobotAktivitas;
                     }
+
+                    // 1. Samakan pembulatan komponen dengan di Dashboard
+                    $persentaseCapaianAktivitas = round($kontribusiPersen, 1);
+                    $persentaseKetepatanWaktu = $disetujui > 0 ? round($tepatWaktu / $disetujui * 100, 1) : 0.0;
+                    $ketepatanPersenTampil = $disetujui > 0 ? ($tepatWaktu / $disetujui * 100) : null;
+
+                    // 2. Hitung nilai akhir dan langsung bulatkan 1 desimal persis seperti di Dashboard
+                    $nilaiKpiFinal = round(
+                        ($persentaseCapaianAktivitas * (float) $pengaturan->porsi_capaian_aktivitas / 100)
+                            + ($persentaseKetepatanWaktu * (float) $pengaturan->porsi_ketepatan_waktu / 100),
+                        1
+                    );
+
+                    $dapatTunjangan = match ($flag) {
+                        'safety' => $pengaturan->tim_safety_dapat_tunjangan,
+                        'pengawas' => $pengaturan->tim_pengawas_dapat_tunjangan,
+                        'medis' => $pengaturan->tim_medis_dapat_tunjangan,
+                    };
+
+                    $nominalTunjanganTim = match ($flag) {
+                        'safety'   => (float) $pengaturan->tunjangan_safety,
+                        'pengawas' => (float) $pengaturan->tunjangan_pengawas,
+                        'medis'    => (float) $pengaturan->tunjangan_medis,
+                        default    => 0.0,
+                    };
+
+                    $tunjangan = null;
+                    if ($dapatTunjangan) {
+                        // 3. Gunakan $nilaiKpiFinal (yang SUDAH DIBULATKAN) untuk clamp & hitung tunjangan
+                        $skorUntukTunjangan = max(
+                            (float) $pengaturan->skor_minimum_tunjangan,
+                            min($nilaiKpiFinal, (float) $pengaturan->skor_maksimum_tunjangan)
+                        );
+
+                        $tunjangan = (int) round(
+                            $nominalTunjanganTim * ($skorUntukTunjangan / 100)
+                        );
+                    }
+
+                    $petugasRows[] = [
+                        'badge' => $pegawai->badge,
+                        'nama' => $pegawai->nama,
+                        'terkirim' => $terkirim,
+                        'disetujui' => $disetujui,
+                        'capaian_persen' => $persentaseCapaianAktivitas,
+                        'ketepatan_waktu_persen' => $ketepatanPersenTampil,
+                        'nilai_kpi_final' => $nilaiKpiFinal,
+                        'standby' => 'N',
+                        'hari_kerja_efektif' => $flag === 'pengawas'
+                            ? $pengaturan->hari_kerja_efektif_p2k3
+                            : $pengaturan->hari_kerja_efektif_manajer,
+                        'tunjangan' => $tunjangan,
+                    ];
+
+                    $terkirimTim += $terkirim;
+                    $disetujuiTim += $disetujui;
+                    $tepatWaktuTim += $tepatWaktu;
+                    $kontribusiTimPersen += $kontribusiPersen;
                 }
 
-                // 1. Samakan pembulatan komponen dengan di Dashboard
-                $persentaseCapaianAktivitas = round($kontribusiPersen, 1);
-                $persentaseKetepatanWaktu = $disetujui > 0 ? round($tepatWaktu / $disetujui * 100, 1) : 0.0;
-                $ketepatanPersenTampil = $disetujui > 0 ? ($tepatWaktu / $disetujui * 100) : null;
-
-                // 2. Hitung nilai akhir dan langsung bulatkan 1 desimal persis seperti di Dashboard
-                $nilaiKpiFinal = round(
-                    ($persentaseCapaianAktivitas * (float) $pengaturan->porsi_capaian_aktivitas / 100)
-                        + ($persentaseKetepatanWaktu * (float) $pengaturan->porsi_ketepatan_waktu / 100),
+                $ketepatanTimPersen = $disetujuiTim > 0 ? round($tepatWaktuTim / $disetujuiTim * 100, 1) : null;
+                $pencapaianTimPersen = round($kontribusiTimPersen, 1);
+                $nilaiKpiFinalTim = round(
+                    ($pencapaianTimPersen * (float) $pengaturan->porsi_capaian_aktivitas
+                        + ($ketepatanTimPersen ?? 0) * (float) $pengaturan->porsi_ketepatan_waktu) / 100,
                     1
                 );
 
-                $dapatTunjangan = match ($flag) {
-                    'safety' => $pengaturan->tim_safety_dapat_tunjangan,
-                    'pengawas' => $pengaturan->tim_pengawas_dapat_tunjangan,
-                    'medis' => $pengaturan->tim_medis_dapat_tunjangan,
-                };
+                $kategori = $this->kategoriTim($pencapaianTimPersen, $pengaturan);
 
-                $nominalTunjanganTim = match ($flag) {
-                    'safety'   => (float) $pengaturan->tunjangan_safety,
-                    'pengawas' => (float) $pengaturan->tunjangan_pengawas,
-                    'medis'    => (float) $pengaturan->tunjangan_medis,
-                    default    => 0.0,
-                };
+                $rincianAktivitas = $aktivitasTim->map(function (AktivitasKpiK3 $akt) use ($flag, $roster, $periodeMulai, $periodeSelesai, $totalSkorTim) {
+                    $disetujui = $this->hitungDisetujuiAktivitas($flag, $akt, $roster, $periodeMulai, $periodeSelesai);
+                    return [
+                        'kode' => $akt->kode,
+                        'nama_aktivitas' => $akt->nama_aktivitas,
+                        'bobot_persen' => $totalSkorTim > 0 ? round($akt->skor / $totalSkorTim * 100, 1) : 0,
+                        'target_periode' => $akt->target_per_bulan,
+                        'disetujui' => $disetujui,
+                        'aktual_pencapaian_persen' => $akt->target_per_bulan > 0
+                            ? round($disetujui / $akt->target_per_bulan * 100, 1)
+                            : null,
+                    ];
+                })->values();
 
-                $tunjangan = null;
-                if ($dapatTunjangan) {
-                    // 3. Gunakan $nilaiKpiFinal (yang SUDAH DIBULATKAN) untuk clamp & hitung tunjangan
-                    $skorUntukTunjangan = max(
-                        (float) $pengaturan->skor_minimum_tunjangan,
-                        min($nilaiKpiFinal, (float) $pengaturan->skor_maksimum_tunjangan)
-                    );
-
-                    $tunjangan = (int) round(
-                        $nominalTunjanganTim * ($skorUntukTunjangan / 100)
-                    );
-                }
-
-                $petugasRows[] = [
-                    'badge' => $pegawai->badge,
-                    'nama' => $pegawai->nama,
-                    'terkirim' => $terkirim,
-                    'disetujui' => $disetujui,
-                    'capaian_persen' => $persentaseCapaianAktivitas,
-                    'ketepatan_waktu_persen' => $ketepatanPersenTampil,
-                    'nilai_kpi_final' => $nilaiKpiFinal,
-                    'standby' => 'N',
-                    'hari_kerja_efektif' => $flag === 'pengawas'
-                        ? $pengaturan->hari_kerja_efektif_p2k3
-                        : $pengaturan->hari_kerja_efektif_manajer,
-                    'tunjangan' => $tunjangan,
+                $hasil[$flag] = [
+                    'label' => $timLabel,
+                    'target_laporan' => $targetTim,
+                    'laporan_disetujui' => $disetujuiTim,
+                    'pencapaian_persen' => $pencapaianTimPersen,
+                    'ketepatan_target_persen' => 100.0, // konstan sesuai contoh sheet Anda
+                    'ketepatan_realisasi_persen' => $ketepatanTimPersen,
+                    'nilai_kpi_final_persen' => $nilaiKpiFinalTim,
+                    'tunjangan_tim' => collect($petugasRows)->sum('tunjangan'),
+                    'kategori' => $kategori,
+                    'rincian_aktivitas' => $rincianAktivitas,
+                    'petugas' => $petugasRows,
                 ];
-
-                $terkirimTim += $terkirim;
-                $disetujuiTim += $disetujui;
-                $tepatWaktuTim += $tepatWaktu;
-                $kontribusiTimPersen += $kontribusiPersen;
             }
-
-            $ketepatanTimPersen = $disetujuiTim > 0 ? round($tepatWaktuTim / $disetujuiTim * 100, 1) : null;
-            $pencapaianTimPersen = round($kontribusiTimPersen, 1);
-            $nilaiKpiFinalTim = round(
-                ($pencapaianTimPersen * (float) $pengaturan->porsi_capaian_aktivitas
-                    + ($ketepatanTimPersen ?? 0) * (float) $pengaturan->porsi_ketepatan_waktu) / 100,
-                1
-            );
-
-            $kategori = $this->kategoriTim($pencapaianTimPersen, $pengaturan);
-
-            $rincianAktivitas = $aktivitasTim->map(function (AktivitasKpiK3 $akt) use ($flag, $roster, $periodeMulai, $periodeSelesai, $totalSkorTim) {
-                $disetujui = $this->hitungDisetujuiAktivitas($flag, $akt, $roster, $periodeMulai, $periodeSelesai);
-                return [
-                    'kode' => $akt->kode,
-                    'nama_aktivitas' => $akt->nama_aktivitas,
-                    'bobot_persen' => $totalSkorTim > 0 ? round($akt->skor / $totalSkorTim * 100, 1) : 0,
-                    'target_periode' => $akt->target_per_bulan,
-                    'disetujui' => $disetujui,
-                    'aktual_pencapaian_persen' => $akt->target_per_bulan > 0
-                        ? round($disetujui / $akt->target_per_bulan * 100, 1)
-                        : null,
-                ];
-            })->values();
-
-            $hasil[$flag] = [
-                'label' => $timLabel,
-                'target_laporan' => $targetTim,
-                'laporan_disetujui' => $disetujuiTim,
-                'pencapaian_persen' => $pencapaianTimPersen,
-                'ketepatan_target_persen' => 100.0, // konstan sesuai contoh sheet Anda
-                'ketepatan_realisasi_persen' => $ketepatanTimPersen,
-                'nilai_kpi_final_persen' => $nilaiKpiFinalTim,
-                'tunjangan_tim' => collect($petugasRows)->sum('tunjangan'),
-                'kategori' => $kategori,
-                'rincian_aktivitas' => $rincianAktivitas,
-                'petugas' => $petugasRows,
-            ];
         }
 
         $totalRow = $this->hitungTotalTim($hasil, $pengaturan);
 
-        return response()->json([
+        return [
             'periode' => [
                 'mulai' => $periodeMulai->format('d/m/Y'),
                 'selesai' => $periodeSelesai->format('d/m/Y'),
                 'bulan_label' => Carbon::create($tahun, $bulan, 1)->translatedFormat('F Y'),
             ],
             'tim' => $hasil,
-            'total' => $totalRow,                                          // ⬅️ baru
+            'total' => $totalRow,
             'total_tunjangan_seluruh_tim' => collect($hasil)->sum('tunjangan_tim'),
+        ];
+    }
+
+    public function export(Request $request)
+    {
+        $pengaturan = PengaturanKpiK3::current();
+        $tahun = (int) ($request->query('tahun') ?: $pengaturan->tahun_aktif);
+        $bulan = (int) ($request->query('bulan') ?: $pengaturan->bulan_aktif);
+
+        $data = $this->hitungLaporan($tahun, $bulan);
+        $filename = 'laporan-capaian-kpi-k3-' . now()->format('Ymd-His');
+
+        return $this->exportXlsx($data, $filename);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // EXPORT EXCEL
+    // ─────────────────────────────────────────────────────────────
+
+    private function exportXlsx(array $data, string $filename)
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Laporan Capaian KPI');
+
+        $TEAM_ORDER = [
+            ['safety', 'SAFETY', '1A7A3C'],   // hijau — samakan dengan --green di dashboard
+            ['pengawas', 'PENGAWAS', 'B7860B'], // gold — samakan dengan --gold
+            ['medis', 'MEDIS', '2D4B9E'],     // biru — samakan dengan --blue
+        ];
+        $PURPLE = '3B1F6E'; // header utama & total (samakan nuansa dgn contoh sheet)
+        $BLUE   = '2D4B9E';
+
+        $row = 1;
+
+        // ══════ HEADER PERUSAHAAN ══════
+        $sheet->mergeCells('A1:C2');
+        $sheet->setCellValue('A1', "PT. FOKUS JASA MITRA\nMitra Alih Daya Profesional");
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(11);
+        $sheet->getStyle('A1')->getAlignment()->setWrapText(true)->setVertical('center');
+
+        $sheet->mergeCells('D1:J1');
+        $sheet->setCellValue('D1', 'LAPORAN CAPAIAN KPI K3 - DEPARTEMEN K3 & OPERASIONAL');
+        $sheet->getStyle('D1')->getFont()->setBold(true)->setSize(13);
+        $sheet->getStyle('D1')->getAlignment()->setHorizontal('center');
+
+        $sheet->mergeCells('D2:J2');
+        $sheet->setCellValue('D2', "Periode Cut Off: {$data['periode']['mulai']} s/d {$data['periode']['selesai']}   |   Bulan: {$data['periode']['bulan_label']}");
+        $sheet->getStyle('D2')->getFont()->setItalic(true)->setSize(10);
+        $sheet->getStyle('D2')->getAlignment()->setHorizontal('center');
+
+        $row = 4;
+
+        // ══════ SECTION A ══════
+        $colsA = ['NO', 'JENIS TIM', 'TARGET LAPORAN', 'LAPORAN DISETUJUI', 'PENCAPAIAN (%)', 'KETEPATAN TARGET', 'KETEPATAN REALISASI', 'NILAI KPI FINAL (%)', 'TUNJANGAN TIM (Rp)', 'KATEGORI'];
+        $lastColA = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($colsA));
+
+        $sheet->mergeCells("A{$row}:{$lastColA}{$row}");
+        $sheet->setCellValue("A{$row}", 'A. RINGKASAN CAPAIAN KPI PER TIM (petugas aktif)');
+        $this->styleSectionBar($sheet, "A{$row}:{$lastColA}{$row}", $PURPLE);
+        $row++;
+
+        $sheet->fromArray($colsA, null, "A{$row}");
+        $this->styleHeaderRow($sheet, "A{$row}:{$lastColA}{$row}", $PURPLE);
+        $row++;
+
+        $no = 1;
+        foreach ($TEAM_ORDER as [$key, $label, $color]) {
+            $t = $data['tim'][$key] ?? null;
+            if (!$t) continue;
+
+            $sheet->fromArray([
+                $no++,
+                $label,
+                $t['target_laporan'],
+                $t['laporan_disetujui'],
+                $t['pencapaian_persen'] / 100,
+                $t['ketepatan_target_persen'] / 100,
+                $t['ketepatan_realisasi_persen'] !== null ? $t['ketepatan_realisasi_persen'] / 100 : null,
+                $t['nilai_kpi_final_persen'] / 100,
+                $t['tunjangan_tim'],
+                $t['kategori'],
+            ], null, "A{$row}");
+
+            $sheet->getStyle("E{$row}:H{$row}")->getNumberFormat()->setFormatCode('0.0%');
+            $sheet->getStyle("I{$row}")->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle("B{$row}")->getFont()->setBold(true);
+            $row++;
+        }
+
+        $sheet->mergeCells("A{$row}:B{$row}");
+        $sheet->setCellValue("A{$row}", 'HASIL PENCAPAIAN TIM (rata²)');
+        $sheet->fromArray([
+            $data['total']['target_laporan'],
+            $data['total']['laporan_disetujui'],
+            $data['total']['pencapaian_persen'] / 100,
+            $data['total']['ketepatan_target_persen'] / 100,
+            $data['total']['ketepatan_realisasi_persen'] / 100,
+            $data['total']['nilai_kpi_final_persen'] / 100,
+            $data['total']['tunjangan_tim'],
+            $data['total']['kategori'],
+        ], null, "C{$row}");
+        $sheet->getStyle("E{$row}:H{$row}")->getNumberFormat()->setFormatCode('0.0%');
+        $sheet->getStyle("I{$row}")->getNumberFormat()->setFormatCode('#,##0');
+        $this->styleTotalRow($sheet, "A{$row}:{$lastColA}{$row}", $PURPLE);
+        $row += 2;
+
+        // ══════ SECTION B ══════
+        $colsB = ['TIM', 'KODE LAPORAN', 'NAMA AKTIFITAS', 'BOBOT (%)', 'TARGET PERIODE', 'DISETUJUI', 'AKTUAL PENCAPAIAN (%)'];
+        $lastColB = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($colsB));
+
+        $sheet->mergeCells("A{$row}:{$lastColB}{$row}");
+        $sheet->setCellValue("A{$row}", 'B. RINCIAN CAPAIAN PER AKTIVITAS KPI (hanya program aktif — seluruh tim)');
+        $this->styleSectionBar($sheet, "A{$row}:{$lastColB}{$row}", $BLUE);
+        $row++;
+
+        $sheet->fromArray($colsB, null, "A{$row}");
+        $this->styleHeaderRow($sheet, "A{$row}:{$lastColB}{$row}", $BLUE);
+        $row++;
+
+        foreach ($TEAM_ORDER as [$key, $label, $color]) {
+            $t = $data['tim'][$key] ?? null;
+            if (!$t) continue;
+
+            foreach ($t['rincian_aktivitas'] as $r) {
+                $kosong = $r['disetujui'] === 0;
+                $sheet->fromArray([
+                    $label,
+                    $r['kode'],
+                    $r['nama_aktivitas'],
+                    $r['bobot_persen'] / 100,
+                    $r['target_periode'],
+                    $kosong ? '-' : $r['disetujui'],
+                    $r['aktual_pencapaian_persen'] !== null ? $r['aktual_pencapaian_persen'] / 100 : '-',
+                ], null, "A{$row}");
+
+                $sheet->getStyle("D{$row}")->getNumberFormat()->setFormatCode('0.0%');
+                if (!$kosong) $sheet->getStyle("G{$row}")->getNumberFormat()->setFormatCode('0.0%');
+                if ($kosong) {
+                    $sheet->getStyle("F{$row}:G{$row}")->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('FBD5D5'); // pink highlight, sama seperti di sheet contoh
+                }
+                $row++;
+            }
+        }
+        $row += 1;
+
+        // ══════ SECTION C ══════
+        $colsC = ['NO', 'NAMA PETUGAS', 'TERKIRIM', 'DISETUJUI', 'CAPAIAN (%)', 'KETEPATAN WAKTU (%)', 'NILAI KPI FINAL (%)', 'STANDBY (Y/N)', 'HARI KERJA EFEKTIF', 'TUNJANGAN (Rp)'];
+        $lastColC = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($colsC));
+
+        $sheet->mergeCells("A{$row}:{$lastColC}{$row}");
+        $sheet->setCellValue("A{$row}", 'C. LAPORAN PER PETUGAS & JENIS (hanya aktif · termasuk tunjangan)');
+        $this->styleSectionBar($sheet, "A{$row}:{$lastColC}{$row}", $PURPLE);
+        $row++;
+
+        $sheet->fromArray($colsC, null, "A{$row}");
+        $this->styleHeaderRow($sheet, "A{$row}:{$lastColC}{$row}", $PURPLE);
+        $row++;
+
+        foreach ($TEAM_ORDER as [$key, $label, $color]) {
+            $t = $data['tim'][$key] ?? null;
+            if (!$t) continue;
+
+            $sheet->mergeCells("A{$row}:{$lastColC}{$row}");
+            $sheet->setCellValue("A{$row}", "TIM {$label}");
+            $this->styleGroupHeader($sheet, "A{$row}:{$lastColC}{$row}", $color);
+            $row++;
+
+            $terkirimTim = 0;
+            $no = 1;
+            foreach ($t['petugas'] as $p) {
+                $kosong = $p['disetujui'] === 0;
+                $sheet->fromArray([
+                    $no++,
+                    "{$p['nama']} ({$p['badge']})",
+                    $kosong ? '-' : $p['terkirim'],
+                    $kosong ? '-' : $p['disetujui'],
+                    $kosong ? '-' : $p['capaian_persen'] / 100,
+                    $p['ketepatan_waktu_persen'] !== null ? $p['ketepatan_waktu_persen'] / 100 : '-',
+                    $kosong ? '-' : $p['nilai_kpi_final'] / 100,
+                    $p['standby'],
+                    $p['hari_kerja_efektif'],
+                    $p['tunjangan'] ?: '-',
+                ], null, "A{$row}");
+
+                foreach (['E', 'F', 'G'] as $col) {
+                    if ($sheet->getCell("{$col}{$row}")->getValue() !== '-') {
+                        $sheet->getStyle("{$col}{$row}")->getNumberFormat()->setFormatCode('0.0%');
+                    }
+                }
+                $sheet->getStyle("J{$row}")->getNumberFormat()->setFormatCode('#,##0');
+                if ($kosong) {
+                    $sheet->getStyle("C{$row}:G{$row}")->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('FBD5D5');
+                }
+                $terkirimTim += $p['terkirim'];
+                $row++;
+            }
+
+            $sheet->mergeCells("A{$row}:B{$row}");
+            $sheet->setCellValue("A{$row}", "SUBTOTAL {$label} (aktif)");
+            $sheet->fromArray([
+                $terkirimTim,
+                $t['laporan_disetujui'],
+                $t['pencapaian_persen'] / 100,
+                '',
+                $t['nilai_kpi_final_persen'] / 100,
+                '',
+                '',
+                $t['tunjangan_tim'],
+            ], null, "C{$row}");
+            $sheet->getStyle("E{$row}")->getNumberFormat()->setFormatCode('0.0%');
+            $sheet->getStyle("G{$row}")->getNumberFormat()->setFormatCode('0.0%');
+            $sheet->getStyle("J{$row}")->getNumberFormat()->setFormatCode('#,##0');
+            $this->styleSubtotalRow($sheet, "A{$row}:{$lastColC}{$row}", $color);
+            $row++;
+        }
+
+        $sheet->mergeCells("A{$row}:I{$row}");
+        $sheet->setCellValue("A{$row}", 'TOTAL TUNJANGAN SELURUH PETUGAS AKTIF (periode ini)');
+        $sheet->setCellValue("J{$row}", $data['total_tunjangan_seluruh_tim']);
+        $sheet->getStyle("J{$row}")->getNumberFormat()->setFormatCode('#,##0');
+        $this->styleTotalRow($sheet, "A{$row}:{$lastColC}{$row}", $PURPLE);
+        $row += 3;
+
+        // ══════ BLOK TANDA TANGAN ══════
+        $sheet->mergeCells("A{$row}:C{$row}");
+        $sheet->mergeCells("D{$row}:G{$row}");
+        $sheet->mergeCells("H{$row}:J{$row}");
+        $sheet->setCellValue("A{$row}", 'Disusun oleh,');
+        $sheet->setCellValue("D{$row}", 'Diperiksa oleh,');
+        $sheet->setCellValue("H{$row}", 'Disetujui oleh,');
+        $sheet->getStyle("A{$row}:J{$row}")->getAlignment()->setHorizontal('center');
+        $row += 4;
+
+        $sheet->mergeCells("A{$row}:C{$row}");
+        $sheet->mergeCells("D{$row}:G{$row}");
+        $sheet->mergeCells("H{$row}:J{$row}");
+        $sheet->setCellValue("A{$row}", '( ___________________ )');
+        $sheet->setCellValue("D{$row}", '( ___________________ )');
+        $sheet->setCellValue("H{$row}", '( ___________________ )');
+        $sheet->getStyle("A{$row}:J{$row}")->getAlignment()->setHorizontal('center');
+
+        // ══════ FINALISASI ══════
+        foreach (range('A', $lastColC) as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        $sheet->getColumnDimension('B')->setWidth(30); // nama tim/petugas jangan kepotong
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, "{$filename}.xlsx", [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // HELPER STYLE (dipakai bareng oleh Section A/B/C)
+    // ─────────────────────────────────────────────────────────────
+
+    private function styleSectionBar($sheet, string $range, string $hex): void
+    {
+        $sheet->getStyle($range)->getFont()->setBold(true)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'));
+        $sheet->getStyle($range)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB($hex);
+        $sheet->getStyle($range)->getAlignment()->setHorizontal('left')->setVertical('center');
+    }
+
+    private function styleHeaderRow($sheet, string $range, string $hex): void
+    {
+        $sheet->getStyle($range)->getFont()->setBold(true)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'));
+        $sheet->getStyle($range)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB($hex);
+        $sheet->getStyle($range)->getAlignment()->setHorizontal('center')->setVertical('center')->setWrapText(true);
+        $sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+    }
+
+    private function styleGroupHeader($sheet, string $range, string $hex): void
+    {
+        $sheet->getStyle($range)->getFont()->setBold(true)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'));
+        $sheet->getStyle($range)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB($hex);
+    }
+
+    private function styleSubtotalRow($sheet, string $range, string $hex): void
+    {
+        $sheet->getStyle($range)->getFont()->setBold(true);
+        $sheet->getStyle($range)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('33' . $hex); // versi terang
+    }
+
+    private function styleTotalRow($sheet, string $range, string $hex): void
+    {
+        $sheet->getStyle($range)->getFont()->setBold(true)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF'));
+        $sheet->getStyle($range)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB($hex);
     }
 
     private function hitungTotalTim(array $hasil, PengaturanKpiK3 $pengaturan): array

@@ -680,6 +680,149 @@
             display: inline-block;
             animation: pulse 2s infinite;
         }
+
+        /* CUSTOM SELECT (menggantikan tampilan <select> personil) */
+        .cs-wrap {
+            position: relative;
+        }
+
+        .cs-trigger {
+            width: 100%;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border: 1px solid rgba(45, 75, 158, 0.25);
+            border-radius: 8px;
+            padding: 0 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--blue);
+            background: #F8F9FF;
+            cursor: pointer;
+            transition: border-color .15s, background .15s, box-shadow .15s;
+        }
+
+        .cs-trigger:hover {
+            border-color: var(--blue);
+        }
+
+        .cs-wrap.open .cs-trigger {
+            border-color: var(--blue);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(45, 75, 158, 0.10);
+        }
+
+        .cs-trigger-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .cs-trigger-label.placeholder {
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        /* panah bawah custom, konsisten & rapi */
+        .cs-arrow {
+            flex-shrink: 0;
+            width: 9px;
+            height: 9px;
+            border-right: 2px solid #94A3B8;
+            border-bottom: 2px solid #94A3B8;
+            transform: rotate(45deg);
+            margin-top: -3px;
+            transition: transform .15s, border-color .15s;
+        }
+
+        .cs-wrap.open .cs-arrow {
+            transform: rotate(-135deg);
+            margin-top: 3px;
+            border-color: var(--blue);
+        }
+
+        .cs-panel {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            box-shadow: 0 14px 30px rgba(26, 29, 46, 0.16);
+            z-index: 40;
+            display: none;
+            overflow: hidden;
+        }
+
+        .cs-wrap.open .cs-panel {
+            display: block;
+        }
+
+        .cs-search-wrap {
+            padding: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            background: #fff;
+        }
+
+        .cs-search {
+            width: 100%;
+            height: 32px;
+            border: 1px solid rgba(0, 0, 0, 0.09);
+            border-radius: 6px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none;
+            background: #F8F9FF;
+        }
+
+        .cs-search:focus {
+            border-color: var(--blue);
+            background: #fff;
+        }
+
+        .cs-list {
+            max-height: 236px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .cs-item {
+            padding: 9px 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .cs-item:hover {
+            background: #F0F2FA;
+        }
+
+        .cs-item.selected {
+            background: rgba(45, 75, 158, 0.09);
+            color: var(--blue);
+            font-weight: 800;
+        }
+
+        .cs-empty {
+            padding: 16px 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .cs-wrap.disabled .cs-trigger {
+            opacity: .6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -997,10 +1140,12 @@
     </div>
 
     <script>
+        const LOCKED_TIM = @json($lockedTim);
+        const LOCKED_BADGE = @json($lockedBadge);
         const API_URL = "{{ route('dashboard-kpi-k3.api') }}";
-        const TEAMS = ['SAFETY', 'PENGAWAS', 'MEDIS'];
-        let activeTeamTab = 'SAFETY';
-        const teamLoaded = {}; // cache flag per tim
+        const TEAMS = LOCKED_TIM ? [LOCKED_TIM] : ['SAFETY', 'PENGAWAS', 'MEDIS'];
+        let activeTeamTab = LOCKED_TIM || 'SAFETY';
+        const teamLoaded = {};
 
         const fmtRp = (n) => n === null || n === undefined ? '—' : 'Rp ' + Number(n).toLocaleString('id-ID');
         const fmtPct = (n) => n === null || n === undefined ? '—' : Number(n).toLocaleString('id-ID', {
@@ -1008,6 +1153,101 @@
             maximumFractionDigits: 1
         }) + '%';
         const fmtNum = (n) => n === null || n === undefined ? '—' : Number(n).toLocaleString('id-ID');
+
+        function enhanceSelect(selectEl) {
+            if (!selectEl || selectEl.dataset.enhanced) return;
+            selectEl.dataset.enhanced = '1';
+            selectEl.style.display = 'none';
+
+            const wrap = document.createElement('div');
+            wrap.className = 'cs-wrap';
+
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'cs-trigger';
+            trigger.innerHTML =
+                `<span class="cs-trigger-label placeholder">Pilih nama…</span><span class="cs-arrow"></span>`;
+
+            const panel = document.createElement('div');
+            panel.className = 'cs-panel';
+            panel.innerHTML = `
+        <div class="cs-search-wrap"><input type="text" class="cs-search" placeholder="Cari nama / badge…"></div>
+        <div class="cs-list"></div>
+    `;
+
+            selectEl.insertAdjacentElement('afterend', wrap);
+            wrap.appendChild(trigger);
+            wrap.appendChild(panel);
+            wrap.insertBefore(selectEl, trigger); // select tetap di dalam wrap, tersembunyi
+
+            const searchInput = panel.querySelector('.cs-search');
+            const list = panel.querySelector('.cs-list');
+
+            function closePanel() {
+                wrap.classList.remove('open');
+            }
+
+            trigger.addEventListener('click', () => {
+                if (selectEl.disabled) return;
+                const willOpen = !wrap.classList.contains('open');
+                document.querySelectorAll('.cs-wrap.open').forEach(w => w.classList.remove('open'));
+                if (willOpen) {
+                    wrap.classList.add('open');
+                    searchInput.value = '';
+                    filterList('');
+                    searchInput.focus();
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!wrap.contains(e.target)) closePanel();
+            });
+
+            searchInput.addEventListener('input', (e) => filterList(e.target.value.toLowerCase()));
+
+            function filterList(q) {
+                let visible = 0;
+                list.querySelectorAll('.cs-item').forEach(item => {
+                    const match = item.textContent.toLowerCase().includes(q);
+                    item.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                const empty = list.querySelector('.cs-empty');
+                if (empty) empty.style.display = visible ? 'none' : '';
+            }
+
+            refreshEnhancedSelect(selectEl);
+        }
+
+        function refreshEnhancedSelect(selectEl) {
+            if (!selectEl || !selectEl.dataset.enhanced) return;
+            const wrap = selectEl.parentElement;
+            const trigger = wrap.querySelector('.cs-trigger-label');
+            const list = wrap.querySelector('.cs-list');
+
+            list.innerHTML = '';
+            [...selectEl.options].forEach(opt => {
+                const item = document.createElement('div');
+                item.className = 'cs-item' + (opt.value === selectEl.value ? ' selected' : '');
+                item.textContent = opt.textContent;
+                item.dataset.value = opt.value;
+                item.addEventListener('click', () => {
+                    if (selectEl.value !== opt.value) {
+                        selectEl.value = opt.value;
+                        selectEl.dispatchEvent(new Event('change'));
+                    }
+                    wrap.classList.remove('open');
+                });
+                list.appendChild(item);
+            });
+            list.insertAdjacentHTML('beforeend', '<div class="cs-empty" style="display:none;">Tidak ditemukan.</div>');
+
+            const selectedOpt = selectEl.options[selectEl.selectedIndex];
+            trigger.textContent = selectedOpt ? selectedOpt.textContent : 'Pilih nama…';
+            trigger.classList.toggle('placeholder', !selectedOpt);
+
+            wrap.classList.toggle('disabled', selectEl.disabled);
+        }
 
         function populateTahun() {
             const el = document.getElementById('fTahun');
@@ -1019,6 +1259,23 @@
                 el.appendChild(opt);
             }
             el.value = current;
+        }
+
+        function applyLockUI() {
+            if (!LOCKED_TIM) return;
+
+            document.querySelectorAll('.kpi-tab-btn').forEach(btn => {
+                btn.style.display = btn.dataset.tim === LOCKED_TIM ? '' : 'none';
+            });
+            document.querySelectorAll('.kpi-tab-panel').forEach(panel => {
+                panel.style.display = panel.dataset.timPanel === LOCKED_TIM ? '' : 'none';
+            });
+
+            const sel = document.getElementById(`fPersonil_${LOCKED_TIM}`);
+            if (sel) {
+                sel.disabled = true;
+                refreshEnhancedSelect(sel); // ⬅️ supaya class .disabled ikut terpasang di cs-wrap
+            }
         }
 
         function baseParams() {
@@ -1114,22 +1371,23 @@
                 return;
             }
             body.innerHTML = rows.map(r => `
-        <tr>
-            <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
-            <td>${r.nama_aktivitas}</td>
-            <td>${fmtNum(r.target_per_bulan)}</td>
-            <td>${fmtNum(r.laporan_disetujui)}</td>
-            <td>${fmtPct(r.bobot_item)}</td>
-            <td>${fmtPct(r.kontribusi)}</td>
-            <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
-        </tr>
-    `).join('');
+                <tr>
+                    <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
+                    <td>${r.nama_aktivitas}</td>
+                    <td>${fmtNum(r.target_per_bulan)}</td>
+                    <td>${fmtNum(r.laporan_disetujui)}</td>
+                    <td>${fmtPct(r.bobot_item)}</td>
+                    <td>${fmtPct(r.kontribusi)}</td>
+                    <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
+                </tr>
+            `).join('');
         }
 
         function renderPersonilOptionsFor(tim, options, selectedKey) {
             const el = document.getElementById(`fPersonil_${tim}`);
             el.innerHTML = options.map(o => `<option value="${o.key}">${o.label}</option>`).join('');
             if (selectedKey) el.value = selectedKey;
+            refreshEnhancedSelect(el); // ⬅️ tambahkan ini
         }
 
         async function loadTopData() {
@@ -1173,6 +1431,8 @@
         }
 
         function switchTeamTab(tim) {
+            if (LOCKED_TIM && tim !== LOCKED_TIM) return; // abaikan percobaan pindah tab
+
             activeTeamTab = tim;
             document.querySelectorAll('.kpi-tab-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.tim === tim);
@@ -1202,8 +1462,11 @@
             loadTeamData(activeTeamTab, currentPersonil);
         });
 
+        TEAMS.forEach(tim => enhanceSelect(document.getElementById(`fPersonil_${tim}`)));
+
         populateTahun();
-        loadTeamData('SAFETY'); // tab default saat halaman pertama dibuka
+        applyLockUI();
+        loadTeamData(activeTeamTab);
     </script>
 </body>
 
