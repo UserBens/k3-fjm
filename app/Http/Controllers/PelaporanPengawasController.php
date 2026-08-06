@@ -62,7 +62,10 @@ class PelaporanPengawasController extends Controller
     {
         try {
             $query = PelaporanPengawas::with('aktivitas');
-
+            $userRole = session('auth_user.role');
+            if ($userRole === 'pengawas') {
+                $query->where('badge_pengawas', session('auth_user.username'));
+            }
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama_pengawas', 'ilike', "%{$search}%")
@@ -123,32 +126,102 @@ class PelaporanPengawasController extends Controller
     public function lokasiKerjaOptions(): JsonResponse
     {
         $staticOptions = [
-            'KAWASAN',
-            'PABRIK I A',
-            'PABRIK I B',
-            'PABRIK II A',
-            'PABRIK II B',
-            'PABRIK III A',
-            'PABRIK III B',
-            'PELABUHAN',
-            'PERGUDANGAN',
+            "BUNCOP",
+            "DERMAGA A",
+            "DIKLAT",
+            "GEDUNG GRAHA",
+            "GUDANG MULTI GUNA (GMG)",
+            "JETTY I, II, III",
+            "KIG",
+            "PA BABAT",
+            "PA GUNUNGSARI",
+            "PABRIK I A",
+            "PABRIK I B",
+            "PABRIK II A",
+            "PABRIK II B",
+            "PABRIK III A",
+            "PABRIK III B",
+            "PERUMAHAN DINAS",
+            "SOR"
         ];
 
-        $items = LokasiKerja::query()
-            ->select('nama_lokasi')
-            ->whereNotNull('nama_lokasi')
-            ->where('nama_lokasi', '!=', '')
-            ->distinct()
-            ->pluck('nama_lokasi');
-
-        $merged = collect($staticOptions)
-            ->merge($items)
-            ->filter()
+        $items = collect($staticOptions)
             ->unique()
             ->sort(SORT_STRING)
             ->values();
 
-        return response()->json(['data' => $merged]);
+        return response()->json(['data' => $items]);
+    }
+
+    // Dropdown/picker "Sub Area" — daftar tetap.
+    public function subAreaOptions(): JsonResponse
+    {
+        $staticOptions = [
+            "ADM & KEUANGAN",
+            "ADMIN BISNIS",
+            "ADMINISTRASI & PENJUALAN",
+            "ADMINISTRASI BISNIS",
+            "AGRO SOLUTION",
+            "AKUNTANSI",
+            "BARANG REJECT",
+            "DIKLAT",
+            "FABRIKASI DAN ALAT BERAT",
+            "GEDUNG ADMINISTRASI",
+            "HAR I A",
+            "HAR I B",
+            "HAR II",
+            "HAR III A",
+            "HAR III B",
+            "HARSAN",
+            "HK",
+            "HUKUM & SEKRETARIAT",
+            "KEUANGAN",
+            "KOMUNIKASI KORPORAT",
+            "LABORATORIUM",
+            "MITRA BISNIS PEMASARAN RETAIL",
+            "OPERASIONAL PELABUHAN",
+            "PA BABAT",
+            "PA GUNUNGSARI",
+            "PELAPORAN KEUANGAN & MANAJEMEN",
+            "PELAYANAN UMUM",
+            "PEMADAM KEBAKARAN",
+            "PEMELIHARAAN PELABUHAN",
+            "PENGADAAN BARANG",
+            "PENGADAAN DAN PENGEMBANGAN BISNIS",
+            "PENGADAAN JASA",
+            "PENGELOLAAN MITRA",
+            "PENGELOLAAN PELANGGAN",
+            "PENGELOLAAN TRANSFORMASI BISNIS",
+            "PENGEMBANGAN KORPORAT",
+            "PENGHIJAUAN",
+            "PERGUDANGAN DAN PENGANTONGAN",
+            "PORTFOLIO BISNIS",
+            "PPBJ",
+            "PPSB",
+            "PRODUKSI I",
+            "PRODUKSI II A",
+            "PRODUKSI II B",
+            "PRODUKSI III",
+            "PRODUKSI III A",
+            "PRODUKSI III B",
+            "PROJECT MANAJER RETAIL MANAJEMEN",
+            "PROYEK INFRASTRUKTUR",
+            "PROYEK MANAJEMEN PRODUK BARU",
+            "PROYEK PENGEMBANGAN",
+            "RENDAL & ANGGARAN",
+            "RENSTRAHAR",
+            "RISET",
+            "TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
+            "TATA KELOLA PERUSAHAAN & MANAJEMEN RISIKO",
+            "TEKNIK & BISNIS"
+        ];
+
+        $items = collect($staticOptions)
+            ->unique()
+            ->sort(SORT_STRING)
+            ->values();
+
+        return response()->json(['data' => $items]);
     }
 
     public function unitKerjaOptions(): JsonResponse
@@ -372,6 +445,7 @@ class PelaporanPengawasController extends Controller
             'badge_pengawas'      => ['nullable', 'string', 'max:50'],
             'nama_pengawas'       => ['required', 'string', 'max:255'],
             'area_kerja'          => ['required', 'string', 'max:255'],
+            'sub_area' => ['nullable', 'string', 'max:150'],
             'unit_kerja'          => ['required', 'string', 'max:255'],
             'aktivitas_kpi_k3_id' => ['required', 'exists:aktivitas_kpi_k3,id'],
 
@@ -381,7 +455,6 @@ class PelaporanPengawasController extends Controller
             'materi_safety_briefing'        => [$briefingTextRule, 'string'],
             'foto_kegiatan_safety_briefing' => [$briefingFileRule, 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
             'formulir_presensi_pdf'         => [$briefingFileRule, 'mimes:pdf', 'max:4096'],
-
             'status' => ['nullable', 'in:PENDING,APPROVE,REJECT,CANCEL'],
         ]);
     }
@@ -396,6 +469,7 @@ class PelaporanPengawasController extends Controller
             'badge_pengawas'       => $item->badge_pengawas,
             'nama_pengawas'        => $item->nama_pengawas,
             'area_kerja'           => $item->area_kerja,
+            'sub_area'    => $item->sub_area,   // ← BARU
             'unit_kerja'           => $item->unit_kerja,
 
             'aktivitas_kpi_k3_id'  => $item->aktivitas_kpi_k3_id,

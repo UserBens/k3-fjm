@@ -119,11 +119,14 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::put('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'update'])->name('update');
             Route::delete('/{aktivitasKpiK3}', [KpiK3MatriksController::class, 'destroy'])->name('destroy');
         });
+
         Route::get('kpi-k3/matriks/safety-officers', [KpiK3MatriksController::class, 'safetyOfficerOptions'])
             ->name('kpi-k3.matriks.safety-officers');
         Route::get('kpi-k3/matriks/rekap-safety-officer', [KpiK3MatriksController::class, 'rekapSafetyOfficer'])
             ->name('kpi-k3.matriks.rekap-so');
         Route::put('kpi-k3/pengaturan', [KpiK3MatriksController::class, 'updatePengaturan'])->name('kpi-k3.pengaturan.update');
+        Route::get('/kpi-k3/pengaturan', [KpiK3MatriksController::class, 'pengaturanShow'])->name('kpi-k3.pengaturan.show');
+        Route::get('/kpi-k3/pengaturan/periode-list', [KpiK3MatriksController::class, 'pengaturanPeriodeList'])->name('kpi-k3.pengaturan.periode-list');
 
         // MONITORING LAPORAN (Medis, Safety, Pengawas)
         Route::prefix('monitoring-laporan')->name('monitoring-laporan.')->group(function () {
@@ -536,6 +539,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/', [PelaporanPengawasController::class, 'index'])->name('index');
         Route::get('/data', [PelaporanPengawasController::class, 'data'])->name('data');
         Route::get('/lokasi-kerja-options', [PelaporanPengawasController::class, 'lokasiKerjaOptions'])->name('lokasi-kerja-options');
+        Route::get('/sub-area-options', [PelaporanPengawasController::class, 'subAreaOptions'])->name('sub-area-options');
         Route::get('/unit-kerja-options', [PelaporanPengawasController::class, 'unitKerjaOptions'])->name('unit-kerja-options');
         Route::get('/jenis-aktivitas-options', [PelaporanPengawasController::class, 'jenisAktivitasOptions'])->name('jenis-aktivitas-options');
         Route::get('/cari-pengawas', [PelaporanPengawasController::class, 'cariPengawas'])->name('cari-pengawas');

@@ -241,7 +241,7 @@ class LaporanCapaianKpiController extends Controller
 
     private function hitungLaporan(int $tahun, int $bulan): array
     {
-        $pengaturan = PengaturanKpiK3::current();
+        $pengaturan = PengaturanKpiK3::forPeriode(now()->year, now()->month);
 
         [$periodeMulai, $periodeSelesai] = $this->resolvePeriode($pengaturan, $tahun, $bulan);
 
@@ -403,7 +403,7 @@ class LaporanCapaianKpiController extends Controller
 
     public function export(Request $request)
     {
-        $pengaturan = PengaturanKpiK3::current();
+        $pengaturan = PengaturanKpiK3::forPeriode(now()->year, now()->month);
         $tahun = (int) ($request->query('tahun') ?: $pengaturan->tahun_aktif);
         $bulan = (int) ($request->query('bulan') ?: $pengaturan->bulan_aktif);
 
@@ -779,7 +779,7 @@ class LaporanCapaianKpiController extends Controller
      */
     private function laporanUntukPegawai(string $flag, Pegawai $pegawai, Carbon $mulai, Carbon $selesai): Collection
     {
-        $pengaturan = PengaturanKpiK3::current();
+        $pengaturan = PengaturanKpiK3::forPeriode(now()->year, now()->month);
         $batasTerlambat = (int) $pengaturan->batas_terlambat_lapor;
         $batasAwal = (int) $pengaturan->batas_lapor_lebih_awal;
 

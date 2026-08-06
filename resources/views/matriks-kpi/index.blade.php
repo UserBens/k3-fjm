@@ -1362,6 +1362,30 @@
                 </div>
             </div>
 
+            <div
+                style="display:flex; align-items:center; gap:10px; margin-bottom:14px; padding:10px 12px; background:#F8FAFC; border:1px solid #e2e8f0; border-radius:8px;">
+                <span style="font-size:12px; font-weight:600; color:#475569;">Lihat Pengaturan Periode:</span>
+                <select id="pengaturanPeriodeBulan" class="filter-select" onchange="onPeriodePengaturanChange()"
+                    style="width:auto;">
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+                <input type="number" id="pengaturanPeriodeTahun" class="filter-select" style="width:90px;"
+                    onchange="onPeriodePengaturanChange()">
+                <span id="pengaturanPeriodeBadge"
+                    style="font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;"></span>
+            </div>
+
             <!-- ══════ PANEL PENGATURAN (1-6) ══════ -->
             <div class="section-card" style="margin-bottom:14px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer;"
@@ -1400,7 +1424,8 @@
                                 </div>
                                 <div class="pengaturan-field">
                                     <label>Tanggal Cut-off Laporan Manajer</label>
-                                    <input type="number" id="pCutoffManajer" min="1" max="31" required>
+                                    <input type="number" id="pCutoffManajer" min="1" max="31"
+                                        required>
                                 </div>
                                 <div class="pengaturan-field">
                                     <label>Periode Manajer</label>
@@ -1889,6 +1914,9 @@
         const PENGATURAN_ENDPOINT = "{{ route('kpi-k3.pengaturan.update') }}";
         const SO_OPTIONS_ENDPOINT = "{{ route('kpi-k3.matriks.safety-officers') }}";
         const REKAP_SO_ENDPOINT = "{{ route('kpi-k3.matriks.rekap-so') }}";
+        const PENGATURAN_SHOW_ENDPOINT = "{{ route('kpi-k3.pengaturan.show') }}";
+        const PENGATURAN_PERIODE_LIST_ENDPOINT = "{{ route('kpi-k3.pengaturan.periode-list') }}";
+
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
         const state = {
@@ -1969,34 +1997,70 @@
             loadData();
         }
 
+        async function loadPengaturanForPeriode(tahun, bulan) {
+            const res = await fetch(`${PENGATURAN_SHOW_ENDPOINT}?tahun=${tahun}&bulan=${bulan}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            const json = await res.json();
+            fillPengaturanForm(json.data);
+
+            const badge = document.getElementById('pengaturanPeriodeBadge');
+            if (json.exists) {
+                badge.textContent = 'Tersimpan';
+                badge.style.background = '#DCFCE7';
+                badge.style.color = '#166534';
+            } else {
+                badge.textContent = 'Belum disimpan — disalin dari periode terakhir';
+                badge.style.background = '#FEF3C7';
+                badge.style.color = '#92400E';
+            }
+        }
+
+        function onPeriodePengaturanChange() {
+            const bulan = parseInt(document.getElementById('pengaturanPeriodeBulan').value, 10);
+            const tahun = parseInt(document.getElementById('pengaturanPeriodeTahun').value, 10);
+            loadPengaturanForPeriode(tahun, bulan);
+        }
+
+        // Panggil saat load halaman pertama kali (ganti bagian di loadData() yang lama)
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            document.getElementById('pengaturanPeriodeBulan').value = now.getMonth() + 1;
+            document.getElementById('pengaturanPeriodeTahun').value = now.getFullYear();
+            loadPengaturanForPeriode(now.getFullYear(), now.getMonth() + 1);
+            loadData();
+        });
+
         // ══════ RENDER RINGKASAN ══════
         function renderRingkasan(summary) {
             latestSummary = summary;
             const el = document.getElementById('ringkasanCards');
             /*
-            el.innerHTML = `
-                <div class="ringkasan-card">
-                    <div class="rc-label">Total Skor Seluruh Aktivitas</div>
-                    <div class="rc-value">${summary.total_skor}</div>
-                    <div class="rc-sub">Target total: ${summary.total_target} / bulan</div>
-                </div>
-                <div class="ringkasan-card">
-                    <div class="rc-label">Total Skor Tim Safety</div>
-                    <div class="rc-value" style="color:#1e40af;">${summary.total_skor_safety}</div>
-                    <div class="rc-sub">Dasar pembagian bobot % Safety</div>
-                </div>
-                <div class="ringkasan-card">
-                    <div class="rc-label">Total Skor Tim Pengawas</div>
-                    <div class="rc-value" style="color:#166534;">${summary.total_skor_pengawas}</div>
-                    <div class="rc-sub">Dasar pembagian bobot % Pengawas</div>
-                </div>
-                <div class="ringkasan-card">
-                    <div class="rc-label">Total Skor Tim Medis</div>
-                    <div class="rc-value" style="color:#92400e;">${summary.total_skor_medis}</div>
-                    <div class="rc-sub">Dasar pembagian bobot % Medis</div>
-                </div>
-            `;
-            */
+                        el.innerHTML = `
+            <div class="ringkasan-card">
+                <div class="rc-label">Total Skor Seluruh Aktivitas</div>
+                <div class="rc-value">${summary.total_skor}</div>
+                <div class="rc-sub">Target total: ${summary.total_target} / bulan</div>
+            </div>
+            <div class="ringkasan-card">
+                <div class="rc-label">Total Skor Tim Safety</div>
+                <div class="rc-value" style="color:#1e40af;">${summary.total_skor_safety}</div>
+                <div class="rc-sub">Dasar pembagian bobot % Safety</div>
+            </div>
+            <div class="ringkasan-card">
+                <div class="rc-label">Total Skor Tim Pengawas</div>
+                <div class="rc-value" style="color:#166534;">${summary.total_skor_pengawas}</div>
+                <div class="rc-sub">Dasar pembagian bobot % Pengawas</div>
+            </div>
+            <div class="ringkasan-card">
+                <div class="rc-label">Total Skor Tim Medis</div>
+                <div class="rc-value" style="color:#92400e;">${summary.total_skor_medis}</div>
+                <div class="rc-sub">Dasar pembagian bobot % Medis</div>
+            </div>
+        `;
+                        */
         }
 
         // ══════ RENDER TABLE ══════
@@ -2089,10 +2153,6 @@
                 document.getElementById('dataSummary').innerHTML =
                     `<strong>${json.data.length}</strong> aktivitas ditemukan`;
 
-                if (!window.__pengaturanLoaded) {
-                    fillPengaturanForm(json.pengaturan);
-                    window.__pengaturanLoaded = true;
-                }
             } catch (e) {
                 document.getElementById('tableBody').innerHTML =
                     `<tr><td colspan="10" style="text-align:center;color:red;">Error memuat data</td></tr>`;
@@ -2188,6 +2248,7 @@
                 if (!res.ok) throw new Error(json.message || 'Gagal menyimpan data');
 
                 showToast(json.message, 'success');
+                loadPengaturanForPeriode(payload.tahun_aktif, payload.bulan_aktif); // ← tambahkan ini
                 closeAktivitasModal();
                 loadData();
             } catch (e) {
@@ -2213,6 +2274,7 @@
                 if (!res.ok) throw new Error(json.message || 'Gagal menghapus data');
 
                 showToast(json.message, 'success');
+                loadPengaturanForPeriode(payload.tahun_aktif, payload.bulan_aktif); // ← tambahkan ini
                 closeAktivitasModal();
                 loadData();
             } catch (e) {
@@ -2294,6 +2356,7 @@
                 if (!res.ok) throw new Error(json.message || 'Gagal menyimpan pengaturan');
 
                 showToast(json.message, 'success');
+                loadPengaturanForPeriode(payload.tahun_aktif, payload.bulan_aktif); // ← tambahkan ini
             } catch (e) {
                 showToast(e.message || 'Terjadi kesalahan', 'error');
             }

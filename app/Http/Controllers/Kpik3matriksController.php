@@ -95,7 +95,7 @@ class KpiK3MatriksController extends Controller
                 'total_skor_pengawas' => $totalSkorPengawas,
                 'total_skor_medis'    => $totalSkorMedis,
             ],
-            'pengaturan' => PengaturanKpiK3::current(),
+            'pengaturan' => PengaturanKpiK3::forPeriode(now()->year, now()->month),
         ]);
     }
 
@@ -143,6 +143,27 @@ class KpiK3MatriksController extends Controller
     }
 
     /** Update panel Pengaturan (bagian 1-6). */
+    /** GET pengaturan utk periode tertentu (default: bulan berjalan). */
+    public function pengaturanShow(Request $request)
+    {
+        $tahun = (int) $request->query('tahun', now()->year);
+        $bulan = (int) $request->query('bulan', now()->month);
+
+        $pengaturan = PengaturanKpiK3::forPeriode($tahun, $bulan);
+
+        return response()->json([
+            'data'   => $pengaturan,
+            'exists' => $pengaturan->exists, // false = belum pernah disimpan utk periode ini (masih draft/salinan)
+        ]);
+    }
+
+    /** GET daftar periode yang sudah pernah disimpan (utk dropdown histori). */
+    public function pengaturanPeriodeList()
+    {
+        return response()->json(PengaturanKpiK3::daftarPeriodeTersimpan());
+    }
+
+    /** Simpan/Update pengaturan utk periode (tahun_aktif, bulan_aktif) yang dikirim. */
     public function updatePengaturan(Request $request)
     {
         $validated = $request->validate([
@@ -173,11 +194,13 @@ class KpiK3MatriksController extends Controller
             'ambang_kuning' => 'required|numeric|min:0|max:100',
         ]);
 
-        $pengaturan = PengaturanKpiK3::current();
-        $pengaturan->update($validated);
+        $pengaturan = PengaturanKpiK3::updateOrCreate(
+            ['tahun_aktif' => $validated['tahun_aktif'], 'bulan_aktif' => $validated['bulan_aktif']],
+            $validated
+        );
 
         return response()->json([
-            'message' => 'Pengaturan KPI K3 berhasil disimpan.',
+            'message' => "Pengaturan KPI K3 periode {$validated['bulan_aktif']}/{$validated['tahun_aktif']} berhasil disimpan.",
             'data' => $pengaturan->fresh(),
         ]);
     }

@@ -181,7 +181,7 @@ class AktivitasKpiK3Seeder extends Seeder
                 'maks_per_hari' => 1,
                 'mulai_berlaku' => 2026,
                 'akhir_berlaku' => null,
-                'safety' => false,
+                'safety' => true,
                 'pengawas' => false,
                 'medis' => true,
                 'status' => 'AKTIF',

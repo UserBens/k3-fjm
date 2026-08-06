@@ -289,6 +289,35 @@
             gap: 14px;
         }
 
+        .ringkasan-personil {
+            margin-top: 14px;
+        }
+
+        .ringkasan-personil-title {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .monitoring-box {
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #F8F9FF;
+        }
+
+        .monitoring-box .kv-row {
+            padding: 9px 12px;
+        }
+
+        .monitoring-box .kv-row .v.highlight {
+            color: var(--blue);
+            font-size: 13px;
+        }
+
         .personil-select-wrap {
             margin-bottom: 12px;
         }
@@ -300,7 +329,8 @@
             color: #94A3B8;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            /* Ubah dari 5px menjadi 8px */
         }
 
         .personil-select-wrap select {
@@ -363,6 +393,8 @@
 
         .rtable-wrap {
             overflow-x: auto;
+            margin-top: 0;
+            /* Ubah dari 16px menjadi 0 (atau hapus baris ini) */
         }
 
         .rtable {
@@ -394,6 +426,20 @@
 
         .rtable tr:hover td {
             background: #F8F9FF;
+        }
+
+        .rincian-kpi-col {
+            margin-left: 18px;
+        }
+
+        .rincian-kpi-title {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            /* Ubah dari 10px menjadi 8px */
         }
 
         .status-capaian {
@@ -970,12 +1016,16 @@
                                     <label>Pilih Nama (Safety)</label>
                                     <select id="fPersonil_SAFETY"></select>
                                 </div>
-                                <div id="monitoringBox_SAFETY"
-                                    style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
-                                    <div class="loading-state">Memuat data personil…</div>
+
+                                <div class="ringkasan-personil">
+                                    <div class="ringkasan-personil-title">Ringkasan Kinerja</div>
+                                    <div id="monitoringBox_SAFETY" class="monitoring-box">
+                                        <div class="loading-state">Memuat data personil…</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="rincian-kpi-col">
+                                <div class="rincian-kpi-title">Tabel Aktivitas KPI Personil</div>
                                 <div class="rtable-wrap">
                                     <table class="rtable">
                                         <thead>
@@ -1002,6 +1052,7 @@
                     </div>
 
                     <!-- PANEL PENGAWAS -->
+                    <!-- PANEL PENGAWAS -->
                     <div class="kpi-tab-panel" data-tim-panel="PENGAWAS" style="display:none;">
                         <div class="monitor-grid">
                             <div>
@@ -1009,12 +1060,16 @@
                                     <label>Pilih Nama (Pengawas)</label>
                                     <select id="fPersonil_PENGAWAS"></select>
                                 </div>
-                                <div id="monitoringBox_PENGAWAS"
-                                    style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
-                                    <div class="loading-state">Memuat data personil…</div>
+
+                                <div class="ringkasan-personil">
+                                    <div class="ringkasan-personil-title">Ringkasan Kinerja</div>
+                                    <div id="monitoringBox_PENGAWAS" class="monitoring-box">
+                                        <div class="loading-state">Memuat data personil…</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="rincian-kpi-col">
+                                <div class="rincian-kpi-title">Tabel Aktivitas KPI Personil</div>
                                 <div class="rtable-wrap">
                                     <table class="rtable">
                                         <thead>
@@ -1048,12 +1103,16 @@
                                     <label>Pilih Nama (Medis)</label>
                                     <select id="fPersonil_MEDIS"></select>
                                 </div>
-                                <div id="monitoringBox_MEDIS"
-                                    style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
-                                    <div class="loading-state">Memuat data personil…</div>
+
+                                <div class="ringkasan-personil">
+                                    <div class="ringkasan-personil-title">Ringkasan Kinerja</div>
+                                    <div id="monitoringBox_MEDIS" class="monitoring-box">
+                                        <div class="loading-state">Memuat data personil…</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="rincian-kpi-col">
+                                <div class="rincian-kpi-title">Tabel Aktivitas KPI Personil</div>
                                 <div class="rtable-wrap">
                                     <table class="rtable">
                                         <thead>
@@ -1112,7 +1171,7 @@
             </div>
 
             <!-- INDIKATOR KPI -->
-            <div>
+            {{-- <div>
                 <span class="section-label sl-green">Indikator KPI</span>
                 <div class="card-block">
                     <div class="indikator-grid">
@@ -1133,8 +1192,24 @@
                             <div class="val" id="ikPersonilBaik">–</div>
                         </div>
                     </div>
+
+                    <div style="margin-top:16px;">
+                        <div class="rincian-kpi-title">Monitoring Personil Terpilih</div>
+                        <div id="monitoringBox_SAFETY" data-monitor-team="SAFETY"
+                            style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
+                            <div class="loading-state">Memuat data personil…</div>
+                        </div>
+                        <div id="monitoringBox_PENGAWAS" data-monitor-team="PENGAWAS"
+                            style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;display:none;">
+                            <div class="loading-state">Memuat data personil…</div>
+                        </div>
+                        <div id="monitoringBox_MEDIS" data-monitor-team="MEDIS"
+                            style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;display:none;">
+                            <div class="loading-state">Memuat data personil…</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </div> --}}
 
         </div>
     </div>
@@ -1319,13 +1394,13 @@
             document.getElementById('stTotal').textContent = fmtNum(r.total);
         }
 
-        function renderIndikator(ik) {
-            document.getElementById('ikTotalLaporan').textContent = fmtNum(ik.total_laporan_disetujui);
-            document.getElementById('ikRataSkor').textContent = fmtPct(ik.rata_rata_skor_akhir);
-            document.getElementById('ikTunjangan').textContent = ik.total_tunjangan === null ? '—' : fmtRp(ik
-                .total_tunjangan);
-            document.getElementById('ikPersonilBaik').textContent = fmtNum(ik.jumlah_personil_baik);
-        }
+        // function renderIndikator(ik) {
+        //     document.getElementById('ikTotalLaporan').textContent = fmtNum(ik.total_laporan_disetujui);
+        //     document.getElementById('ikRataSkor').textContent = fmtPct(ik.rata_rata_skor_akhir);
+        //     document.getElementById('ikTunjangan').textContent = ik.total_tunjangan === null ? '—' : fmtRp(ik
+        //         .total_tunjangan);
+        //     document.getElementById('ikPersonilBaik').textContent = fmtNum(ik.jumlah_personil_baik);
+        // }
 
         function renderAreaOptions(areas) {
             const el = document.getElementById('fArea');
@@ -1348,19 +1423,12 @@
                 return;
             }
             box.innerHTML = `
-        <div class="kv-row"><span class="k">Tim / Jenis Petugas</span><span class="v">${m.tim}</span></div>
-        <div class="kv-row"><span class="k">Hari Kerja Efektif</span><span class="v">${fmtNum(m.hari_kerja_efektif)}</span></div>
-        <div class="kv-row"><span class="k">Total Target Laporan (Periode)</span><span class="v">${fmtNum(m.total_target_laporan)}</span></div>
-        <div class="kv-row"><span class="k">Jumlah Laporan Disetujui</span><span class="v">${fmtNum(m.jumlah_laporan_disetujui)}</span></div>
-        <div class="kv-row"><span class="k">Jumlah Laporan Tepat Waktu</span><span class="v">${fmtNum(m.jumlah_laporan_tepat_waktu)}</span></div>
-        <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
-        <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
-        <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v" style="color:var(--blue)">${fmtPct(m.nilai_kpi_final)}</span></div>
-        <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
-        <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
-        <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
-        <div class="kv-row"><span class="k">Kategori Penilaian</span><span class="kategori-pill ${kategoriClass(m.kategori_penilaian)}">${m.kategori_penilaian}</span></div>
-    `;
+                <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
+                <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
+                <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v highlight">${fmtPct(m.nilai_kpi_final)}</span></div>                <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
+                <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
+                <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
+            `;
         }
 
         function renderRincianFor(tim, rows) {
@@ -1375,7 +1443,7 @@
                     <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
                     <td>${r.nama_aktivitas}</td>
                     <td>${fmtNum(r.target_per_bulan)}</td>
-                    <td>${fmtNum(r.laporan_disetujui)}</td>
+                    <td style="color:var(--green);font-weight:800">${fmtNum(r.laporan_disetujui)}</td>
                     <td>${fmtPct(r.bobot_item)}</td>
                     <td>${fmtPct(r.kontribusi)}</td>
                     <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
@@ -1397,7 +1465,7 @@
                 const json = await res.json();
                 renderPeriode(json.periode);
                 renderRingkasan(json.ringkasan_status_dokumen);
-                renderIndikator(json.indikator_kpi);
+                // renderIndikator(json.indikator_kpi);
                 renderAreaOptions(json.area_options || []);
             } catch (e) {
                 console.error(e);
@@ -1417,7 +1485,7 @@
                 // Top panel sekarang ikut personil/tim yang aktif di tab ini
                 renderPeriode(json.periode);
                 renderRingkasan(json.ringkasan_status_dokumen);
-                renderIndikator(json.indikator_kpi);
+                // renderIndikator(json.indikator_kpi);
                 renderAreaOptions(json.area_options || []);
 
                 renderPersonilOptionsFor(tim, json.personil_options || [], json.personil_terpilih);
@@ -1437,9 +1505,13 @@
             document.querySelectorAll('.kpi-tab-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.tim === tim);
             });
+
             document.querySelectorAll('.kpi-tab-panel').forEach(panel => {
                 panel.style.display = panel.dataset.timPanel === tim ? '' : 'none';
             });
+            // document.querySelectorAll('[data-monitor-team]').forEach(el => {
+            //     el.style.display = el.dataset.monitorTeam === tim ? '' : 'none';
+            // });
             // pindah tab -> top panel ikut ganti ke data tim ini, entah dari cache atau fetch baru
             if (!teamLoaded[tim]) {
                 loadTeamData(tim);

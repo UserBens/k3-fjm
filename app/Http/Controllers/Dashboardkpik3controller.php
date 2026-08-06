@@ -70,7 +70,7 @@ class DashboardKpiK3Controller extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            $pengaturan = PengaturanKpiK3::current();
+            $pengaturan = PengaturanKpiK3::forPeriode(now()->year, now()->month);
             $userRole   = session('auth_user.role');
             $username   = session('auth_user.username');
             $isTerbatas = in_array($userRole, ['safety', 'pengawas', 'medis'], true);
@@ -479,8 +479,13 @@ class DashboardKpiK3Controller extends Controller
             1
         );
 
-        $bobotDitugaskan = $totalAktivitasAktifTim > 0
-            ? round($aktivitasDitugaskan->count() / $totalAktivitasAktifTim * 100, 1)
+        // $bobotDitugaskan = $totalAktivitasAktifTim > 0
+        //     ? round($aktivitasDitugaskan->count() / $totalAktivitasAktifTim * 100, 1)
+        //     : 0.0;
+
+        // Menggunakan sum('skor') dibagi dengan $totalSkorTim yang sudah Anda definisikan sebelumnya
+        $bobotDitugaskan = $totalSkorTim > 0
+            ? round($aktivitasDitugaskan->sum('skor') / $totalSkorTim * 100, 1)
             : 0.0;
 
         $skorUntukTunjangan = max($pengaturan->skor_minimum_tunjangan, min($nilaiKpiFinal, $pengaturan->skor_maksimum_tunjangan));
