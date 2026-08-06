@@ -13,9 +13,43 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Traits\GeneratesUploadFileName;
+
 
 class PelaporanPengawasController extends Controller
 {
+    use GeneratesUploadFileName;
+
+    // Label yang dipakai untuk penamaan file (harus didefinisikan, sebelumnya belum ada)
+    private array $fileLabels = [
+        'foto_temuan_bahaya'            => 'Foto Temuan Bahaya',
+        'foto_kegiatan_safety_briefing' => 'Foto Kegiatan Safety Briefing',
+        'formulir_presensi_pdf'         => 'Formulir Presensi',
+    ];
+
+    /**
+     * Hitung nomor urut file berdasarkan riwayat laporan lain
+     * (badge pengawas + jenis aktivitas yang sama) yang sudah punya file di kolom ini.
+     * Menggunakan aktivitas_kpi_k3_id karena tabel ini tidak punya kolom jenis_aktifitas_kpi.
+     */
+    private function nextFileSequence(
+        string $column,
+        ?string $badge,
+        ?int $aktivitasId,
+        ?int $excludeId = null
+    ): int {
+        $query = PelaporanPengawas::query()
+            ->whereNotNull($column)
+            ->where('badge_pengawas', $badge)
+            ->where('aktivitas_kpi_k3_id', $aktivitasId);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->count() + 1;
+    }
+
     /**
      * Menampilkan halaman Pelaporan Pengawas (listing + modal tambah/edit).
      */
@@ -29,7 +63,6 @@ class PelaporanPengawasController extends Controller
         try {
             $query = PelaporanPengawas::with('aktivitas');
 
-            // 1. Fitur Pencarian (Search)
             if ($search = trim((string) $request->query('search', ''))) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama_pengawas', 'ilike', "%{$search}%")
@@ -38,7 +71,6 @@ class PelaporanPengawasController extends Controller
                 });
             }
 
-            // 2. Fitur Filter Unit Kerja & Status
             if ($unitKerja = $request->query('unit_kerja')) {
                 $query->where('unit_kerja', $unitKerja);
             }
@@ -51,7 +83,6 @@ class PelaporanPengawasController extends Controller
 
             $query->orderByDesc('tanggal_pelaksanaan')->orderByDesc('created_at');
 
-            // 3. Opsi Filter (unit kerja & status unik dari data yang sudah ada)
             $filterOptions = [
                 'unit_kerja' => PelaporanPengawas::select('unit_kerja')
                     ->distinct()
@@ -62,13 +93,11 @@ class PelaporanPengawasController extends Controller
                 'status' => ['PENDING', 'APPROVE', 'REJECT', 'CANCEL'],
             ];
 
-            // 4. Pagination
             $perPage = (int) $request->query('per_page', 10);
             $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
 
             $paginator = $query->paginate($perPage);
 
-            // 5. Mapping Data
             $transformedData = collect($paginator->items())->map(fn($item) => $this->transform($item));
 
             return response()->json([
@@ -91,8 +120,6 @@ class PelaporanPengawasController extends Controller
         }
     }
 
-    // Dropdown "Area Kerja" <- master Lokasi Kerja.
-    // Dropdown "Area Kerja" <- gabungan master Lokasi Kerja + opsi statis.
     public function lokasiKerjaOptions(): JsonResponse
     {
         $staticOptions = [
@@ -124,7 +151,6 @@ class PelaporanPengawasController extends Controller
         return response()->json(['data' => $merged]);
     }
 
-    // Dropdown "Unit Kerja" <- master Unit Kerja.
     public function unitKerjaOptions(): JsonResponse
     {
         $items = UnitKerja::query()
@@ -139,7 +165,6 @@ class PelaporanPengawasController extends Controller
         return response()->json(['data' => $items]);
     }
 
-    // Dropdown/picker "Jenis Aktifitas KPI" <- master aktivitas_kpi_k3 (hanya yang berstatus AKTIF).
     public function jenisAktivitasOptions(Request $request): JsonResponse
     {
         $search = trim((string) $request->query('search', ''));
@@ -163,7 +188,7 @@ class PelaporanPengawasController extends Controller
             'id'             => $a->id,
             'kode'           => $a->kode,
             'nama_aktivitas' => $a->nama_aktivitas,
-            'label'          => $a->label, // "[kode] nama_aktivitas"
+            'label'          => $a->label,
             'kategori'       => str_contains(strtolower($a->nama_aktivitas), 'nearmiss')
                 ? 'NEARMISS'
                 : (str_contains(strtolower($a->nama_aktivitas), 'safety briefing') ? 'BRIEFING' : 'LAINNYA'),
@@ -172,7 +197,6 @@ class PelaporanPengawasController extends Controller
         return response()->json(['data' => $items]);
     }
 
-    // Picker karyawan — dipakai untuk field "Nama Pengawas" di form.
     public function cariPengawas(Request $request): JsonResponse
     {
         $search = trim((string) $request->query('search', ''));
@@ -209,10 +233,28 @@ class PelaporanPengawasController extends Controller
 
         try {
             $folderPath = 'pelaporan_pengawas/' . date('Y-m');
+
             foreach ($this->fileFields() as $field) {
-                if ($request->hasFile($field)) {
-                    $validated[$field] = $request->file($field)->store($folderPath, 'public');
-                }
+                if (!$request->hasFile($field)) continue;
+
+                $urutan = $this->nextFileSequence(
+                    $field,
+                    $validated['badge_pengawas'] ?? null,
+                    $validated['aktivitas_kpi_k3_id'] ?? null
+                );
+
+                $file = $request->file($field);
+                $fileName = $this->buildUploadFileName(
+                    $validated['tanggal_pelaksanaan'] ?? null,
+                    $validated['badge_pengawas'] ?? null,
+                    $validated['nama_pengawas'] ?? null,
+                    $aktivitas->nama_aktivitas ?? null,
+                    $this->fileLabels[$field] ?? $field,
+                    $urutan,
+                    $file->getClientOriginalExtension()
+                );
+
+                $validated[$field] = $file->storeAs($folderPath, $fileName, 'public');
             }
 
             $validated['id_laporan']    = $this->generateIdLaporan();
@@ -251,12 +293,32 @@ class PelaporanPengawasController extends Controller
 
         try {
             $folderPath = 'pelaporan_pengawas/' . date('Y-m');
+
             foreach ($this->fileFields() as $field) {
                 if ($request->hasFile($field)) {
+                    $urutan = $this->nextFileSequence(
+                        $field,
+                        $validated['badge_pengawas'] ?? $laporan->badge_pengawas,
+                        $validated['aktivitas_kpi_k3_id'] ?? $laporan->aktivitas_kpi_k3_id,
+                        $laporan->id
+                    );
+
                     if ($laporan->$field) {
                         Storage::disk('public')->delete($laporan->$field);
                     }
-                    $validated[$field] = $request->file($field)->store($folderPath, 'public');
+
+                    $file = $request->file($field);
+                    $fileName = $this->buildUploadFileName(
+                        $validated['tanggal_pelaksanaan'] ?? $laporan->tanggal_pelaksanaan,
+                        $validated['badge_pengawas'] ?? $laporan->badge_pengawas,
+                        $validated['nama_pengawas'] ?? $laporan->nama_pengawas,
+                        $aktivitas->nama_aktivitas ?? $laporan->aktivitas?->nama_aktivitas,
+                        $this->fileLabels[$field] ?? $field,
+                        $urutan,
+                        $file->getClientOriginalExtension()
+                    );
+
+                    $validated[$field] = $file->storeAs($folderPath, $fileName, 'public');
                 } else {
                     unset($validated[$field]); // tidak upload baru -> file lama tetap dipertahankan
                 }
@@ -285,10 +347,6 @@ class PelaporanPengawasController extends Controller
         ];
     }
 
-    /**
-     * Generate ID Laporan format: PGW-YYYYMMDD-XXXX (4 karakter acak uppercase),
-     * dicek keunikannya terhadap kolom id_laporan.
-     */
     private function generateIdLaporan(): string
     {
         do {
@@ -304,8 +362,6 @@ class PelaporanPengawasController extends Controller
         $isNearmiss   = str_contains($namaAktivitas, 'nearmiss');
         $isBriefing   = str_contains($namaAktivitas, 'safety briefing');
 
-        // Field khusus per jenis aktivitas hanya wajib diisi kalau jenis aktivitasnya cocok,
-        // dan hanya wajib saat data baru (create) — saat edit tanpa upload baru, file lama dipertahankan.
         $nearmissTextRule = $isNearmiss ? 'required' : 'nullable';
         $nearmissFileRule = ($isNearmiss && $filesRequiredBase) ? 'required' : 'nullable';
         $briefingTextRule = $isBriefing ? 'required' : 'nullable';

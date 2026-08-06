@@ -3,6 +3,7 @@
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AlatBeratController;
 use App\Http\Controllers\AlatKesehatanPenggunaController;
+use App\Http\Controllers\ArsipDokumenController;
 use App\Http\Controllers\DashboardApdAlkesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardKpiController;
@@ -240,6 +241,12 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])->name('dashboard-kpi-k3.index');
             Route::get('/dashboard-kpi-k3/api', [DashboardKpiK3Controller::class, 'api'])->name('dashboard-kpi-k3.api');
         });
+
+    Route::prefix('arsip-dokumen')->name('arsip-dokumen.')->group(function () {
+        Route::get('/', [ArsipDokumenController::class, 'index'])->name('index');
+        Route::get('/data', [ArsipDokumenController::class, 'data'])->name('data');
+        Route::get('/detail/{sumber}/{id}', [ArsipDokumenController::class, 'detail'])->name('detail');
+    });
 
     // LAPORAN KPI
     Route::get('/laporan-capaian-kpi', [LaporanCapaianKpiController::class, 'index'])->name('laporan-capaian-kpi.index');

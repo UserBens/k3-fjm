@@ -10,43 +10,64 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\GeneratesUploadFileName;
 
 class DataSafetyController extends Controller
 {
+    use GeneratesUploadFileName;
+
+    private function nextFileSequence(
+        string $column,
+        ?string $badge,
+        ?string $jenisAktivitas,
+        ?int $excludeId = null
+    ): int {
+        $query = DataSafety::query()
+            ->whereNotNull($column)
+            ->where('badge_tenaga', $badge)
+            ->where('jenis_aktifitas_kpi', $jenisAktivitas);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->count() + 1;
+    }
+
     // Daftar semua field file: form_field => [kolom_db, folder_storage]
     private array $fileFields = [
-        'foto_alat' => ['foto_alat_path', 'foto-alat'],
-        'formulir_inspeksi_peralatan' => ['formulir_inspeksi_peralatan_path', 'formulir-inspeksi-peralatan'],
-        'formulir_kegiatan_inspeksi_peralatan' => ['formulir_kegiatan_inspeksi_peralatan_path', 'formulir-kegiatan-inspeksi-peralatan'],
-        'foto_temuan_uauc' => ['foto_temuan_uauc_path', 'foto-temuan-uauc'],
-        'formulir_kegiatan_inspeksi_area_kerja' => ['formulir_kegiatan_inspeksi_area_kerja_path', 'formulir-inspeksi-area-kerja'],
-        'formulir_observi' => ['formulir_observi_path', 'formulir-observi'],
-        'formulir_kegiatan_observi' => ['formulir_kegiatan_observi_path', 'formulir-kegiatan-observi'],
-        'safety_permit' => ['safety_permit_path', 'safety-permit'],
-        'formulir_kegiatan_verifikasi_safety_permit' => ['formulir_kegiatan_verifikasi_safety_permit_path', 'formulir-verifikasi-safety-permit'],
-        'foto_temuan_bahaya_nearmiss' => ['foto_temuan_bahaya_nearmiss_path', 'foto-nearmiss'],
-        'foto_pelaksanaan_safety_briefing' => ['foto_pelaksanaan_safety_briefing_path', 'foto-safety-briefing'],
-        'foto_daftar_hadir_briefing' => ['foto_daftar_hadir_briefing_path', 'daftar-hadir-briefing'],
-        'formulir_kegiatan_safety_briefing' => ['formulir_kegiatan_safety_briefing_path', 'formulir-safety-briefing'],
-        'foto_evidence_reward' => ['foto_evidence_reward_path', 'foto-reward'],
-        'formulir_kegiatan_reward' => ['formulir_kegiatan_reward_path', 'formulir-reward'],
-        'foto_kegiatan_sosialisasi_keselamatan' => ['foto_kegiatan_sosialisasi_keselamatan_path', 'foto-sosialisasi-keselamatan'],
-        'formulir_presensi_sosialisasi_keselamatan' => ['formulir_presensi_sosialisasi_keselamatan_path', 'presensi-sosialisasi-keselamatan'],
-        'formulir_kegiatan_sosialisasi_keselamatan' => ['formulir_kegiatan_sosialisasi_keselamatan_path', 'formulir-sosialisasi-keselamatan'],
-        'foto_kegiatan_dcu' => ['foto_kegiatan_dcu_path', 'foto-kegiatan-dcu'],
-        'formulir_hasil_pemeriksaan_dcu' => ['formulir_hasil_pemeriksaan_dcu_path', 'hasil-pemeriksaan-dcu'],
-        'formulir_kegiatan_pemeriksaan_dcu' => ['formulir_kegiatan_pemeriksaan_dcu_path', 'formulir-kegiatan-dcu'],
-        'foto_kegiatan_bugar_sehat' => ['foto_kegiatan_bugar_sehat_path', 'foto-bugar-sehat'],
-        'formulir_presensi_bugar_sehat' => ['formulir_presensi_bugar_sehat_path', 'presensi-bugar-sehat'],
-        'formulir_kegiatan_bugar_sehat' => ['formulir_kegiatan_bugar_sehat_path', 'formulir-bugar-sehat'],
-        'foto_kegiatan_tes_keseimbangan' => ['foto_kegiatan_tes_keseimbangan_path', 'foto-romberg'],
-        'formulir_hasil_pemeriksaan_romberg' => ['formulir_hasil_pemeriksaan_romberg_path', 'hasil-romberg'],
-        'formulir_kegiatan_tes_keseimbangan' => ['formulir_kegiatan_tes_keseimbangan_path', 'formulir-romberg'],
-        'foto_kegiatan_sosialisasi_kesehatan' => ['foto_kegiatan_sosialisasi_kesehatan_path', 'foto-sosialisasi-kesehatan'],
-        'formulir_presensi_sosialisasi_kesehatan' => ['formulir_presensi_sosialisasi_kesehatan_path', 'presensi-sosialisasi-kesehatan'],
-        'formulir_kegiatan_sosialisasi_kesehatan' => ['formulir_kegiatan_sosialisasi_kesehatan_path', 'formulir-sosialisasi-kesehatan'],
-        'kesesuaian_isi_p3k' => ['kesesuaian_isi_p3k_path', 'kesesuaian-p3k'],
-        'formulir_kegiatan_inspeksi_p3k' => ['formulir_kegiatan_inspeksi_p3k_path', 'formulir-inspeksi-p3k'],
+        'foto_alat' => ['foto_alat_path', 'foto-alat', 'Foto Alat'],
+        'formulir_inspeksi_peralatan' => ['formulir_inspeksi_peralatan_path', 'formulir-inspeksi-peralatan', 'Formulir Inspeksi Peralatan'],
+        'formulir_kegiatan_inspeksi_peralatan' => ['formulir_kegiatan_inspeksi_peralatan_path', 'formulir-kegiatan-inspeksi-peralatan', 'Formulir Kegiatan Inspeksi Peralatan'],
+        'foto_temuan_uauc' => ['foto_temuan_uauc_path', 'foto-temuan-uauc', 'Foto Temuan UA/UC'],
+        'formulir_kegiatan_inspeksi_area_kerja' => ['formulir_kegiatan_inspeksi_area_kerja_path', 'formulir-inspeksi-area-kerja', 'Formulir Kegiatan Inspeksi Area Kerja'],
+        'formulir_observi' => ['formulir_observi_path', 'formulir-observi', 'Formulir Observi'],
+        'formulir_kegiatan_observi' => ['formulir_kegiatan_observi_path', 'formulir-kegiatan-observi', 'Formulir Kegiatan Observi'],
+        'safety_permit' => ['safety_permit_path', 'safety-permit', 'Safety Permit'],
+        'formulir_kegiatan_verifikasi_safety_permit' => ['formulir_kegiatan_verifikasi_safety_permit_path', 'formulir-verifikasi-safety-permit', 'Formulir Kegiatan Verifikasi Safety Permit'],
+        'foto_temuan_bahaya_nearmiss' => ['foto_temuan_bahaya_nearmiss_path', 'foto-nearmiss', 'Foto Temuan Bahaya Nearmiss'],
+        'foto_pelaksanaan_safety_briefing' => ['foto_pelaksanaan_safety_briefing_path', 'foto-safety-briefing', 'Foto Pelaksanaan Safety Briefing'],
+        'foto_daftar_hadir_briefing' => ['foto_daftar_hadir_briefing_path', 'daftar-hadir-briefing', 'Foto Daftar Hadir Briefing'],
+        'formulir_kegiatan_safety_briefing' => ['formulir_kegiatan_safety_briefing_path', 'formulir-safety-briefing', 'Formulir Kegiatan Safety Briefing'],
+        'foto_evidence_reward' => ['foto_evidence_reward_path', 'foto-reward', 'Foto Evidence Reward'],
+        'formulir_kegiatan_reward' => ['formulir_kegiatan_reward_path', 'formulir-reward', 'Formulir Kegiatan Reward'],
+        'foto_kegiatan_sosialisasi_keselamatan' => ['foto_kegiatan_sosialisasi_keselamatan_path', 'foto-sosialisasi-keselamatan', 'Foto Kegiatan Sosialisasi Keselamatan'],
+        'formulir_presensi_sosialisasi_keselamatan' => ['formulir_presensi_sosialisasi_keselamatan_path', 'presensi-sosialisasi-keselamatan', 'Formulir Presensi Sosialisasi Keselamatan'],
+        'formulir_kegiatan_sosialisasi_keselamatan' => ['formulir_kegiatan_sosialisasi_keselamatan_path', 'formulir-sosialisasi-keselamatan', 'Formulir Kegiatan Sosialisasi Keselamatan'],
+        'foto_kegiatan_dcu' => ['foto_kegiatan_dcu_path', 'foto-kegiatan-dcu', 'Foto Kegiatan DCU'],
+        'formulir_hasil_pemeriksaan_dcu' => ['formulir_hasil_pemeriksaan_dcu_path', 'hasil-pemeriksaan-dcu', 'Formulir Hasil Pemeriksaan DCU'],
+        'formulir_kegiatan_pemeriksaan_dcu' => ['formulir_kegiatan_pemeriksaan_dcu_path', 'formulir-kegiatan-dcu', 'Formulir Kegiatan Pemeriksaan DCU'],
+        'foto_kegiatan_bugar_sehat' => ['foto_kegiatan_bugar_sehat_path', 'foto-bugar-sehat', 'Foto Kegiatan Bugar Sehat'],
+        'formulir_presensi_bugar_sehat' => ['formulir_presensi_bugar_sehat_path', 'presensi-bugar-sehat', 'Formulir Presensi Bugar Sehat'],
+        'formulir_kegiatan_bugar_sehat' => ['formulir_kegiatan_bugar_sehat_path', 'formulir-bugar-sehat', 'Formulir Kegiatan Bugar Sehat'],
+        'foto_kegiatan_tes_keseimbangan' => ['foto_kegiatan_tes_keseimbangan_path', 'foto-romberg', 'Foto Kegiatan Tes Keseimbangan'],
+        'formulir_hasil_pemeriksaan_romberg' => ['formulir_hasil_pemeriksaan_romberg_path', 'hasil-romberg', 'Formulir Hasil Pemeriksaan Romberg'],
+        'formulir_kegiatan_tes_keseimbangan' => ['formulir_kegiatan_tes_keseimbangan_path', 'formulir-romberg', 'Formulir Kegiatan Tes Keseimbangan'],
+        'foto_kegiatan_sosialisasi_kesehatan' => ['foto_kegiatan_sosialisasi_kesehatan_path', 'foto-sosialisasi-kesehatan', 'Foto Kegiatan Sosialisasi Kesehatan'],
+        'formulir_presensi_sosialisasi_kesehatan' => ['formulir_presensi_sosialisasi_kesehatan_path', 'presensi-sosialisasi-kesehatan', 'Formulir Presensi Sosialisasi Kesehatan'],
+        'formulir_kegiatan_sosialisasi_kesehatan' => ['formulir_kegiatan_sosialisasi_kesehatan_path', 'formulir-sosialisasi-kesehatan', 'Formulir Kegiatan Sosialisasi Kesehatan'],
+        'kesesuaian_isi_p3k' => ['kesesuaian_isi_p3k_path', 'kesesuaian-p3k', 'Kesesuaian Isi P3K'],
+        'formulir_kegiatan_inspeksi_p3k' => ['formulir_kegiatan_inspeksi_p3k_path', 'formulir-inspeksi-p3k', 'Formulir Kegiatan Inspeksi P3K'],
     ];
 
 
@@ -119,7 +140,6 @@ class DataSafetyController extends Controller
         $validated = $this->validateData($request);
 
         try {
-            // ← BARU — paksa badge_tenaga = username sendiri untuk role safety
             if (session('auth_user.role') === 'safety') {
                 $validated['badge_tenaga'] = session('auth_user.username');
             }
@@ -127,9 +147,31 @@ class DataSafetyController extends Controller
             $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING';
             $validated['kategori_form'] = $this->resolveKategoriForm($validated['jenis_aktifitas_kpi'] ?? '');
 
-            foreach ($this->fileFields as $formField => [$column, $folder]) {
-                $path = $this->storeFileIfPresent($request, $formField, $folder);
-                if ($path) $validated[$column] = $path;
+            $urutan = 1;
+            foreach ($this->fileFields as $formField => [$column, $folder, $label]) {
+                if (!$request->hasFile($formField)) continue;
+
+                $urutan = $this->nextFileSequence(
+                    $column,
+                    $validated['badge_tenaga'] ?? null,
+                    $validated['jenis_aktifitas_kpi'] ?? null
+                );
+
+                $path = $this->storeFileIfPresent(
+                    $request,
+                    $formField,
+                    $folder,
+                    $label,
+                    $urutan,
+                    $validated['tanggal_pelaksanaan'] ?? null,
+                    $validated['badge_tenaga'] ?? null,
+                    $validated['nama_tenaga'] ?? null,
+                    $validated['jenis_aktifitas_kpi'] ?? null
+                );
+
+                if ($path) {
+                    $validated[$column] = $path;
+                }
             }
 
             $data = DataSafety::create($validated);
@@ -165,8 +207,29 @@ class DataSafetyController extends Controller
         }
 
         try {
-            foreach ($this->fileFields as $formField => [$column, $folder]) {
-                $path = $this->storeFileIfPresent($request, $formField, $folder);
+            $urutan = 1;
+            foreach ($this->fileFields as $formField => [$column, $folder, $label]) {
+                if (!$request->hasFile($formField)) continue;
+
+                $urutan = $this->nextFileSequence(
+                    $column,
+                    $validated['badge_tenaga'] ?? $dataSafety->badge_tenaga,
+                    $validated['jenis_aktifitas_kpi'] ?? $dataSafety->jenis_aktifitas_kpi,
+                    $dataSafety->id
+                );
+
+                $path = $this->storeFileIfPresent(
+                    $request,
+                    $formField,
+                    $folder,
+                    $label,
+                    $urutan,
+                    $validated['tanggal_pelaksanaan'] ?? $dataSafety->tanggal_pelaksanaan,
+                    $validated['badge_tenaga'] ?? $dataSafety->badge_tenaga,
+                    $validated['nama_tenaga'] ?? $dataSafety->nama_tenaga,
+                    $validated['jenis_aktifitas_kpi'] ?? $dataSafety->jenis_aktifitas_kpi
+                );
+
                 if ($path) {
                     $this->deleteFileIfExists($dataSafety->{$column});
                     $validated[$column] = $path;
@@ -397,10 +460,31 @@ class DataSafetyController extends Controller
         return '';
     }
 
-    private function storeFileIfPresent(Request $request, string $field, string $folder): ?string
-    {
+    private function storeFileIfPresent(
+        Request $request,
+        string $field,
+        string $folder,
+        string $label,
+        int $urutan,
+        ?string $tanggal,
+        ?string $badge,
+        ?string $nama,
+        ?string $jenisAktivitas
+    ): ?string {
         if (!$request->hasFile($field)) return null;
-        return $request->file($field)->store("data-safety/{$folder}", 'public');
+
+        $file = $request->file($field);
+        $fileName = $this->buildUploadFileName(
+            $tanggal,
+            $badge,
+            $nama,
+            $jenisAktivitas,
+            $label,
+            $urutan,
+            $file->getClientOriginalExtension()
+        );
+
+        return $file->storeAs("data-safety/{$folder}", $fileName, 'public');
     }
 
     private function deleteFileIfExists(?string $path): void

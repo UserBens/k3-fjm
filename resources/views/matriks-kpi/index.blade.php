@@ -1973,6 +1973,7 @@
         function renderRingkasan(summary) {
             latestSummary = summary;
             const el = document.getElementById('ringkasanCards');
+            /*
             el.innerHTML = `
                 <div class="ringkasan-card">
                     <div class="rc-label">Total Skor Seluruh Aktivitas</div>
@@ -1995,6 +1996,7 @@
                     <div class="rc-sub">Dasar pembagian bobot % Medis</div>
                 </div>
             `;
+            */
         }
 
         // ══════ RENDER TABLE ══════

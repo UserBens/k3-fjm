@@ -396,6 +396,7 @@
                 request()->routeIs('monitoring-laporan.*') ||
                 request()->routeIs('data-unsafe.*') ||
                 request()->routeIs('toolbox-meeting.*') ||
+                request()->routeIs('arsip-dokumen.*') ||
                 // request()->routeIs('data-reject-monitoring.*') ||
                 request()->routeIs('monitoring-so.*') ||
                 request()->routeIs('dashboard-individu.*') ||
@@ -475,6 +476,12 @@
                 <a class="nav-link {{ request()->routeIs('monitoring-laporan.*') ? 'active' : '' }}"
                     href="{{ route('monitoring-laporan.index') }}">
                     <span class="nav-label">Data Pelaporan</span>
+                </a>
+            @endif
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <a class="nav-link {{ request()->routeIs('arsip-dokumen.*') ? 'active' : '' }}"
+                    href="{{ route('arsip-dokumen.index') }}">
+                    <span class="nav-label">Arsip Dokumen</span>
                 </a>
             @endif
 

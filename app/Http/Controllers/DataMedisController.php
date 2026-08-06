@@ -10,9 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\GeneratesUploadFileName;
+
 
 class DataMedisController extends Controller
 {
+    use GeneratesUploadFileName;
+
     public function index()
     {
         return view('data-medis.index');
@@ -86,14 +90,29 @@ class DataMedisController extends Controller
         $validated = $this->validateData($request);
 
         try {
-            $validated['waktu_submit'] = now();
-            $validated['status_pindah'] = $validated['status_pindah'] ?? 'PENDING';
-            $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING';
-
-            $validated['foto_evidence_path'] = $this->storeFileIfPresent($request, 'foto_evidence', 'evidence');
-            $validated['formulir_kegiatan_path'] = $this->storeFileIfPresent($request, 'formulir_kegiatan', 'formulir');
-            $validated['arsip_path'] = $this->storeFileIfPresent($request, 'arsip', 'arsip');
-
+            $urutan = 1;
+            foreach (
+                [
+                    'foto_evidence'     => ['foto_evidence_path', 'evidence'],
+                    'formulir_kegiatan' => ['formulir_kegiatan_path', 'formulir'],
+                    'arsip'             => ['arsip_path', 'arsip'],
+                ] as $field => [$column, $folder]
+            ) {
+                $path = $this->storeFileIfPresent(
+                    $request,
+                    $field,
+                    $folder,
+                    $validated['tanggal_pelaksanaan'] ?? null,
+                    $validated['badge_tenaga'] ?? null,
+                    $validated['nama_tenaga'] ?? null,
+                    $validated['jenis_aktifitas_kpi'] ?? null,
+                    $urutan
+                );
+                if ($path) {
+                    $validated[$column] = $path;
+                    $urutan++;
+                }
+            }
             $laporan = Datamedis::create($validated);
 
             return response()->json([
@@ -117,22 +136,28 @@ class DataMedisController extends Controller
         try {
             $laporan = Datamedis::findOrFail($id);
 
-            $newFoto = $this->storeFileIfPresent($request, 'foto_evidence', 'evidence');
-            if ($newFoto) {
-                $this->deleteFileIfExists($laporan->foto_evidence_path);
-                $validated['foto_evidence_path'] = $newFoto;
-            }
-
-            $newFormulir = $this->storeFileIfPresent($request, 'formulir_kegiatan', 'formulir');
-            if ($newFormulir) {
-                $this->deleteFileIfExists($laporan->formulir_kegiatan_path);
-                $validated['formulir_kegiatan_path'] = $newFormulir;
-            }
-
-            $newArsip = $this->storeFileIfPresent($request, 'arsip', 'arsip');
-            if ($newArsip) {
-                $this->deleteFileIfExists($laporan->arsip_path);
-                $validated['arsip_path'] = $newArsip;
+            $urutan = 1;
+            foreach (
+                [
+                    'foto_evidence'     => ['foto_evidence_path', 'evidence'],
+                    'formulir_kegiatan' => ['formulir_kegiatan_path', 'formulir'],
+                    'arsip'             => ['arsip_path', 'arsip'],
+                ] as $field => [$column, $folder]
+            ) {
+                $path = $this->storeFileIfPresent(
+                    $request,
+                    $field,
+                    $folder,
+                    $validated['tanggal_pelaksanaan'] ?? null,
+                    $validated['badge_tenaga'] ?? null,
+                    $validated['nama_tenaga'] ?? null,
+                    $validated['jenis_aktifitas_kpi'] ?? null,
+                    $urutan
+                );
+                if ($path) {
+                    $validated[$column] = $path;
+                    $urutan++;
+                }
             }
 
             $laporan->update($validated);
@@ -273,13 +298,30 @@ class DataMedisController extends Controller
         return response()->json(['data' => $results]);
     }
 
-    private function storeFileIfPresent(Request $request, string $field, string $folder): ?string
-    {
-        if (!$request->hasFile($field)) {
-            return null;
-        }
+    private function storeFileIfPresent(
+        Request $request,
+        string $field,
+        string $folder,
+        ?string $tanggal,
+        ?string $badge,
+        ?string $nama,
+        ?string $jenisAktivitas,
+        int $urutan
+    ): ?string {
+        if (!$request->hasFile($field)) return null;
 
-        return $request->file($field)->store("data-medis/{$folder}", 'public');
+        $file = $request->file($field);
+        $fileName = $this->buildUploadFileName(
+            $tanggal,
+            $badge,
+            $nama,
+            $jenisAktivitas,
+            $this->fileLabels[$field] ?? $field,
+            $urutan,
+            $file->getClientOriginalExtension()
+        );
+
+        return $file->storeAs("data-medis/{$folder}", $fileName, 'public');
     }
 
     private function deleteFileIfExists(?string $path): void
