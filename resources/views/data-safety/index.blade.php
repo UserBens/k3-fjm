@@ -2827,7 +2827,7 @@
         }
 
         function isImageUrl(url) {
-            return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(url || '');
+            return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(url || '') || !!driveFileId(url);
         }
 
         function fieldNameFromInput(input) {
@@ -2882,7 +2882,8 @@
                 clearFilePreview(box);
                 return;
             }
-            if (isImageUrl(url)) renderImagePreview(box, url, getFileNameFromUrl(url));
+            const thumb = driveThumbnailUrl(url) || (isImageUrl(url) ? url : null);
+            if (thumb) renderImagePreview(box, thumb, getFileNameFromUrl(url));
             else renderDocPreview(box, url, getFileNameFromUrl(url), false);
         }
 
@@ -3062,6 +3063,17 @@
             } catch (e) {
                 showToast(e.message || 'Gagal menghapus data.', 'error');
             }
+        }
+
+        function driveFileId(url) {
+            if (!url) return null;
+            const m = url.match(/[?&]id=([A-Za-z0-9_-]+)/) || url.match(/\/d\/([A-Za-z0-9_-]+)/);
+            return m ? m[1] : null;
+        }
+
+        function driveThumbnailUrl(url, size = 200) {
+            const id = driveFileId(url);
+            return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w${size}` : null;
         }
 
         document.addEventListener('DOMContentLoaded', () => {

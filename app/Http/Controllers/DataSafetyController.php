@@ -500,7 +500,10 @@ class DataSafetyController extends Controller
         $base['tanggal_pelaksanaan'] = $d->tanggal_pelaksanaan?->format('Y-m-d');
 
         foreach ($this->fileFields as [$column, $folder]) {
-            $base[$column . '_url'] = $d->{$column} ? asset('storage/' . $d->{$column}) : null;
+            $value = $d->{$column};
+            $base[$column . '_url'] = $value
+                ? (str_starts_with($value, 'http') ? $value : asset('storage/' . $value))
+                : null;
         }
 
         return $base;

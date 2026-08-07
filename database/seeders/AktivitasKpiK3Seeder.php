@@ -76,7 +76,7 @@ class AktivitasKpiK3Seeder extends Seeder
             ],
             [
                 'kode' => 'D.1',
-                'nama_aktivitas' => 'Laporan / Pelaporan Nearmiss',
+                'nama_aktivitas' => 'Laporan Nearmiss', // sebelumnya: 'Laporan / Pelaporan Nearmiss'
                 'kompleksitas' => 3,
                 'frekuensi' => 1,
                 'skor' => 3 * 1,
@@ -92,7 +92,7 @@ class AktivitasKpiK3Seeder extends Seeder
             ],
             [
                 'kode' => 'D.2',
-                'nama_aktivitas' => 'Laporan / Pelaporan Safety Briefing',
+                'nama_aktivitas' => 'Laporan Safety Briefing', // sebelumnya: 'Laporan / Pelaporan Safety Briefing'
                 'kompleksitas' => 1,
                 'frekuensi' => 2,
                 'skor' => 1 * 2,

@@ -46,6 +46,31 @@ use Illuminate\Support\Facades\Log;
  */
 class DashboardKpiK3Controller extends Controller
 {
+    /**
+     * Normalisasi teks untuk pencocokan yang toleran terhadap perbedaan
+     * spasi, tanda garis miring, tanda hubung, dsb.
+     * "Laporan / Pelaporan Nearmiss" dan "Laporan Nearmiss" akan TETAP beda
+     * (karena memang beda kata), tapi "Reward / Punishment" vs "Reward/Punishment"
+     * akan dianggap SAMA.
+     */
+    private function normalisasiTeks(?string $s): string
+    {
+        if (!$s) return '';
+        // lowercase, buang semua karakter selain huruf & angka
+        return strtolower(preg_replace('/[^a-z0-9]/i', '', $s));
+    }
+
+    private function cocokDenganAktivitas(?string $nilaiKolom, AktivitasKpiK3 $aktivitas): bool
+    {
+        if (!$nilaiKolom) return false;
+
+        $nilaiNorm = $this->normalisasiTeks($nilaiKolom);
+        $kodeNorm  = $this->normalisasiTeks($aktivitas->kode);
+        $namaNorm  = $this->normalisasiTeks($aktivitas->nama_aktivitas);
+
+        return $nilaiNorm === $kodeNorm || $nilaiNorm === $namaNorm;
+    }
+
     public function index()
     {
         $userRole = session('auth_user.role');
@@ -75,20 +100,20 @@ class DashboardKpiK3Controller extends Controller
             $username   = session('auth_user.username');
             $isTerbatas = in_array($userRole, ['safety', 'pengawas', 'medis'], true);
 
-            $tahun = (int) $request->query('tahun', $pengaturan->tahun_aktif);
-            $bulan = (int) $request->query('bulan', $pengaturan->bulan_aktif);
-            $tim   = strtoupper((string) $request->query('tim', 'SEMUA'));
-            $area  = (string) $request->query('area', 'SEMUA');
+            $tahun       = (int) $request->query('tahun', $pengaturan->tahun_aktif);
+            $bulan       = (int) $request->query('bulan', $pengaturan->bulan_aktif);
+            $periodeType = (string) $request->query('periode_type', '26_25'); // ⬅️ Baca pilihan periode
+            $tim         = strtoupper((string) $request->query('tim', 'SEMUA'));
+            $area        = (string) $request->query('area', 'SEMUA');
             $tampilkanRupiah = filter_var($request->query('tampilkan_rupiah', true), FILTER_VALIDATE_BOOLEAN);
             $personilKey = $request->query('personil');
 
-            // 🔒 Non-admin: abaikan tim/personil dari request, paksa ke milik sendiri
             if ($isTerbatas) {
                 $tim = strtoupper($userRole);
-                $personilKey = null; // dihitung ulang di bawah, jangan andalkan input user
+                $personilKey = null;
             }
 
-            [$periodeMulai, $periodeSelesai] = $this->hitungRentangPeriode($pengaturan, $tahun, $bulan);
+            [$periodeMulai, $periodeSelesai] = $this->hitungRentangPeriode($pengaturan, $tahun, $bulan, $periodeType);
 
             $filters = [
                 'tahun' => $tahun,
@@ -164,12 +189,30 @@ class DashboardKpiK3Controller extends Controller
      * Rentang periode "Tanggal {cutoff-1} bulan lalu s/d {cutoff-1}" mengikuti pola
      * `tanggal_cutoff_manajer` (contoh sheet: 26/05 s/d 25/06 untuk periode Juni).
      */
-    private function hitungRentangPeriode(PengaturanKpiK3 $pengaturan, int $tahun, int $bulan): array
+    private function hitungRentangPeriode(PengaturanKpiK3 $pengaturan, int $tahun, int $bulan, string $periodeType = '26_25'): array
     {
+        // Jika memilih mode kalender normal (1 - Akhir Bulan)
+        if ($periodeType === '1_31') {
+            $mulai = Carbon::create($tahun, $bulan, 1)->startOfDay();
+            $selesai = Carbon::create($tahun, $bulan, 1)->endOfMonth()->endOfDay();
+            return [$mulai, $selesai];
+        }
+
+        // Prioritaskan tanggal yang tersimpan langsung di tabel pengaturan jika periode match
+        if ((int)$pengaturan->tahun_aktif === $tahun && (int)$pengaturan->bulan_aktif === $bulan) {
+            if ($pengaturan->periode_mulai && $pengaturan->periode_selesai) {
+                return [
+                    Carbon::parse($pengaturan->periode_mulai)->startOfDay(),
+                    Carbon::parse($pengaturan->periode_selesai)->endOfDay(),
+                ];
+            }
+        }
+
+        // Fallback kalkulasi dinamis berdasarkan tanggal cutoff
         $cutoff = max(1, min(28, (int) $pengaturan->tanggal_cutoff_manajer));
 
-        $selesai = Carbon::create($tahun, $bulan, $cutoff)->endOfDay();
-        $mulai = (clone $selesai)->subMonthNoOverflow()->addDay()->startOfDay();
+        $selesai = Carbon::create($tahun, $bulan, $cutoff - 1)->endOfDay();
+        $mulai = Carbon::create($tahun, $bulan, $cutoff)->subMonthNoOverflow()->startOfDay();
 
         return [$mulai, $selesai];
     }
@@ -211,7 +254,7 @@ class DashboardKpiK3Controller extends Controller
         $selesai = $filters['periode_selesai'];
         $tim = $filters['tim'];
         $area = $filters['area'];
-        $personil = $filters['personil_terpilih'] ?? null;   // ⬅️ tambahkan ini
+        $personil = $filters['personil_terpilih'] ?? null;
 
         $medis = DB::table('datamedis')->select([
             DB::raw("'MEDIS' as sumber"),
@@ -223,7 +266,7 @@ class DashboardKpiK3Controller extends Controller
             'unit_kerja',
             'keputusan as status',
             'waktu_submit',
-        ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]);
+        ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateTimeString(), $selesai->toDateTimeString()]);
 
         $safety = DB::table('data_safety')->select([
             DB::raw("'SAFETY' as sumber"),
@@ -235,7 +278,7 @@ class DashboardKpiK3Controller extends Controller
             'unit_kerja',
             'keputusan as status',
             'waktu_submit',
-        ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]);
+        ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateTimeString(), $selesai->toDateTimeString()]);
 
         $pengawas = DB::table('pelaporan_pengawas')->select([
             DB::raw("'PENGAWAS' as sumber"),
@@ -247,15 +290,15 @@ class DashboardKpiK3Controller extends Controller
             'unit_kerja',
             'status',
             DB::raw('created_at as waktu_submit'),
-        ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]);
+        ])->whereBetween('tanggal_pelaksanaan', [$mulai->toDateTimeString(), $selesai->toDateTimeString()]);
 
+        // ... Sisa blok kondisi $area dan $personil biarkan sama seperti aslinya
         if ($area && strtoupper($area) !== 'SEMUA') {
             $medis->where('area_kerja', $area);
             $safety->where('area_kerja', $area);
             $pengawas->where('area_kerja', $area);
         }
 
-        // ⬅️ blok baru: batasi ke badge personil yang sedang dipilih
         if ($personil) {
             if ($personil['tim'] === 'MEDIS') {
                 $medis->where('badge_tenaga', $personil['badge']);
@@ -414,33 +457,32 @@ class DashboardKpiK3Controller extends Controller
 
         $aktivitasDitugaskan = $this->aktivitasDitugaskan($personil);
         $totalSkorTim = AktivitasKpiK3::aktif()->where(strtolower($personil['tim']) === 'medis' ? 'medis' : (strtolower($personil['tim']) === 'pengawas' ? 'pengawas' : 'safety'), true)->sum('skor');
-        $totalAktivitasAktifTim = AktivitasKpiK3::aktif()->where(strtolower($personil['tim']) === 'medis' ? 'medis' : (strtolower($personil['tim']) === 'pengawas' ? 'pengawas' : 'safety'), true)->count();
 
         [$laporanQuery, $kolomStatus, $kolomAktivitas] = $this->queryLaporanPersonil($personil, $mulai, $selesai);
+
+        $semuaLaporan = $kolomAktivitas
+            ? $laporanQuery->get()
+            : collect();
 
         $laporanDisetujui = 0;
         $laporanTepatWaktu = 0;
         $rincian = [];
-        $capaianAktivitasTotal = 0.0;
+        $capaianAktivitasTotalRaw = 0.0; // ⬅️ Gunakan nilai raw presisi tinggi
 
         $batasTerlambatLapor = (int) $pengaturan->batas_terlambat_lapor;
         $batasLaporLebihAwal = (int) $pengaturan->batas_lapor_lebih_awal;
 
         foreach ($aktivitasDitugaskan as $aktivitas) {
             /** @var AktivitasKpiK3 $aktivitas */
-            $q = (clone $laporanQuery);
 
             if ($personil['tim'] === 'PENGAWAS') {
-                $q->where('aktivitas_kpi_k3_id', $aktivitas->id);
+                $rows = (clone $laporanQuery)->where('aktivitas_kpi_k3_id', $aktivitas->id)->get();
             } else {
-                // Memeriksa apakah kolom menyimpan KODE (C.2) atau NAMA AKTIVITAS (Laporan Temuan UA/UC)
-                $q->where(function ($sub) use ($kolomAktivitas, $aktivitas) {
-                    $sub->whereRaw('LOWER(TRIM(' . $kolomAktivitas . ')) = ?', [strtolower(trim($aktivitas->kode))])
-                        ->orWhereRaw('LOWER(TRIM(' . $kolomAktivitas . ')) = ?', [strtolower(trim($aktivitas->nama_aktivitas))]);
-                });
+                $rows = $semuaLaporan->filter(
+                    fn($r) => $this->cocokDenganAktivitas($r->{$kolomAktivitas} ?? null, $aktivitas)
+                );
             }
 
-            $rows = $q->get();
             $disetujuiAktivitas = $rows->where($kolomStatus, 'APPROVE')->count();
             $laporanDisetujui += $disetujuiAktivitas;
 
@@ -451,51 +493,49 @@ class DashboardKpiK3Controller extends Controller
                     if (!$waktuSubmit || !$tanggalPelaksanaan) {
                         return false;
                     }
-                    // selisih = tanggal_pelaksanaan - waktu_submit (hari), disamakan dgn
-                    // LaporanCapaianKpiController::laporanUntukPegawai() supaya konsisten.
-                    $selisih = Carbon::parse($waktuSubmit)->startOfDay()
-                        ->diffInDays(Carbon::parse($tanggalPelaksanaan)->startOfDay(), false);
-                    return $selisih >= -$batasTerlambatLapor && $selisih <= $batasLaporLebihAwal;
+
+                    $tglSubmit = Carbon::parse($waktuSubmit)->startOfDay();
+                    $tglPelaksanaan = Carbon::parse($tanggalPelaksanaan)->startOfDay();
+
+                    // Selisih hari: positif jika submit setelah pelaksanaan, negatif jika submit sebelum pelaksanaan
+                    $selisihHari = $tglPelaksanaan->diffInDays($tglSubmit, false);
+
+                    // Laporan dianggap tepat waktu jika disubmit antara (-batasLebihAwal) sampai (+batasTerlambat)
+                    return $selisihHari <= $batasTerlambatLapor && $selisihHari >= -$batasLaporLebihAwal;
                 })->count();
+
             $laporanTepatWaktu += $tepatWaktuAktivitas;
 
-            $bobotItem = ($totalSkorTim > 0) ? round($aktivitas->skor / $totalSkorTim * 100, 1) : 0.0;
+            // 💡 HITUNG BOBOT RAW (Tanpa round di sini)
+            $bobotItemRaw = ($totalSkorTim > 0) ? ($aktivitas->skor / $totalSkorTim * 100) : 0.0;
 
             $target = (int) $aktivitas->target_per_bulan;
             $rasioCapaian = $target > 0 ? min($disetujuiAktivitas / $target, 1) : ($disetujuiAktivitas > 0 ? 1 : 0);
-            $kontribusi = round($rasioCapaian * $bobotItem, 1);
-            $capaianAktivitasTotal += $rasioCapaian * $bobotItem;
 
+            // Akumulasi presisi penuh
+            $capaianAktivitasTotalRaw += ($rasioCapaian * $bobotItemRaw);
+
+            // Pembulatan hanya untuk array rincian tampilan
             $rincian[] = [
                 'kode' => $aktivitas->kode,
                 'nama_aktivitas' => $aktivitas->nama_aktivitas,
                 'target_per_bulan' => $target,
                 'laporan_disetujui' => $disetujuiAktivitas,
-                'bobot_item' => $bobotItem,
-                'kontribusi' => $kontribusi,
+                'bobot_item' => round($bobotItemRaw, 1),
+                'kontribusi' => round($rasioCapaian * $bobotItemRaw, 1),
                 'status_capaian' => $rasioCapaian >= 1 ? 'TERCAPAI' : 'BELUM TERCAPAI',
             ];
         }
 
-        $persentaseKetepatanWaktu = $laporanDisetujui > 0 ? round($laporanTepatWaktu / $laporanDisetujui * 100, 1) : 0.0;
-        $persentaseCapaianAktivitas = round($capaianAktivitasTotal, 1);
+        // 💡 PERSENTASE RAW UNTUK PERHITUNGAN MATEMATIS
+        $persentaseKetepatanWaktuRaw = $laporanDisetujui > 0 ? ($laporanTepatWaktu / $laporanDisetujui * 100) : 0.0;
+        $persentaseCapaianAktivitasRaw = $capaianAktivitasTotalRaw;
 
-        $nilaiKpiFinal = round(
-            ($pengaturan->porsi_capaian_aktivitas / 100 * $persentaseCapaianAktivitas)
-                + ($pengaturan->porsi_ketepatan_waktu / 100 * $persentaseKetepatanWaktu),
-            1
-        );
+        $nilaiKpiFinalRaw = ($pengaturan->porsi_capaian_aktivitas / 100 * $persentaseCapaianAktivitasRaw)
+            + ($pengaturan->porsi_ketepatan_waktu / 100 * $persentaseKetepatanWaktuRaw);
 
-        // $bobotDitugaskan = $totalAktivitasAktifTim > 0
-        //     ? round($aktivitasDitugaskan->count() / $totalAktivitasAktifTim * 100, 1)
-        //     : 0.0;
-
-        // Menggunakan sum('skor') dibagi dengan $totalSkorTim yang sudah Anda definisikan sebelumnya
-        $bobotDitugaskan = $totalSkorTim > 0
-            ? round($aktivitasDitugaskan->sum('skor') / $totalSkorTim * 100, 1)
-            : 0.0;
-
-        $skorUntukTunjangan = max($pengaturan->skor_minimum_tunjangan, min($nilaiKpiFinal, $pengaturan->skor_maksimum_tunjangan));
+        // 💡 PERHITUNGAN TUNJANGAN DARI NILAI RAW (Seperti di Excel)
+        $skorUntukTunjangan = max($pengaturan->skor_minimum_tunjangan, min($nilaiKpiFinalRaw, $pengaturan->skor_maksimum_tunjangan));
 
         $timDapatTunjangan = match ($personil['tim']) {
             'SAFETY' => (bool) $pengaturan->tim_safety_dapat_tunjangan,
@@ -514,6 +554,15 @@ class DashboardKpiK3Controller extends Controller
         $tunjangan = $timDapatTunjangan
             ? round($nominalTunjanganTim * ($skorUntukTunjangan / 100))
             : 0;
+
+        // 💡 BARU DIBULATKAN UNTUK DISPLAY DI UI / DASHBOARD
+        $persentaseCapaianAktivitas = round($persentaseCapaianAktivitasRaw, 1);
+        $persentaseKetepatanWaktu = round($persentaseKetepatanWaktuRaw, 1);
+        $nilaiKpiFinal = round($nilaiKpiFinalRaw, 1);
+
+        $bobotDitugaskan = $totalSkorTim > 0
+            ? round($aktivitasDitugaskan->sum('skor') / $totalSkorTim * 100, 1)
+            : 0.0;
 
         $kategori = $this->kategoriPenilaian($nilaiKpiFinal, $pengaturan);
 
@@ -544,21 +593,21 @@ class DashboardKpiK3Controller extends Controller
             'SAFETY' => [
                 DB::table('data_safety')
                     ->where('badge_tenaga', $personil['badge'])
-                    ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]),
+                    ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateTimeString(), $selesai->toDateTimeString()]),
                 'keputusan',
                 'jenis_aktifitas_kpi',
             ],
             'MEDIS' => [
                 DB::table('datamedis')
                     ->where('badge_tenaga', $personil['badge'])
-                    ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]),
+                    ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateTimeString(), $selesai->toDateTimeString()]),
                 'keputusan',
                 'jenis_aktifitas_kpi',
             ],
             default => [
                 DB::table('pelaporan_pengawas')
                     ->where('badge_pengawas', $personil['badge'])
-                    ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()]),
+                    ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateTimeString(), $selesai->toDateTimeString()]),
                 'status',
                 null,
             ],

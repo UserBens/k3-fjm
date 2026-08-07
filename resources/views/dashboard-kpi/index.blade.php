@@ -914,6 +914,14 @@
 
             <!-- PANEL SAKLAR -->
             <div class="panel-saklar">
+                <!-- BARU: Field Skema Periode Cut-Off -->
+                <div class="saklar-field">
+                    <label>Periode</label>
+                    <select id="fPeriode">
+                        <option value="26_25" selected>Tanggal 26 s/d 25</option>
+                        <option value="1_31">Tanggal 1 s/d Akhir Bulan</option>
+                    </select>
+                </div>
                 {{-- <div class="panel-saklar-title">Panel Saklar · ubah di sini, seluruh dashboard mengikuti</div> --}}
                 <div class="saklar-grid">
                     <div class="saklar-field">
@@ -1363,11 +1371,21 @@
             }
         }
 
+        // Helper: Format tanggal dari YYYY-MM-DD menjadi DD/MM/YYYY (Sesuai Gambar Dashboard Sheet)
+        function formatDateIndo(dateStr) {
+            if (!dateStr) return '-';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        // Ambil parameter filter dari Panel Saklar
         function baseParams() {
             return {
                 tahun: document.getElementById('fTahun').value,
                 bulan: document.getElementById('fBulan').value,
                 area: document.getElementById('fArea').value,
+                periode_type: document.getElementById('fPeriode') ? document.getElementById('fPeriode').value : '26_25',
             };
         }
 
@@ -1390,8 +1408,11 @@
         }
 
         function renderPeriode(p) {
+            const tglMulaiFormatted = formatDateIndo(p.periode_mulai);
+            const tglSelesaiFormatted = formatDateIndo(p.periode_selesai);
+
             document.getElementById('periodeAktifLine').innerHTML =
-                `Periode aktif: <b>${p.periode_mulai}</b> s/d <b>${p.periode_selesai}</b> &nbsp;|&nbsp; <b>${p.bulan_label}</b> &nbsp;·&nbsp; Area: <b>${p.area}</b>`;
+                `Periode aktif: &nbsp; <b>${tglMulaiFormatted} s/d ${tglSelesaiFormatted}</b> &nbsp;|&nbsp; <b>${p.bulan_label}</b> &nbsp;|&nbsp; Tim: <b>${p.tim}</b> &nbsp;·&nbsp; Area: <b>${p.area}</b>`;
         }
 
         function renderRingkasan(r) {

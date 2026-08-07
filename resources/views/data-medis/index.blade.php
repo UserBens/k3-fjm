@@ -1479,9 +1479,9 @@
                         <div class="detail-field span-2" id="dFormulirWrap">
                             <label>Upload Formulir Kegiatan</label>
                         </div>
-                        <div class="detail-field span-2" id="dLinkArsipWrap">
+                        {{-- <div class="detail-field span-2" id="dLinkArsipWrap">
                             <label>Link Arsip</label>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -1963,14 +1963,14 @@
             return 'sp-amber';
         }
 
-        function renderLinkList(rawLinks) {
-            if (!rawLinks) return '<span class="link-line empty">Belum ada link</span>';
-            const links = rawLinks.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-            if (links.length === 0) return '<span class="link-line empty">Belum ada link</span>';
-            return links.map((link, i) =>
-                `<a class="link-line" href="${escapeHtml(link)}" target="_blank" rel="noopener">Link Arsip ${links.length > 1 ? (i + 1) : ''}</a>`
-            ).join('');
-        }
+        // function renderLinkList(rawLinks) {
+        //     if (!rawLinks) return '<span class="link-line empty">Belum ada link</span>';
+        //     const links = rawLinks.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        //     if (links.length === 0) return '<span class="link-line empty">Belum ada link</span>';
+        //     return links.map((link, i) =>
+        //         `<a class="link-line" href="${escapeHtml(link)}" target="_blank" rel="noopener">Link Arsip ${links.length > 1 ? (i + 1) : ''}</a>`
+        //     ).join('');
+        // }
 
         function onSearchInput() {
             clearTimeout(searchDebounce);
@@ -2583,16 +2583,16 @@
                 `<a class="detail-link" href="${escapeHtml(row.formulir_kegiatan_url)}" target="_blank" rel="noopener">Buka Formulir Kegiatan ↗</a>` :
                 '<input type="text" value="Belum ada formulir" readonly>');
 
-            const linkArsipWrap = document.getElementById('dLinkArsipWrap');
-            if (row.link_arsip) {
-                const links = row.link_arsip.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-                linkArsipWrap.innerHTML = '<label>Link Arsip</label>' +
-                    links.map((link, i) =>
-                        `<a class="detail-link" style="margin-bottom:6px;" href="${escapeHtml(link)}" target="_blank" rel="noopener">Buka Arsip ${links.length > 1 ? (i + 1) : ''} ↗</a>`
-                    ).join('');
-            } else {
-                linkArsipWrap.innerHTML = '<label>Link Arsip</label><input type="text" value="Belum ada arsip" readonly>';
-            }
+            // const linkArsipWrap = document.getElementById('dLinkArsipWrap');
+            // if (row.link_arsip) {
+            //     const links = row.link_arsip.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            //     linkArsipWrap.innerHTML = '<label>Link Arsip</label>' +
+            //         links.map((link, i) =>
+            //             `<a class="detail-link" style="margin-bottom:6px;" href="${escapeHtml(link)}" target="_blank" rel="noopener">Buka Arsip ${links.length > 1 ? (i + 1) : ''} ↗</a>`
+            //         ).join('');
+            // } else {
+            //     linkArsipWrap.innerHTML = '<label>Link Arsip</label><input type="text" value="Belum ada arsip" readonly>';
+            // }
 
             document.getElementById('dKeputusan').value = row.keputusan || '-';
 

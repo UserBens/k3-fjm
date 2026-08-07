@@ -16,7 +16,23 @@ use App\Traits\GeneratesUploadFileName;
 class DataMedisController extends Controller
 {
     use GeneratesUploadFileName;
+    private function nextFileSequence(
+        string $column,
+        ?string $badge,
+        ?string $jenisAktivitas,
+        ?int $excludeId = null
+    ): int {
+        $query = Datamedis::query()
+            ->whereNotNull($column)
+            ->where('badge_tenaga', $badge)
+            ->where('jenis_aktifitas_kpi', $jenisAktivitas);
 
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->count() + 1;
+    }
     public function index()
     {
         return view('data-medis.index');
@@ -96,13 +112,21 @@ class DataMedisController extends Controller
         $validated['waktu_submit'] = now(); // ⬅️ TAMBAHKAN INI
 
         try {
-            $urutan = 1;
+            // SESUDAH
             foreach (
                 [
                     'foto_evidence'     => ['foto_evidence_path', 'evidence'],
                     'formulir_kegiatan' => ['formulir_kegiatan_path', 'formulir'],
                 ] as $field => [$column, $folder]
             ) {
+                if (!$request->hasFile($field)) continue;
+
+                $urutan = $this->nextFileSequence(
+                    $column,
+                    $validated['badge_tenaga'] ?? null,
+                    $validated['jenis_aktifitas_kpi'] ?? null
+                );
+
                 $path = $this->storeFileIfPresent(
                     $request,
                     $field,
@@ -115,10 +139,11 @@ class DataMedisController extends Controller
                 );
                 if ($path) {
                     $validated[$column] = $path;
-                    $urutan++;
                 }
             }
+
             $laporan = Datamedis::create($validated);
+
             if (session('auth_user.role') === 'medis') {
                 $validated['badge_tenaga'] = session('auth_user.username');
                 $validated['nama_tenaga'] = session('auth_user.nama_lengkap');
@@ -145,28 +170,36 @@ class DataMedisController extends Controller
         try {
             $laporan = Datamedis::findOrFail($id);
 
-            $urutan = 1;
             foreach (
                 [
                     'foto_evidence'     => ['foto_evidence_path', 'evidence'],
                     'formulir_kegiatan' => ['formulir_kegiatan_path', 'formulir'],
                 ] as $field => [$column, $folder]
             ) {
+                if (!$request->hasFile($field)) continue;
+
+                $urutan = $this->nextFileSequence(
+                    $column,
+                    $validated['badge_tenaga'] ?? $laporan->badge_tenaga,
+                    $validated['jenis_aktifitas_kpi'] ?? $laporan->jenis_aktifitas_kpi,
+                    $laporan->id
+                );
+
                 $path = $this->storeFileIfPresent(
                     $request,
                     $field,
                     $folder,
-                    $validated['tanggal_pelaksanaan'] ?? null,
-                    $validated['badge_tenaga'] ?? null,
-                    $validated['nama_tenaga'] ?? null,
-                    $validated['jenis_aktifitas_kpi'] ?? null,
+                    $validated['tanggal_pelaksanaan'] ?? $laporan->tanggal_pelaksanaan,
+                    $validated['badge_tenaga'] ?? $laporan->badge_tenaga,
+                    $validated['nama_tenaga'] ?? $laporan->nama_tenaga,
+                    $validated['jenis_aktifitas_kpi'] ?? $laporan->jenis_aktifitas_kpi,
                     $urutan
                 );
                 if ($path) {
                     $validated[$column] = $path;
-                    $urutan++;
                 }
             }
+            
             if (session('auth_user.role') === 'medis' && $laporan->badge_tenaga !== session('auth_user.username')) {
                 return response()->json(['message' => 'Anda tidak memiliki izin untuk mengubah data ini.'], 403);
             }
