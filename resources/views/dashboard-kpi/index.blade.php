@@ -101,7 +101,8 @@
 
         .saklar-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(4, 1fr);
+            /* Diubah menjadi 4 kolom karena filter rupiah dihapus */
             gap: 10px;
         }
 
@@ -125,14 +126,29 @@
             font-size: 12px;
             font-weight: 700;
             color: var(--blue);
-            background: #F8F9FF;
+            background-color: #F8F9FF;
+            /* Menggunakan background-color agar tidak menimpa background-image */
             outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        /* Tambahan untuk Custom Arrow yang lebih rapi */
+        .saklar-field select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D4B9E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 32px;
+            cursor: pointer;
         }
 
         .saklar-field select:focus,
         .saklar-field input:focus {
             border-color: var(--blue);
-            background: #fff;
+            background-color: #fff;
         }
 
         .periode-aktif-line {
@@ -936,13 +952,7 @@
                             <option value="SEMUA">SEMUA</option>
                         </select>
                     </div>
-                    <div class="saklar-field">
-                        <label>Tampilkan Rupiah</label>
-                        <select id="fRupiah">
-                            <option value="1">YA</option>
-                            <option value="0">TIDAK</option>
-                        </select>
-                    </div>
+
                     <div class="saklar-field flex items-end">
                         <button id="btnTerapkan" type="button"
                             style="width:100%;height:34px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;">
@@ -1358,7 +1368,6 @@
                 tahun: document.getElementById('fTahun').value,
                 bulan: document.getElementById('fBulan').value,
                 area: document.getElementById('fArea').value,
-                tampilkan_rupiah: document.getElementById('fRupiah').value,
             };
         }
 
@@ -1374,8 +1383,7 @@
                 tahun: document.getElementById('fTahun').value,
                 bulan: document.getElementById('fBulan').value,
                 area: document.getElementById('fArea').value,
-                tampilkan_rupiah: document.getElementById('fRupiah').value,
-                tim,
+                tim: tim, // ⬅️ tambahkan baris ini
             });
             if (personilKey) params.set('personil', personilKey);
             return params.toString();

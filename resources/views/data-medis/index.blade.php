@@ -1272,12 +1272,8 @@
                         <option value="">Semua Area Kerja</option>
                     </select>
 
-                    <select id="filterStatusPindah" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status Pindah</option>
-                    </select>
-
                     <select id="filterKeputusan" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Keputusan</option>
+                        <option value="">Semua Status</option>
                     </select>
 
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
@@ -1293,15 +1289,13 @@
                                 <th>Tenaga Medis</th>
                                 <th>Kegiatan</th>
                                 <th>Tgl Pelaksanaan</th>
-                                <th>Dokumen</th>
                                 <th>Status</th>
-                                <th>Keputusan</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="7">
+                                <td colspan="6">
                                     <div class="skeleton-bar" style="width:100%;height:40px;"></div>
                                 </td>
                             </tr>
@@ -1386,9 +1380,24 @@
                         <input type="hidden" id="fAreaKerja">
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Sub Area</label>
+                        <div class="picker-wrap">
+                            <input type="text" id="subAreaInput" class="form-input"
+                                placeholder="Pilih / Cari Sub Area..." oninput="onSubAreaPickerInput()"
+                                onfocus="onSubAreaPickerFocus()" autocomplete="off" />
+                            <div class="picker-dropdown" id="subAreaDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fSubArea">
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Unit Kerja</label>
-                        <input type="text" id="fUnitKerja" class="form-input"
-                            placeholder="ALAT BERAT EXISTING" />
+                        <div class="picker-wrap">
+                            <input type="text" id="unitKerjaInput" class="form-input"
+                                placeholder="Cari Unit Kerja..." oninput="onUnitKerjaPickerInput()"
+                                onfocus="onUnitKerjaPickerFocus()" autocomplete="off" />
+                            <div class="picker-dropdown" id="unitKerjaDropdown"></div>
+                        </div>
+                        <input type="hidden" id="fUnitKerja">
                     </div>
                 </div>
 
@@ -1396,47 +1405,18 @@
                 <div class="form-grid">
                     <div class="form-group span-2">
                         <label class="form-label">Foto Evidence Kegiatan</label>
-                        <input type="file" id="fFotoEvidence" class="form-input"
+                        <input type="file" id="f_foto_evidence" class="form-input"
                             style="padding:8px 12px; height:auto;" accept=".jpg,.jpeg,.png,.webp" />
-                        <a href="#" id="fFotoEvidenceCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file saat ini ↗</a>
                     </div>
                     <div class="form-group span-2">
                         <label class="form-label">Upload Formulir Kegiatan</label>
-                        <input type="file" id="fFormulirKegiatan" class="form-input"
+                        <input type="file" id="f_formulir_kegiatan" class="form-input"
                             style="padding:8px 12px; height:auto;" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
-                        <a href="#" id="fFormulirKegiatanCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file saat ini ↗</a>
                     </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Arsip</label>
-                        <input type="file" id="fArsip" class="form-input"
-                            style="padding:8px 12px; height:auto;"
-                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" />
-                        <a href="#" id="fArsipCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file saat ini ↗</a>
-                    </div>
+
                 </div>
 
-                {{-- <div class="form-section-title">Status</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Status Pindah</label>
-                        <select id="fStatusPindah" class="form-select">
-                            <option value="PENDING">PENDING</option>
-                            <option value="SUKSES">SUKSES</option>
-                            <option value="GAGAL">GAGAL</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Keputusan</label>
-                        <select id="fKeputusan" class="form-select">
-                            <option value="PENDING">PENDING</option>
-                            <option value="APPROVE">APPROVE</option>
-                            <option value="REJECT">REJECT</option>
-                        </select>
-                    </div>
-                </div> --}}
+
             </div>
 
             <div class="modal-actions" style="margin-top:18px;">
@@ -1457,16 +1437,11 @@
                         <div class="detail-subtitle" id="detailBadgeSub">-</div>
                     </div>
                 </div>
-                <button class="toast-close" style="font-size:18px;" onclick="closeDetailModal()">✕</button>
             </div>
 
             <div class="detail-modal-body">
                 <div class="detail-section">
-                    <div class="detail-section-title mt-2">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                    <div class="detail-section-title mt-3">
                         Waktu & Area
                     </div>
                     <div class="detail-form-grid">
@@ -1495,10 +1470,6 @@
 
                 <div class="detail-section">
                     <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 8h16" />
-                        </svg>
                         Evidence & Arsip
                     </div>
                     <div class="detail-form-grid">
@@ -1516,19 +1487,11 @@
 
                 <div class="detail-section">
                     <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
                         Status
                     </div>
                     <div class="detail-form-grid">
                         <div class="detail-field">
-                            <label>Status Pindah</label>
-                            <input type="text" id="dStatusPindah" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Keputusan</label>
+                            {{-- <label>S</label> --}}
                             <input type="text" id="dKeputusan" readonly>
                         </div>
                     </div>
@@ -1571,7 +1534,11 @@
         const CARI_TENAGA_ENDPOINT = "{{ route('data-medis.cari-tenaga') }}";
         const JENIS_AKTIVITAS_OPTIONS_ENDPOINT = "{{ route('data-medis.jenis-aktivitas-options') }}";
         const LOKASI_KERJA_OPTIONS_ENDPOINT = "{{ route('data-medis.lokasi-kerja-options') }}";
+        const SUB_AREA_OPTIONS_ENDPOINT = "{{ route('data-medis.sub-area-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
+        const CURRENT_USER_ROLE = "{{ session('auth_user.role') }}";
+        const CURRENT_USER_BADGE = "{{ session('auth_user.username') }}";
+        const CURRENT_USER_NAMA = "{{ session('auth_user.nama_lengkap') }}";
 
         const state = {
             search: '',
@@ -1588,6 +1555,360 @@
         let currentDeleteId = null;
         let jenisAktivitasOptionsCache = [];
         let jenisAktivitasDebounce = null;
+        let subAreaOptionsCache = [];
+
+        const UNIT_KERJA_OPTIONS = [
+            "ADMIN BISNIS",
+            "ALF3",
+            "ALAT BERAT",
+            "AMMONIA I A",
+            "AMMONIA I B",
+            "ARSIP",
+            "AUDIT KEUANGAN & UMUM",
+            "AUDIT OPERASI & PRODUKSI",
+            "BENGKEL LAS I",
+            "BENGKEL LAS IIA",
+            "BENGKEL LAS IIB",
+            "BENGKEL LAS III A",
+            "BENGKEL LAS III B",
+            "BENGKEL MEKANIK I A",
+            "BENGKEL MEKANIK I B",
+            "BENGKEL MESIN",
+            "BENGKEL MESIN I",
+            "BENGKEL MESIN III A",
+            "BENGKEL SIPIL I A",
+            "BENGKEL SIPIL I B",
+            "BENGKEL SIPIL II",
+            "BENGKEL SIPIL III A",
+            "BENGKEL SIPIL III B",
+            "CANDAL PELABUHAN",
+            "CANDAL PRODUKSI I",
+            "CANDAL RUTIN",
+            "COMMAND CENTER",
+            "CSU I",
+            "CSU II",
+            "DEMIN 3A",
+            "DEMIN III B",
+            "DEP. ADM & KEUANGAN",
+            "DEP. ADMINISTRASI & PENJUALAN",
+            "DEP. ADMINISTRASI BISNIS",
+            "DEP. AGRO SOLUTION",
+            "DEP. AKUNTANSI",
+            "DEP. BARANG REJECT",
+            "DEP. HUKUM & SEKRETARIAT",
+            "DEP. KEUANGAN",
+            "DEP. KOMUNIKASI KORPORAT",
+            "DEP. MITRA BISNIS PEMASARAN RETAIL",
+            "DEP. PELAPORAN KEUANGAN & MANAJEMEN",
+            "DEP. PENGADAAN BARANG",
+            "DEP. PENGADAAN DAN PENGEMBANGAN BISNIS",
+            "DEP. PENGADAAN JASA",
+            "DEP. PENGELOLAAN MITRA",
+            "DEP. PENGELOLAAN PELANGGAN",
+            "DEP. PENGELOLAAN TRANSFORMASI BISNIS",
+            "DEP. PENGEMBANGAN KORPORAT",
+            "DEP. PORTOFOLIO BISNIS",
+            "DEP. PROJECT MANAJER RETAIL MANAJEMEN",
+            "DEP. PROYEK MANAJEMEN PRODUK BARU",
+            "DEP. RISET",
+            "DEP. TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
+            "DEP. TATA KELOLA PERUSAHAAN & MANAJEMEN RESIKO",
+            "DEP. TEKNIK & BISNIS",
+            "DIKLAT",
+            "EFLUENT TREATMENT III A",
+            "EFLUENT TREATMENT III B",
+            "EQUALIZER",
+            "FABRIKASI",
+            "FABRIKASI DAN ALAT BERAT",
+            "GEDUNG ADMINISTRASI",
+            "GM. RENDAL & ANGGARAN",
+            "GUDANG 02.200",
+            "GUDANG 02.600",
+            "GUDANG 02.650",
+            "GUDANG 03.200",
+            "GUDANG 34-U2000",
+            "GUDANG 50.000",
+            "GUDANG 50.000 TON",
+            "GUDANG ALF 3",
+            "GUDANG ALF3",
+            "GUDANG BAGING NPK 2,3,4",
+            "GUDANG BS 02-U400",
+            "GUDANG BS U02-500",
+            "GUDANG BS U03-500",
+            "GUDANG BS UREA 1",
+            "GUDANG BS UREA 2",
+            "GUDANG BS ZA 1/3",
+            "GUDANG BS ZA 2",
+            "GUDANG KIG Q",
+            "GUDANG MULTIGUNA 1 & 2",
+            "GUDANG NON PUPUK CAIR",
+            "GUDANG PHONSKA 1",
+            "GUDANG PHONSKA 2,3,5",
+            "GUDANG PHONSKA 4",
+            "GUDANG PUPUK PENGEMBANGAN",
+            "GUDANG UREA I",
+            "GUDANG UREA II",
+            "GUDANG ZA",
+            "HAR I A",
+            "HAR I B",
+            "HAR II",
+            "HAR III A",
+            "HAR III B",
+            "HOUSEKEEPING",
+            "INOVASI SISTEM MANAJEMEN",
+            "INSPEKSI TEKNIK",
+            "INSPEKSI TEKNIK II",
+            "INSTRUMEN",
+            "INSTRUMEN II",
+            "INSTRUMEN III A",
+            "INSTRUMEN III B",
+            "JEMBATAN TIMBANG 1",
+            "JEMBATAN TIMBANG 2",
+            "JEMBATAN TIMBANG 3",
+            "JEMBATAN TIMBANG 4",
+            "JEMBATAN TIMBANG 5",
+            "K3",
+            "KC",
+            "KELLAS",
+            "LAB I A",
+            "LAB I B",
+            "LAB III A",
+            "LAB III B",
+            "LABORATORIUM",
+            "LABORATORIUM II",
+            "LINGKUNGAN",
+            "LISTRIK",
+            "LISTRIK II",
+            "LOADING AMMONIA",
+            "MANAJEMEN ASET",
+            "MANAJEMEN PENGEMBANGAN SUMBER DAYA MANUSIA",
+            "MEKANIK IIA",
+            "NON LOGAM",
+            "NON LOGAM II",
+            "NPK",
+            "NPK II, III, IV",
+            "OPERASIONAL PELABUHAN",
+            "OPERASIONAL SDM",
+            "PA I",
+            "PA II",
+            "PEMADAM KEBAKARAN",
+            "PEMELIHARAAN PELABUHAN",
+            "PELAYANAN UMUM",
+            "PENGANTONGAN PHONSKA 1",
+            "PENGANTONGAN PHONSKA 2,3,5",
+            "PENGANTONGAN PHONSKA 4",
+            "PERGUDANGAN DAN PENGANTONGAN",
+            "PHONSKA I",
+            "PHONSKA II",
+            "PHONSKA III",
+            "PHONSKA IV",
+            "PM. AGRO SOLUTION",
+            "PPBJ",
+            "PPSB",
+            "PPP",
+            "PPE",
+            "PRODUKSI I",
+            "PRODUKSI IA",
+            "PRODUKSI II A",
+            "PRODUKSI II B",
+            "PRODUKSI III",
+            "PRODUKSI III A",
+            "PRODUKSI III B",
+            "PROYEK INFRASTRUKUR",
+            "PROYEK INFRASTRUKTUR DERMAGA A",
+            "PROYEK PENGEMBANGAN",
+            "PURIFIKASI GYPSUM I",
+            "PURIFIKASI GYPSUM II",
+            "RANCANG BANGUN",
+            "REALIBILITY",
+            "RENSTRAHAR",
+            "SA/SU I",
+            "SA/SU II",
+            "SIPIL",
+            "TANK YARD UTILLITAS IIB",
+            "TEKNOLOGI INFORMASI",
+            "TK-1400",
+            "TRANSPORT",
+            "UREA I A",
+            "UREA I B",
+            "UTILLITAS II A",
+            "UTILITAS I A",
+            "UTILITAS I B",
+            "UTILITAS BATU BARA",
+            "WASBONG",
+            "ZA 1/3",
+            "ZA 2",
+            "ZK"
+        ];
+
+        function renderUnitKerjaDropdown(keyword = '') {
+            const dropdown = document.getElementById('unitKerjaDropdown');
+            const filtered = keyword ?
+                UNIT_KERJA_OPTIONS.filter(v => v.toLowerCase().includes(keyword.toLowerCase())) :
+                UNIT_KERJA_OPTIONS;
+
+            dropdown.innerHTML = filtered.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada data ditemukan.</div>` :
+                filtered.map(v =>
+                    `<div class="picker-item" onclick="pilihUnitKerja('${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`
+                ).join('');
+
+            dropdown.classList.add('open');
+        }
+
+        function onUnitKerjaPickerInput() {
+            document.getElementById('fUnitKerja').value = '';
+            renderUnitKerjaDropdown(document.getElementById('unitKerjaInput').value.trim());
+        }
+
+        function onUnitKerjaPickerFocus() {
+            renderUnitKerjaDropdown(document.getElementById('unitKerjaInput').value.trim());
+        }
+
+        function pilihUnitKerja(value) {
+            document.getElementById('unitKerjaInput').value = value;
+            document.getElementById('fUnitKerja').value = value;
+            document.getElementById('unitKerjaDropdown').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('unitKerjaInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('unitKerjaDropdown')?.classList.remove('open');
+            }
+        });
+
+
+        function formatFileSize(bytes) {
+            if (!bytes && bytes !== 0) return '';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let i = 0,
+                size = bytes;
+            while (size >= 1024 && i < units.length - 1) {
+                size /= 1024;
+                i++;
+            }
+            return `${size.toFixed(size >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+        }
+
+        function getFileNameFromUrl(url) {
+            try {
+                return decodeURIComponent(url.split('/').pop().split('?')[0]);
+            } catch (e) {
+                return 'dokumen';
+            }
+        }
+
+        function isImageUrl(url) {
+            return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(url || '');
+        }
+
+        function fieldNameFromInput(input) {
+            return input.id.replace(/^f_/, '');
+        }
+
+        function ensureFilePreviewBox(input) {
+            const fieldName = fieldNameFromInput(input);
+            let box = document.getElementById('filepreview_' + fieldName);
+            if (box) return box;
+            box = document.createElement('div');
+            box.id = 'filepreview_' + fieldName;
+            box.style.cssText = 'display:none; margin-top:8px;';
+            input.insertAdjacentElement('afterend', box);
+            return box;
+        }
+
+        function renderImagePreview(box, src, caption) {
+            box.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${src}" alt="Preview" style="width:64px; height:64px; border-radius:8px; border:1px solid #e2e8f0; object-fit:cover; flex-shrink:0;">
+            <div style="min-width:0;">
+                <div style="font-size:11.5px; font-weight:600; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px;">${escapeHtml(caption)}</div>
+                <a href="${src}" target="_blank" rel="noopener" style="font-size:11px; color:#2D4B9E; text-decoration:none;">Lihat ukuran penuh ↗</a>
+            </div>
+        </div>`;
+            box.style.display = 'block';
+        }
+
+        function renderDocPreview(box, href, caption, isNew) {
+            box.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px; padding:6px 10px; background:#F8FAFC; border:1px solid #e2e8f0; border-radius:8px;">
+            <span style="font-size:16px;">📄</span>
+            <div style="min-width:0; flex:1;">
+                <div style="font-size:11.5px; font-weight:600; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(caption)}</div>
+                <div style="font-size:10.5px; color:#94A3B8;">${isNew ? 'Siap diupload' : 'Dokumen tersimpan'}</div>
+            </div>
+            ${href ? `<a href="${href}" target="_blank" rel="noopener" style="font-size:11px; color:#2D4B9E; text-decoration:none; flex-shrink:0;">Buka ↗</a>` : ''}
+        </div>`;
+            box.style.display = 'block';
+        }
+
+        function clearFilePreview(box) {
+            if (!box) return;
+            box.style.display = 'none';
+            box.innerHTML = '';
+        }
+
+        function restoreExistingPreview(input, box) {
+            const url = input.dataset.existingUrl;
+            if (!url) {
+                clearFilePreview(box);
+                return;
+            }
+            if (isImageUrl(url)) renderImagePreview(box, url, getFileNameFromUrl(url));
+            else renderDocPreview(box, url, getFileNameFromUrl(url), false);
+        }
+
+        function onFileInputChange(e) {
+            const input = e.target;
+            const box = ensureFilePreviewBox(input);
+            const file = input.files && input.files[0];
+
+            if (!file) {
+                restoreExistingPreview(input, box);
+                return;
+            }
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (ev) => renderImagePreview(box, ev.target.result,
+                    `${file.name} (${formatFileSize(file.size)})`);
+                reader.readAsDataURL(file);
+            } else {
+                renderDocPreview(box, null, `${file.name} (${formatFileSize(file.size)})`, true);
+            }
+        }
+
+        function setupFilePreviewListeners() {
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                ensureFilePreviewBox(input);
+                if (input.dataset.previewBound) return;
+                input.dataset.previewBound = '1';
+                input.addEventListener('change', onFileInputChange);
+            });
+        }
+
+        function resetFilePreviews() {
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                delete input.dataset.existingUrl;
+                clearFilePreview(document.getElementById('filepreview_' + fieldNameFromInput(input)));
+            });
+        }
+
+        function setExistingFilePreviews(row) {
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                const fieldName = fieldNameFromInput(input);
+                const url = row ? row[fieldName + '_url'] : null; // ⚠️ lihat catatan di bawah
+                const box = document.getElementById('filepreview_' + fieldName);
+                if (url) {
+                    input.dataset.existingUrl = url;
+                    if (isImageUrl(url)) renderImagePreview(box, url, getFileNameFromUrl(url));
+                    else renderDocPreview(box, url, getFileNameFromUrl(url), false);
+                } else {
+                    delete input.dataset.existingUrl;
+                    clearFilePreview(box);
+                }
+            });
+        }
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1662,11 +1983,11 @@
 
         function onFilterChange() {
             state.area_kerja = document.getElementById('filterAreaKerja').value;
-            state.status_pindah = document.getElementById('filterStatusPindah').value;
             state.keputusan = document.getElementById('filterKeputusan').value;
             state.page = 1;
             loadData();
         }
+
 
         function onPerPageChange() {
             state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
@@ -1677,11 +1998,9 @@
         function resetFilters() {
             document.getElementById('searchInput').value = '';
             document.getElementById('filterAreaKerja').value = '';
-            document.getElementById('filterStatusPindah').value = '';
             document.getElementById('filterKeputusan').value = '';
             state.search = '';
             state.area_kerja = '';
-            state.status_pindah = '';
             state.keputusan = '';
             state.page = 1;
             loadData();
@@ -1712,7 +2031,6 @@
             };
 
             build('filterAreaKerja', options.area_kerja || []);
-            build('filterStatusPindah', options.status_pindah || []);
             build('filterKeputusan', options.keputusan || []);
             filterOptionsLoaded = true;
         }
@@ -1721,7 +2039,7 @@
             const tbody = document.getElementById('tableBody');
             if (!rows || rows.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
+                    `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
                 return;
             }
             tbody.innerHTML = rows.map(row => `
@@ -1739,16 +2057,12 @@
                         <div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.jenis_aktifitas_kpi)}</div>
                         <div class="td-name-sub">${escapeHtml(row.area_kerja)} · ${escapeHtml(row.unit_kerja)}</div>
                     </td>
-                    <td>${formatDate(row.tanggal_pelaksanaan)}</td>
+                  <td>${formatDate(row.tanggal_pelaksanaan)}</td>
                     <td>
-                        ${row.foto_evidence_url ? `<a href="${row.foto_evidence_url}" target="_blank" class="btn-outline" style="padding:3px 8px; font-size:10px; margin-right:4px;">Foto</a>` : ''}
-                        ${row.formulir_kegiatan_url ? `<a href="${row.formulir_kegiatan_url}" target="_blank" class="btn-outline" style="padding:3px 8px; font-size:10px; margin-right:4px;">Formulir</a>` : ''}
-                        ${row.arsip_url ? `<a href="${row.arsip_url}" target="_blank" class="btn-outline" style="padding:3px 8px; font-size:10px;">Arsip</a>` : ''}
-                        ${!row.foto_evidence_url && !row.formulir_kegiatan_url && !row.arsip_url ? '<span class="td-name-sub">Belum ada dokumen</span>' : ''}
+                        <span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span>
                     </td>
-                    <td><span class="status-pill ${row.status_pindah === 'SUKSES' ? 'sp-green' : row.status_pindah === 'GAGAL' ? 'sp-red' : 'sp-amber'}">${row.status_pindah}</span></td>
-                    <td><span class="status-pill ${row.keputusan === 'APPROVE' ? 'sp-green' : row.keputusan === 'REJECT' ? 'sp-red' : 'sp-amber'}">${row.keputusan}</span></td>
                     <td style="text-align:center; white-space:nowrap;">
+                        <button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
                         <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteData(${row.id}, ${JSON.stringify(row.nama_tenaga)})">Hapus</button>
                     </td>
@@ -1759,7 +2073,7 @@
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
         <tr>
-            <td colspan="8">
+            <td colspan="6">
                 <div class="error-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -1956,6 +2270,59 @@
             }
         });
 
+        async function loadSubAreaOptions() {
+            if (subAreaOptionsCache.length > 0) return;
+            try {
+                const res = await fetch(SUB_AREA_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                subAreaOptionsCache = json.data || [];
+            } catch (e) {
+                /* diamkan */
+            }
+        }
+
+        function renderSubAreaDropdown(keyword = '') {
+            const dropdown = document.getElementById('subAreaDropdown');
+            const filtered = keyword ?
+                subAreaOptionsCache.filter(v => v.toLowerCase().includes(keyword.toLowerCase())) :
+                subAreaOptionsCache;
+
+            dropdown.innerHTML = filtered.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Tidak ada data ditemukan.</div>` :
+                filtered.map(v =>
+                    `<div class="picker-item" onclick="pilihSubArea('${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`
+                ).join('');
+
+            dropdown.classList.add('open');
+        }
+
+        function onSubAreaPickerInput() {
+            document.getElementById('fSubArea').value = '';
+            renderSubAreaDropdown(document.getElementById('subAreaInput').value.trim());
+        }
+
+        async function onSubAreaPickerFocus() {
+            if (subAreaOptionsCache.length === 0) await loadSubAreaOptions();
+            renderSubAreaDropdown(document.getElementById('subAreaInput').value.trim());
+        }
+
+        function pilihSubArea(value) {
+            document.getElementById('subAreaInput').value = value;
+            document.getElementById('fSubArea').value = value;
+            document.getElementById('subAreaDropdown').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('subAreaInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('subAreaDropdown')?.classList.remove('open');
+            }
+        });
+
         // ══════ TOAST ══════
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
@@ -2041,52 +2408,58 @@
         // ══════ MODAL TAMBAH / EDIT ══════
         async function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
-            await loadLokasiKerjaOptions(); // ← BARU
+            await loadLokasiKerjaOptions();
+            await loadSubAreaOptions(); // ⬅️ BARU
 
             document.getElementById('formModalTitle').textContent = row ? 'Edit Laporan KPI Medis' :
                 'Tambah Laporan KPI Medis';
             document.getElementById('formModalSub').textContent = row ? `Perbarui data untuk ${row.nama_tenaga}` :
                 'Lengkapi data kegiatan di bawah ini.';
 
-            // Reset picker
+            // Reset picker tenaga
             document.getElementById('tenagaPickerInput').value = '';
             document.getElementById('tenagaPickerDropdown').classList.remove('open');
             document.getElementById('tenagaPickerDropdown').innerHTML = '';
             document.getElementById('fBadgeTenaga').value = row?.badge_tenaga && row.badge_tenaga !== '-' ? row
                 .badge_tenaga : '';
             document.getElementById('fNamaTenaga').value = row?.nama_tenaga && row.nama_tenaga !== '-' ? row
-                .nama_tenaga :
-                '';
+                .nama_tenaga : '';
 
-            if (row && row.nama_tenaga && row.nama_tenaga !== '-') {
+            // 🔒 Role medis: tenaga otomatis terkunci ke akun sendiri
+            if (CURRENT_USER_ROLE === 'medis') {
+                document.getElementById('fBadgeTenaga').value = CURRENT_USER_BADGE;
+                document.getElementById('fNamaTenaga').value = CURRENT_USER_NAMA;
+                showTenagaChip(CURRENT_USER_NAMA, CURRENT_USER_BADGE);
+                document.querySelector('#tenagaSelectedChip .picker-clear-btn').style.display = 'none';
+            } else if (row && row.nama_tenaga && row.nama_tenaga !== '-') {
                 showTenagaChip(row.nama_tenaga, row.badge_tenaga);
+                document.querySelector('#tenagaSelectedChip .picker-clear-btn').style.display = '';
             } else {
                 hideTenagaChip();
             }
 
             document.getElementById('fTanggalPelaksanaan').value = row?.tanggal_pelaksanaan || '';
+
             const areaKerjaVal = row?.area_kerja && row.area_kerja !== '-' ? row.area_kerja : '';
             document.getElementById('areaKerjaInput').value = areaKerjaVal;
             document.getElementById('fAreaKerja').value = areaKerjaVal;
+            // ⬅️ BARU
+            const subAreaVal = row?.sub_area && row.sub_area !== '-' ? row.sub_area : '';
+            document.getElementById('subAreaInput').value = subAreaVal;
+            document.getElementById('fSubArea').value = subAreaVal;
 
-            document.getElementById('fUnitKerja').value = row?.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja :
-                '';
+            const unitKerjaVal = row?.unit_kerja && row.unit_kerja !== '-' ? row.unit_kerja : '';
+            document.getElementById('unitKerjaInput').value = unitKerjaVal;
+            document.getElementById('fUnitKerja').value = unitKerjaVal;
 
             const jenisAktifitasVal = row?.jenis_aktifitas_kpi && row.jenis_aktifitas_kpi !== '-' ? row
                 .jenis_aktifitas_kpi : '';
             document.getElementById('jenisAktifitasPickerInput').value = jenisAktifitasVal;
             document.getElementById('fJenisAktifitas').value = jenisAktifitasVal;
-            // document.getElementById('fStatusPindah').value = row?.status_pindah || 'PENDING';
-            // document.getElementById('fKeputusan').value = row?.keputusan || 'PENDING';
 
-            // File input selalu dikosongkan; hanya terisi jika user upload file baru
-            document.getElementById('fFotoEvidence').value = '';
-            document.getElementById('fFormulirKegiatan').value = '';
-            document.getElementById('fArsip').value = '';
-
-            setCurrentFileLink('fFotoEvidenceCurrent', row?.foto_evidence_url);
-            setCurrentFileLink('fFormulirKegiatanCurrent', row?.formulir_kegiatan_url);
-            setCurrentFileLink('fArsipCurrent', row?.arsip_url);
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(el => el.value = '');
+            resetFilePreviews();
+            setExistingFilePreviews(row);
 
             document.getElementById('formModalOverlay').classList.add('open');
         }
@@ -2148,44 +2521,35 @@
             formData.append('nama_tenaga', namaTenaga);
             formData.append('tanggal_pelaksanaan', document.getElementById('fTanggalPelaksanaan').value || '');
             formData.append('area_kerja', document.getElementById('fAreaKerja').value.trim());
+            formData.append('sub_area', document.getElementById('fSubArea').value.trim()); // ⬅️ BARU
             formData.append('unit_kerja', document.getElementById('fUnitKerja').value.trim());
             formData.append('jenis_aktifitas_kpi', document.getElementById('fJenisAktifitas').value.trim());
-            // formData.append('status_pindah', document.getElementById('fStatusPindah').value);
-            // formData.append('keputusan', document.getElementById('fKeputusan').value);
 
-            const fotoFile = document.getElementById('fFotoEvidence').files[0];
-            if (fotoFile) formData.append('foto_evidence', fotoFile);
-
-            const formulirFile = document.getElementById('fFormulirKegiatan').files[0];
-            if (formulirFile) formData.append('formulir_kegiatan', formulirFile);
-
-            const arsipFile = document.getElementById('fArsip').files[0];
-            if (arsipFile) formData.append('arsip', arsipFile);
+            document.querySelectorAll('.form-modal-body input[type="file"]').forEach(el => {
+                const fieldName = el.id.replace(/^f_/, '');
+                if (el.files[0]) formData.append(fieldName, el.files[0]);
+            });
 
             let url = STORE_ENDPOINT;
             if (currentEditId) {
                 url = `${BASE_ENDPOINT}/${currentEditId}`;
-                formData.append('_method', 'PUT'); // spoofing, karena PHP tidak parse file di request PUT asli
+                formData.append('_method', 'PUT');
             }
 
             try {
                 const res = await fetch(url, {
-                    method: 'POST', // selalu POST; PUT di-spoof via _method di atas
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN,
-                        // JANGAN set Content-Type manual — browser yang atur boundary multipart
+                        'X-CSRF-TOKEN': CSRF_TOKEN
                     },
                     body: formData,
                 });
-
                 const json = await res.json();
-
                 if (!res.ok) {
                     const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
                     throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
                 }
-
                 closeFormModal();
                 await loadData();
                 showToast(json.message, 'success');
@@ -2196,6 +2560,7 @@
                 btn.textContent = originalText;
             }
         }
+
         // ══════ MODAL DETAIL ══════
         function openDetailModal(row) {
             document.getElementById('detailAvatar').textContent = initials(row.nama_tenaga);
@@ -2229,7 +2594,6 @@
                 linkArsipWrap.innerHTML = '<label>Link Arsip</label><input type="text" value="Belum ada arsip" readonly>';
             }
 
-            document.getElementById('dStatusPindah').value = row.status_pindah || '-';
             document.getElementById('dKeputusan').value = row.keputusan || '-';
 
             document.getElementById('detailModalOverlay').classList.add('open');
@@ -2315,7 +2679,10 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupFilePreviewListeners();
+        });
     </script>
 </body>
 

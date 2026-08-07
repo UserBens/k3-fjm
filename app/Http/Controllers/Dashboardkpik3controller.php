@@ -339,13 +339,20 @@ class DashboardKpiK3Controller extends Controller
 
         // ── 3. TIM MEDIS (Hardcode 1 Personil Utama) ──
         if (!$tim || $tim === 'SEMUA' || $tim === 'MEDIS') {
-            $keyMedis = "MEDIS|K.250455|MUHAMMAD HAFIZ MAULANA";
-            $out->put($keyMedis, [
-                'key' => $keyMedis,
-                'badge' => 'K.250455',
-                'nama' => 'MUHAMMAD HAFIZ MAULANA',
-                'tim' => 'MEDIS',
-            ]);
+            $daftarMedis = [
+                ['badge' => 'K.250455', 'nama' => 'MUHAMMAD HAFIZ MAULANA'],
+                ['badge' => 'K.26305', 'nama' => 'UTSNA ROSALINA MAULIDYA'], // ⬅️ BARU
+            ];
+
+            foreach ($daftarMedis as $m) {
+                $key = "MEDIS|{$m['badge']}|{$m['nama']}";
+                $out->put($key, [
+                    'key' => $key,
+                    'badge' => $m['badge'],
+                    'nama' => $m['nama'],
+                    'tim' => 'MEDIS',
+                ]);
+            }
         }
 
         return $out->values()->sortBy('nama')->values();

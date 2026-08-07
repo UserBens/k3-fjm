@@ -297,6 +297,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/data-medis/data', [DataMedisController::class, 'data'])->name('data-medis.data');
         Route::get('/data-medis/jenis-aktivitas-options', [DataMedisController::class, 'jenisAktivitasOptions'])->name('data-medis.jenis-aktivitas-options'); // ← BARU
         Route::get('/data-medis/lokasi-kerja-options', [DataMedisController::class, 'lokasiKerjaOptions'])->name('data-medis.lokasi-kerja-options'); // ← BARU
+        Route::get('/data-medis/sub-area-options', [DataMedisController::class, 'subAreaOptions'])->name('data-medis.sub-area-options'); // ← BARU
         Route::post('/data-medis', [DataMedisController::class, 'store'])->name('data-medis.store');
         Route::put('/data-medis/{id}', [DataMedisController::class, 'update'])->name('data-medis.update');
         Route::delete('/data-medis/{id}', [DataMedisController::class, 'destroy'])->name('data-medis.destroy');

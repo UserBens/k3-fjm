@@ -41,6 +41,10 @@ class DataMedisController extends Controller
                 $query->where('area_kerja', $areaKerja);
             }
 
+            if ($subArea = $request->query('sub_area')) {
+                $query->where('sub_area', $subArea);
+            }
+
             if ($statusPindah = $request->query('status_pindah')) {
                 $query->where('status_pindah', $statusPindah);
             }
@@ -53,6 +57,7 @@ class DataMedisController extends Controller
 
             $filterOptions = [
                 'area_kerja' => Datamedis::whereNotNull('area_kerja')->distinct()->pluck('area_kerja')->sort()->values(),
+                'sub_area' => Datamedis::whereNotNull('sub_area')->distinct()->pluck('sub_area')->sort()->values(),
                 'status_pindah' => ['SUKSES', 'GAGAL', 'PENDING'],
                 'keputusan' => ['APPROVE', 'REJECT', 'PENDING'],
             ];
@@ -88,6 +93,7 @@ class DataMedisController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $this->validateData($request);
+        $validated['waktu_submit'] = now(); // ⬅️ TAMBAHKAN INI
 
         try {
             $urutan = 1;
@@ -95,7 +101,6 @@ class DataMedisController extends Controller
                 [
                     'foto_evidence'     => ['foto_evidence_path', 'evidence'],
                     'formulir_kegiatan' => ['formulir_kegiatan_path', 'formulir'],
-                    'arsip'             => ['arsip_path', 'arsip'],
                 ] as $field => [$column, $folder]
             ) {
                 $path = $this->storeFileIfPresent(
@@ -114,6 +119,10 @@ class DataMedisController extends Controller
                 }
             }
             $laporan = Datamedis::create($validated);
+            if (session('auth_user.role') === 'medis') {
+                $validated['badge_tenaga'] = session('auth_user.username');
+                $validated['nama_tenaga'] = session('auth_user.nama_lengkap');
+            }
 
             return response()->json([
                 'status' => 'success',
@@ -141,7 +150,6 @@ class DataMedisController extends Controller
                 [
                     'foto_evidence'     => ['foto_evidence_path', 'evidence'],
                     'formulir_kegiatan' => ['formulir_kegiatan_path', 'formulir'],
-                    'arsip'             => ['arsip_path', 'arsip'],
                 ] as $field => [$column, $folder]
             ) {
                 $path = $this->storeFileIfPresent(
@@ -159,7 +167,9 @@ class DataMedisController extends Controller
                     $urutan++;
                 }
             }
-
+            if (session('auth_user.role') === 'medis' && $laporan->badge_tenaga !== session('auth_user.username')) {
+                return response()->json(['message' => 'Anda tidak memiliki izin untuk mengubah data ini.'], 403);
+            }
             $laporan->update($validated);
 
             return response()->json([
@@ -227,27 +237,97 @@ class DataMedisController extends Controller
     public function lokasiKerjaOptions(): JsonResponse
     {
         $staticOptions = [
-            'KAWASAN',
-            'PABRIK I A',
-            'PABRIK I B',
-            'PABRIK II A',
-            'PABRIK II B',
-            'PABRIK III A',
-            'PABRIK III B',
-            'PELABUHAN',
-            'PERGUDANGAN',
+            "BUNCOP",
+            "DERMAGA A",
+            "DIKLAT",
+            "GEDUNG GRAHA",
+            "GUDANG MULTI GUNA (GMG)",
+            "JETTY I, II, III",
+            "KIG",
+            "PA BABAT",
+            "PA GUNUNGSARI",
+            "PABRIK I A",
+            "PABRIK I B",
+            "PABRIK II A",
+            "PABRIK II B",
+            "PABRIK III A",
+            "PABRIK III B",
+            "PERUMAHAN DINAS",
+            "SOR"
         ];
 
-        $fromMaster = LokasiKerja::query()
-            ->select('nama_lokasi')
-            ->whereNotNull('nama_lokasi')
-            ->where('nama_lokasi', '!=', '')
-            ->distinct()
-            ->pluck('nama_lokasi')
-            ->all();
+        $items = collect($staticOptions)
+            ->unique()
+            ->sort(SORT_STRING)
+            ->values();
+
+        return response()->json(['data' => $items]);
+    }
+
+    // Dropdown/picker "Sub Area" — daftar tetap.
+    public function subAreaOptions(): JsonResponse
+    {
+        $staticOptions = [
+            "ADM & KEUANGAN",
+            "ADMIN BISNIS",
+            "ADMINISTRASI & PENJUALAN",
+            "ADMINISTRASI BISNIS",
+            "AGRO SOLUTION",
+            "AKUNTANSI",
+            "BARANG REJECT",
+            "DIKLAT",
+            "FABRIKASI DAN ALAT BERAT",
+            "GEDUNG ADMINISTRASI",
+            "HAR I A",
+            "HAR I B",
+            "HAR II",
+            "HAR III A",
+            "HAR III B",
+            "HARSAN",
+            "HK",
+            "HUKUM & SEKRETARIAT",
+            "KEUANGAN",
+            "KOMUNIKASI KORPORAT",
+            "LABORATORIUM",
+            "MITRA BISNIS PEMASARAN RETAIL",
+            "OPERASIONAL PELABUHAN",
+            "PA BABAT",
+            "PA GUNUNGSARI",
+            "PELAPORAN KEUANGAN & MANAJEMEN",
+            "PELAYANAN UMUM",
+            "PEMADAM KEBAKARAN",
+            "PEMELIHARAAN PELABUHAN",
+            "PENGADAAN BARANG",
+            "PENGADAAN DAN PENGEMBANGAN BISNIS",
+            "PENGADAAN JASA",
+            "PENGELOLAAN MITRA",
+            "PENGELOLAAN PELANGGAN",
+            "PENGELOLAAN TRANSFORMASI BISNIS",
+            "PENGEMBANGAN KORPORAT",
+            "PENGHIJAUAN",
+            "PERGUDANGAN DAN PENGANTONGAN",
+            "PORTFOLIO BISNIS",
+            "PPBJ",
+            "PPSB",
+            "PRODUKSI I",
+            "PRODUKSI II A",
+            "PRODUKSI II B",
+            "PRODUKSI III",
+            "PRODUKSI III A",
+            "PRODUKSI III B",
+            "PROJECT MANAJER RETAIL MANAJEMEN",
+            "PROYEK INFRASTRUKTUR",
+            "PROYEK MANAJEMEN PRODUK BARU",
+            "PROYEK PENGEMBANGAN",
+            "RENDAL & ANGGARAN",
+            "RENSTRAHAR",
+            "RISET",
+            "TANGGUNG JAWAB SOSIAL DAN LINGKUNGAN",
+            "TATA KELOLA PERUSAHAAN & MANAJEMEN RISIKO",
+            "TEKNIK & BISNIS"
+        ];
 
         $items = collect($staticOptions)
-            ->merge($fromMaster)
             ->unique()
             ->sort(SORT_STRING)
             ->values();
@@ -263,7 +343,6 @@ class DataMedisController extends Controller
 
             $this->deleteFileIfExists($laporan->foto_evidence_path);
             $this->deleteFileIfExists($laporan->formulir_kegiatan_path);
-            $this->deleteFileIfExists($laporan->arsip_path);
 
             $laporan->delete();
 
@@ -340,11 +419,11 @@ class DataMedisController extends Controller
             'badge_tenaga' => $item->badge_tenaga ?? '-',
             'nama_tenaga' => $item->nama_tenaga ?? '-',
             'area_kerja' => $item->area_kerja ?? '-',
+            'sub_area' => $item->sub_area ?? '-', // ⬅️ BARU
             'unit_kerja' => $item->unit_kerja ?? '-',
             'jenis_aktifitas_kpi' => $item->jenis_aktifitas_kpi ?? '-',
             'foto_evidence_url' => $item->foto_evidence_path ? asset('storage/' . $item->foto_evidence_path) : null,
             'formulir_kegiatan_url' => $item->formulir_kegiatan_path ? asset('storage/' . $item->formulir_kegiatan_path) : null,
-            'arsip_url' => $item->arsip_path ? asset('storage/' . $item->arsip_path) : null,
             'status_pindah' => $item->status_pindah,
             'keputusan' => $item->keputusan,
         ];
@@ -357,6 +436,7 @@ class DataMedisController extends Controller
             'badge_tenaga' => 'nullable|string|max:50',
             'nama_tenaga' => 'required|string|max:255',
             'area_kerja' => 'nullable|string|max:100',
+            'sub_area' => 'nullable|string|max:150', // ⬅️ BARU
             'unit_kerja' => 'nullable|string|max:150',
             'jenis_aktifitas_kpi' => 'nullable|string|max:150',
             'status_pindah' => 'nullable|string|max:30',
@@ -364,7 +444,6 @@ class DataMedisController extends Controller
 
             'foto_evidence' => 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:4096',
             'formulir_kegiatan' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
-            'arsip' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx|max:5120',
         ]);
     }
 }
