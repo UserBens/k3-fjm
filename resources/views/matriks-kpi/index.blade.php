@@ -1650,6 +1650,76 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ══════ KEHADIRAN SAFETY OFFICER (CUTI/IZIN/SAKIT/ALFA & STANDBY) ══════ -->
+            <div class="section-card" style="margin-bottom:14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer;"
+                    onclick="toggleKehadiranPanel()">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <svg style="width:16px;height:16px;color:#2563eb;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span style="font-size:14px;font-weight:700;color:#1e293b;">Kehadiran Safety Officer — Cuti /
+                            Izin /
+                            Sakit / Alfa & Standby</span>
+                    </div>
+                    <svg id="kehadiranChevron" style="width:16px;height:16px;color:#64748b;transition:transform .2s;"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+
+                <div id="kehadiranBody" style="display:none;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                        <span style="font-size:12px;font-weight:600;color:#475569;">Periode:</span>
+                        <select id="kehadiranBulan" class="filter-select" style="width:auto;"
+                            onchange="loadKehadiran()">
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <input type="number" id="kehadiranTahun" class="filter-select" style="width:90px;"
+                            onchange="loadKehadiran()">
+                        <button type="button" class="btn-primary"
+                            style="margin-left:auto;background-color:#1A7A3C;color:white;border:none;padding:7px 16px;border-radius:6px;font-weight:600;cursor:pointer;"
+                            onclick="submitKehadiran()">Simpan Kehadiran</button>
+                    </div>
+
+                    <div class="data-summary" id="kehadiranSummary">Memuat data kehadiran...</div>
+
+                    <div class="rtable-wrap">
+                        <table class="rtable">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-center" style="width:50px;">No</th>
+                                    <th class="px-6 py-3 text-left">Kode - Nama Personil</th>
+                                    <th class="px-6 py-3 text-center" style="width:140px;">Cuti / Izin (hari)</th>
+                                    <th class="px-6 py-3 text-center" style="width:120px;">Standby (hari)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kehadiranTableBody">
+                                <tr class="skeleton-row">
+                                    <td colspan="4">
+                                        <div class="skeleton-bar" style="width:100%;height:20px;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -1916,6 +1986,8 @@
         const REKAP_SO_ENDPOINT = "{{ route('kpi-k3.matriks.rekap-so') }}";
         const PENGATURAN_SHOW_ENDPOINT = "{{ route('kpi-k3.pengaturan.show') }}";
         const PENGATURAN_PERIODE_LIST_ENDPOINT = "{{ route('kpi-k3.pengaturan.periode-list') }}";
+        const KEHADIRAN_INDEX_ENDPOINT = "{{ route('kpi-k3.kehadiran.index') }}";
+        const KEHADIRAN_UPDATE_ENDPOINT = "{{ route('kpi-k3.kehadiran.update') }}";
 
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
@@ -1928,6 +2000,7 @@
         let latestSummary = null;
         let cachedSafetyOfficers = null;
         let rekapSoLoaded = false;
+        let kehadiranLoaded = false;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -2038,7 +2111,7 @@
             latestSummary = summary;
             const el = document.getElementById('ringkasanCards');
             /*
-                        el.innerHTML = `
+                                                el.innerHTML = `
             <div class="ringkasan-card">
                 <div class="rc-label">Total Skor Seluruh Aktivitas</div>
                 <div class="rc-value">${summary.total_skor}</div>
@@ -2060,7 +2133,7 @@
                 <div class="rc-sub">Dasar pembagian bobot % Medis</div>
             </div>
         `;
-                        */
+                                                */
         }
 
         // ══════ RENDER TABLE ══════
@@ -2447,13 +2520,13 @@
             // Header: Nama + kolom per aktivitas + kolom total
             const head = document.getElementById('rekapSoHead');
             head.innerHTML = `
-        <tr>
-            <th class="px-6 py-3 text-left" style="min-width:180px;">Safety Officer</th>
-            ${aktivitas.map(a => `<th class="px-6 py-3 text-center" title="${escapeHtml(a.nama)} (skor ${a.skor})" style="min-width:44px;">${escapeHtml(a.kode)}</th>`).join('')}
-            <th class="px-6 py-3 text-center rekap-total-col">Σ Skor Tugas</th>
-            <th class="px-6 py-3 text-center rekap-total-col">Bobot Ditugaskan</th>
-            <th class="px-6 py-3 text-center rekap-total-col">Jumlah Tugas</th>
-        </tr>`;
+            <tr>
+                <th class="px-6 py-3 text-left" style="min-width:180px;">Safety Officer</th>
+                ${aktivitas.map(a => `<th class="px-6 py-3 text-center" title="${escapeHtml(a.nama)} (skor ${a.skor})" style="min-width:44px;">${escapeHtml(a.kode)}</th>`).join('')}
+                <th class="px-6 py-3 text-center rekap-total-col">Σ Skor Tugas</th>
+                <th class="px-6 py-3 text-center rekap-total-col">Bobot Ditugaskan</th>
+                <th class="px-6 py-3 text-center rekap-total-col">Jumlah Tugas</th>
+            </tr>`;
 
             // Body
             const body = document.getElementById('rekapSoBodyTable');
@@ -2464,16 +2537,106 @@
             }
 
             body.innerHTML = officers.map(so => `
-        <tr>
-            <td>${escapeHtml(so.nama)}</td>
-            ${aktivitas.map(a => {
-                const checked = so.checklist[a.kode];
-                return `<td class="rekap-check ${checked ? 'yes' : 'no'}">${checked ? '✓' : '–'}</td>`;
-            }).join('')}
-            <td class="rekap-total-col" style="color:#2563eb;">${so.skor_tugas}</td>
-            <td class="rekap-total-col">${so.bobot_ditugaskan}%</td>
-            <td class="rekap-total-col">${so.jumlah_tugas}</td>
-        </tr>`).join('');
+            <tr>
+                <td>${escapeHtml(so.nama)}</td>
+                ${aktivitas.map(a => {
+                    const checked = so.checklist[a.kode];
+                    return `<td class="rekap-check ${checked ? 'yes' : 'no'}">${checked ? '✓' : '–'}</td>`;
+                }).join('')}
+                <td class="rekap-total-col" style="color:#2563eb;">${so.skor_tugas}</td>
+                <td class="rekap-total-col">${so.bobot_ditugaskan}%</td>
+                <td class="rekap-total-col">${so.jumlah_tugas}</td>
+            </tr>`).join('');
+        }
+
+        function toggleKehadiranPanel() {
+            const body = document.getElementById('kehadiranBody');
+            const chevron = document.getElementById('kehadiranChevron');
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'block' : 'none';
+            chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+
+            if (isHidden && !kehadiranLoaded) {
+                const now = new Date();
+                document.getElementById('kehadiranBulan').value = now.getMonth() + 1;
+                document.getElementById('kehadiranTahun').value = now.getFullYear();
+                loadKehadiran();
+                kehadiranLoaded = true;
+            }
+        }
+
+        async function loadKehadiran() {
+            const bulan = document.getElementById('kehadiranBulan').value;
+            const tahun = document.getElementById('kehadiranTahun').value;
+            try {
+                const res = await fetch(`${KEHADIRAN_INDEX_ENDPOINT}?tahun=${tahun}&bulan=${bulan}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!res.ok) throw new Error('Gagal mengambil data kehadiran');
+                const json = await res.json();
+                renderKehadiranTable(json.data);
+                document.getElementById('kehadiranSummary').innerHTML =
+                    `<strong>${json.data.length}</strong> safety officer aktif`;
+            } catch (e) {
+                document.getElementById('kehadiranTableBody').innerHTML =
+                    `<tr><td colspan="6" style="text-align:center;color:red;">Error memuat data</td></tr>`;
+            }
+        }
+
+        function renderKehadiranTable(rows) {
+            const tbody = document.getElementById('kehadiranTableBody');
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">Belum ada safety officer aktif</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rows.map((row, idx) => `
+            <tr data-badge="${escapeHtml(row.badge)}">
+                <td style="text-align:center;">${idx + 1}</td>
+                <td>${escapeHtml(row.badge)}-${escapeHtml(row.nama)}</td>
+                <td style="text-align:center;">
+                    <input type="number" min="0" max="31" class="kehadiran-cuti-input" value="${row.hari_cuti_izin_sakit_alfa}"
+                        style="width:70px;text-align:center;padding:5px;border:1px solid #e2e8f0;border-radius:6px;">
+                </td>
+                <td style="text-align:center;">
+                    <input type="number" min="0" max="31" class="kehadiran-standby-input" value="${row.hari_standby}"
+                        style="width:70px;text-align:center;padding:5px;border:1px solid #e2e8f0;border-radius:6px;">
+                </td>
+            </tr>`).join('');
+        }
+
+        async function submitKehadiran() {
+            const bulan = parseInt(document.getElementById('kehadiranBulan').value, 10);
+            const tahun = parseInt(document.getElementById('kehadiranTahun').value, 10);
+            const items = Array.from(document.querySelectorAll('#kehadiranTableBody tr[data-badge]')).map(tr => ({
+                badge: tr.dataset.badge,
+                hari_cuti_izin_sakit_alfa: parseInt(tr.querySelector('.kehadiran-cuti-input').value || 0,
+                    10),
+                hari_standby: parseInt(tr.querySelector('.kehadiran-standby-input').value || 0, 10),
+            }));
+
+            try {
+                const res = await fetch(KEHADIRAN_UPDATE_ENDPOINT, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    body: JSON.stringify({
+                        tahun_aktif: tahun,
+                        bulan_aktif: bulan,
+                        items
+                    }),
+                });
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || 'Gagal menyimpan kehadiran');
+                showToast(json.message, 'success');
+            } catch (e) {
+                showToast(e.message || 'Terjadi kesalahan', 'error');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadData);
@@ -2495,6 +2658,5 @@
         </script>
     @endif
 </body>
-
 
 </html>

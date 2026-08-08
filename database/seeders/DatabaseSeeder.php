@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             PengaturanKpiK3Seeder::class,
             StokApdSeeder::class,
             AktivitasSafetyOfficerSeeder::class,
-            DataSafetySeeder::class,
+            // DataSafetySeeder::class,
         ]);
     }
 }

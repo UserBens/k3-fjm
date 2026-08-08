@@ -128,6 +128,9 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/kpi-k3/pengaturan', [KpiK3MatriksController::class, 'pengaturanShow'])->name('kpi-k3.pengaturan.show');
         Route::get('/kpi-k3/pengaturan/periode-list', [KpiK3MatriksController::class, 'pengaturanPeriodeList'])->name('kpi-k3.pengaturan.periode-list');
 
+        Route::get('kpi-k3/kehadiran', [KpiK3MatriksController::class, 'kehadiranIndex'])->name('kpi-k3.kehadiran.index');
+        Route::put('kpi-k3/kehadiran', [KpiK3MatriksController::class, 'kehadiranUpdate'])->name('kpi-k3.kehadiran.update');
+
         // MONITORING LAPORAN (Medis, Safety, Pengawas)
         Route::prefix('monitoring-laporan')->name('monitoring-laporan.')->group(function () {
             Route::get('/', [MonitoringLaporanController::class, 'index'])->name('index');

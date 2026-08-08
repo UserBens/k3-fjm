@@ -1452,12 +1452,17 @@
                 return;
             }
             box.innerHTML = `
-                <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
-                <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
-                <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v highlight">${fmtPct(m.nilai_kpi_final)}</span></div>                <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
-                <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
-                <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
-            `;
+        <div class="kv-row"><span class="k">Total Target Laporan</span><span class="v">${fmtNum(m.total_target_laporan)}</span></div>
+        <div class="kv-row"><span class="k">Jumlah Laporan Disetujui</span><span class="v">${fmtNum(m.jumlah_laporan_disetujui)}</span></div>
+        <div class="kv-row"><span class="k">Jumlah Laporan Tepat Waktu</span><span class="v">${fmtNum(m.jumlah_laporan_tepat_waktu)}</span></div>
+        <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
+        <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
+        <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v highlight">${fmtPct(m.nilai_kpi_final)}</span></div>
+        <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
+        <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
+        <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
+        <div class="kv-row"><span class="k">Kategori Penilaian</span><span class="v">${m.kategori_penilaian ?? '—'}</span></div>
+    `;
         }
 
         function renderRincianFor(tim, rows) {
@@ -1565,9 +1570,23 @@
 
         TEAMS.forEach(tim => enhanceSelect(document.getElementById(`fPersonil_${tim}`)));
 
+        async function setDefaultPeriodeAktif() {
+            try {
+                const res = await fetch(`${API_URL}?${new URLSearchParams({ area: 'SEMUA', tim: 'SEMUA' })}`);
+                const json = await res.json();
+                if (json?.periode?.tahun) document.getElementById('fTahun').value = json.periode.tahun;
+                if (json?.periode?.bulan) document.getElementById('fBulan').value = json.periode.bulan;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         populateTahun();
         applyLockUI();
-        loadTeamData(activeTeamTab);
+        setDefaultPeriodeAktif().then(() => {
+            TEAMS.forEach(tim => enhanceSelect(document.getElementById(`fPersonil_${tim}`)));
+            loadTeamData(activeTeamTab);
+        });
     </script>
 </body>
 

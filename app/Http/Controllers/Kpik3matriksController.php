@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AktivitasKpiK3;
+use App\Models\KehadiranKpiK3;
 use App\Models\PengaturanKpiK3;
 use App\Models\SafetyOfficer;
 use Illuminate\Http\Request;
@@ -279,5 +280,61 @@ class KpiK3MatriksController extends Controller
             'officers'       => $data,
             'total_skor_tim' => $totalSkorTim,
         ]);
+    }
+    
+    public function kehadiranIndex(Request $request)
+    {
+        $tahun = (int) $request->query('tahun', now()->year);
+        $bulan = (int) $request->query('bulan', now()->month);
+
+        $officers = SafetyOfficer::where('is_active', true)
+            ->with('pegawai:badge,nama')
+            ->orderBy('badge')
+            ->get();
+
+        $kehadiranMap = KehadiranKpiK3::where('tahun_aktif', $tahun)
+            ->where('bulan_aktif', $bulan)
+            ->get()
+            ->keyBy('badge');
+
+        $data = $officers->map(function (SafetyOfficer $so) use ($kehadiranMap) {
+            $k = $kehadiranMap->get($so->badge);
+            return [
+                'badge'                     => $so->badge,
+                'nama'                      => $so->pegawai->nama ?? $so->badge,
+                'hari_cuti_izin_sakit_alfa' => $k->hari_cuti_izin_sakit_alfa ?? 0,
+                'hari_standby'              => $k->hari_standby ?? 0,
+            ];
+        })->values();
+
+        return response()->json(['data' => $data, 'tahun' => $tahun, 'bulan' => $bulan]);
+    }
+
+    public function kehadiranUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'tahun_aktif' => 'required|integer|min:2000|max:2100',
+            'bulan_aktif' => 'required|integer|min:1|max:12',
+            'items' => 'required|array|min:1',
+            'items.*.badge' => 'required|string|exists:safety_officers,badge',
+            'items.*.hari_cuti_izin_sakit_alfa' => 'required|integer|min:0|max:31',
+            'items.*.hari_standby' => 'required|integer|min:0|max:31',
+        ]);
+
+        foreach ($validated['items'] as $item) {
+            KehadiranKpiK3::updateOrCreate(
+                [
+                    'badge' => $item['badge'],
+                    'tahun_aktif' => $validated['tahun_aktif'],
+                    'bulan_aktif' => $validated['bulan_aktif'],
+                ],
+                [
+                    'hari_cuti_izin_sakit_alfa' => $item['hari_cuti_izin_sakit_alfa'],
+                    'hari_standby' => $item['hari_standby'],
+                ]
+            );
+        }
+
+        return response()->json(['message' => 'Data kehadiran berhasil disimpan.']);
     }
 }
