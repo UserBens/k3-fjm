@@ -885,6 +885,36 @@
             cursor: not-allowed;
             pointer-events: none;
         }
+
+        .saklar-grid {
+            grid-template-columns: repeat(5, 1fr);
+            /* Periode, Tahun, Bulan, Area, Tombol */
+        }
+
+        .saklar-field.flex {
+            display: flex;
+        }
+
+        .saklar-field.items-end {
+            align-items: flex-end;
+        }
+
+        .btn-terapkan {
+            width: 100%;
+            height: 34px;
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-terapkan:hover {
+            background: var(--blue2);
+        }
     </style>
 </head>
 
@@ -914,20 +944,22 @@
 
             <!-- PANEL SAKLAR -->
             <div class="panel-saklar">
-                <!-- BARU: Field Skema Periode Cut-Off -->
-                <div class="saklar-field">
-                    <label>Periode</label>
-                    <select id="fPeriode">
-                        <option value="26_25" selected>Tanggal 26 s/d 25</option>
-                        <option value="1_31">Tanggal 1 s/d Akhir Bulan</option>
-                    </select>
-                </div>
-                {{-- <div class="panel-saklar-title">Panel Saklar · ubah di sini, seluruh dashboard mengikuti</div> --}}
+                <div class="panel-saklar-title">Filter Data</div>
+
                 <div class="saklar-grid">
+                    <div class="saklar-field">
+                        <label>Periode</label>
+                        <select id="fPeriode">
+                            <option value="26_25" selected>Tanggal 26 s/d 25</option>
+                            <option value="1_31">Tanggal 1 s/d Akhir Bulan</option>
+                        </select>
+                    </div>
+
                     <div class="saklar-field">
                         <label>Tahun</label>
                         <select id="fTahun"></select>
                     </div>
+
                     <div class="saklar-field">
                         <label>Bulan</label>
                         <select id="fBulan">
@@ -945,15 +977,7 @@
                             <option value="12">Desember</option>
                         </select>
                     </div>
-                    {{-- <div class="saklar-field">
-                        <label>Tim</label>
-                        <select id="fTim">
-                            <option value="SEMUA">SEMUA</option>
-                            <option value="SAFETY">SAFETY</option>
-                            <option value="PENGAWAS">PENGAWAS</option>
-                            <option value="MEDIS">MEDIS</option>
-                        </select>
-                    </div> --}}
+
                     <div class="saklar-field">
                         <label>Area</label>
                         <select id="fArea">
@@ -962,12 +986,10 @@
                     </div>
 
                     <div class="saklar-field flex items-end">
-                        <button id="btnTerapkan" type="button"
-                            style="width:100%;height:34px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;">
-                            Terapkan
-                        </button>
+                        <button id="btnTerapkan" type="button" class="btn-terapkan">Filter</button>
                     </div>
                 </div>
+
                 <div class="periode-aktif-line" id="periodeAktifLine">Memuat periode aktif…</div>
             </div>
 
@@ -1452,17 +1474,18 @@
                 return;
             }
             box.innerHTML = `
-        <div class="kv-row"><span class="k">Total Target Laporan</span><span class="v">${fmtNum(m.total_target_laporan)}</span></div>
-        <div class="kv-row"><span class="k">Jumlah Laporan Disetujui</span><span class="v">${fmtNum(m.jumlah_laporan_disetujui)}</span></div>
-        <div class="kv-row"><span class="k">Jumlah Laporan Tepat Waktu</span><span class="v">${fmtNum(m.jumlah_laporan_tepat_waktu)}</span></div>
-        <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
-        <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
-        <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v highlight">${fmtPct(m.nilai_kpi_final)}</span></div>
-        <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
-        <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
-        <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
-        <div class="kv-row"><span class="k">Kategori Penilaian</span><span class="v">${m.kategori_penilaian ?? '—'}</span></div>
-    `;
+                <div class="kv-row"><span class="k">Hari Kerja Efektif</span><span class="v">${fmtNum(m.hari_kerja_efektif)} hari</span></div>
+                <div class="kv-row"><span class="k">Total Target Laporan</span><span class="v">${fmtNum(m.total_target_laporan)}</span></div>
+                <div class="kv-row"><span class="k">Jumlah Laporan Disetujui</span><span class="v">${fmtNum(m.jumlah_laporan_disetujui)}</span></div>
+                <div class="kv-row"><span class="k">Jumlah Laporan Tepat Waktu</span><span class="v">${fmtNum(m.jumlah_laporan_tepat_waktu)}</span></div>
+                <div class="kv-row"><span class="k">Persentase Capaian Aktivitas</span><span class="v">${fmtPct(m.persentase_capaian_aktivitas)}</span></div>
+                <div class="kv-row"><span class="k">Persentase Ketepatan Waktu</span><span class="v">${fmtPct(m.persentase_ketepatan_waktu)}</span></div>
+                <div class="kv-row"><span class="k">Nilai KPI Final</span><span class="v highlight">${fmtPct(m.nilai_kpi_final)}</span></div>
+                <div class="kv-row"><span class="k">Bobot Ditugaskan (%)</span><span class="v">${fmtPct(m.bobot_ditugaskan)}</span></div>
+                <div class="kv-row"><span class="k">Jumlah Tugas</span><span class="v">${fmtNum(m.jumlah_tugas)}</span></div>
+                <div class="kv-row"><span class="k">Tunjangan (Rp)</span><span class="v">${m.tunjangan === null ? '—' : fmtRp(m.tunjangan)}</span></div>
+                <div class="kv-row"><span class="k">Kategori Penilaian</span><span class="v">${m.kategori_penilaian ?? '—'}</span></div>
+            `;
         }
 
         function renderRincianFor(tim, rows) {
