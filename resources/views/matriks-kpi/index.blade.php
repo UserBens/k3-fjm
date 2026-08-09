@@ -1485,7 +1485,7 @@
                                         step="0.1" required>
                                 </div>
 
-                                <div class="pengaturan-group-title" style="margin-top:14px;">6 · Ambang Warna</div>
+                                {{-- <div class="pengaturan-group-title" style="margin-top:14px;">6 · Ambang Warna</div>
                                 <div class="pengaturan-field">
                                     <label>Merah bila skor di bawah (%)</label>
                                     <input type="number" id="pAmbangMerah" min="0" max="100"
@@ -1495,7 +1495,7 @@
                                     <label>Kuning bila skor di bawah (%)</label>
                                     <input type="number" id="pAmbangKuning" min="0" max="100"
                                         step="0.1" required>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <!-- 4. TUNJANGAN -->
@@ -2372,8 +2372,8 @@
             document.getElementById('pBatasLebihAwal').value = p.batas_lapor_lebih_awal;
             document.getElementById('pPorsiCapaian').value = p.porsi_capaian_aktivitas;
             document.getElementById('pPorsiKetepatan').value = p.porsi_ketepatan_waktu;
-            document.getElementById('pAmbangMerah').value = p.ambang_merah;
-            document.getElementById('pAmbangKuning').value = p.ambang_kuning;
+            // document.getElementById('pAmbangMerah').value = p.ambang_merah;
+            // document.getElementById('pAmbangKuning').value = p.ambang_kuning;
             document.getElementById('pTunjanganSafety').value = p.tunjangan_safety;
             document.getElementById('pTunjanganPengawas').value = p.tunjangan_pengawas;
             document.getElementById('pTunjanganMedis').value = p.tunjangan_medis;
@@ -2411,8 +2411,8 @@
                 tim_safety_dapat_tunjangan: document.getElementById('pTunjSafety').checked,
                 tim_pengawas_dapat_tunjangan: document.getElementById('pTunjPengawas').checked,
                 tim_medis_dapat_tunjangan: document.getElementById('pTunjMedis').checked,
-                ambang_merah: parseFloat(document.getElementById('pAmbangMerah').value),
-                ambang_kuning: parseFloat(document.getElementById('pAmbangKuning').value),
+                // ambang_merah: parseFloat(document.getElementById('pAmbangMerah').value),
+                // ambang_kuning: parseFloat(document.getElementById('pAmbangKuning').value),
             };
 
             try {

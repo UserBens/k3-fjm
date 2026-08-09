@@ -191,8 +191,8 @@ class KpiK3MatriksController extends Controller
             'tim_safety_dapat_tunjangan' => 'required|boolean',
             'tim_pengawas_dapat_tunjangan' => 'required|boolean',
             'tim_medis_dapat_tunjangan' => 'required|boolean',
-            'ambang_merah' => 'required|numeric|min:0|max:100',
-            'ambang_kuning' => 'required|numeric|min:0|max:100',
+            // 'ambang_merah' => 'required|numeric|min:0|max:100',
+            // 'ambang_kuning' => 'required|numeric|min:0|max:100',
         ]);
 
         $pengaturan = PengaturanKpiK3::updateOrCreate(
