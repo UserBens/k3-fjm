@@ -233,9 +233,18 @@ Route::middleware(['auth.custom'])->group(function () {
     });
 
 
-
-    Route::get('/memo-kib', [MemoKibController::class, 'index'])->name('memo-kib.index');
-    Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
+    // MEMO KIB
+    // Route::get('/memo-kib', [MemoKibController::class, 'index'])->name('memo-kib.index');
+    // Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
+    Route::prefix('memo-kib')->name('memo-kib.')->group(function () {
+        Route::get('/', [MemoKibController::class, 'index'])->name('index');
+        Route::get('/ringkasan', [MemoKibController::class, 'ringkasan'])->name('ringkasan');
+        Route::get('/list-so', [MemoKibController::class, 'listSO'])->name('list-so');
+        Route::get('/{badge}/detail', [MemoKibController::class, 'detail'])->name('detail');
+        Route::post('/{idApi}/zonasi', [MemoKibController::class, 'updateZonasi'])->name('zonasi');
+        Route::post('/{idApi}/pindah-so', [MemoKibController::class, 'pindahSafetyOfficer'])->name('pindah-so');
+        Route::get('/{badge}/cetak', [MemoKibController::class, 'cetak'])->name('cetak');
+    });
 
     // DATA PELAPORAN
     Route::get('monitoring-laporan', [MonitoringLaporanController::class, 'index'])->name('monitoring-laporan.index');

@@ -410,39 +410,6 @@
             background: #F8F9FF;
         }
 
-        .td-name-cell {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            white-space: nowrap;
-        }
-
-        .td-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #E0E7FF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: #2D4B9E;
-            flex-shrink: 0;
-        }
-
-        .td-name-main {
-            font-weight: 700;
-            color: #1A1D2E;
-            line-height: 1.3;
-        }
-
-        .td-name-sub {
-            font-size: 10.5px;
-            color: #94A3B8;
-            font-weight: 600;
-        }
-
         .status-pill {
             display: inline-flex;
             align-items: center;
@@ -474,24 +441,11 @@
             color: #2D4B9E;
         }
 
-        .sp-gray {
-            background: rgba(100, 116, 139, 0.09);
-            color: #64748B;
-        }
-
         .empty-state,
         .error-state {
             text-align: center;
             padding: 48px 12px;
             color: #94A3B8;
-        }
-
-        .empty-state svg,
-        .error-state svg {
-            width: 32px;
-            height: 32px;
-            margin: 0 auto 10px;
-            color: #CBD5E1;
         }
 
         .empty-state-title,
@@ -505,10 +459,6 @@
         .empty-state-sub,
         .error-state-sub {
             font-size: 11.5px;
-        }
-
-        .skeleton-row td {
-            padding: 12px 8px;
         }
 
         .skeleton-bar {
@@ -529,86 +479,7 @@
             }
         }
 
-        /* ══════ PAGINATION ══════ */
-        .pagination-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .pagination-info {
-            font-size: 11px;
-            color: #94A3B8;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .per-page-select {
-            height: 28px;
-            padding: 0 24px 0 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 6px center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #1A1D2E;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .pagination-pages {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            min-width: 28px;
-            height: 28px;
-            padding: 0 6px;
-            border-radius: 7px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748B;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .page-btn:hover:not(:disabled):not(.active) {
-            background: #F0F4FF;
-            border-color: rgba(45, 75, 158, 0.25);
-        }
-
-        .page-btn.active {
-            background: #2D4B9E;
-            border-color: #2D4B9E;
-            color: #fff;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .page-ellipsis {
-            font-size: 11px;
-            color: #94A3B8;
-            padding: 0 2px;
-        }
-
-        /* ══════ RESPONSIVE ══════ */
+        /* ══════ RESPONSIVE / SIDEBAR ══════ */
         .hamburger-btn {
             display: none;
             width: 32px;
@@ -686,10 +557,7 @@
                 gap: 8px;
             }
 
-            .tb-name {
-                display: none;
-            }
-
+            .tb-name,
             .tb-caret {
                 display: none;
             }
@@ -706,23 +574,9 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-
-            .filter-select {
-                min-width: 0;
-                flex: 1 1 46%;
-            }
-
-            .pagination-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .pagination-pages {
-                justify-content: center;
-            }
         }
 
-        /* ══════ MODAL KONFIRMASI ══════ */
+        /* ══════ MODAL DASAR (overlay + box umum) ══════ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -741,140 +595,63 @@
             opacity: 1;
         }
 
-        .modal-box {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            width: 380px;
-            max-width: calc(100vw - 32px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            transform: scale(0.94) translateY(8px);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.open .modal-box {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(45, 75, 158, 0.09);
-            color: #2D4B9E;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-        }
-
         .modal-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 20px;
             letter-spacing: 0.02em;
             color: #1A1D2E;
-            margin-bottom: 8px;
         }
 
-        .modal-desc {
-            font-size: 12.5px;
-            line-height: 1.55;
-            color: #64748B;
-            margin-bottom: 20px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        .btn-modal-cancel {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            color: #64748B;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .btn-modal-cancel:hover {
-            background: #F8F9FF;
-        }
-
-        .btn-modal-confirm {
-            padding: 8px 16px;
-            border-radius: 8px;
+        .modal-close {
+            background: none;
             border: none;
-            background: #2D4B9E;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
+            font-size: 15px;
+            color: #94A3B8;
             cursor: pointer;
-            transition: background 0.15s;
+            line-height: 1;
+            padding: 4px;
         }
 
-        .btn-modal-confirm:hover {
-            background: #1A3C8A;
+        .modal-close:hover {
+            color: #1A1D2E;
         }
 
-        /* ══════ LOADING SCREEN ══════ */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(26, 29, 46, 0.55);
-            backdrop-filter: blur(3px);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .loading-overlay.open {
-            display: flex;
-            opacity: 1;
-        }
-
-        .loading-box {
+        /* box khusus modal "picker"/list (dipakai pindah SO) */
+        .binaan-modal-box {
             background: #fff;
             border-radius: 16px;
-            padding: 32px 36px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.94) translateY(8px);
+            transition: transform 0.2s ease;
+            max-width: calc(100vw - 32px);
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
+        }
+
+        .modal-overlay.open .binaan-modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .binaan-modal-header {
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .binaan-modal-body {
+            overflow-y: auto;
+        }
+
+        .binaan-loading,
+        .binaan-empty {
             text-align: center;
-            width: 300px;
-            max-width: calc(100vw - 32px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid rgba(45, 75, 158, 0.15);
-            border-top-color: #2D4B9E;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-
-        .loading-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 17px;
-            letter-spacing: 0.02em;
-            color: #1A1D2E;
-            margin-bottom: 4px;
-        }
-
-        .loading-sub {
-            font-size: 11.5px;
+            padding: 24px 8px;
+            font-size: 12px;
             color: #94A3B8;
-            line-height: 1.5;
+            font-weight: 600;
         }
 
         /* ══════ TOAST ══════ */
@@ -962,228 +739,193 @@
             flex-shrink: 0;
         }
 
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
+        /* ══════ PANEL MANAJEMEN (grid kiri-kanan) ══════ */
+        .mgmt-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .mgmt-grid {
+                grid-template-columns: 1fr;
             }
-
-            to {
-                transform: rotate(360deg);
-            }
         }
 
-        .btn-edit-kib {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 7px;
-            border: 1px solid rgba(45, 75, 158, 0.2);
-            background: #F0F4FF;
-            color: #2D4B9E;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.15s;
-            white-space: nowrap;
+        .mgmt-so-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .btn-edit-kib:hover {
-            background: rgba(45, 75, 158, 0.14);
-        }
-
-        /* ══════ MODAL UPDATE KIB ══════ */
-        .update-modal-box {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            width: 420px;
-            max-width: calc(100vw - 32px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            transform: scale(0.94) translateY(8px);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.open .update-modal-box {
-            transform: scale(1) translateY(0);
-        }
-
-        .update-modal-header {
-            margin-bottom: 16px;
-        }
-
-        .update-modal-eyebrow {
-            font-size: 10px;
-            font-weight: 700;
-            color: #94A3B8;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .update-modal-name {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
-            letter-spacing: 0.02em;
-            color: #1A1D2E;
-            line-height: 1;
-        }
-
-        .update-modal-nik {
-            font-size: 11.5px;
-            color: #94A3B8;
-            margin-top: 2px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748B;
-            margin-bottom: 5px;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            height: 38px;
-            padding: 0 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.09);
-            background: #fff;
-            font-size: 12.5px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #1A1D2E;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            border-color: #2D4B9E;
-        }
-
-        .form-select {
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;
-            appearance: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-        }
-
-        /* modal detail tenaga */
-        .detail-modal-box {
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .detail-modal-header {
+        .mgmt-so-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-
-        .detail-avatar {
-            width: 42px;
-            height: 42px;
+            gap: 8px;
+            padding: 10px 12px;
             border-radius: 10px;
-            background: linear-gradient(135deg, #2D4B9E, #1A1D2E);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            flex-shrink: 0;
+            border: 1px solid #E5E7EB;
+            cursor: pointer;
+            transition: .15s;
         }
 
-        .detail-subtitle {
+        .mgmt-so-item:hover {
+            border-color: #2D4B9E;
+            background: #F5F7FD;
+        }
+
+        .mgmt-so-item.active-so {
+            border-color: #2D4B9E;
+            background: #EEF1FB;
+        }
+
+        .mgmt-so-name {
+            font-weight: 700;
+            font-size: 12.5px;
+            color: #1A1D2E;
+        }
+
+        .mgmt-so-sub {
+            font-size: 11px;
+            color: #64748B;
+            margin-top: 2px;
+        }
+
+        .mgmt-empty-hint {
+            text-align: center;
+            padding: 48px 16px;
             font-size: 12.5px;
             color: #94A3B8;
-            font-weight: 500;
-        }
-
-        .detail-modal-body {
-            max-height: 65vh;
-            overflow-y: auto;
-            padding-top: 4px;
-        }
-
-        .detail-section {
-            margin-bottom: 18px;
-            padding-bottom: 16px;
-            border-bottom: 1px dashed #E2E8F0;
-        }
-
-        .detail-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .detail-section-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #2D4B9E;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 10px;
-        }
-
-        .detail-section-title svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .detail-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 16px;
-        }
-
-        .detail-field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .detail-field label {
-            font-size: 11px;
             font-weight: 600;
-            color: #94A3B8;
         }
 
-        .detail-field input,
-        .detail-field textarea {
-            border: 1px solid #E2E8F0;
-            background: #F8FAFC;
+        /* ══════ KHUSUS MEMO KIB ══════ */
+        .memo-kode-ok {
+            font-size: 11px;
+            color: #64748B;
+            margin-top: 3px;
+            max-width: 560px;
+        }
+
+        .memo-summary-cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .memo-summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .memo-summary-card {
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .memo-summary-card .val {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .memo-summary-card .lbl {
+            font-size: 10px;
+            color: #64748B;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .memo-summary-card.c-total .val {
+            color: #2D4B9E;
+        }
+
+        .memo-summary-card.c-aktif .val {
+            color: #1A7A3C;
+        }
+
+        .memo-summary-card.c-expired .val {
+            color: #D0021B;
+        }
+
+        .memo-summary-card.c-hampir .val {
+            color: #D97706;
+        }
+
+        .memo-summary-card.c-tidak .val {
+            color: #64748B;
+        }
+
+        .zonasi-input {
+            width: 110px;
+            padding: 5px 8px;
+            font-size: 11.5px;
+            border: 1px solid #E5E7EB;
             border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #1E293B;
-            font-family: inherit;
-            resize: none;
-            cursor: default;
         }
 
-        .detail-field input:focus,
-        .detail-field textarea:focus {
+        .zonasi-input:focus {
             outline: none;
             border-color: #2D4B9E;
-            background: #EEF2FB;
         }
 
-        @media (max-width: 640px) {
-            .detail-form-grid {
-                grid-template-columns: 1fr;
-            }
+        .btn-pindah-so {
+            padding: 5px 10px;
+            font-size: 10.5px;
+            border-radius: 6px;
+            border: 1px solid #2D4B9E;
+            color: #2D4B9E;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .btn-pindah-so:hover {
+            background: #EEF1FB;
+        }
+
+        /* Dropdown Cetak Memo */
+        .dropdown-cetak {
+            position: relative;
+        }
+
+        .dropdown-cetak-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            background: #fff;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+            min-width: 160px;
+            padding: 6px;
+            z-index: 20;
+        }
+
+        .dropdown-cetak-menu.open {
+            display: block;
+        }
+
+        .dropdown-cetak-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #1A1D2E;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .dropdown-cetak-menu a:hover {
+            background: #F5F7FD;
+            color: #2D4B9E;
         }
     </style>
 </head>
@@ -1199,362 +941,158 @@
 
         @include('partials.topbar')
 
-        <!-- PAGE CONTENT -->
         <div id="page-content">
 
-            <!-- PAGE HEADER -->
             <div class="page-hdr">
                 <div class="page-hdr-top">
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Memo KIB Tenaga · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Database Safety Officer · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">MEMO KIB <span>TENAGA KERJA</span></div>
-                        <div class="pg-sub">Cari, filter, dan kelola data memo kibtenaga kerja.</div>
-                    </div>
-                    <div class="pg-actions">
-                        <button class="btn-primary" id="btnSync" onclick="syncData()"
-                            style="background-color: #2563EB; color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
-                            <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                            <span id="syncText">Sync Pegawai</span>
-                        </button>
+                        <div class="pg-title">MEMO <span>KIB</span></div>
+                        <div class="pg-sub">Kelola zonasi &amp; penentuan Safety Officer per tenaga, lalu cetak memo
+                            KIB.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- FILTER BAR -->
-            <div class="section-card" style="margin-bottom:14px;">
-                <div class="filter-bar">
-                    <div class="filter-search">
-                        <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="Cari berdasarkan nama atau NIK..."
-                            oninput="onSearchInput()" />
-                    </div>
-
-                    <select id="filterStatus" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status</option>
-                    </select>
-
-                    <select id="filterDepartemen" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Departemen</option>
-                    </select>
-
-                    <select id="filterJenisKelamin" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Jenis Kelamin</option>
-                    </select>
-
-                    <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
-                </div>
-
-                <div class="data-summary" id="dataSummary">Memuat data tenaga kerja...</div>
-
-                <!-- TABLE -->
-                <div class="rtable-wrap">
-                    <table class="rtable">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 text-left">Data Pegawai</th>
-                                {{-- <th class="px-6 py-3 text-left">Info Personal (TTL & Alamat)</th> --}}
-                                <th class="px-6 py-3 text-left">Unit Kerja</th>
-                                <th class="px-6 py-3 text-left">Data OK</th>
-                                <th class="px-6 py-3 text-left">Pengawas</th> <!-- BARU -->
-                                <th class="px-6 py-3 text-left">Status KIB</th>
-                                {{-- <th class="px-6 py-3 text-left">Data BPJS</th> --}}
-                                <th class="px-6 py-3 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton-bar" style="width:160px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:180px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:120px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:100px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
-                                </td>
-                            </tr>
-                            <tr class="skeleton-row">
-                                <td>
-                                    <div class="skeleton-bar" style="width:150px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:190px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:110px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:90px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton-bar" style="width:90px; margin:auto;"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- PAGINATION -->
-                <div class="pagination-bar">
-                    <div class="pagination-info">
-                        <span id="paginationText">—</span>
-                        <select id="perPageSelect" class="per-page-select" onchange="onPerPageChange()">
-                            <option value="10">10 / halaman</option>
-                            <option value="25">25 / halaman</option>
-                            <option value="50">50 / halaman</option>
-                        </select>
-                    </div>
-                    <div class="pagination-pages" id="paginationPages"></div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ══════ MODAL KONFIRMASI SYNC ══════ -->
-    <div id="syncConfirmOverlay" class="modal-overlay" onclick="closeSyncModalOutside(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-icon-wrap">
-                <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
-                    stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-            </div>
-            <div class="modal-title">Sinkronkan Data Pegawai?</div>
-            <div class="modal-desc">
-                Sistem akan menarik ulang data master pegawai langsung dari SIFO. Proses ini bisa
-                memakan waktu beberapa saat dan akan memperbarui data yang tersimpan secara lokal.
-            </div>
-            <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeSyncModal()">Batal</button>
-                <button class="btn-modal-confirm" onclick="confirmSync()">Ya, Sync Sekarang</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════ MODAL UPDATE KIB ══════ -->
-    <div id="updateModalOverlay" class="modal-overlay" onclick="closeUpdateModalOutside(event)">
-        <div class="update-modal-box" onclick="event.stopPropagation()">
-            <div class="update-modal-header">
-                <div class="update-modal-eyebrow">Update Data KIB</div>
-                <div class="update-modal-name" id="updateModalName">—</div>
-                <div class="update-modal-nik" id="updateModalNik">—</div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Nomor KIB</label>
-                <input type="text" id="inputNomorKib" class="form-input" placeholder="Contoh: KIB-2026-0001" />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Masa Berlaku KIB</label>
-                <input type="date" id="inputMasaBerlakuKib" class="form-input" />
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Status KIB</label>
-                <select id="inputStatusKib" class="form-select">
-                    <option value="">Pilih Status</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Proses Pengajuan">Proses Pengajuan</option>
-                    <option value="Kadaluarsa">Kadaluarsa</option>
-                    <option value="Tidak Berlaku">Tidak Berlaku</option>
-                </select>
-            </div>
-
-            <div class="modal-actions" style="margin-top:20px;">
-                <button class="btn-modal-cancel" onclick="closeUpdateModal()">Batal</button>
-                <button class="btn-modal-confirm" id="btnSubmitUpdate" onclick="submitUpdateKib()">Simpan
-                    Perubahan</button>
-            </div>
-        </div>
-    </div>
-
-    {{-- MODAL DETAIL TENAGA KERJA --}}
-    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
-            <div class="modal-header detail-modal-header">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="detail-avatar" id="detailAvatar">--</div>
+            <div class="section-card">
+                <div class="mgmt-grid">
+                    <!-- KIRI: daftar SO -->
                     <div>
-                        <div class="modal-title" id="detailNamaTitle" style="margin-bottom:2px;">-</div>
-                        <div class="detail-subtitle" id="detailBadgeSub">-</div>
+                        <div class="pg-sub" style="margin:0 0 8px; font-weight:700; color:#1A1D2E;">Daftar Safety
+                            Officer</div>
+
+                        <div class="filter-search" style="margin-bottom:10px;">
+                            <svg class="search-icon" style="width:13px;height:13px" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" id="soSearchInput" placeholder="Cari nama atau badge..."
+                                oninput="onSoSearchInput()" />
+                        </div>
+
+                        <div class="mgmt-so-list" id="memoSoList" style="max-height:640px; overflow-y:auto;">
+                            <div class="binaan-loading">Memuat...</div>
+                        </div>
+                    </div>
+
+                    <!-- KANAN: ringkasan + detail SO terpilih -->
+                    <div>
+                        <div id="memoEmptyState" class="mgmt-empty-hint">Klik salah satu Safety Officer di sebelah
+                            kiri untuk mengelola memo KIB-nya.</div>
+
+                        <div id="memoDetailWrap" style="display:none;">
+                            <div
+                                style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                                <div>
+                                    <div class="pg-sub" style="margin:0; font-weight:700; color:#1A1D2E;"
+                                        id="memoSoTitle">-</div>
+                                    <div class="memo-kode-ok" id="memoKodeOk">-</div>
+                                </div>
+
+                                <div class="dropdown-cetak" id="dropdownCetak">
+                                    <button class="btn-primary" style="padding:7px 14px; font-size:11.5px;"
+                                        onclick="toggleCetakMenu(event)">
+                                        <svg style="width:12px;height:12px;" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4H8v4a1 1 0 001 1zm0-13h6a1 1 0 011 1v3H8V5a1 1 0 011-1z" />
+                                        </svg>
+                                        Cetak Memo
+                                        <svg style="width:10px;height:10px;" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-cetak-menu" id="cetakMenu">
+                                        <a href="#" target="_blank" id="btnCetakPdf">
+                                            <svg style="width:12px;height:12px;" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Cetak PDF
+                                        </a>
+                                        <a href="#" target="_blank" id="btnCetakExcel">
+                                            <svg style="width:12px;height:12px;" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 4h16v16H4V4zm4 4l8 8m0-8l-8 8" />
+                                            </svg>
+                                            Export Excel
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="memo-summary-cards" id="memoSummaryCards"></div>
+
+                            <div class="rtable-wrap" style="margin-top:14px;">
+                                <table class="rtable">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>Jabatan</th>
+                                            <th>Zonasi</th>
+                                            <th>Status KIB</th>
+                                            <th>Safety Officer</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="memoTableBody">
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="skeleton-bar" style="width:100%;height:40px;"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button class="modal-close" onclick="closeDetailModal()">✕</button>
             </div>
 
-            <div class="modal-body detail-modal-body">
+        </div>
+    </div>
 
-                <!-- SECTION: DATA PRIBADI -->
-                <div class="detail-section">
-                    <div class="detail-section-title mt-2">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        Data Pribadi
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Nama Lengkap</label>
-                            <input type="text" id="detailInputNama" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Badge / NIK</label>
-                            <input type="text" id="detailInputBadge" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Jenis Kelamin</label>
-                            <input type="text" id="detailInputJenisKelamin" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Tempat, Tanggal Lahir</label>
-                            <input type="text" id="detailInputTtl" readonly>
-                        </div>
-                        <div class="detail-field" style="grid-column: span 2;">
-                            <label>Alamat</label>
-                            <textarea id="detailInputAlamat" readonly rows="2"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
-                        </svg>
-                        Unit Kerja
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Nama Unit Kerja</label>
-                            <input type="text" id="detailInputUnitKerja" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Bagian</label>
-                            <input type="text" id="detailInputBagian" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION: BPJS -->
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Data BPJS
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>No. BPJS Kesehatan</label>
-                            <input type="text" id="detailInputBpjsKesehatan" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>No. BPJS Ketenagakerjaan</label>
-                            <input type="text" id="detailInputBpjsTk" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION: DATA OK -->
-                <div class="detail-section">
-                    <div class="detail-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Data OK (Order Kerja)
-                    </div>
-                    <div class="detail-form-grid">
-                        <div class="detail-field">
-                            <label>Kode OK</label>
-                            <input type="text" id="detailInputKodeOk" readonly>
-                        </div>
-                        <div class="detail-field">
-                            <label>Nomor OK</label>
-                            <input type="text" id="detailInputNomorOk" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-field">
-                    <label>Pengawas</label>
-                    <input type="text" id="detailInputPengawas" readonly>
-                </div>
-
+    <!-- ══════ MODAL PINDAH SAFETY OFFICER ══════ -->
+    <div class="modal-overlay" id="pindahSOOverlay" onclick="closePindahSOModalOutside(event)">
+        <div class="binaan-modal-box" style="width:420px;" onclick="event.stopPropagation()">
+            <div class="binaan-modal-header">
+                <div class="modal-title">Pindah Safety Officer</div>
+                <button class="modal-close" onclick="closePindahSOModal()">✕</button>
             </div>
-            <div class="modal-footer mt-4">
-                <button class="btn-outline" onclick="closeDetailModal()">Tutup</button>
+            <div class="binaan-modal-body">
+                <p class="pg-sub" style="margin:0 0 10px;" id="pindahSODesc">Pilih Safety Officer baru untuk tenaga
+                    ini.</p>
+                <select id="pindahSOSelect" class="filter-select" style="width:100%;"></select>
+                <button class="btn-primary" style="width:100%; margin-top:12px; justify-content:center;"
+                    onclick="confirmPindahSO()">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- ══════ TOAST NOTIFIKASI ══════ -->
+    <!-- ══════ TOAST ══════ -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- ══════ LOADING SCREEN OVERLAY ══════ -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-box">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Menyinkronkan Data Pegawai</div>
-            <div class="loading-sub">Mohon tunggu, sedang mengambil data terbaru dari SIFO...</div>
-        </div>
-    </div>
-
-    {{-- RENDER DATA DI TABEL --}}
     <script>
-        // ══════ CONFIG ══════
-        const API_ENDPOINT = "{{ route('tenaga.api') }}";
+        const MEMO_RINGKASAN_ENDPOINT = "{{ route('memo-kib.ringkasan') }}";
+        const MEMO_BASE_ENDPOINT = "{{ url('/memo-kib') }}";
+        const CSRF_TOKEN = "{{ csrf_token() }}";
 
-        const state = {
-            search: '',
-            status: '',
-            departemen: '',
-            jenis_kelamin: '',
-            page: 1,
-            per_page: 10,
-        };
-
-        let searchDebounce = null;
-        let filterOptionsLoaded = false;
+        let currentSO = null; // { badge, nama }
+        let soSearchDebounce = null;
+        let pendingPindahSO = null; // { idApi, nama }
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebar-overlay').classList.toggle('open');
-        }
-
-        function initials(name) {
-            if (!name || name === '-') return '—';
-            const parts = name.trim().split(/\s+/);
-            return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
         }
 
         function escapeHtml(str) {
@@ -1563,351 +1101,13 @@
             return div.innerHTML;
         }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            });
-        }
-
-        function statusPillClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s.includes('aktif') && !s.includes('non')) return 'sp-green';
-            if (s.includes('non') || s.includes('resign') || s.includes('berhenti')) return 'sp-red';
-            if (s.includes('cuti') || s.includes('kontrak')) return 'sp-amber';
-            if (s === '-' || s === '') return 'sp-gray';
-            return 'sp-blue';
-        }
-
-        function onSearchInput() {
-            clearTimeout(searchDebounce);
-            searchDebounce = setTimeout(() => {
-                state.search = document.getElementById('searchInput').value.trim();
-                state.page = 1;
-                loadData();
-            }, 350);
-        }
-
-        function onFilterChange() {
-            state.status = document.getElementById('filterStatus').value;
-            state.departemen = document.getElementById('filterDepartemen').value;
-            state.jenis_kelamin = document.getElementById('filterJenisKelamin').value;
-            state.page = 1;
-            loadData();
-        }
-
-        function onPerPageChange() {
-            state.per_page = parseInt(document.getElementById('perPageSelect').value, 10);
-            state.page = 1;
-            loadData();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterDepartemen').value = '';
-            document.getElementById('filterJenisKelamin').value = '';
-            state.search = '';
-            state.status = '';
-            state.departemen = '';
-            state.jenis_kelamin = '';
-            state.page = 1;
-            loadData();
-        }
-
-        function goToPage(page) {
-            state.page = page;
-            loadData();
-            document.getElementById('page-content').scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        function populateFilterOptions(options) {
-            if (filterOptionsLoaded || !options) return;
-
-            const build = (selectId, values, isObjectOption = false) => {
-                const select = document.getElementById(selectId);
-                const current = select.value;
-                values.forEach(val => {
-                    const opt = document.createElement('option');
-                    if (isObjectOption) {
-                        opt.value = val.value;
-                        opt.textContent = val.label;
-                    } else {
-                        opt.value = val;
-                        opt.textContent = val;
-                    }
-                    select.appendChild(opt);
-                });
-                select.value = current;
-            };
-
-            build('filterStatus', options.status || []);
-            build('filterDepartemen', options.departemen || [], true); // BARU: pakai object
-            build('filterJenisKelamin', options.jenis_kelamin || []);
-        }
-
-        function sisaHariBadge(sisaHari) {
-            if (sisaHari === null || sisaHari === undefined) {
-                return `<span class="status-pill sp-gray">-</span>`;
-            }
-            let cls = 'sp-green';
-            if (sisaHari < 0) cls = 'sp-red';
-            else if (sisaHari <= 30) cls = 'sp-amber';
-            const label = sisaHari < 0 ? `Lewat ${Math.abs(sisaHari)} hari` : `${sisaHari} hari`;
-            return `<span class="status-pill ${cls}">${label}</span>`;
-        }
-
-        function kibStatusPillClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s.includes('aktif') || s.includes('berlaku')) return 'sp-green';
-            if (s.includes('proses') || s.includes('pengajuan')) return 'sp-amber';
-            if (s.includes('expired') || s.includes('kadaluarsa') || s.includes('habis')) return 'sp-red';
-            if (!s) return 'sp-gray';
-            return 'sp-blue';
-        }
-
-        function renderTable(rows) {
-            const tbody = document.getElementById('tableBody');
-
-            if (!rows || rows.length === 0) {
-                tbody.innerHTML = `
-                <tr>
-                    <td colspan="8">
-                        <div class="empty-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <div class="empty-state-title">Data tidak ditemukan</div>
-                            <div class="empty-state-sub">Coba ubah kata kunci pencarian atau filter yang digunakan.</div>
-                        </div>
-                    </td>
-                </tr>`;
-                return;
-            }
-
-            tbody.innerHTML = rows.map(row => `
-                <tr>
-                    <td>
-                        <div class="td-name-cell">
-                            <div class="td-avatar">${escapeHtml(initials(row.nama))}</div>
-                            <div>
-                                <div class="td-name-main">${escapeHtml(row.nama)}</div>
-                                <div class="td-name-sub">
-                                    <span style="font-weight:600; color:#475569;">${escapeHtml(row.badge)}</span> • ${escapeHtml(row.jenis_kelamin)}
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-
-                    <td>
-                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_unit_kerja)}</div>
-                        <div class="td-name-sub">${escapeHtml(row.bagian)}</div>
-                    </td>
-
-                   <td>
-                        <div style="font-weight:600; font-size: 13px; margin-bottom:2px;">
-                            Kode: <span style="color:#2563eb;">${escapeHtml(row.kode_ok)}</span>
-                        </div>
-                        <div class="td-name-sub">
-                            No: ${escapeHtml(row.nomor_ok)}
-                        </div>
-                    </td>
-
-                     <td>
-                        ${row.nama_pengawas === '-' ? `
-                                                <span class="status-pill sp-gray">-</span>
-                                            ` : `
-                                                <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
-                                                <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
-                                            `}
-                    </td>
-
-                    <td>
-                        <div style="margin-bottom: 6px;">
-                            ${sisaHariBadge(row.sisa_hari_kib)}
-                        </div>
-
-                        <div style="margin-bottom: 6px;">
-                            <span class="status-pill ${kibStatusPillClass(row.status_kib)}">
-                                ${row.status_kib ? escapeHtml(row.status_kib) : 'Belum Diisi'}
-                            </span>
-                        </div>
-
-                        <div>
-                            <span class="status-pill ${kibStatusPillClass(row.nomor_kib)}">
-                                ${row.nomor_kib ? escapeHtml(row.nomor_kib) : 'Belum Diisi'}
-                            </span>
-                        </div>
-                    </td>
-
-                    ${'' /* Kolom tempat lahir dan alamat dinonaktifkan
-                        <td>
-                            <div style="font-size: 12px; margin-bottom:4px;">
-                                <span style="color:#64748B;">Kes:</span> 
-                                <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_kesehatan)}</span>
-                            </div>
-                            <div style="font-size: 12px;">
-                                <span style="color:#64748B;">TK:</span> 
-                                <span style="font-weight:600; color:#1e293b;">${escapeHtml(row.no_bpjs_ketenagakerjaan)}</span>
-                            </div>
-                        </td>
-                    */}
-
-                    <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-detail-tenaga" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
-                                style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; margin-right:6px;">
-                            <svg style="width:14px;height:14px; color:#2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Detail
-                        </button>
-
-                        <button class="btn-edit-kib" onclick='openUpdateModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'
-                                style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
-                            <svg style="width:14px;height:14px; color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Update
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderError(message) {
-            document.getElementById('tableBody').innerHTML = `
-        <tr>
-            <td colspan="8">
-                <div class="error-state">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />
-                    </svg>
-                    <div class="error-state-title">Gagal memuat data</div>
-                    <div class="error-state-sub">${escapeHtml(message)}</div>
-                </div>
-            </td>
-        </tr>`;
-            document.getElementById('paginationText').textContent = '—';
-            document.getElementById('paginationPages').innerHTML = '';
-            document.getElementById('dataSummary').textContent = 'Gagal memuat data tenaga kerja.';
-        }
-
-        function renderPagination(meta) {
-            document.getElementById('paginationText').textContent =
-                meta.total > 0 ?
-                `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` :
-                'Tidak ada data';
-
-            document.getElementById('dataSummary').innerHTML =
-                `<strong>${meta.total}</strong> tenaga kerja ditemukan`;
-
-            const container = document.getElementById('paginationPages');
-            const current = meta.current_page;
-            const last = meta.last_page;
-
-            let pages = [];
-            const addPage = p => pages.push(p);
-            const addEllipsis = () => pages.push('...');
-
-            addPage(1);
-            if (current > 3) addEllipsis();
-            for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) addPage(p);
-            if (current < last - 2) addEllipsis();
-            if (last > 1) addPage(last);
-
-            pages = [...new Set(pages)];
-
-            let html =
-                `<button class="page-btn" ${current <= 1 ? 'disabled' : ''} onclick="goToPage(${current - 1})">‹</button>`;
-            pages.forEach(p => {
-                if (p === '...') {
-                    html += `<span class="page-ellipsis">…</span>`;
-                } else {
-                    html +=
-                        `<button class="page-btn ${p === current ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-                }
-            });
-            html +=
-                `<button class="page-btn" ${current >= last ? 'disabled' : ''} onclick="goToPage(${current + 1})">›</button>`;
-
-            container.innerHTML = html;
-        }
-
-        async function loadData() {
-            const params = new URLSearchParams();
-            if (state.search) params.set('search', state.search);
-            if (state.status) params.set('status', state.status);
-            if (state.departemen) params.set('departemen', state.departemen);
-            if (state.jenis_kelamin) params.set('jenis_kelamin', state.jenis_kelamin);
-            params.set('page', state.page);
-            params.set('per_page', state.per_page);
-
-            try {
-                const res = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                });
-
-                if (!res.ok) {
-                    const errJson = await res.json().catch(() => null);
-                    throw new Error(errJson?.message || `Server merespons status ${res.status}`);
-                }
-
-                const json = await res.json();
-                renderTable(json.data);
-                renderPagination(json.meta);
-                populateFilterOptions(json.filter_options);
-            } catch (e) {
-                renderError(e.message || 'Terjadi kesalahan tak terduga.');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadData);
-    </script>
-
-    <script>
-        // Ambil URL Endpoint POST Sync dari Laravel route helper
-        const SYNC_ENDPOINT = "{{ route('tenaga.sync') }}";
-
-        function syncData() {
-            document.getElementById('syncConfirmOverlay').classList.add('open');
-        }
-
-        function closeSyncModal() {
-            document.getElementById('syncConfirmOverlay').classList.remove('open');
-        }
-
-        function closeSyncModalOutside(event) {
-            // Hanya menutup modal jika yang diklik adalah area overlay itu sendiri,
-            // bukan konten di dalam modal-box
-            if (event.target.id === 'syncConfirmOverlay') {
-                closeSyncModal();
-            }
-        }
-
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
-
             const iconSvg = type === 'error' ?
                 '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>' :
                 '<svg style="width:12px;height:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
-
             toast.innerHTML = `
                 <div class="toast-icon">${iconSvg}</div>
                 <div class="toast-body">
@@ -1916,151 +1116,232 @@
                 </div>
                 <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
             `;
-
             container.appendChild(toast);
             requestAnimationFrame(() => toast.classList.add('show'));
-
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 250);
             }, 4000);
         }
 
-        async function confirmSync() {
-            closeSyncModal();
-            document.getElementById('loadingOverlay').classList.add('open');
+        function onSoSearchInput() {
+            clearTimeout(soSearchDebounce);
+            soSearchDebounce = setTimeout(loadSoList, 350);
+        }
+
+        async function loadSoList() {
+            const listEl = document.getElementById('memoSoList');
+            const search = document.getElementById('soSearchInput').value.trim();
+            listEl.innerHTML = '<div class="binaan-loading">Memuat...</div>';
 
             try {
-                const res = await fetch(SYNC_ENDPOINT, {
+                const res = await fetch(`${MEMO_RINGKASAN_ENDPOINT}?search=${encodeURIComponent(search)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+
+                if (!json.data || json.data.length === 0) {
+                    listEl.innerHTML = '<div class="binaan-empty">Tidak ada Safety Officer ditemukan.</div>';
+                    return;
+                }
+
+                listEl.innerHTML = json.data.map(so => `
+                    <div class="mgmt-so-item ${currentSO && currentSO.badge === so.badge ? 'active-so' : ''}" onclick='selectSO(${JSON.stringify(so.badge)}, ${JSON.stringify(so.nama)})'>
+                        <div>
+                            <div class="mgmt-so-name">${escapeHtml(so.nama)}</div>
+                            <div class="mgmt-so-sub">${escapeHtml(so.badge)} · ${so.jumlah_tenaga} tenaga</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                listEl.innerHTML = '<div class="binaan-empty" style="color:#D0021B;">Gagal memuat data.</div>';
+            }
+        }
+
+        function selectSO(badge, nama) {
+            currentSO = {
+                badge,
+                nama
+            };
+            document.getElementById('memoEmptyState').style.display = 'none';
+            document.getElementById('memoDetailWrap').style.display = 'block';
+            document.getElementById('memoSoTitle').textContent = `${badge}-${nama}`;
+            document.getElementById('btnCetakPdf').href = `${MEMO_BASE_ENDPOINT}/${badge}/cetak?format=pdf`;
+            document.getElementById('btnCetakExcel').href = `${MEMO_BASE_ENDPOINT}/${badge}/cetak?format=excel`;
+            loadSoList();
+            loadRingkasanCard();
+            loadDetail();
+        }
+
+        async function loadRingkasanCard() {
+            if (!currentSO) return;
+            try {
+                const res = await fetch(`${MEMO_RINGKASAN_ENDPOINT}?search=${encodeURIComponent(currentSO.badge)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                const r = (json.data || []).find(x => x.badge === currentSO.badge);
+                if (!r) return;
+
+                document.getElementById('memoKodeOk').textContent = `Kode OK: ${r.kode_ok}`;
+                document.getElementById('memoSummaryCards').innerHTML = `
+                    <div class="memo-summary-card c-total"><div class="val">${r.jumlah_tenaga}</div><div class="lbl">Jumlah Tenaga</div></div>
+                    <div class="memo-summary-card c-aktif"><div class="val">${r.kib_aktif}</div><div class="lbl">KIB Aktif</div></div>
+                    <div class="memo-summary-card c-expired"><div class="val">${r.kib_expired}</div><div class="lbl">KIB Expired</div></div>
+                    <div class="memo-summary-card c-hampir"><div class="val">${r.kib_hampir_habis}</div><div class="lbl">Hampir Habis</div></div>
+                    <div class="memo-summary-card c-tidak"><div class="val">${r.kib_tidak_ditemukan}</div><div class="lbl">Tidak Ditemukan</div></div>
+                `;
+            } catch (e) {
+                /* ringkasan bukan bagian kritikal */ }
+        }
+
+        async function loadDetail() {
+            if (!currentSO) return;
+            const tbody = document.getElementById('memoTableBody');
+            tbody.innerHTML =
+                '<tr><td colspan="7"><div class="skeleton-bar" style="width:100%;height:40px;"></div></td></tr>';
+
+            try {
+                const res = await fetch(`${MEMO_BASE_ENDPOINT}/${currentSO.badge}/detail`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message);
+
+                if (!json.data || json.data.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Belum ada tenaga binaan</div></div></td></tr>';
+                    return;
+                }
+
+                const pillClass = {
+                    aktif: 'sp-green',
+                    expired: 'sp-red',
+                    hampir_habis: 'sp-amber',
+                    tidak_ditemukan: 'sp-blue'
+                };
+
+                tbody.innerHTML = json.data.map(p => `
+                    <tr>
+                        <td>${p.no}</td>
+                        <td>${escapeHtml(p.nama)}</td>
+                        <td>${escapeHtml(p.jabatan)}</td>
+                        <td><input type="text" class="zonasi-input" value="${escapeHtml(p.zonasi)}" placeholder="Zona I, II..." onchange="saveZonasi('${p.id_api}', this.value)"></td>
+                        <td><span class="status-pill ${pillClass[p.status_kib_key] || 'sp-blue'}">${escapeHtml(p.status_kib)}</span></td>
+                        <td>${escapeHtml(p.safety_officer)}</td>
+                        <td><button class="btn-pindah-so" onclick='openPindahSOModal("${p.id_api}", ${JSON.stringify(p.nama)})'>Pindah SO</button></td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                tbody.innerHTML =
+                    `<tr><td colspan="7"><div class="error-state">${escapeHtml(e.message || 'Gagal memuat data.')}</div></td></tr>`;
+            }
+        }
+
+        async function saveZonasi(idApi, value) {
+            try {
+                const res = await fetch(`${MEMO_BASE_ENDPOINT}/${idApi}/zonasi`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    body: JSON.stringify({
+                        zonasi: value
+                    })
                 });
-
                 const json = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(json.message || `Server merespons dengan status ${res.status}`);
-                }
-
-                await loadData();
-
-                document.getElementById('loadingOverlay').classList.remove('open');
+                if (!res.ok) throw new Error(json.message);
                 showToast(json.message, 'success');
-
             } catch (e) {
-                document.getElementById('loadingOverlay').classList.remove('open');
-                showToast(e.message || 'Terjadi kesalahan tidak terduga saat sinkronisasi.', 'error');
+                showToast(e.message || 'Gagal menyimpan zonasi.', 'error');
             }
         }
 
-        const UPDATE_ENDPOINT_BASE = "{{ url('/tenaga') }}";
-        let currentEditId = null;
+        async function openPindahSOModal(idApi, nama) {
+            pendingPindahSO = {
+                idApi,
+                nama
+            };
+            document.getElementById('pindahSODesc').textContent = `Pindahkan "${nama}" menjadi binaan Safety Officer:`;
 
-        function openUpdateModal(row) {
-            currentEditId = row.id;
-            document.getElementById('updateModalName').textContent = row.nama || '-';
-            document.getElementById('updateModalNik').textContent = row.nik || '-';
-            document.getElementById('inputNomorKib').value = row.nomor_kib || '';
-            document.getElementById('inputMasaBerlakuKib').value = row.masa_berlaku_kib ? row.masa_berlaku_kib.substring(0,
-                10) : '';
-            document.getElementById('inputStatusKib').value = row.status_kib || '';
-            document.getElementById('updateModalOverlay').classList.add('open');
-        }
-
-        function closeUpdateModal() {
-            document.getElementById('updateModalOverlay').classList.remove('open');
-            currentEditId = null;
-        }
-
-        function closeUpdateModalOutside(event) {
-            if (event.target.id === 'updateModalOverlay') {
-                closeUpdateModal();
-            }
-        }
-
-        async function submitUpdateKib() {
-            if (!currentEditId) return;
-
-            const btn = document.getElementById('btnSubmitUpdate');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Menyimpan...';
+            const select = document.getElementById('pindahSOSelect');
+            select.innerHTML = '<option>Memuat...</option>';
+            document.getElementById('pindahSOOverlay').classList.add('open');
 
             try {
-                const res = await fetch(`${UPDATE_ENDPOINT_BASE}/${currentEditId}`, {
-                    method: 'PUT',
+                const res = await fetch(`${MEMO_BASE_ENDPOINT}/list-so`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                select.innerHTML = (json.data || []).map(so =>
+                    `<option value="${escapeHtml(so.badge)}" ${currentSO && so.badge === currentSO.badge ? 'selected' : ''}>${escapeHtml(so.nama)} (${escapeHtml(so.badge)})</option>`
+                ).join('');
+            } catch (e) {
+                select.innerHTML = '<option>Gagal memuat daftar SO</option>';
+            }
+        }
+
+        function closePindahSOModal() {
+            document.getElementById('pindahSOOverlay').classList.remove('open');
+            pendingPindahSO = null;
+        }
+
+        function closePindahSOModalOutside(e) {
+            if (e.target.id === 'pindahSOOverlay') closePindahSOModal();
+        }
+
+        async function confirmPindahSO() {
+            if (!pendingPindahSO) return;
+            const badge = document.getElementById('pindahSOSelect').value;
+
+            try {
+                const res = await fetch(`${MEMO_BASE_ENDPOINT}/${pendingPindahSO.idApi}/pindah-so`, {
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': CSRF_TOKEN
                     },
                     body: JSON.stringify({
-                        nomor_kib: document.getElementById('inputNomorKib').value.trim() || null,
-                        masa_berlaku_kib: document.getElementById('inputMasaBerlakuKib').value || null,
-                        status_kib: document.getElementById('inputStatusKib').value || null,
+                        badge_safety_officer: badge
                     })
                 });
-
                 const json = await res.json();
+                if (!res.ok) throw new Error(json.message);
 
-                if (!res.ok) {
-                    const firstError = json.errors ? Object.values(json.errors)[0][0] : null;
-                    throw new Error(firstError || json.message || `Server merespons dengan status ${res.status}`);
-                }
-
-                closeUpdateModal();
-                await loadData();
+                closePindahSOModal();
+                await loadSoList();
+                await loadRingkasanCard();
+                await loadDetail();
                 showToast(json.message, 'success');
-
             } catch (e) {
-                showToast(e.message || 'Terjadi kesalahan saat memperbarui data.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
+                showToast(e.message || 'Gagal memindahkan.', 'error');
             }
         }
-    </script>
 
-    {{-- MODAL DETAIL --}}
-    <script>
-        function openDetailModal(row) {
-            document.getElementById('detailAvatar').textContent = initials(row.nama);
-            document.getElementById('detailNamaTitle').textContent = row.nama || '-';
-            document.getElementById('detailBadgeSub').textContent = row.badge || '-';
-
-            document.getElementById('detailInputNama').value = row.nama || '-';
-            document.getElementById('detailInputBadge').value = row.badge || '-';
-            document.getElementById('detailInputJenisKelamin').value = row.jenis_kelamin || '-';
-            document.getElementById('detailInputTtl').value =
-                `${row.tempat_lahir || '-'}, ${formatDate(row.tanggal_lahir)}`;
-            document.getElementById('detailInputAlamat').value = row.alamat || '-';
-            // BARU — Unit Kerja
-            document.getElementById('detailInputUnitKerja').value = row.nama_unit_kerja || '-';
-            document.getElementById('detailInputBagian').value = row.bagian || '-';
-            document.getElementById('detailInputBpjsKesehatan').value = row.no_bpjs_kesehatan || '-';
-            document.getElementById('detailInputBpjsTk').value = row.no_bpjs_ketenagakerjaan || '-';
-            document.getElementById('detailInputKodeOk').value = row.kode_ok || '-';
-            document.getElementById('detailInputNomorOk').value = row.nomor_ok || '-';
-            document.getElementById('detailInputPengawas').value =
-                row.nama_pengawas !== '-' ? `${row.nama_pengawas} (${row.badge_pengawas})` : '-';
-
-            document.getElementById('detailModalOverlay').classList.add('open');
+        // ══════ DROPDOWN CETAK MEMO ══════
+        function toggleCetakMenu(e) {
+            e.stopPropagation();
+            document.getElementById('cetakMenu').classList.toggle('open');
         }
 
-        // ── FUNGSI YANG HILANG, INI YANG BIKIN X & TUTUP TIDAK BERFUNGSI ──
-        function closeDetailModal() {
-            document.getElementById('detailModalOverlay').classList.remove('open');
-        }
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('dropdownCetak');
+            const menu = document.getElementById('cetakMenu');
+            if (wrap && !wrap.contains(e.target)) menu.classList.remove('open');
+        });
 
-        function closeDetailModalOutside(event) {
-            if (event.target.id === 'detailModalOverlay') {
-                closeDetailModal();
-            }
-        }
+        document.addEventListener('DOMContentLoaded', loadSoList);
     </script>
 </body>
 

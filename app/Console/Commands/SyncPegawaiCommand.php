@@ -164,8 +164,12 @@ class SyncPegawaiCommand extends Command
             return false;
         }
     }
+
     /**
-     * Sinkronisasi data pegawai (kode asli Anda, tidak diubah).
+     * Sinkronisasi data pegawai — disesuaikan agar memetakan seluruh kolom
+     * baru pada tabel pegawais (audit trail created_by/updated_by TIDAK
+     * disertakan di sini karena bukan berasal dari API ERP, melainkan
+     * field internal aplikasi yang diisi manual/oleh sistem lain).
      */
     protected function syncPegawai(): int
     {
@@ -202,7 +206,7 @@ class SyncPegawaiCommand extends Command
                     continue;
                 }
 
-                // ← TAMBAHAN: kumpulkan kode OK
+                // ← kumpulkan kode OK (master)
                 if (!empty($item['kode_ok'])) {
                     $this->kodeOkCollector[$item['kode_ok']] = $item['uraian_kode_ok'] ?? null;
                 }
@@ -217,7 +221,7 @@ class SyncPegawaiCommand extends Command
                         'jabatan' => $item['jabatan'] ?? $item['posisi'] ?? null,
                         'unit_kerjaid' => $item['unit_kerjaid'] ?? null,
                         'lokasi_kerjaid' => $item['lokasi_kerjaid'] ?? null,
-                        'kualifikasiid' => $item['kualifikasiid'] ?? null,   // ← TAMBAHKAN BARIS INI
+                        'kualifikasiid' => $item['kualifikasiid'] ?? null,
                         'is_active' => $item['is_active'] ?? true,
 
                         'tempat_lahir' => $item['tempat_lahir'] ?? null,
@@ -227,6 +231,61 @@ class SyncPegawaiCommand extends Command
                         'no_bpjs_ketenagakerjaan' => $item['no_bpjs_ketenagakerjaan'] ?? null,
                         'kode_ok' => $item['kode_ok'] ?? null,
                         'nomor_ok' => $item['nomor_ok'] ?? null,
+                        'uraian_kode_ok' => $item['uraian_kode_ok'] ?? null,
+                        'uraian_nomor_ok' => $item['uraian_nomor_ok'] ?? null,
+
+                        // --- TAMBAHAN: Kepegawaian / status ---
+                        'golongan' => $item['golongan'] ?? null,
+                        'pangkat' => $item['pangkat'] ?? null,
+                        'status_pegawai' => $item['status_pegawai'] ?? null,
+                        'jenis_pegawai' => $item['jenis_pegawai'] ?? null,
+                        'kelompok_tenagaid' => $item['kelompok_tenagaid'] ?? null,
+                        'pendidikan' => $item['pendidikan'] ?? null,
+                        'hp' => $item['hp'] ?? null,
+                        'status_nikah' => $item['status_nikah'] ?? null,
+
+                        // --- TAMBAHAN: Penggajian ---
+                        'is_100_persen' => $item['is_100_persen'] ?? false,
+                        'no_rekening' => $item['no_rekening'] ?? null,
+                        'bank' => $item['bank'] ?? null,
+                        'bankid_bank' => $item['bankid_bank'] ?? null,
+                        'no_gaji' => $item['no_gaji'] ?? null,
+                        'nama_di_rekening' => $item['nama_di_rekening'] ?? null,
+                        'tarif_upahid' => $item['tarif_upahid'] ?? null,
+                        'npwp' => $item['npwp'] ?? null,
+                        'tanggal_pembayaran' => $item['tanggal_pembayaran'] ?? null,
+
+                        // --- TAMBAHAN: Alamat tambahan ---
+                        'rt' => $item['rt'] ?? null,
+                        'rw' => $item['rw'] ?? null,
+                        'kecamatan' => $item['kecamatan'] ?? null,
+                        'kelurahan' => $item['kelurahan'] ?? null,
+                        'kotaid_kota' => $item['kotaid_kota'] ?? null,
+
+                        // --- TAMBAHAN: Masa kerja / kontrak ---
+                        'tanggal_masuk' => $item['tanggal_masuk'] ?? null,
+                        'tanggal_kontrak_awal' => $item['tanggal_kontrak_awal'] ?? null,
+                        'tanggal_kontrak_akhir' => $item['tanggal_kontrak_akhir'] ?? null,
+                        'tanggal_keluar' => $item['tanggal_keluar'] ?? null,
+                        'jenis_keluar' => $item['jenis_keluar'] ?? null,
+                        'jenis_keluar_lainnya' => $item['jenis_keluar_lainnya'] ?? null,
+                        'tanggal_exit_clearence' => $item['tanggal_exit_clearence'] ?? null,
+                        'keterangan_pegawai' => $item['keterangan_pegawai'] ?? null,
+
+                        // --- TAMBAHAN: Shift ---
+                        'is_shift' => $item['is_shift'] ?? false,
+                        'shift_grup' => $item['shift_grup'] ?? null,
+                        'shift_lokasi' => $item['shift_lokasi'] ?? null,
+                        'is_shift_dibayar' => $item['is_shift_dibayar'] ?? false,
+                        'jam_masuk_standar' => $item['jam_masuk_standar'] ?? null,
+                        'jam_pulang_standar' => $item['jam_pulang_standar'] ?? null,
+
+                        // --- TAMBAHAN: Lain-lain ---
+                        'perusahaan_subkonid' => $item['perusahaan_subkonid'] ?? null,
+                        'tali_asihid' => $item['tali_asihid'] ?? null,
+                        'is_pph21' => $item['is_pph21'] ?? false,
+                        'coa' => $item['coa'] ?? null,
+                        'no_parklaring' => $item['no_parklaring'] ?? null,
 
                         'last_sync' => Carbon::now(),
                     ]
@@ -483,8 +542,6 @@ class SyncPegawaiCommand extends Command
     {
         $this->info('Memulai sinkronisasi data kualifikasi dari API...');
 
-        // Ganti dengan endpoint API kualifikasi yang sesuai di ERP Anda,
-        // atau pindahkan ke config('services.kualifikasi.url') seperti unit kerja/pengawas.
         $apiUrl = config('services.kualifikasi.url');
         $apiKey = config('services.kualifikasi.key');
 

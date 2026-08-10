@@ -315,6 +315,11 @@
                     href="{{ route('safety-officer.index') }}">
                     <span class="nav-label">Data Safety Officer</span>
                 </a>
+              
+                <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}"
+                    href="{{ route('memo-kib.index') }}">
+                    <span class="nav-label">Memo KIB</span>
+                </a>
 
                 <a class="nav-link {{ request()->routeIs('kode-ok.*') ? 'active' : '' }}"
                     href="{{ route('kode-ok.index') }}">
