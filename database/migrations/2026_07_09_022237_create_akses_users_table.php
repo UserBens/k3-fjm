@@ -22,7 +22,7 @@ return new class extends Migration
                 ->nullable();
             $table->string('activated_by')->nullable();
             $table->timestamp('activated_at')->nullable();
-            $table->timestamps();
+            $table->timestamps(); 
         });
 
         // Seed 4 username awal sebagai super admin sekaligus sudah aktif

@@ -355,12 +355,21 @@
             white-space: nowrap;
         }
 
+        .rtable th:last-child {
+            text-align: center;
+        }
+
         .rtable td {
             font-size: 12px;
             color: #1A1D2E;
             padding: 10px 8px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.04);
             vertical-align: middle;
+        }
+
+        .rtable td:last-child {
+            text-align: center;
+            white-space: nowrap;
         }
 
         .rtable tr:last-child td {
@@ -694,7 +703,7 @@
             background: #fff;
             border-radius: 16px;
             padding: 24px;
-            width: 380px;
+            width: 640px;
             max-width: calc(100vw - 32px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
             transform: scale(0.94) translateY(8px);
@@ -715,6 +724,95 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 14px;
+        }
+
+        .role-modal-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(45, 75, 158, 0.09);
+            color: #2D4B9E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .role-modal-user-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #F8F9FF;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .role-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .role-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .role-option:hover {
+            border-color: rgba(45, 75, 158, 0.3);
+            background: #F8F9FF;
+        }
+
+        .role-option input {
+            display: none;
+        }
+
+        .role-option-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #CBD5E1;
+            flex-shrink: 0;
+            position: relative;
+            transition: border-color 0.15s;
+        }
+
+        .role-option.selected {
+            border-color: #2D4B9E;
+            background: #F0F4FF;
+        }
+
+        .role-option.selected .role-option-dot {
+            border-color: #2D4B9E;
+        }
+
+        .role-option.selected .role-option-dot::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            background: #2D4B9E;
+        }
+
+        .role-option-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #1A1D2E;
+        }
+
+        .role-option-desc {
+            font-size: 10.5px;
+            color: #94A3B8;
+            font-weight: 600;
+            margin-top: 1px;
         }
 
         .modal-title {
@@ -1354,9 +1452,7 @@
                         <thead>
                             <tr>
                                 <th class="px-6 py-3 text-left">User</th>
-                                <th class="px-6 py-3 text-left">Person ID</th>
                                 <th class="px-6 py-3 text-left">Level</th>
-                                <th class="px-6 py-3 text-left">Status ERP</th>
                                 <th class="px-6 py-3 text-left">Akses Login</th>
                                 <th class="px-6 py-3 text-center">Action</th>
                             </tr>
@@ -1426,28 +1522,66 @@
     <!-- ══════ MODAL KONFIRMASI AKTIVASI ══════ -->
     <div id="roleModalOverlay" class="modal-overlay" onclick="closeRoleModalOutside(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="form-modal-header">
-                <div class="modal-title" id="roleModalTitle">Aktifkan Akses Login</div>
-                <div class="pg-sub" style="margin:0;">Untuk <strong id="modalNamaUser"></strong></div>
+            <div class="role-modal-icon">
+                <svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zM19 8v4m2-2h-4" />
+                </svg>
             </div>
+            <div class="modal-title">Aktifkan Akses Login</div>
+            <div class="pg-sub" style="margin:0 0 16px;">Berikan izin masuk ke sistem untuk user berikut</div>
 
-            <div class="form-modal-body">
-                <div class="form-group">
-                    <label class="form-label">Hak Akses Sebagai</label>
-                    <select id="modalRoleSelect" class="form-input">
-                        <option value="">— Pilih hak akses —</option>
-                        <option value="super_admin">Super Admin</option>
-                        <option value="safety">User Safety</option>
-                        <option value="pengawas">User Pengawas</option>
-                        <option value="medis">User Medis</option>
-                    </select>
+            <div class="role-modal-user-card">
+                <div class="td-avatar" id="modalUserAvatar" style="width:36px;height:36px;border-radius:10px;">--
+                </div>
+                <div>
+                    <div class="td-name-main" id="modalNamaUser">-</div>
+                    <div class="td-name-sub" id="modalUsernameLabel">-</div>
                 </div>
             </div>
 
-            <div class="modal-actions" style="margin-top:16px;">
+            <div class="form-group" style="margin-top:18px;">
+                <label class="form-label">Hak Akses Sebagai</label>
+                <div class="role-options" id="roleOptionsWrap">
+                    <label class="role-option" data-value="super_admin">
+                        <input type="radio" name="modalRole" value="super_admin">
+                        <div class="role-option-dot"></div>
+                        <div>
+                            <div class="role-option-title">Super Admin</div>
+                            <div class="role-option-desc">Akses ke seluruh halaman sistem</div>
+                        </div>
+                    </label>
+                    <label class="role-option" data-value="safety">
+                        <input type="radio" name="modalRole" value="safety">
+                        <div class="role-option-dot"></div>
+                        <div>
+                            <div class="role-option-title">User Safety</div>
+                            <div class="role-option-desc">Akses ke halaman Data Safety</div>
+                        </div>
+                    </label>
+                    <label class="role-option" data-value="pengawas">
+                        <input type="radio" name="modalRole" value="pengawas">
+                        <div class="role-option-dot"></div>
+                        <div>
+                            <div class="role-option-title">User Pengawas</div>
+                            <div class="role-option-desc">Akses ke halaman Pelaporan Pengawas</div>
+                        </div>
+                    </label>
+                    <label class="role-option" data-value="medis">
+                        <input type="radio" name="modalRole" value="medis">
+                        <div class="role-option-dot"></div>
+                        <div>
+                            <div class="role-option-title">User Medis</div>
+                            <div class="role-option-desc">Akses ke halaman Data Medis</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:20px;">
                 <button class="btn-modal-cancel" onclick="closeRoleModal()">Batal</button>
-                <button class="btn-modal-confirm" id="btnKonfirmasiAktivasi"
-                    onclick="konfirmasiAktivasi()">Aktifkan</button>
+                <button class="btn-modal-confirm" id="btnKonfirmasiAktivasi" onclick="konfirmasiAktivasi()">Aktifkan
+                    Akses</button>
             </div>
         </div>
     </div>
@@ -1602,33 +1736,33 @@
                                 </div>
                             </div>
                         </td>
-                        <td>${escapeHtml(row.person_id)}</td>
                         <td>${escapeHtml(row.level)}</td>
                         <td>
-                            <span class="status-pill ${row.blokir_erp ? 'sp-red' : 'sp-green'}">${row.blokir_erp ? 'Diblokir ERP' : 'Normal'}</span>
+                            <span class="status-pill ${row.is_active ? 'sp-green' : 'sp-gray'}">${row.is_active ? roleLabel(row.role) : 'Belum Aktif'}</span>
+                            ${row.is_active && row.activated_by ? `
+                                                            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
+                                                                oleh ${escapeHtml(row.activated_by)} · ${row.activated_at ? new Date(row.activated_at).toLocaleDateString('id-ID') : '-'}
+                                                            </div>` : ''}
                         </td>
                         <td>
-                            <span class="status-pill ${row.is_active ? 'sp-green' : 'sp-gray'}">${row.is_active ? roleLabel(row.role) : 'Belum Aktif'}</span>
-                        </td>
-                       <td style="text-align:center; white-space:nowrap;">
                             ${row.is_active
                                 ? `<button class="btn-toggle-nonaktif" ${row.username === CURRENT_USERNAME ? 'disabled title="Tidak dapat menonaktifkan akun sendiri"' : ''}
-                                            onclick='bukaModalNonaktivasi("${row.username}", ${JSON.stringify(row.nama_lengkap)})'
-                                            style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
-                                            <svg style="width:14px;height:14px; color:#dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                            </svg>
-                                            Nonaktifkan
-                                    </button>`
+                                                                    onclick='bukaModalNonaktivasi("${row.username}", ${JSON.stringify(row.nama_lengkap)})'
+                                                                    style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
+                                                                    <svg style="width:14px;height:14px; color:#dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                                    </svg>
+                                                                    Nonaktifkan
+                                                            </button>`
                                 : `<button class="btn-toggle-aktif"
-                                            onclick='bukaModalAktivasi("${row.username}", ${JSON.stringify(row.nama_lengkap)})'
-                                            style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
-                                            <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            Aktifkan
-                                    </button>`
+                                                                    onclick='bukaModalAktivasi("${row.username}", ${JSON.stringify(row.nama_lengkap)})'
+                                                                    style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; cursor:pointer; color:#475569; display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; transition:all 0.2s;">
+                                                                    <svg style="width:14px;height:14px; color:#16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                    Aktifkan
+                                                            </button>`
                             }
                         </td>
                     </tr>`;
@@ -1650,10 +1784,26 @@
                 username,
                 namaLengkap
             };
-            document.getElementById('modalNamaUser').textContent = `${namaLengkap} (${username})`;
-            document.getElementById('modalRoleSelect').value = '';
+
+            document.getElementById('modalNamaUser').textContent = namaLengkap;
+            document.getElementById('modalUsernameLabel').textContent = username;
+            document.getElementById('modalUserAvatar').textContent = initials(namaLengkap);
+
+            document.querySelectorAll('.role-option').forEach(el => {
+                el.classList.remove('selected');
+                el.querySelector('input').checked = false;
+            });
+
             document.getElementById('roleModalOverlay').classList.add('open');
         }
+
+        document.querySelectorAll('.role-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.role-option').forEach(el => el.classList.remove('selected'));
+                opt.classList.add('selected');
+                opt.querySelector('input').checked = true;
+            });
+        });
 
         function closeRoleModal() {
             document.getElementById('roleModalOverlay').classList.remove('open');
@@ -1667,7 +1817,9 @@
         }
 
         async function konfirmasiAktivasi() {
-            const role = document.getElementById('modalRoleSelect').value;
+            const selected = document.querySelector('.role-option.selected');
+            const role = selected ? selected.dataset.value : null;
+
             if (!role) {
                 showToast('Pilih hak akses terlebih dahulu.', 'error');
                 return;
