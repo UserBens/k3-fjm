@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AksesUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -18,21 +19,25 @@ class AktivasiAkunController extends Controller
     public function data(Request $request): JsonResponse
     {
         try {
-            $apiUrl = config('services.user_login.url');
-            $apiKey = config('services.user_login.key');
+            $items = Cache::remember('erp_users_list', now()->addMinutes(10), function () {
+                $apiUrl = config('services.user_login.url');
+                $apiKey = config('services.user_login.key');
 
-            $response = Http::withHeaders(['X-API-KEY' => $apiKey])->timeout(30)->get($apiUrl);
+                $response = Http::withHeaders(['X-API-KEY' => $apiKey])->timeout(30)->get($apiUrl);
 
-            if (!$response->successful()) {
-                return response()->json(['message' => 'Gagal mengambil data user dari server ERP.'], 500);
-            }
+                if (!$response->successful()) {
+                    throw new \RuntimeException('Gagal mengambil data user dari server ERP.');
+                }
 
-            $json = $response->json();
-            $items = $json['data'] ?? $json;
+                $json = $response->json();
+                $data = $json['data'] ?? $json;
 
-            if (!is_array($items)) {
-                return response()->json(['message' => 'Format data user tidak dikenali.'], 500);
-            }
+                if (!is_array($data)) {
+                    throw new \RuntimeException('Format data user tidak dikenali.');
+                }
+
+                return $data;
+            });
 
             $aksesList = AksesUser::all()->keyBy('username');
 
@@ -53,12 +58,10 @@ class AktivasiAkunController extends Controller
                     return [
                         'username' => $username,
                         'nama_lengkap' => $item['nama_lengkap'] ?? '-',
-                        'person_id' => $item['PERSON_ID'] ?? '-',
                         'level' => $item['level'] ?? '-',
-                        'blokir_erp' => ($item['blokir'] ?? 'N') === 'Y',
                         'is_active' => $akses->is_active ?? false,
                         'is_admin' => $akses->is_admin ?? false,
-                        'role' => $akses->role ?? null, // ← BARU
+                        'role' => $akses->role ?? null,
                         'activated_by' => $akses->activated_by ?? null,
                         'activated_at' => $akses->activated_at ?? null,
                     ];
