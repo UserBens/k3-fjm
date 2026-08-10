@@ -233,7 +233,7 @@ Route::middleware(['auth.custom'])->group(function () {
     });
 
 
-
+    // MEMO KIB
     Route::get('/memo-kib', [MemoKibController::class, 'index'])->name('memo-kib.index');
     Route::get('/memo-kib/data', [MemoKibController::class, 'data'])->name('memo-kib.data');
 
