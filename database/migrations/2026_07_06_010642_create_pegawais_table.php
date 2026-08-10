@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('status_kib', 50)->nullable();
             $table->date('masa_berlaku_kib')->nullable();
             $table->string('gambar_kib')->nullable();
+            $table->string('zonasi', 100)->nullable();
 
             // --- Audit trail ---
             $table->string('created_by')->nullable();

@@ -59,4 +59,24 @@ class Pegawai extends Model
     {
         return $this->hasOne(SafetyOfficer::class, 'badge', 'badge');
     }
+
+    public function getStatusKibInfoAttribute(): array
+    {
+        if (empty($this->nomor_kib) || empty($this->masa_berlaku_kib)) {
+            return ['key' => 'tidak_ditemukan', 'label' => 'TIDAK DITEMUKAN'];
+        }
+
+        $today = now()->startOfDay();
+        $expiry = \Carbon\Carbon::parse($this->masa_berlaku_kib)->startOfDay();
+
+        if ($expiry->lt($today)) {
+            return ['key' => 'expired', 'label' => 'EXPIRED'];
+        }
+
+        if ($today->diffInDays($expiry) <= 30) {
+            return ['key' => 'hampir_habis', 'label' => 'HAMPIR HABIS'];
+        }
+
+        return ['key' => 'aktif', 'label' => 'AKTIF'];
+    }
 }
