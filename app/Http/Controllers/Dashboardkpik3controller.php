@@ -523,7 +523,7 @@ class DashboardKpiK3Controller extends Controller
             $bobotItemRaw = ($totalSkorTim > 0) ? ($aktivitas->skor / $totalSkorTim * 100) : 0.0;
 
             $target = $aktivitas->target_ikut_hari_kerja_personil
-                ? $hariKerjaEfektifPersonil
+                ? min($hariKerjaEfektifPersonil, (int) $aktivitas->target_per_bulan)
                 : (int) $aktivitas->target_per_bulan;
             $totalTargetDinamis += $target;
 

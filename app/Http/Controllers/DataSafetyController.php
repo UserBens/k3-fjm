@@ -436,7 +436,7 @@ class DataSafetyController extends Controller
         $rules = [
             'p3k'                     => ['p3k'],
             'dcu'                     => ['dcu'],
-            'romberg'                 => ['romberg', 'keseimbangan'],
+            'romberg'                 => ['romberg', 'keseimbangan', 'fatigue'], // ← ditambahkan 'fatigue' supaya Evaluasi Fatigue (E.4) memakai field Romberg            
             'bugar_sehat'             => ['bugar sehat', 'bugar'],
             'sosialisasi_keselamatan' => ['sosialisasi keselamatan'],
             'sosialisasi_kesehatan'   => ['sosialisasi kesehatan'],
@@ -444,7 +444,7 @@ class DataSafetyController extends Controller
             'briefing'                => ['safety briefing', 'briefing'],
             'nearmiss'                => ['nearmiss'],
             'permit'                  => ['safety permit', 'permit'],
-            'observi'                 => ['observi'],
+            'observi'                 => ['obseri'], // ← DIPERBAIKI: sebelumnya 'observi' (ada huruf V), harusnya 'obseri' sesuai nama aktivitas aslinya
             'peralatan'               => ['inspeksi peralatan', 'peralatan'],
             'temuan'                  => ['area kerja', 'temuan'],
         ];
