@@ -17,46 +17,6 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanCapaianKpiController extends Controller
 {
-    /**
-     * ============================================================
-     * CATATAN ASUMSI PERHITUNGAN (harap divalidasi ke Excel asli)
-     * ============================================================
-     * 1. ROSTER PER TIM diambil dari MASTER, bukan dari tabel laporan,
-     *    supaya petugas yang belum pernah lapor tetap muncul (0%):
-     *      - SAFETY   : pegawais.is_safety_officer = true & is_active = true
-     *      - PENGAWAS : pegawais yg id_api-nya ada di pengawas_pekerjaans.pegawai_id (distinct) & is_active
-     *      - MEDIS    : daftar badge tetap di $this->medisBadges (hanya 1 org saat ini)
-     *
-     * 2. TARGET TIM (Section A) = SUM(target_per_bulan) aktivitas_kpi_k3
-     *    yang AKTIF & flag tim = true & berlaku di tahun aktif.
-     *
-     * 3. KONTRIBUSI/CAPAIAN PER PETUGAS (Section C) TIDAK dibagi rata,
-     *    tapi dihitung dari bobot aktivitas yang benar-benar ia laporkan (disetujui):
-     *
-     *      kontribusi_petugas% = Σ [ (disetujui_orang_ini_utk_aktivitas_X / target_per_bulan_X) × bobot_X% ]
-     *
-     *    dimana bobot_X% = skor_X / total_skor_tim × 100 (persis logic AktivitasKpiK3 yang sudah ada).
-     *    Jumlah seluruh kontribusi_petugas% dalam satu tim = Pencapaian% tim (Section A).
-     *
-     * 4. KETEPATAN WAKTU per petugas = laporan disetujui yang tepat waktu / total disetujui.
-     *    "Tepat waktu" = selisih hari (tanggal submit vs tanggal_pelaksanaan) berada dalam
-     *    batas_terlambat_lapor & batas_lapor_lebih_awal (pengaturan_kpi_k3). Sesuaikan arah
-     *    perbandingan jika definisi "terlambat/lebih awal" di lapangan berbeda.
-     *
-     * 5. NILAI KPI FINAL = (kontribusi% × porsi_capaian_aktivitas + ketepatan% × porsi_ketepatan_waktu) / 100
-     *
-     * 6. TUNJANGAN = tunjangan_{safety|pengawas|medis} (sesuai tim) × clamp(nilai_kpi_final, skor_min, skor_max) / skor_maksimum_tunjangan
-     *    hanya jika tim_{safety|pengawas|medis}_dapat_tunjangan = true.
-     *
-     * 7. KATEGORI (BAIK/CUKUP/PERLU PERBAIKAN) ada di LEVEL TIM (Section A), berdasarkan
-     *    Pencapaian% tim dibanding ambang_kuning / ambang_merah (bukan nilai KPI final):
-     *      >= ambang_kuning  -> BAIK
-     *      >= ambang_merah   -> CUKUP
-     *      < ambang_merah    -> PERLU PERBAIKAN
-     * ============================================================
-     */
-
-    // TODO: pindahkan ke tabel/config kalau tenaga medis lebih dari satu.
     private array $medisBadges = [
         'K.250455', // MUHAMMAD HAFIZ MAULANA
     ];
@@ -175,6 +135,8 @@ class LaporanCapaianKpiController extends Controller
             $jumlahPetugasTim = 0;
             $sumTunjanganTim = 0;
             $agregatAktivitas = []; // [aktivitas_id => ['target_sum','disetujui_raw_sum','disetujui_capped_sum']]
+            $targetLaporanTim = 0; // <--- 1. Tambahkan akumulator ini
+            $sumKpiFinalTim = 0.0;
 
             foreach ($roster as $pegawai) {
                 $hasilPersonil = $this->hitungKpiPersonilLaporan(
@@ -198,17 +160,19 @@ class LaporanCapaianKpiController extends Controller
                     'capaian_persen' => $hasilPersonil['capaian_persen'],
                     'ketepatan_waktu_persen' => $hasilPersonil['ketepatan_waktu_persen'],
                     'nilai_kpi_final' => $hasilPersonil['nilai_kpi_final'],
-                    'standby' => 'N',
+                    'standby' => $hasilPersonil['standby'], // <--- 2. Gunakan nilai dinamis                    
                     'hari_kerja_efektif' => $hasilPersonil['hari_kerja_efektif'],
                     'tunjangan' => $hasilPersonil['tunjangan'],
                 ];
 
+                $targetLaporanTim += $hasilPersonil['target_laporan'];
                 $terkirimTim += $hasilPersonil['terkirim'];
                 $disetujuiTim += $hasilPersonil['disetujui'];
                 $tepatWaktuTim += $hasilPersonil['tepat_waktu'];
                 $sumCapaianPersenTim += $hasilPersonil['capaian_persen'];
                 $jumlahPetugasTim++;
                 $sumTunjanganTim += (int) ($hasilPersonil['tunjangan'] ?? 0);
+                $sumKpiFinalTim += $hasilPersonil['nilai_kpi_final'];
 
                 // Section B: agregasi per aktivitas, dikumpulkan sekalian di loop yang sama
                 foreach ($hasilPersonil['per_aktivitas'] as $aktivitasId => $data) {
@@ -228,12 +192,13 @@ class LaporanCapaianKpiController extends Controller
             // ── Ringkasan tim (Section A) ──
             $pencapaianTimPersen = $jumlahPetugasTim > 0 ? round($sumCapaianPersenTim / $jumlahPetugasTim, 1) : 0.0;
             $ketepatanTimPersen = $disetujuiTim > 0 ? round($tepatWaktuTim / $disetujuiTim * 100, 1) : null;
-            $nilaiKpiFinalTim = round(
-                ($pencapaianTimPersen * (float) $pengaturan->porsi_capaian_aktivitas
-                    + ($ketepatanTimPersen ?? 0) * (float) $pengaturan->porsi_ketepatan_waktu) / 100,
-                1
-            );
+            // $nilaiKpiFinalTim = round(
+            //     ($pencapaianTimPersen * (float) $pengaturan->porsi_capaian_aktivitas
+            //         + ($ketepatanTimPersen ?? 0) * (float) $pengaturan->porsi_ketepatan_waktu) / 100,
+            //     1
+            // );
 
+            $nilaiKpiFinalTim = $jumlahPetugasTim > 0 ? round($sumKpiFinalTim / $jumlahPetugasTim, 1) : 0.0;
             $kategori = $this->kategoriTim($pencapaianTimPersen, $pengaturan);
 
             // ── Section B: langsung pakai $agregatAktivitas yang sudah lengkap dari loop di atas ──
@@ -268,11 +233,13 @@ class LaporanCapaianKpiController extends Controller
                         ? round($rasioAktual * 100, 1)
                         : null,
                 ];
-            })->values();   
+            })->values();
+
+            $targetTimAktual = collect($agregatAktivitas)->sum('target_sum');
 
             $hasil[$flag] = [
                 'label' => $timLabel,
-                'target_laporan' => $targetTim,
+                'target_laporan' => $targetLaporanTim, // <--- 4. Gunakan variabel dinamis ini (akan menghasilkan ~1.220)
                 'laporan_disetujui' => $disetujuiTim,
                 'pencapaian_persen' => $pencapaianTimPersen,
                 'ketepatan_target_persen' => 100.0,
@@ -282,6 +249,7 @@ class LaporanCapaianKpiController extends Controller
                 'kategori' => $kategori,
                 'rincian_aktivitas' => $rincianAktivitas,
                 'petugas' => $petugasRows,
+                'standby' => $hasilPersonil['standby'],
             ];
         }
 
@@ -340,7 +308,7 @@ class LaporanCapaianKpiController extends Controller
 
         foreach ($aktivitasDitugaskan as $aktivitas) {
             if ($personil['tim'] === 'PENGAWAS') {
-                $rows = $semuaLaporanPersonil->where('aktivitas_kpi_k3_id', $aktivitas->id);
+                $rows = $semuaLaporanPersonil->where('aktivitas_kpi_k3_id', '==', $aktivitas->id);
             } else {
                 $rows = $semuaLaporanPersonil->filter(
                     fn($r) => $this->cocokDenganAktivitasPersonil($r->{$kolomAktivitas} ?? null, $aktivitas)
@@ -408,6 +376,7 @@ class LaporanCapaianKpiController extends Controller
             'tunjangan' => $tunjangan ?: null,
             'kategori' => $this->kategoriPenilaianPersonil($nilaiKpiFinal, $pengaturan),
             'per_aktivitas' => $perAktivitas, // 🆕
+            'standby' => $hariStandby > 0 ? 'Y' : 'N',
         ];
     }
 
