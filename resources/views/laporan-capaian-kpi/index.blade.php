@@ -636,7 +636,7 @@
                     <div class="saklar-field flex items-end" style="display:flex; gap:8px;">
                         <button id="btnTerapkan" type="button"
                             style="width:100%;height:34px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;">
-                            Terapkan
+                            Filter
                         </button>
 
                         <!-- Tombol Export Data -->

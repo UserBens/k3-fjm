@@ -120,13 +120,29 @@
         background: #2D4B9E;
     }
 
-    .nav-link.active .nav-icon {
-        color: #fff;
-    }
 
+    .nav-link.active .nav-icon,
     .nav-link.active .nav-label {
         color: #fff;
         font-weight: 700;
+    }
+
+    .nav-dropdown-toggle.has-active {
+        background: #F4F5F8;
+        border-radius: 8px;
+        /* Kembalikan ke 8px agar semua sudut melengkung */
+        margin-bottom: 4px;
+        /* Memberikan jarak antara parent menu dan sub-menu di bawahnya */
+    }
+
+    .nav-dropdown-toggle.has-active .nav-icon,
+    .nav-dropdown-toggle.has-active .nav-label {
+        color: #2D4B9E;
+        font-weight: 700;
+    }
+
+    .nav-dropdown-toggle.has-active .dropdown-arrow {
+        color: #2D4B9E;
     }
 
     .nav-icon {
@@ -227,12 +243,43 @@
     }
 
     .dropdown-menu .nav-link {
-        padding: 8px 10px 8px 44px;
-        margin: 2px 0;
+        position: relative;
+        padding-left: 46px;
+        margin-bottom: 2px;
+        /* Memberikan sedikit jarak antar list di dalam sub-menu */
     }
 
-    .dropdown-menu .nav-label {
-        font-size: 12px;
+    .dropdown-menu .nav-link.active {
+        background: #EAF7EF;
+        border-radius: 8px;
+        /* Kembalikan ke 8px agar semua sudut melengkung */
+        padding-left: 46px;
+    }
+
+    .dropdown-menu .nav-link.active::before {
+        content: "";
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: #1A7A3C;
+        border-radius: 4px;
+    }
+
+    .dropdown-menu .nav-link.active .nav-label {
+        color: #1A7A3C;
+        font-weight: 700;
+    }
+
+    /* geser sedikit karena ada garis aksen di kiri */
+    .dropdown-menu .nav-link {
+        padding-left: 46px;
+    }
+
+    .dropdown-menu .nav-link.active {
+        padding-left: 46px;
     }
 </style>
 
@@ -280,7 +327,8 @@
 
             @endphp
 
-            <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'active' : '' }}"
+            <a href="javascript:void(0)"
+                class="nav-link nav-dropdown-toggle {{ $datatenagaActive ? 'has-active' : '' }}"
                 onclick="toggleDropdown('datatenagaDropdown', this)">
 
                 <div class="nav-dropdown-left">
@@ -315,7 +363,7 @@
                     href="{{ route('safety-officer.index') }}">
                     <span class="nav-label">Data Safety Officer</span>
                 </a>
-              
+
                 <a class="nav-link {{ request()->routeIs('memo-kib.*') ? 'active' : '' }}"
                     href="{{ route('memo-kib.index') }}">
                     <span class="nav-label">Memo KIB</span>
@@ -412,7 +460,7 @@
                 request()->routeIs('kpi-k3.pengaturan.*');
         @endphp
 
-        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $monitoringActive ? 'active' : '' }}"
+        <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $monitoringActive ? 'has-active' : '' }}"
             onclick="toggleDropdown('monitoringDropdown', this)">
 
             <div class="nav-dropdown-left">
