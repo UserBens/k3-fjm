@@ -1248,6 +1248,17 @@
         .category-select-wrap {
             margin-bottom: 14px;
         }
+
+        .file-hint {
+            font-size: 10.5px;
+            color: #94A3B8;
+            margin-top: 4px;
+        }
+
+        .file-hint.file-hint-error {
+            color: #D0021B;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -2833,15 +2844,61 @@
         function fieldNameFromInput(input) {
             return input.id.replace(/^f_/, '');
         }
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+        const FILE_TYPE_PRESETS = {
+            image: {
+                accept: 'image/*',
+                label: 'JPG, JPEG, PNG, WEBP',
+                exts: ['jpg', 'jpeg', 'png', 'webp']
+            },
+            pdfImage: {
+                accept: '.pdf,image/*',
+                label: 'PDF, JPG, JPEG, PNG, WEBP',
+                exts: ['jpg', 'jpeg', 'png', 'webp', 'pdf']
+            },
+            document: {
+                accept: '.pdf,.doc,.docx,image/*',
+                label: 'PDF, DOC, DOCX, JPG, JPEG, PNG, WEBP',
+                exts: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'webp']
+            },
+        };
+
+        // Tentukan preset berdasarkan atribut accept yang sudah ada di HTML.
+        // Field tanpa accept (kebanyakan "Formulir ...") dianggap dokumen umum.
+        function resolveFilePreset(input) {
+            const accept = (input.getAttribute('accept') || '').trim();
+            if (accept === 'image/*') return FILE_TYPE_PRESETS.image;
+            if (accept === '.pdf,image/*') return FILE_TYPE_PRESETS.pdfImage;
+            return FILE_TYPE_PRESETS.document;
+        }
+
+        function ensureFileHint(input) {
+            const fieldName = fieldNameFromInput(input);
+            let hint = document.getElementById('filehint_' + fieldName);
+            if (hint) return hint;
+
+            const preset = resolveFilePreset(input);
+            if (!input.getAttribute('accept')) input.setAttribute('accept', preset.accept);
+
+            hint = document.createElement('div');
+            hint.id = 'filehint_' + fieldName;
+            hint.className = 'file-hint';
+            hint.textContent = `Format: ${preset.label} · Maks 5MB`;
+            input.insertAdjacentElement('afterend', hint);
+            return hint;
+        }
 
         function ensureFilePreviewBox(input) {
             const fieldName = fieldNameFromInput(input);
             let box = document.getElementById('filepreview_' + fieldName);
             if (box) return box;
+
+            const hint = ensureFileHint(input); // pastikan hint sudah ada duluan
             box = document.createElement('div');
             box.id = 'filepreview_' + fieldName;
             box.style.cssText = 'display:none; margin-top:8px;';
-            input.insertAdjacentElement('afterend', box);
+            hint.insertAdjacentElement('afterend', box);
             return box;
         }
 
@@ -2890,12 +2947,35 @@
         function onFileInputChange(e) {
             const input = e.target;
             const box = ensureFilePreviewBox(input);
+            const hint = ensureFileHint(input);
+            const preset = resolveFilePreset(input);
             const file = input.files && input.files[0];
 
             if (!file) {
-                restoreExistingPreview(input, box); // balik ke file lama (mode edit) kalau ada
+                hint.classList.remove('file-hint-error');
+                hint.textContent = `Format: ${preset.label} · Maks 5MB`;
+                restoreExistingPreview(input, box);
                 return;
             }
+
+            const ext = (file.name.split('.').pop() || '').toLowerCase();
+            const validType = preset.exts.includes(ext);
+            const validSize = file.size <= MAX_FILE_SIZE;
+
+            if (!validType || !validSize) {
+                input.value = '';
+                hint.classList.add('file-hint-error');
+                hint.textContent = !validType ?
+                    `Format tidak didukung. Gunakan: ${preset.label}` :
+                    `Ukuran file ${formatFileSize(file.size)} melebihi batas maksimal 5MB.`;
+                clearFilePreview(box);
+                showToast(!validType ? 'Format file tidak didukung.' : 'Ukuran file melebihi 5MB.', 'error');
+                return;
+            }
+
+            hint.classList.remove('file-hint-error');
+            hint.textContent = `Format: ${preset.label} · Maks 5MB`;
+
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = (ev) => renderImagePreview(box, ev.target.result,
@@ -2908,6 +2988,7 @@
 
         function setupFilePreviewListeners() {
             document.querySelectorAll('.form-modal-body input[type="file"]').forEach(input => {
+                ensureFileHint(input);
                 ensureFilePreviewBox(input);
                 if (input.dataset.previewBound) return;
                 input.dataset.previewBound = '1';
