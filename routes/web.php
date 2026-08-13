@@ -44,6 +44,7 @@ use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\ReferensiKodeOkController;
 use App\Http\Controllers\RegistrasiK3Controller;
+use App\Http\Controllers\Rekapkpiprogramcontroller;
 use App\Http\Controllers\RencanaPelatihanK3Controller;
 use App\Http\Controllers\SafetyOfficerController;
 use App\Http\Controllers\StokAPDController;
@@ -255,6 +256,15 @@ Route::middleware(['auth.custom'])->group(function () {
         ->group(function () {
             Route::get('/dashboard-kpi-k3', [DashboardKpiK3Controller::class, 'index'])->name('dashboard-kpi-k3.index');
             Route::get('/dashboard-kpi-k3/api', [DashboardKpiK3Controller::class, 'api'])->name('dashboard-kpi-k3.api');
+        });
+
+// REKAP KPI PROGRAM (LEADING)
+    Route::middleware(['role.custom:safety,pengawas,medis,super_admin'])
+        ->group(function () {
+            Route::get('/rekap-kpi-program', [Rekapkpiprogramcontroller::class, 'index'])
+                ->name('rekap-kpi-program.index');
+            Route::get('/rekap-kpi-program/api', [RekapKpiProgramController::class, 'api'])
+                ->name('rekap-kpi-program.api');
         });
 
     Route::prefix('arsip-dokumen')->name('arsip-dokumen.')->group(function () {

@@ -450,14 +450,14 @@
                 request()->routeIs('data-unsafe.*') ||
                 request()->routeIs('toolbox-meeting.*') ||
                 request()->routeIs('arsip-dokumen.*') ||
-                // request()->routeIs('data-reject-monitoring.*') ||
-                request()->routeIs('monitoring-so.*') ||
-                request()->routeIs('dashboard-individu.*') ||
-                request()->routeIs('rekap-pengawas.*') ||
-                request()->routeIs('monitoring-medis.*') ||
-                request()->routeIs('rekap-medis.*') ||
                 request()->routeIs('kpi-k3.matriks.*') ||
+                request()->routeIs('rekap-kpi-program.*') ||
                 request()->routeIs('kpi-k3.pengaturan.*');
+            // request()->routeIs('monitoring-so.*') ||
+            // request()->routeIs('dashboard-individu.*') ||
+            // request()->routeIs('rekap-pengawas.*') ||
+            // request()->routeIs('monitoring-medis.*') ||
+            // request()->routeIs('rekap-medis.*') ||
         @endphp
 
         <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $monitoringActive ? 'has-active' : '' }}"
@@ -550,6 +550,13 @@
                 <a class="nav-link {{ request()->routeIs('toolbox-meeting.*') ? 'active' : '' }}"
                     href="{{ route('toolbox-meeting.index') }}">
                     <span class="nav-label">ToolBox Meeting</span>
+                </a>
+            @endif
+
+            @if (in_array(session('auth_user.role'), ['super_admin']))
+                <a class="nav-link {{ request()->routeIs('rekap-kpi-program.*') ? 'active' : '' }}"
+                    href="{{ route('rekap-kpi-program.index') }}">
+                    <span class="nav-label">Rekap KPI</span>
                 </a>
             @endif
 
