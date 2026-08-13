@@ -137,6 +137,7 @@ class LaporanCapaianKpiController extends Controller
             $agregatAktivitas = []; // [aktivitas_id => ['target_sum','disetujui_raw_sum','disetujui_capped_sum']]
             $targetLaporanTim = 0; // <--- 1. Tambahkan akumulator ini
             $sumKpiFinalTim = 0.0;
+            $sumTunjanganTimRaw = 0.0;
 
             foreach ($roster as $pegawai) {
                 $hasilPersonil = $this->hitungKpiPersonilLaporan(
@@ -171,7 +172,7 @@ class LaporanCapaianKpiController extends Controller
                 $tepatWaktuTim += $hasilPersonil['tepat_waktu'];
                 $sumCapaianPersenTim += $hasilPersonil['capaian_persen'];
                 $jumlahPetugasTim++;
-                $sumTunjanganTim += (int) ($hasilPersonil['tunjangan'] ?? 0);
+                $sumTunjanganTimRaw += $hasilPersonil['tunjangan_raw'];
                 $sumKpiFinalTim += $hasilPersonil['nilai_kpi_final'];
 
                 // Section B: agregasi per aktivitas, dikumpulkan sekalian di loop yang sama
@@ -245,7 +246,7 @@ class LaporanCapaianKpiController extends Controller
                 'ketepatan_target_persen' => 100.0,
                 'ketepatan_realisasi_persen' => $ketepatanTimPersen,
                 'nilai_kpi_final_persen' => $nilaiKpiFinalTim,
-                'tunjangan_tim' => $sumTunjanganTim,
+                'tunjangan_tim' => (int) round($sumTunjanganTimRaw),
                 'kategori' => $kategori,
                 'rincian_aktivitas' => $rincianAktivitas,
                 'petugas' => $petugasRows,
@@ -338,7 +339,7 @@ class LaporanCapaianKpiController extends Controller
         $persentaseKetepatanWaktuRaw = $laporanDisetujui > 0 ? ($laporanTepatWaktu / $laporanDisetujui * 100) : 0.0;
 
         $bobotDitugaskanRaw = $totalSkorTim > 0 ? ($aktivitasDitugaskan->sum('skor') / $totalSkorTim) : 0.0;
-        $persentaseCapaianAktivitasRaw = $bobotDitugaskanRaw > 0 ? ($capaianAktivitasTotalRaw / $bobotDitugaskanRaw) : 0.0;
+        $persentaseCapaianAktivitasRaw = $capaianAktivitasTotalRaw;
 
         $nilaiKpiFinalRaw = ($pengaturan->porsi_capaian_aktivitas / 100 * $persentaseCapaianAktivitasRaw)
             + ($pengaturan->porsi_ketepatan_waktu / 100 * $persentaseKetepatanWaktuRaw);
@@ -358,9 +359,13 @@ class LaporanCapaianKpiController extends Controller
             default    => 0,
         };
 
-        $tunjangan = $timDapatTunjangan
-            ? (int) round($nominalTunjanganTim * ($skorUntukTunjangan / 100))
-            : 0;
+
+
+        $tunjanganRaw = $timDapatTunjangan
+            ? ($nominalTunjanganTim * ($skorUntukTunjangan / 100))
+            : 0.0;
+
+        $tunjangan = (int) round($tunjanganRaw);
 
         $nilaiKpiFinal = round($nilaiKpiFinalRaw, 1);
 
@@ -374,6 +379,7 @@ class LaporanCapaianKpiController extends Controller
             'nilai_kpi_final' => $nilaiKpiFinal,
             'hari_kerja_efektif' => $hariKerjaEfektifPersonil,
             'tunjangan' => $tunjangan ?: null,
+            'tunjangan_raw' => $tunjanganRaw,
             'kategori' => $this->kategoriPenilaianPersonil($nilaiKpiFinal, $pengaturan),
             'per_aktivitas' => $perAktivitas, // 🆕
             'standby' => $hariStandby > 0 ? 'Y' : 'N',

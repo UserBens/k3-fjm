@@ -548,9 +548,11 @@ class DashboardKpiK3Controller extends Controller
             ? ($aktivitasDitugaskan->sum('skor') / $totalSkorTim)
             : 0.0;
 
-        $persentaseCapaianAktivitasRaw = $bobotDitugaskanRaw > 0
-            ? ($capaianAktivitasTotalRaw / $bobotDitugaskanRaw)
-            : 0.0;
+        // $persentaseCapaianAktivitasRaw = $bobotDitugaskanRaw > 0
+        //     ? ($capaianAktivitasTotalRaw / $bobotDitugaskanRaw)
+        //     : 0.0;
+        
+        $persentaseCapaianAktivitasRaw = $capaianAktivitasTotalRaw;
 
         $nilaiKpiFinalRaw = ($pengaturan->porsi_capaian_aktivitas / 100 * $persentaseCapaianAktivitasRaw)
             + ($pengaturan->porsi_ketepatan_waktu / 100 * $persentaseKetepatanWaktuRaw);

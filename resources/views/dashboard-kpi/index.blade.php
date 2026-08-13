@@ -993,47 +993,6 @@
                 <div class="periode-aktif-line" id="periodeAktifLine">Memuat periode aktif…</div>
             </div>
 
-            <!-- MONITORING PER PERSONIL + RINCIAN AKTIVITAS -->
-            {{-- <div>
-                <span class="section-label sl-gold">Monitoring &amp; Rincian per Personil</span>
-                <div class="card-block">
-                    <div class="monitor-grid">
-                        <div>
-                            <div class="personil-select-wrap">
-                                <label>Pilih Nama</label>
-                                <select id="fPersonil"></select>
-                            </div>
-                            <div id="monitoringBox"
-                                style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
-                                <div class="loading-state">Memuat data personil…</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="rtable-wrap">
-                                <table class="rtable">
-                                    <thead>
-                                        <tr>
-                                            <th>Kode</th>
-                                            <th>Nama Aktivitas KPI</th>
-                                            <th>Target/Bulan</th>
-                                            <th>Laporan Disetujui</th>
-                                            <th>Bobot Item (%)</th>
-                                            <th>Kontribusi (%)</th>
-                                            <th>Status Capaian</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rincianBody">
-                                        <tr>
-                                            <td colspan="7" class="loading-state">Memuat rincian aktivitas…</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-
             <!-- MONITORING PER PERSONIL + RINCIAN AKTIVITAS — PER TIM (TAB) -->
             <div>
                 <span class="section-label sl-gold">Monitoring &amp; Rincian per Personil</span>
@@ -1209,47 +1168,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- INDIKATOR KPI -->
-            {{-- <div>
-                <span class="section-label sl-green">Indikator KPI</span>
-                <div class="card-block">
-                    <div class="indikator-grid">
-                        <div class="indikator-card">
-                            <div class="lbl">Total Laporan Disetujui</div>
-                            <div class="val" id="ikTotalLaporan">–</div>
-                        </div>
-                        <div class="indikator-card">
-                            <div class="lbl">Rata-rata Skor Akhir (aktif)</div>
-                            <div class="val" id="ikRataSkor">–</div>
-                        </div>
-                        <div class="indikator-card">
-                            <div class="lbl">Total Tunjangan (Rp)</div>
-                            <div class="val" id="ikTunjangan">–</div>
-                        </div>
-                        <div class="indikator-card">
-                            <div class="lbl">Jumlah Personil "BAIK"</div>
-                            <div class="val" id="ikPersonilBaik">–</div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top:16px;">
-                        <div class="rincian-kpi-title">Monitoring Personil Terpilih</div>
-                        <div id="monitoringBox_SAFETY" data-monitor-team="SAFETY"
-                            style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;">
-                            <div class="loading-state">Memuat data personil…</div>
-                        </div>
-                        <div id="monitoringBox_PENGAWAS" data-monitor-team="PENGAWAS"
-                            style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;display:none;">
-                            <div class="loading-state">Memuat data personil…</div>
-                        </div>
-                        <div id="monitoringBox_MEDIS" data-monitor-team="MEDIS"
-                            style="border:1px solid rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;display:none;">
-                            <div class="loading-state">Memuat data personil…</div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
 
         </div>
     </div>
@@ -1488,24 +1406,49 @@
             `;
         }
 
-        function renderRincianFor(tim, rows) {
+        function renderRincianFor(tim, rows, monitoring) {
             const body = document.getElementById(`rincianBody_${tim}`);
             if (!rows || rows.length === 0) {
                 body.innerHTML =
                     '<tr><td colspan="7" class="empty-state">Tidak ada aktivitas untuk personil/filter ini.</td></tr>';
                 return;
             }
-            body.innerHTML = rows.map(r => `
-                <tr>
-                    <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
-                    <td>${r.nama_aktivitas}</td>
-                    <td>${fmtNum(r.target_per_bulan)}</td>
-                    <td style="color:var(--green);font-weight:800">${fmtNum(r.laporan_disetujui)}</td>
-                    <td>${fmtPct(r.bobot_item)}</td>
-                    <td>${fmtPct(r.kontribusi)}</td>
-                    <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
-                </tr>
-            `).join('');
+
+            const rowsHtml = rows.map(r => `
+        <tr>
+            <td style="font-weight:700;color:var(--blue)">${r.kode}</td>
+            <td>${r.nama_aktivitas}</td>
+            <td>${fmtNum(r.target_per_bulan)}</td>
+            <td style="color:var(--green);font-weight:800">${fmtNum(r.laporan_disetujui)}</td>
+            <td>${fmtPct(r.bobot_item)}</td>
+            <td>${fmtPct(r.kontribusi)}</td>
+            <td><span class="status-capaian ${r.status_capaian === 'TERCAPAI' ? 'sc-tercapai' : 'sc-belum'}">${r.status_capaian}</span></td>
+        </tr>
+    `).join('');
+
+            // 🆕 Target & Disetujui: aman dijumlah dari rows (integer, tidak ada rounding drift)
+            const totalTarget = rows.reduce((s, r) => s + (Number(r.target_per_bulan) || 0), 0);
+            const totalDisetujui = rows.reduce((s, r) => s + (Number(r.laporan_disetujui) || 0), 0);
+
+            // 🆕 Bobot & Kontribusi: JANGAN dijumlah dari rows (sudah dibulatkan per baris → rounding drift).
+            // Pakai angka yang sudah dihitung backend dari nilai mentah (dan sudah dinormalisasi untuk kontribusi).
+            const totalBobot = monitoring ? monitoring.bobot_ditugaskan : rows.reduce((s, r) => s + (Number(r.bobot_item) ||
+                0), 0);
+            const totalKontribusi = monitoring ? monitoring.persentase_capaian_aktivitas : rows.reduce((s, r) => s + (
+                Number(r.kontribusi) || 0), 0);
+
+            const totalHtml = `
+        <tr class="rtable-total-row" style="font-weight:800;border-top:2px solid var(--blue);background:#f8f9fc;">
+            <td colspan="2">TOTAL</td>
+            <td>${fmtNum(totalTarget)}</td>
+            <td style="color:var(--green)">${fmtNum(totalDisetujui)}</td>
+            <td>${fmtPct(totalBobot)}</td>
+            <td>${fmtPct(totalKontribusi)}</td>
+            <td></td>
+        </tr>
+    `;
+
+            body.innerHTML = rowsHtml + totalHtml;
         }
 
         function renderPersonilOptionsFor(tim, options, selectedKey) {
@@ -1547,7 +1490,7 @@
 
                 renderPersonilOptionsFor(tim, json.personil_options || [], json.personil_terpilih);
                 renderMonitoringFor(tim, json.monitoring_personil);
-                renderRincianFor(tim, json.rincian_aktivitas);
+                renderRincianFor(tim, json.rincian_aktivitas, json.monitoring_personil); // ⬅️ tambahkan argumen ketiga
                 teamLoaded[tim] = true;
             } catch (e) {
                 console.error(e);
