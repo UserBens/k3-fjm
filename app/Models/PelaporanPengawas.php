@@ -15,6 +15,8 @@ class PelaporanPengawas extends Model
 
     protected $casts = [
         'tanggal_pelaksanaan' => 'date',
+        'waktu_submit'        => 'datetime',
+
     ];
 
     public function aktivitas()

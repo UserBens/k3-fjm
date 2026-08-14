@@ -334,6 +334,7 @@ class PelaporanPengawasController extends Controller
             $validated['status']    = $validated['status'] ?? 'PENDING';
             $validated['lokasi_berkas'] = 'ARSIP';
             $validated['diperiksa_oleh'] = $request->user()->email ?? auth()->user()?->email;
+            $validated['waktu_submit']  = $validated['waktu_submit'] ?? now(); // ← baru
 
             $laporan = PelaporanPengawas::create($validated);
 
@@ -442,6 +443,7 @@ class PelaporanPengawasController extends Controller
 
         return Validator::make($request->all(), [
             'tanggal_pelaksanaan' => ['required', 'date'],
+            'waktu_submit' => ['nullable', 'date'],
             'badge_pengawas'      => ['nullable', 'string', 'max:50'],
             'nama_pengawas'       => ['required', 'string', 'max:255'],
             'area_kerja'          => ['required', 'string', 'max:255'],
@@ -466,6 +468,7 @@ class PelaporanPengawasController extends Controller
         return [
             'id'                   => $item->id,
             'tanggal_pelaksanaan'  => optional($item->tanggal_pelaksanaan)->format('Y-m-d'),
+            'waktu_submit' => optional($item->waktu_submit)->format('Y-m-d H:i:s'),
             'badge_pengawas'       => $item->badge_pengawas,
             'nama_pengawas'        => $item->nama_pengawas,
             'area_kerja'           => $item->area_kerja,

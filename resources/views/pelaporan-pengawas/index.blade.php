@@ -1862,6 +1862,20 @@
             });
         }
 
+        // ── BARU ──
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr.replace(' ', 'T')); // "Y-m-d H:i:s" -> ISO-friendly
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebar-overlay').classList.toggle('open');
@@ -2568,6 +2582,7 @@
 
             const umumFields = [
                 buildDetailField('Tanggal Pelaksanaan', formatDate(row.tanggal_pelaksanaan)),
+                buildDetailField('Waktu Submit', formatDateTime(row.waktu_submit)), // ← BARU
                 buildDetailField('Area Kerja', row.area_kerja),
                 buildDetailField('Sub Area', row.sub_area),
                 buildDetailField('Unit Kerja', row.unit_kerja),

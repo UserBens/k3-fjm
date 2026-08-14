@@ -189,9 +189,13 @@ class ImportDataPengawasCsv extends Command
         $jenisRaw = $get('Jenis Aktifitas KPI');
         $aktivitasId = $this->resolveAktivitasId($jenisRaw);
 
+        $timestampRaw = $get('Timestamp');
+        $waktuSubmit = $timestampRaw ? $this->parseTanggalIndo($timestampRaw) : null;
+
         // ── TANGGAL DIPERIKSA (otomatis), kalau ada di sumber lain ──
         $data = [
             'tanggal_pelaksanaan' => $tanggal,
+            'waktu_submit'        => $waktuSubmit, // ← BARU
             'badge_pengawas' => $badge,
             'nama_pengawas' => $nama,
             'aktivitas_kpi_k3_id' => $aktivitasId,
@@ -231,7 +235,7 @@ class ImportDataPengawasCsv extends Command
         }
 
         return array_filter($data, fn($v) => $v !== null) + [
-            'status' => $data['status'] ?? 'PENDING',
+            'status' => $data['status'] ?? 'APPROVE', // ← diubah dari 'PENDING'
             'lokasi_berkas' => $data['lokasi_berkas'] ?? 'ARSIP',
             'aktivitas_kpi_k3_id' => $data['aktivitas_kpi_k3_id'],
             'id_laporan' => $data['id_laporan'],
@@ -398,6 +402,6 @@ class ImportDataPengawasCsv extends Command
     private function normalizeStatus(?string $status): string
     {
         $status = strtoupper((string) $status);
-        return in_array($status, ['APPROVE', 'REJECT', 'CANCEL'], true) ? $status : 'PENDING';
+        return in_array($status, ['APPROVE', 'REJECT', 'CANCEL'], true) ? $status : 'APPROVE'; // ← diubah dari 'PENDING'
     }
 }
