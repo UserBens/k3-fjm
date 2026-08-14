@@ -39,6 +39,43 @@ class SyncPegawaiCommand extends Command
         'K.260061', // DWI ELLA MAGAREZA
         'K.210462', // RIZKI IRVAN
     ];
+
+    protected array $pengawasBadges = [
+        'K.202287',    // ABD. RAHMAN
+        'K.201352',    // ACHMAT NAIM
+        'K.200702',    // AGUNG RUDYANTO
+        'LJ.23301024', // ACHMAD ANDI BURHANSYAH
+        'K.201613',    // ANWAR EDI SANTOSO
+        'K.250625',    // SURATMAN
+        'K.200266',    // BACHTIAR EFENDI
+        'K.201340',    // H. SUNANDAR
+        'K.250257',    // GUNTARA SETIAWAN
+        'K.210011',    // INDARTO
+        'K.202191',    // M. DHAMIRI LATHIF
+        'K.230080',    // KHOIRUDDIN
+        'K.200438',    // M. SYARIFUDDIN
+        'K.201549',    // MITOHADI
+        'K.200771',    // MUNIF
+        'K.250229',    // MOH. MIFTACHUL FADLI
+        'K.200425',    // NANANG QOSIM
+        'K.201356',    // RAUF ADE ARIEF
+        'K.022104',    // SUSANTO
+        'K.201328',    // SYARONI
+        'K.202573',    // FERRY ARDIANSYAH
+        'K.250364',    // M. ABIDZAN ZAHID
+        'K.250470',    // BERNARD ADERIANUS NESIMNASI
+        'K.201044',    // M. SUBAKTI
+        'K.200765',    // SLAMET ARIYADI
+        'K.201544',    // AGUS PRASETYO
+        'K.202092',    // ACHMAD ROFI A.
+        'K.210031',    // SYAFIK
+        'K.230251',    // M. MUZAYYIN
+        'K.202037',    // MOCH. LUCKY WICAKSONO
+        'K.200915',    // SUGIONO
+        'K.200919',    // SYAIFUL ROMADANI
+        'K.250143',    // MOH. AMIRUDIN RIFAI
+    ];
+
     protected $signature = 'sync:pegawai';
     protected $description = 'Sinkronisasi data master pegawai (beserta unit kerja) dari API ERP ke database lokal K3';
     protected array $kodeOkCollector = []; // ← TAMBAHAN: kode_ok => uraian_kode_ok
@@ -92,6 +129,11 @@ class SyncPegawaiCommand extends Command
             $this->error('Sinkronisasi dilanjutkan, tapi gagal menetapkan status Safety Officer.');
             // sengaja TIDAK return FAILURE di sini — kegagalan tagging Safety Officer
             // tidak perlu membatalkan sync pegawai/pengawas yang sudah berhasil.
+        }
+
+        if (!$this->assignPengawas()) {
+            $this->error('Sinkronisasi dilanjutkan, tapi gagal menetapkan status Pengawas.');
+            // sama seperti Safety Officer — tidak perlu return FAILURE
         }
 
         $pegawaiResult = $this->syncPegawai();
@@ -534,6 +576,38 @@ class SyncPegawaiCommand extends Command
             return true;
         } catch (\Exception $e) {
             $this->error('Terjadi kesalahan saat menetapkan Safety Officer: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    protected function assignPengawas(): bool
+    {
+        $this->info('Menetapkan status Pengawas berdasarkan daftar badge (mode tambah saja, tidak mereset)...');
+
+        try {
+            $existing = Pegawai::where('is_pengawas', true)->pluck('badge')->all();
+            $toActivate = array_diff($this->pengawasBadges, $existing);
+
+            $count = 0;
+            if (!empty($toActivate)) {
+                $count = Pegawai::whereIn('badge', $toActivate)->update([
+                    'is_pengawas' => true,
+                    'pengawas_since' => Carbon::now(),
+                ]);
+            }
+
+            $matchedBadges = Pegawai::whereIn('badge', $this->pengawasBadges)->pluck('badge');
+            $notFound = collect($this->pengawasBadges)->diff($matchedBadges);
+
+            if ($notFound->isNotEmpty()) {
+                $this->warn('Badge berikut ada di daftar whitelist Pengawas tapi TIDAK ditemukan di tabel pegawai: '
+                    . $notFound->implode(', '));
+            }
+
+            $this->info("Status Pengawas baru ditambahkan untuk {$count} pegawai (yang belum berstatus Pengawas sebelumnya).");
+            return true;
+        } catch (\Exception $e) {
+            $this->error('Terjadi kesalahan saat menetapkan Pengawas: ' . $e->getMessage());
             return false;
         }
     }

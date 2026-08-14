@@ -26,6 +26,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_safety_officer')->default(false);
             $table->timestamp('safety_officer_since')->nullable();
+            $table->boolean('is_pengawas')->default(false);
+            $table->timestamp('pengawas_since')->nullable();
 
             // --- Data pribadi ---
             $table->string('tempat_lahir', 100)->nullable();

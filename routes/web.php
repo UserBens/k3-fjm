@@ -90,10 +90,22 @@ Route::middleware(['auth.custom'])->group(function () {
         });
 
         // DATA PENGAWAS
-        Route::get('/pengawas', [PengawasController::class, 'index'])->name('pengawas.index');
-        Route::get('/pengawas/data', [PengawasController::class, 'data'])->name('pengawas.data');
-        Route::get('/pengawas/{idApi}/pegawai', [PengawasController::class, 'pegawaiBinaan'])->name('pengawas.pegawai');
+        Route::prefix('pengawas')->name('pengawas.')->group(function () {
+            Route::get('/', [PengawasController::class, 'index'])->name('index');
+            Route::get('/data', [PengawasController::class, 'data'])->name('data');
+            Route::get('/{badge}/tenaga', [PengawasController::class, 'tenagaBinaan'])->name('tenaga');
 
+            // Manajemen (Tab 2)
+            Route::get('/list-pengawas', [PengawasController::class, 'listPengawas'])->name('list-pengawas');
+            Route::get('/cari-pegawai-pengawas', [PengawasController::class, 'cariPegawaiUntukPengawas'])->name('cari-pegawai-pengawas');
+            Route::post('/tetapkan', [PengawasController::class, 'tetapkanPengawas'])->name('tetapkan');
+            Route::delete('/{badge}/lepas', [PengawasController::class, 'lepasPengawas'])->name('lepas');
+
+            Route::get('/{badge}/cari-tenaga', [PengawasController::class, 'cariTenaga'])->name('cari-tenaga');
+            Route::post('/{badge}/assign-tenaga', [PengawasController::class, 'assignTenaga'])->name('assign-tenaga');
+            Route::delete('/{badge}/unassign-tenaga/{pegawaiId}', [PengawasController::class, 'unassignTenaga'])->name('unassign-tenaga');
+        });
+        
         // DATA SAFETY OFFICER
         Route::prefix('safety-officer')->name('safety-officer.')->group(function () {
             Route::get('/', [SafetyOfficerController::class, 'index'])->name('index');
@@ -258,7 +270,7 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::get('/dashboard-kpi-k3/api', [DashboardKpiK3Controller::class, 'api'])->name('dashboard-kpi-k3.api');
         });
 
-// REKAP KPI PROGRAM (LEADING)
+    // REKAP KPI PROGRAM (LEADING)
     Route::middleware(['role.custom:safety,pengawas,medis,super_admin'])
         ->group(function () {
             Route::get('/rekap-kpi-program', [Rekapkpiprogramcontroller::class, 'index'])

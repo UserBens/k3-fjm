@@ -79,4 +79,16 @@ class Pegawai extends Model
 
         return ['key' => 'aktif', 'label' => 'AKTIF'];
     }
+
+    // BARU — daftar tenaga yang dibina oleh pegawai ini (kalau dia berstatus Pengawas)
+    public function tenagaBinaanPengawas()
+    {
+        return $this->hasMany(PengawasPegawai::class, 'badge_pengawas', 'badge');
+    }
+
+    // BARU — akun intra user ERP milik pegawai ini (kalau ada), untuk info tambahan (kode_ok_pekerjaan dll)
+    public function pengawasIntraAccount()
+    {
+        return $this->hasOne(PengawasIntraUser::class, 'username', 'badge');
+    }
 }
