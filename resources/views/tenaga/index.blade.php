@@ -1453,9 +1453,36 @@
                             <label>Alamat</label>
                             <textarea id="detailInputAlamat" readonly rows="2"></textarea>
                         </div>
+
+                        <div class="detail-field" style="grid-column: span 2;">
+                            <label>Alamat</label>
+                            <textarea id="detailInputAlamat" readonly rows="2"></textarea>
+                        </div>
+                        <div class="detail-field">
+                            <label>No. KTP</label>
+                            <input type="text" id="detailInputNoKtp" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>RT/RW</label>
+                            <input type="text" id="detailInputRtRw" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Kecamatan</label>
+                            <input type="text" id="detailInputKecamatan" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Kelurahan</label>
+                            <input type="text" id="detailInputKelurahan" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Kode Kota</label>
+                            <input type="text" id="detailInputKotaKota" readonly>
+                        </div>
+
                     </div>
                 </div>
 
+                {{-- UNIT KERJA --}}
                 <div class="detail-section">
                     <div class="detail-section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1476,6 +1503,169 @@
                         <div class="detail-field">
                             <label>Kualifikasi</label>
                             <input type="text" id="detailInputKualifikasi" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: STATUS KEPEGAWAIAN -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Status Kepegawaian
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Status Pegawai</label>
+                            <input type="text" id="detailInputStatusPegawai" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Jenis Pegawai</label>
+                            <input type="text" id="detailInputJenisPegawai" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Golongan</label>
+                            <input type="text" id="detailInputGolongan" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Pangkat</label>
+                            <input type="text" id="detailInputPangkat" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Pendidikan Terakhir</label>
+                            <input type="text" id="detailInputPendidikan" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Status Nikah</label>
+                            <input type="text" id="detailInputStatusNikah" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>No. HP</label>
+                            <input type="text" id="detailInputHp" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>NPWP</label>
+                            <input type="text" id="detailInputNpwp" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: MASA KERJA & KONTRAK -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Masa Kerja & Kontrak
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Tanggal Masuk</label>
+                            <input type="text" id="detailInputTglMasuk" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Kontrak Awal</label>
+                            <input type="text" id="detailInputKontrakAwal" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Kontrak Akhir</label>
+                            <input type="text" id="detailInputKontrakAkhir" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Tanggal Keluar</label>
+                            <input type="text" id="detailInputTglKeluar" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Shift Kerja</label>
+                            <input type="text" id="detailInputShift" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Jenis Keluar</label>
+                            <input type="text" id="detailInputJenisKeluar" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Tanggal Exit Clearance</label>
+                            <input type="text" id="detailInputExitClearence" readonly>
+                        </div>
+                        <div class="detail-field" style="grid-column: span 2;">
+                            <label>Keterangan Pegawai</label>
+                            <textarea id="detailInputKeteranganPegawai" readonly rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3" />
+                        </svg>
+                        Detail Shift
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Jam Masuk Standar</label>
+                            <input type="text" id="detailInputJamMasuk" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Jam Pulang Standar</label>
+                            <input type="text" id="detailInputJamPulang" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Shift Dibayar</label>
+                            <input type="text" id="detailInputShiftDibayar" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: DATA PENGGAJIAN -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                        </svg>
+                        Data Penggajian
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>No. Rekening</label>
+                            <input type="text" id="detailInputNoRekening" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Bank</label>
+                            <input type="text" id="detailInputBank" readonly>
+                        </div>
+                        <div class="detail-field" style="grid-column: span 2;">
+                            <label>Nama di Rekening</label>
+                            <input type="text" id="detailInputNamaRekening" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>No. Gaji</label>
+                            <input type="text" id="detailInputNoGaji" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Tanggal Pembayaran</label>
+                            <input type="text" id="detailInputTglGaji" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Gaji 100%</label>
+                            <input type="text" id="detailInputIs100Persen" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Kena PPh21</label>
+                            <input type="text" id="detailInputIsPph21" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>COA</label>
+                            <input type="text" id="detailInputCoa" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>No. Parklaring</label>
+                            <input type="text" id="detailInputParklaring" readonly>
                         </div>
                     </div>
                 </div>
@@ -1541,6 +1731,14 @@
                             <label>Nomor OK</label>
                             <input type="text" id="detailInputNomorOk" readonly>
                         </div>
+                        <div class="detail-field">
+                            <label>Uraian Kode OK</label>
+                            <input type="text" id="detailInputUraianKodeOk" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Uraian Nomor OK</label>
+                            <input type="text" id="detailInputUraianNomorOk" readonly>
+                        </div>
                     </div>
                 </div>
 
@@ -1561,6 +1759,26 @@
                         <div class="detail-field">
                             <label>Pengawas</label>
                             <input type="text" id="detailInputPengawas" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Info Sistem
+                    </div>
+                    <div class="detail-form-grid">
+                        <div class="detail-field">
+                            <label>Dibuat Pada</label>
+                            <input type="text" id="detailInputCreatedAt" readonly>
+                        </div>
+                        <div class="detail-field">
+                            <label>Diperbarui Pada</label>
+                            <input type="text" id="detailInputUpdatedAt" readonly>
                         </div>
                     </div>
                 </div>
@@ -1812,11 +2030,11 @@
 
                      <td>
                         ${row.nama_pengawas === '-' ? `
-                                                                     <span class="status-pill sp-gray">-</span>
-                                                                        ` : `
-                                                                    <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
-                                                                    <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
-                                                                      `}
+                                                                                                         <span class="status-pill sp-gray">-</span>
+                                                                                                            ` : `
+                                                                                                        <div style="font-weight:600; color:#334155; font-size:13px;">${escapeHtml(row.nama_pengawas)}</div>
+                                                                                                        <div class="td-name-sub">${escapeHtml(row.badge_pengawas)}</div>
+                                                                                                          `}
                     </td>
 
                     <td>
@@ -2153,6 +2371,67 @@
             document.getElementById('detailInputLokasiKerja').value = row.nama_lokasi;
             document.getElementById('detailInputSubkon').value = row.nama_subkon;
             document.getElementById('detailInputKualifikasi').value = row.nama_kualifikasi || '-';
+
+            // ── TAMBAHAN: Status Kepegawaian ──
+            document.getElementById('detailInputStatusPegawai').value = row.status_pegawai || '-';
+            document.getElementById('detailInputJenisPegawai').value = row.jenis_pegawai || '-';
+            document.getElementById('detailInputGolongan').value = row.golongan || '-';
+            document.getElementById('detailInputPangkat').value = row.pangkat || '-';
+            document.getElementById('detailInputPendidikan').value = row.pendidikan || '-';
+            document.getElementById('detailInputStatusNikah').value = row.status_nikah || '-';
+            document.getElementById('detailInputHp').value = row.hp || '-';
+            document.getElementById('detailInputNpwp').value = row.npwp || '-';
+
+            // ── TAMBAHAN: Masa Kerja & Kontrak ──
+            document.getElementById('detailInputTglMasuk').value = formatDate(row.tanggal_masuk);
+            document.getElementById('detailInputKontrakAwal').value = formatDate(row.tanggal_kontrak_awal);
+            document.getElementById('detailInputKontrakAkhir').value = formatDate(row.tanggal_kontrak_akhir);
+            document.getElementById('detailInputTglKeluar').value = formatDate(row.tanggal_keluar);
+            document.getElementById('detailInputShift').value = row.is_shift ? 'Ya' : 'Tidak';
+
+            // ── TAMBAHAN: Data Penggajian ──
+            document.getElementById('detailInputNoRekening').value = row.no_rekening || '-';
+            document.getElementById('detailInputBank').value = row.bank || '-';
+            document.getElementById('detailInputNamaRekening').value = row.nama_di_rekening || '-';
+            document.getElementById('detailInputNoGaji').value = row.no_gaji || '-';
+            document.getElementById('detailInputTglGaji').value = row.tanggal_pembayaran || '-';
+
+            // ── TAMBAHAN: Identitas & Alamat Lengkap ──
+            document.getElementById('detailInputNoKtp').value = row.no_ktp || '-';
+            document.getElementById('detailInputRtRw').value =
+                (row.rt && row.rt !== '-') || (row.rw && row.rw !== '-') ? `${row.rt || '-'} / ${row.rw || '-'}` : '-';
+            document.getElementById('detailInputKecamatan').value = row.kecamatan || '-';
+            document.getElementById('detailInputKelurahan').value = row.kelurahan || '-';
+            document.getElementById('detailInputKotaKota').value = row.kotaid_kota || '-';
+
+            // ── TAMBAHAN: Data OK Lengkap ──
+            document.getElementById('detailInputUraianKodeOk').value = row.uraian_kode_ok || '-';
+            document.getElementById('detailInputUraianNomorOk').value = row.uraian_nomor_ok || '-';
+
+            // ── TAMBAHAN: Masa Kerja & Kontrak Lengkap ──
+            document.getElementById('detailInputJenisKeluar').value =
+                row.jenis_keluar && row.jenis_keluar !== '-' ?
+                (row.jenis_keluar_lainnya && row.jenis_keluar_lainnya !== '-' ?
+                    `${row.jenis_keluar} (${row.jenis_keluar_lainnya})` : row.jenis_keluar) :
+                '-';
+            document.getElementById('detailInputExitClearence').value = formatDate(row.tanggal_exit_clearence);
+            document.getElementById('detailInputKeteranganPegawai').value = row.keterangan_pegawai || '-';
+
+            // ── TAMBAHAN: Detail Shift ──
+            document.getElementById('detailInputJamMasuk').value = row.jam_masuk_standar || '-';
+            document.getElementById('detailInputJamPulang').value = row.jam_pulang_standar || '-';
+            document.getElementById('detailInputShiftDibayar').value = row.is_shift_dibayar ? 'Ya' : 'Tidak';
+
+            // ── TAMBAHAN: Data Penggajian Lengkap ──
+            document.getElementById('detailInputIs100Persen').value = row.is_100_persen ? 'Ya' : 'Tidak';
+            document.getElementById('detailInputIsPph21').value = row.is_pph21 ? 'Ya' : 'Tidak';
+            document.getElementById('detailInputCoa').value = row.coa || '-';
+            document.getElementById('detailInputParklaring').value = row.no_parklaring || '-';
+
+            // ── TAMBAHAN: Info Sistem ──
+            document.getElementById('detailInputCreatedAt').value = formatDate(row.created_at);
+            document.getElementById('detailInputUpdatedAt').value = formatDate(row.updated_at);
+            
             // BARU - Logika untuk menampilkan Gambar KIB
             const imgKib = document.getElementById('detailImageKib');
             const imgEmpty = document.getElementById('detailImageKibEmpty');

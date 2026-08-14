@@ -315,7 +315,7 @@ class SyncPegawaiCommand extends Command
                         'keterangan_pegawai' => $item['keterangan_pegawai'] ?? null,
 
                         // --- TAMBAHAN: Shift ---
-                        'is_shift' => $item['is_shift'] ?? false,
+                        'is_shift' => in_array($item['is_shift'] ?? null, ['T', '1', 1, true], true),
                         'shift_grup' => $item['shift_grup'] ?? null,
                         'shift_lokasi' => $item['shift_lokasi'] ?? null,
                         'is_shift_dibayar' => $item['is_shift_dibayar'] ?? false,

@@ -127,6 +127,67 @@ class TenagaController extends Controller
                     'nama_subkon' => $item->subkon->nama_subkon ?? '-',
                     'nama_kualifikasi' => $item->kualifikasi->nama_kualifikasi ?? '-',   // ← TAMBAHAN
 
+                    // ── TAMBAHAN: Status Kepegawaian ──
+                    'golongan' => $item->golongan ?? '-',
+                    'pangkat' => $item->pangkat ?? '-',
+                    'status_pegawai' => trim($item->status_pegawai ?? '') ?: '-',
+                    'jenis_pegawai' => $item->jenis_pegawai ?? '-',
+                    'pendidikan' => $item->pendidikan ?? '-',
+                    'status_nikah' => $item->status_nikah ?? '-',
+                    'hp' => $item->hp ?? '-',
+                    'npwp' => $item->npwp ?: '-',
+
+                    // ── TAMBAHAN: Masa Kerja & Kontrak ──
+                    'tanggal_masuk' => $item->tanggal_masuk,
+                    'tanggal_kontrak_awal' => $item->tanggal_kontrak_awal,
+                    'tanggal_kontrak_akhir' => $item->tanggal_kontrak_akhir,
+                    'tanggal_keluar' => $item->tanggal_keluar,
+                    'is_shift' => in_array($item->is_shift, [true, 1, '1', 'T', 't'], true) || $item->is_shift === 'T',
+                    'shift_grup' => $item->shift_grup ?? '-',
+                    'shift_lokasi' => $item->shift_lokasi ?? '-',
+
+                    // ── TAMBAHAN: Data Penggajian ──
+                    'no_rekening' => $item->no_rekening ?? '-',
+                    'bank' => $item->bank ?? '-',
+                    'nama_di_rekening' => $item->nama_di_rekening ?? '-',
+                    'no_gaji' => $item->no_gaji ?? '-',
+                    'tanggal_pembayaran' => $item->tanggal_pembayaran ? "Tanggal {$item->tanggal_pembayaran}" : '-',
+                    // ── TAMBAHAN: Identitas & Alamat Lengkap ──
+                    'no_ktp' => $item->no_ktp ?: '-',
+                    'rt' => $item->rt ?: '-',
+                    'rw' => $item->rw ?: '-',
+                    'kecamatan' => $item->kecamatan ?: '-',
+                    'kelurahan' => $item->kelurahan ?: '-',
+                    'kotaid_kota' => $item->kotaid_kota ?: '-',
+
+                    // ── TAMBAHAN: Data OK Lengkap ──
+                    'uraian_kode_ok' => $item->uraian_kode_ok ?: '-',
+                    'uraian_nomor_ok' => $item->uraian_nomor_ok ?: '-',
+
+                    // ── TAMBAHAN: Masa Kerja & Kontrak Lengkap ──
+                    'jenis_keluar' => $item->jenis_keluar ?: '-',
+                    'jenis_keluar_lainnya' => $item->jenis_keluar_lainnya ?: '-',
+                    'tanggal_exit_clearence' => $item->tanggal_exit_clearence,
+                    'keterangan_pegawai' => $item->keterangan_pegawai ?: '-',
+
+                    // ── TAMBAHAN: Data Shift Lengkap ──
+                    'is_shift_dibayar' => in_array($item->is_shift_dibayar, [true, 1, '1', 'T', 't'], true),
+                    'jam_masuk_standar' => $item->jam_masuk_standar ?: '-',
+                    'jam_pulang_standar' => $item->jam_pulang_standar ?: '-',
+
+                    // ── TAMBAHAN: Penggajian & Lain-lain ──
+                    'is_100_persen' => in_array($item->is_100_persen, [true, 1, '1', 'T', 't'], true),
+                    'is_pph21' => in_array($item->is_pph21, [true, 1, '1', 'T', 't'], true),
+                    'bankid_bank' => $item->bankid_bank ?: '-',
+                    'tali_asihid' => $item->tali_asihid ?: '-',
+                    'coa' => $item->coa ?: '-',
+                    'no_parklaring' => $item->no_parklaring ?: '-',
+
+                    // ── TAMBAHAN: Audit Trail ──
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                    'created_by' => $item->created_by ?: '-',
+                    'updated_by' => $item->updated_by ?: '-',
                 ];
             });
 
