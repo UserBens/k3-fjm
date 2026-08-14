@@ -21,42 +21,6 @@ class LaporanCapaianKpiController extends Controller
         'K.250455', // MUHAMMAD HAFIZ MAULANA
     ];
 
-    private array $pengawasRoster = [
-        'K.202287'    => 'ABD. RAHMAN',
-        'K.201352'    => 'ACHMAT NAIM',
-        'K.200702'    => 'AGUNG RUDYANTO',
-        'LJ.23301024' => 'ACHMAD ANDI BURHANSYAH',
-        'K.201613'    => 'ANWAR EDI SANTOSO',
-        'K.250625'    => 'SURATMAN',
-        'K.200266'    => 'BACHTIAR EFENDI',
-        'K.201340'    => 'H. SUNANDAR',
-        'K.250257'    => 'GUNTARA SETIAWAN',
-        'K.210011'    => 'INDARTO',
-        'K.202191'    => 'M. DHAMIRI LATHIF',
-        'K.230080'    => 'KHOIRUDDIN',
-        'K.200438'    => 'M. SYARIFUDDIN',
-        'K.201549'    => 'MITOHADI',
-        'K.200771'    => 'MUNIF',
-        'K.250229'    => 'MOH. MIFTACHUL FADLI',
-        'K.200425'    => 'NANANG QOSIM',
-        'K.201356'    => 'RAUF ADE ARIEF',
-        'K.022104'    => 'SUSANTO',
-        'K.201328'    => 'SYARONI',
-        'K.202573'    => 'FERRY ARDIANSYAH',
-        'K.250364'    => 'M. ABIDZAN ZAHID',
-        'K.250470'    => 'BERNARD ADERIANUS NESIMNASI',
-        'K.201044'    => 'M. SUBAKTI',
-        'K.200765'    => 'SLAMET ARIYADI',
-        'K.201544'    => 'AGUS PRASETYO',
-        'K.202092'    => 'ACHMAD ROFI A.',
-        'K.210031'    => 'SYAFIK',
-        'K.230251'    => 'M. MUZAYYIN',
-        'K.202037'    => 'MOCH. LUCKY WICAKSONO',
-        'K.200915'    => 'SUGIONO',
-        'K.200919'    => 'SYAIFUL ROMADANI',
-        'K.250143'    => 'MOH. AMIRUDIN RIFAI',
-    ];
-
     private function normalisasiTeksPersonil(?string $s): string
     {
         if (!$s) return '';
@@ -755,10 +719,10 @@ class LaporanCapaianKpiController extends Controller
     private function resolvePeriode(PengaturanKpiK3 $pengaturan, int $tahun, int $bulan): array
     {
         if ((int) $pengaturan->tahun_aktif === $tahun && (int) $pengaturan->bulan_aktif === $bulan) {
-            if ($pengaturan->periode_manajer_mulai && $pengaturan->periode_manajer_selesai) { // ← diperbaiki
+            if ($pengaturan->periode_mulai && $pengaturan->periode_selesai) {
                 return [
-                    Carbon::parse($pengaturan->periode_manajer_mulai)->startOfDay(),
-                    Carbon::parse($pengaturan->periode_manajer_selesai)->endOfDay(),
+                    Carbon::parse($pengaturan->periode_mulai)->startOfDay(),
+                    Carbon::parse($pengaturan->periode_selesai)->endOfDay(),
                 ];
             }
         }
@@ -776,9 +740,20 @@ class LaporanCapaianKpiController extends Controller
             'safety' => Pegawai::where('is_safety_officer', true)->where('is_active', true)
                 ->orderBy('nama')->get(),
 
-            'pengawas' => collect($this->pengawasRoster)->map(function ($nama, $badge) {
-                return (object) ['badge' => $badge, 'nama' => $nama];
-            })->sortBy('nama')->values(),
+            // ⬇️ diperbaiki: roster pengawas diambil dari pengguna_id (si pemeriksa),
+            // bukan pegawai_id (pegawai yang diperiksa)
+            'pengawas' => Pegawai::where('is_active', true)
+                ->whereIn('badge', function ($q) {
+                    $q->select('username')
+                        ->from('pengawas_intra_users')
+                        ->whereNotNull('username')
+                        ->whereIn('id_api', function ($q2) {
+                            $q2->select('pengguna_id')
+                                ->from('pengawas_pekerjaans')
+                                ->whereNotNull('pengguna_id');
+                        });
+                })
+                ->orderBy('nama')->get(),
 
             'medis' => Pegawai::where('is_active', true)
                 ->whereIn('badge', $this->medisBadges)
