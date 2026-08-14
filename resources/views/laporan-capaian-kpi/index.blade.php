@@ -125,14 +125,29 @@
             font-size: 12px;
             font-weight: 700;
             color: var(--blue);
-            background: #F8F9FF;
+            background-color: #F8F9FF;
             outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
         }
+
+        /* Custom arrow — samakan dengan Dashboard KPI */
+        .saklar-field select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D4B9E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 32px;
+            cursor: pointer;
+        }
+
 
         .saklar-field select:focus,
         .saklar-field input:focus {
             border-color: var(--blue);
-            background: #fff;
+            background-color: #fff;
         }
 
         .periode-aktif-line {

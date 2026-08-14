@@ -221,7 +221,7 @@ class ImportDataMedisCsv extends Command
         }
 
         return array_filter($data, fn($v) => $v !== null) + [
-            'keputusan' => $data['keputusan'] ?? 'PENDING',
+            'keputusan' => $data['keputusan'] ?? 'APPROVE', // ← diubah dari 'PENDING'
             'nama_tenaga' => $data['nama_tenaga'],
         ];
     }
@@ -322,6 +322,6 @@ class ImportDataMedisCsv extends Command
     private function normalizeKeputusan(?string $status): string
     {
         $status = strtoupper((string) $status);
-        return in_array($status, ['APPROVE', 'REJECT'], true) ? $status : 'PENDING';
+        return in_array($status, ['APPROVE', 'REJECT'], true) ? $status : 'APPROVE'; // ← diubah dari 'PENDING'
     }
 }

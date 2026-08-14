@@ -177,7 +177,7 @@ class AktivitasKpiK3Seeder extends Seeder
                 'akhir_berlaku' => null,
                 'safety' => true,
                 'pengawas' => false,
-                'medis' => false,
+                'medis' => true,
                 'status' => 'AKTIF',
             ],
             [
@@ -228,7 +228,7 @@ class AktivitasKpiK3Seeder extends Seeder
                 'akhir_berlaku' => null,
                 'safety' => true,
                 'pengawas' => false,
-                'medis' => false,
+                'medis' => true,
                 'status' => 'AKTIF',
             ],
         ];

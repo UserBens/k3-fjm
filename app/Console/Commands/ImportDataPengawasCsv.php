@@ -235,7 +235,7 @@ class ImportDataPengawasCsv extends Command
         }
 
         return array_filter($data, fn($v) => $v !== null) + [
-            'status' => $data['status'] ?? 'APPROVE', // ← diubah dari 'PENDING'
+            'status' => $data['status'] ?? 'PENDING', // dikembalikan
             'lokasi_berkas' => $data['lokasi_berkas'] ?? 'ARSIP',
             'aktivitas_kpi_k3_id' => $data['aktivitas_kpi_k3_id'],
             'id_laporan' => $data['id_laporan'],
@@ -402,6 +402,6 @@ class ImportDataPengawasCsv extends Command
     private function normalizeStatus(?string $status): string
     {
         $status = strtoupper((string) $status);
-        return in_array($status, ['APPROVE', 'REJECT', 'CANCEL'], true) ? $status : 'APPROVE'; // ← diubah dari 'PENDING'
+        return in_array($status, ['APPROVE', 'REJECT', 'CANCEL'], true) ? $status : 'PENDING'; // dikembalikan
     }
 }
