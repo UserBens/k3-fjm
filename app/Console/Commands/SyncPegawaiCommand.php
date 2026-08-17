@@ -7,6 +7,7 @@ use App\Models\Kualifikasi;
 use App\Models\LokasiKerja;
 use App\Models\Pegawai;
 use App\Models\PengawasIntraUser;
+use App\Models\PengawasPegawai;
 use App\Models\PengawasPekerjaan;
 use App\Models\SafetyOfficer;
 use App\Models\Subkon;
@@ -125,6 +126,11 @@ class SyncPegawaiCommand extends Command
             return Command::FAILURE;
         }
 
+        if (!$this->seedPengawasPegawaiFromErp()) {
+            $this->error('Sinkronisasi dibatalkan karena gagal sync pengawas pegawai.');
+            return Command::FAILURE;
+        }
+
         if (!$this->assignSafetyOfficers()) {
             $this->error('Sinkronisasi dilanjutkan, tapi gagal menetapkan status Safety Officer.');
             // sengaja TIDAK return FAILURE di sini — kegagalan tagging Safety Officer
@@ -136,7 +142,6 @@ class SyncPegawaiCommand extends Command
             // sama seperti Safety Officer — tidak perlu return FAILURE
         }
 
-        $pegawaiResult = $this->syncPegawai();
         if ($pegawaiResult !== Command::SUCCESS) {
             $this->error('Sinkronisasi dihentikan karena gagal sync pegawai.');
             return $pegawaiResult;
@@ -223,7 +228,11 @@ class SyncPegawaiCommand extends Command
         try {
             $response = Http::withHeaders([
                 'X-API-KEY' => $apiKey,
-            ])->timeout(30)->get($apiUrl);
+            ])
+                ->connectTimeout(15)   // waktu untuk membangun koneksi
+                ->timeout(180)         // waktu total tunggu respons — naikkan dari 30 ke 180 detik
+                ->retry(2, 3000)       // coba ulang 2x kalau gagal, jeda 3 detik antar percobaan
+                ->get($apiUrl);
 
             if (!$response->successful()) {
                 $this->error('Gagal mengambil data dari API. Status: ' . $response->status());
@@ -443,6 +452,43 @@ class SyncPegawaiCommand extends Command
             $this->error('Terjadi kesalahan saat sinkronisasi pengawas pekerjaan: ' . $e->getMessage());
             return false;
         }
+    }
+
+    protected function seedPengawasPegawaiFromErp(): bool
+    {
+        $this->info('Menyelaraskan pengawas_pegawais dari data ERP (tanpa menimpa assignment manual)...');
+
+        $relasi = PengawasPekerjaan::whereNotNull('pegawai_id')->whereNotNull('pengguna_id')->get();
+
+        $count = 0;
+        foreach ($relasi as $r) {
+            // pengguna_id di pengawas_pekerjaans → id_api di pengawas_intra_users
+            // perlu badge pengawas yang sepadan (username = badge, sesuai relasi dataPegawai() di model Anda)
+            $intraUser = PengawasIntraUser::where('id_api', $r->pengguna_id)->first();
+            if (!$intraUser || !$intraUser->username) continue;
+
+            $badgePengawas = $intraUser->username; // asumsinya username = badge pegawai
+
+            $existing = PengawasPegawai::where('pegawai_id', $r->pegawai_id)->first();
+
+            // Kalau belum ada assignment sama sekali, ATAU assignment yang ada berasal dari sync sebelumnya
+            // (bukan manual user), maka boleh diperbarui mengikuti data ERP terbaru.
+            if (!$existing || $existing->assigned_by === 'system:sync') {
+                PengawasPegawai::updateOrCreate(
+                    ['pegawai_id' => $r->pegawai_id],
+                    [
+                        'badge_pengawas' => $badgePengawas,
+                        'assigned_by' => 'system:sync',
+                        'assigned_at' => Carbon::now(),
+                    ]
+                );
+                $count++;
+            }
+            // Kalau existing->assigned_by BUKAN 'system:sync' → berarti sudah di-reassign manual, SKIP, jangan ditimpa.
+        }
+
+        $this->info("Penyelarasan pengawas_pegawais selesai! {$count} baris diperbarui/ditambahkan dari ERP.");
+        return true;
     }
 
     protected function syncLokasiKerja(): bool

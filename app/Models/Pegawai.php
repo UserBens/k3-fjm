@@ -91,4 +91,10 @@ class Pegawai extends Model
     {
         return $this->hasOne(PengawasIntraUser::class, 'username', 'badge');
     }
+
+    // pengawas_pegawais: pegawai_id → id_api pegawai ini (sebagai tenaga)
+    public function pengawasBinaan()
+    {
+        return $this->hasOne(PengawasPegawai::class, 'pegawai_id', 'id_api');
+    }
 }

@@ -37,7 +37,7 @@ class TenagaController extends Controller
     public function api(Request $request): JsonResponse
     {
         try {
-            $query = Pegawai::with(['unitKerja', 'pengawasPekerjaan.pengawas', 'lokasiKerja', 'subkon', 'kualifikasi'])
+            $query = Pegawai::with(['unitKerja', 'pengawasBinaan.pengawas', 'lokasiKerja', 'subkon', 'kualifikasi'])
                 ->where('is_active', true); // BARU — wajib hanya pegawai aktif, tidak bisa dioverride
 
             if ($search = trim((string) $request->query('search', ''))) {
@@ -112,8 +112,9 @@ class TenagaController extends Controller
                     'nama_unit_kerja' => $item->unitKerja->nama_unit_kerja ?? '-',
                     'bagian' => $item->unitKerja->bagian ?? '-',
 
-                    'nama_pengawas' => $item->pengawasPekerjaan->pengawas->nama_lengkap ?? '-',
-                    'badge_pengawas' => $item->pengawasPekerjaan->pengawas->username ?? '-',
+                    // di transform:
+                    'nama_pengawas' => $item->pengawasBinaan->pengawas->nama ?? '-',
+                    'badge_pengawas' => $item->pengawasBinaan->pengawas->badge ?? '-',
 
                     'jabatan' => $item->jabatan ?? '-',
                     'departemen' => $item->unit_kerjaid ?? '-',

@@ -793,6 +793,11 @@
             el.value = current;
         }
 
+        function populateBulanSekarang() {
+            const bulanSekarang = new Date().getMonth() + 1; // getMonth() itu 0-indexed (Jan=0), jadi +1
+            document.getElementById('fBulan').value = bulanSekarang;
+        }
+
         function exportExcel() {
             const params = new URLSearchParams({
                 tahun: document.getElementById('fTahun').value,
@@ -975,6 +980,7 @@
         document.getElementById('btnTerapkan').addEventListener('click', loadLaporan);
 
         populateTahun();
+        populateBulanSekarang(); // 🆕 tambahkan ini
         loadLaporan();
     </script>
 </body>

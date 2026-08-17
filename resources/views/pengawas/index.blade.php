@@ -1260,6 +1260,15 @@
                                 <div class="mgmt-empty-hint">Klik salah satu Pengawas di daftar sebelah kiri
                                     untuk mengelola tenaga.</div>
                             </div>
+
+                            <!-- TAMBAHKAN INI -->
+                            <div class="pagination-bar" id="mgmtDetailPagBar" style="display:none;">
+                                <div class="pagination-info">
+                                    <span id="mgmtDetailPagText">—</span>
+                                </div>
+                                <div class="pagination-pages" id="mgmtDetailPagPages"></div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -1401,6 +1410,13 @@
         let currentMgmtPengawas = null; // badge Pengawas yang lagi dipilih di panel kiri
         let tambahPengawasDebounce = null;
         let tambahTenagaDebounce = null;
+
+        // TAMBAHKAN INI — state pagination untuk detail tenaga di Tab 2
+        const mgmtDetailState = {
+            badge: null,
+            page: 1,
+            per_page: 10
+        };
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1726,9 +1742,14 @@
 
         function selectMgmtPengawas(badge, nama) {
             currentMgmtPengawas = badge;
+
+            // reset pagination setiap kali pindah Pengawas
+            mgmtDetailState.badge = badge;
+            mgmtDetailState.page = 1;
+
             document.getElementById('mgmtDetailTitle').textContent = `Tenaga — ${nama}`;
             document.getElementById('btnTambahTenaga').style.display = 'inline-flex';
-            loadMgmtPengawasList(); // re-render supaya highlight active update
+            loadMgmtPengawasList();
             loadMgmtDetail();
         }
 
@@ -1736,9 +1757,14 @@
             if (!currentMgmtPengawas) return;
             const bodyEl = document.getElementById('mgmtDetailBody');
             bodyEl.innerHTML = '<div class="binaan-loading">Memuat...</div>';
+            document.getElementById('mgmtDetailPagBar').style.display = 'none';
+
+            const params = new URLSearchParams();
+            params.set('page', mgmtDetailState.page);
+            params.set('per_page', mgmtDetailState.per_page);
 
             try {
-                const res = await fetch(`${BASE_ENDPOINT}/${currentMgmtPengawas}/tenaga?per_page=50`, {
+                const res = await fetch(`${BASE_ENDPOINT}/${currentMgmtPengawas}/tenaga?${params.toString()}`, {
                     headers: {
                         'Accept': 'application/json'
                     }
@@ -1752,20 +1778,39 @@
                     return;
                 }
 
-                // Ganti baris tombol Hapus pada loadMgmtDetail():
                 bodyEl.innerHTML = json.data.map(p => `
-                    <div class="binaan-item">
-                        <div class="td-avatar">${escapeHtml(initials(p.nama))}</div>
-                        <div style="flex:1; min-width:0;">
-                            <div class="binaan-item-name">${escapeHtml(p.nama)}</div>
-                            <div class="binaan-item-sub">${escapeHtml(p.badge)} • ${escapeHtml(p.nama_unit_kerja)} — ${escapeHtml(p.bagian)}</div>
-                        </div>
-                        <button class="btn-lepas-so" onclick='openHapusTenagaModal("${p.id_api}", ${JSON.stringify(p.nama)})'>Hapus</button>
-                    </div>
-                `).join('');
+            <div class="binaan-item">
+                <div class="td-avatar">${escapeHtml(initials(p.nama))}</div>
+                <div style="flex:1; min-width:0;">
+                    <div class="binaan-item-name">${escapeHtml(p.nama)}</div>
+                    <div class="binaan-item-sub">${escapeHtml(p.badge)} • ${escapeHtml(p.nama_unit_kerja)} — ${escapeHtml(p.bagian)}</div>
+                </div>
+                <button class="btn-lepas-so" onclick='openHapusTenagaModal("${p.id_api}", ${JSON.stringify(p.nama)})'>Hapus</button>
+            </div>
+        `).join('');
+
+                // render pagination
+                const pagBar = document.getElementById('mgmtDetailPagBar');
+                if (json.meta && json.meta.total > 0) {
+                    pagBar.style.display = 'flex';
+                    renderPaginationGeneric(
+                        json.meta,
+                        document.getElementById('mgmtDetailPagText'),
+                        document.getElementById('mgmtDetailPagPages'),
+                        goToMgmtDetailPage
+                    );
+                } else {
+                    pagBar.style.display = 'none';
+                }
             } catch (e) {
                 bodyEl.innerHTML = `<div class="mgmt-empty-hint" style="color:#D0021B;">${escapeHtml(e.message)}</div>`;
             }
+        }
+
+        // TAMBAHKAN FUNGSI INI — handler pindah halaman
+        function goToMgmtDetailPage(page) {
+            mgmtDetailState.page = page;
+            loadMgmtDetail();
         }
 
         // State & Modal logic konfirmasi hapus tenaga binaan
