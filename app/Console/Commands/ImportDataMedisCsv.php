@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Datamedis;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class ImportDataMedisCsv extends Command
 {
@@ -26,6 +26,7 @@ class ImportDataMedisCsv extends Command
         'Unit Kerja' => 'unit_kerja',
         'Foto Evidence Kegiatan' => 'foto_evidence_path',
         'Upload Formulir Kegiatan' => 'formulir_kegiatan_path',
+        'ID LAPORAN (otomatis)' => 'id_laporan',
         'STATUS (APPROVE / REJECT / CANCEL)' => 'keputusan',
         'ARSIP (otomatis)' => 'arsip_path',
     ];
@@ -42,13 +43,16 @@ class ImportDataMedisCsv extends Command
         'Tanggal Pelaksanaan',
         'Nama Tenaga Medis',
         'Area Kerja',
-        'Sub Area',
         'Unit Kerja',
         'Jenis Aktifitas KPI',
         'Foto Evidence Kegiatan',
         'Upload Formulir Kegiatan',
+        'ID LAPORAN (otomatis)',
         'STATUS (APPROVE / REJECT / CANCEL)',
-        'ARSIP (otomatis)',
+        'LOKASI BERKAS (otomatis)',
+        'DIPERIKSA OLEH (otomatis)',
+        'TANGGAL DIPERIKSA (otomatis)',
+        'CATATAN (otomatis)',
     ];
 
     public function handle(): int
@@ -70,7 +74,7 @@ class ImportDataMedisCsv extends Command
         $firstLine = fgets($handle);
         rewind($handle);
 
-        // Auto-deteksi delimiter kalau yang di-set ternyata salah (cuma menghasilkan 1 kolom)
+        // Auto-deteksi delimiter kalau yang di-set ternyata salah
         $delimiter = $this->autoDetectDelimiter($firstLine, $delimiter);
 
         if ($noHeader) {
@@ -86,9 +90,7 @@ class ImportDataMedisCsv extends Command
             $this->info('Delimiter terdeteksi: ' . $this->delimiterLabel($delimiter) . ' (' . count($header) . ' kolom)');
         }
 
-        // Bersihkan UTF-8 BOM yang sering nempel di kolom pertama file CSV
-        // hasil export Google Sheets/Excel (bikin header pertama, misal "Timestamp",
-        // tidak match walau tampak sama secara visual)
+        // Bersihkan UTF-8 BOM
         $header = array_map(
             fn($h) => trim(str_replace("\xEF\xBB\xBF", '', $h)),
             $header
@@ -118,6 +120,7 @@ class ImportDataMedisCsv extends Command
                 if ($dryRun) {
                     $this->newLine();
                     $this->line("Baris {$rowNum}: " . json_encode([
+                        'id_laporan' => $data['id_laporan'] ?? null,
                         'waktu_submit' => $data['waktu_submit'] ?? null,
                         'tanggal_pelaksanaan' => $data['tanggal_pelaksanaan'] ?? null,
                         'badge_tenaga' => $data['badge_tenaga'] ?? null,
@@ -126,7 +129,15 @@ class ImportDataMedisCsv extends Command
                         'keputusan' => $data['keputusan'] ?? null,
                     ], JSON_UNESCAPED_UNICODE));
                 } else {
-                    Datamedis::create($data);
+                    // Mencegah duplikasi: Jika id_laporan ada, lakukan update/create
+                    if (!empty($data['id_laporan'])) {
+                        Datamedis::updateOrCreate(
+                            ['id_laporan' => $data['id_laporan']],
+                            $data
+                        );
+                    } else {
+                        Datamedis::create($data);
+                    }
                 }
 
                 $imported++;
@@ -157,7 +168,7 @@ class ImportDataMedisCsv extends Command
             return $val === '' ? null : $val;
         };
 
-        // ── Tanggal Pelaksanaan (D/M/YYYY, format export lokal ID) ──
+        // ── Tanggal Pelaksanaan ──
         $tanggalRaw = $get('Tanggal Pelaksanaan');
         $tanggal = $tanggalRaw ? $this->parseTanggalIndo($tanggalRaw)?->toDateString() : null;
 
@@ -165,7 +176,7 @@ class ImportDataMedisCsv extends Command
         $timestampRaw = $get('Timestamp');
         $waktuSubmit = $timestampRaw ? $this->parseTanggalIndo($timestampRaw) : null;
 
-        // ── Nama Tenaga Medis -> badge_tenaga + nama_tenaga (format "BADGE-Nama") ──
+        // ── Nama Tenaga Medis -> badge_tenaga + nama_tenaga ──
         $namaRaw = $get('Nama Tenaga Medis');
         $badge = null;
         $nama = null;
@@ -180,7 +191,7 @@ class ImportDataMedisCsv extends Command
             throw new \RuntimeException('Nama Tenaga Medis kosong — baris dilewati.');
         }
 
-        // ── Jenis Aktifitas KPI: "[E.6] Laporan Inspeksi Kotak P3K" -> ambil nama saja (kolom string biasa, bukan FK) ──
+        // ── Jenis Aktifitas KPI ──
         $jenisRaw = $get('Jenis Aktifitas KPI');
         $jenisAktifitas = $jenisRaw;
         if ($jenisRaw && preg_match('/^\[(.+?)\]\s*(.+)$/', $jenisRaw, $m)) {
@@ -188,6 +199,7 @@ class ImportDataMedisCsv extends Command
         }
 
         $data = [
+            'id_laporan' => $get('ID LAPORAN (otomatis)'),
             'waktu_submit' => $waktuSubmit,
             'tanggal_pelaksanaan' => $tanggal,
             'badge_tenaga' => $badge,
@@ -196,21 +208,22 @@ class ImportDataMedisCsv extends Command
             'keputusan' => $this->normalizeKeputusan($get('STATUS (APPROVE / REJECT / CANCEL)')),
         ];
 
-        // ── Kolom teks & file lainnya (Area Kerja, Sub Area, Unit Kerja, Foto Evidence, Formulir Kegiatan) ──
+        // ── Kolom teks & file lainnya ──
         $handledManually = [
             'Timestamp',
             'Tanggal Pelaksanaan',
             'Nama Tenaga Medis',
             'Jenis Aktifitas KPI',
             'STATUS (APPROVE / REJECT / CANCEL)',
+            'ID LAPORAN (otomatis)',
         ];
         foreach ($this->columnMap as $csvCol => $dbCol) {
             if (in_array($csvCol, $handledManually, true)) continue;
-            if (in_array($dbCol, $this->fileColumns, true)) continue; // file ditangani terpisah di bawah
+            if (in_array($dbCol, $this->fileColumns, true)) continue;
             $data[$dbCol] = $get($csvCol);
         }
 
-        // ── Kolom file: simpan link Google Drive apa adanya, TIDAK didownload ──
+        // ── Kolom file ──
         foreach ($this->fileColumns as $dbCol) {
             $csvCol = array_search($dbCol, $this->columnMap, true);
             if ($csvCol === false) continue;
@@ -221,32 +234,20 @@ class ImportDataMedisCsv extends Command
         }
 
         return array_filter($data, fn($v) => $v !== null) + [
-            'keputusan' => $data['keputusan'] ?? 'APPROVE', // ← diubah dari 'PENDING'
+            'keputusan' => $data['keputusan'] ?? 'PENDING',
             'nama_tenaga' => $data['nama_tenaga'],
         ];
     }
 
-    /**
-     * Parse tanggal/timestamp dari CSV export sheet Data Medis.
-     * Sheet ini pakai format lokal Indonesia D/M/YYYY (tanggal/bulan/tahun),
-     * sama seperti sheet Pelaporan Pengawas — beda dengan sheet Data Safety
-     * yang M/D/YYYY (gaya export US Google Forms).
-     *
-     * Auto-detect per baris: default D/M/Y, hanya dianggap M/D/Y kalau angka
-     * kedua > 12 (mustahil jadi bulan dalam urutan D/M/Y).
-     * Contoh: "14/05/2026" = 14 Mei 2026, "02/06/2026" = 2 Juni 2026.
-     */
     private function parseTanggalIndo(string $raw): ?Carbon
     {
         $raw = trim($raw);
         if ($raw === '') return null;
 
-        // Pisahkan bagian tanggal & jam (jika ada)
         $parts = preg_split('/\s+/', $raw, 2);
         $datePart = $parts[0];
         $timePart = $parts[1] ?? '00:00:00';
 
-        // Lengkapi detik kalau cuma H:i
         if (preg_match('/^\d{1,2}:\d{2}$/', $timePart)) {
             $timePart .= ':00';
         }
@@ -256,7 +257,6 @@ class ImportDataMedisCsv extends Command
         }
         [, $first, $second, $year] = $m;
 
-        // Default: D/M/Y. Kalau angka kedua > 12, urutan sebenarnya M/D/Y — tukar.
         if ((int) $second > 12) {
             $month = $first;
             $day = $second;
@@ -275,9 +275,6 @@ class ImportDataMedisCsv extends Command
         }
     }
 
-    /**
-     * Ubah representasi delimiter dari CLI ("\t", "tab") jadi karakter asli.
-     */
     private function resolveDelimiter(string $raw): string
     {
         return match ($raw) {
@@ -286,11 +283,6 @@ class ImportDataMedisCsv extends Command
         };
     }
 
-    /**
-     * Kalau delimiter yang diminta cuma menghasilkan 1 kolom, coba tebak
-     * delimiter yang benar dari baris pertama (header) — pilih yang menghasilkan
-     * jumlah kolom terbanyak di antara koma, titik-koma, tab, dan pipe.
-     */
     private function autoDetectDelimiter(string $firstLine, string $requestedDelimiter): string
     {
         $candidates = [$requestedDelimiter, ',', ';', "\t", '|'];
@@ -321,7 +313,13 @@ class ImportDataMedisCsv extends Command
 
     private function normalizeKeputusan(?string $status): string
     {
-        $status = strtoupper((string) $status);
-        return in_array($status, ['APPROVE', 'REJECT'], true) ? $status : 'APPROVE'; // ← diubah dari 'PENDING'
+        $status = strtoupper(trim((string) $status));
+
+        return match ($status) {
+            'APPROVE', 'APPROVED' => 'APPROVE',
+            'REJECT', 'REJECTED', 'CANCEL', 'CANCELED' => 'REJECT',
+            'PENDING' => 'PENDING',
+            default => 'PENDING',
+        };
     }
 }

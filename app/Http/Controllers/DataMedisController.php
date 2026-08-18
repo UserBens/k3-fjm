@@ -199,7 +199,7 @@ class DataMedisController extends Controller
                     $validated[$column] = $path;
                 }
             }
-            
+
             if (session('auth_user.role') === 'medis' && $laporan->badge_tenaga !== session('auth_user.username')) {
                 return response()->json(['message' => 'Anda tidak memiliki izin untuk mengubah data ini.'], 403);
             }
@@ -445,6 +445,10 @@ class DataMedisController extends Controller
 
     private function transform(Datamedis $item): array
     {
+        $fileUrl = fn(?string $path) => $path
+            ? (str_starts_with($path, 'http') ? $path : asset('storage/' . $path))
+            : null;
+
         return [
             'id' => $item->id,
             'waktu_submit' => optional($item->waktu_submit)->toDateTimeString(),
@@ -452,11 +456,11 @@ class DataMedisController extends Controller
             'badge_tenaga' => $item->badge_tenaga ?? '-',
             'nama_tenaga' => $item->nama_tenaga ?? '-',
             'area_kerja' => $item->area_kerja ?? '-',
-            'sub_area' => $item->sub_area ?? '-', // ⬅️ BARU
+            'sub_area' => $item->sub_area ?? '-',
             'unit_kerja' => $item->unit_kerja ?? '-',
             'jenis_aktifitas_kpi' => $item->jenis_aktifitas_kpi ?? '-',
-            'foto_evidence_url' => $item->foto_evidence_path ? asset('storage/' . $item->foto_evidence_path) : null,
-            'formulir_kegiatan_url' => $item->formulir_kegiatan_path ? asset('storage/' . $item->formulir_kegiatan_path) : null,
+            'foto_evidence_url' => $fileUrl($item->foto_evidence_path),       // ✅ diperbaiki
+            'formulir_kegiatan_url' => $fileUrl($item->formulir_kegiatan_path), // ✅ diperbaiki
             'status_pindah' => $item->status_pindah,
             'keputusan' => $item->keputusan,
         ];

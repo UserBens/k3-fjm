@@ -744,20 +744,12 @@ class LaporanCapaianKpiController extends Controller
                 ->filter()
                 ->values(),
 
-            // ⬇️ diperbaiki: roster pengawas diambil dari pengguna_id (si pemeriksa),
-            // bukan pegawai_id (pegawai yang diperiksa)
+            // ✅ Disamakan dengan PengawasController::data() —
+            // roster tim pengawas = pegawai aktif dengan flag is_pengawas = true
             'pengawas' => Pegawai::where('is_active', true)
-                ->whereIn('badge', function ($q) {
-                    $q->select('username')
-                        ->from('pengawas_intra_users')
-                        ->whereNotNull('username')
-                        ->whereIn('id_api', function ($q2) {
-                            $q2->select('pengguna_id')
-                                ->from('pengawas_pekerjaans')
-                                ->whereNotNull('pengguna_id');
-                        });
-                })
-                ->orderBy('nama')->get(),
+                ->where('is_pengawas', true)
+                ->orderBy('nama')
+                ->get(),
 
             'medis' => Pegawai::where('is_active', true)
                 ->whereIn('badge', $this->medisBadges)

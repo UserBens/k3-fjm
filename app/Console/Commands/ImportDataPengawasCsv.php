@@ -30,9 +30,11 @@ class ImportDataPengawasCsv extends Command
         'Materi Safety Briefing' => 'materi_safety_briefing',
         'Upload Foto Kegiatan Safety Briefing' => 'foto_kegiatan_safety_briefing',
         'Upload Formulir Presensi Safety Briefing (PDF)' => 'formulir_presensi_pdf',
+        'ID LAPORAN (otomatis)' => 'id_laporan',          // ✅ baru
         'STATUS (APPROVE / REJECT / CANCEL)' => 'status',
         'LOKASI BERKAS (otomatis)' => 'lokasi_berkas',
         'DIPERIKSA OLEH (otomatis)' => 'diperiksa_oleh',
+        'TANGGAL DIPERIKSA (otomatis)' => 'tanggal_diperiksa', // ✅ ikut ditambahkan, ada di CSV Anda tapi belum dipetakan
     ];
 
     // Kolom yang isinya berupa link Google Drive (disimpan sebagai link langsung, TIDAK didownload)
@@ -56,9 +58,11 @@ class ImportDataPengawasCsv extends Command
         'Materi Safety Briefing',
         'Upload Foto Kegiatan Safety Briefing',
         'Upload Formulir Presensi Safety Briefing (PDF)',
+        'ID LAPORAN (otomatis)',              // ✅ baru
         'STATUS (APPROVE / REJECT / CANCEL)',
         'LOKASI BERKAS (otomatis)',
         'DIPERIKSA OLEH (otomatis)',
+        'TANGGAL DIPERIKSA (otomatis)',       // ✅ baru
     ];
 
     // Cache lookup nama_aktivitas -> id, supaya tidak query berulang tiap baris
@@ -131,15 +135,20 @@ class ImportDataPengawasCsv extends Command
                 if ($dryRun) {
                     $this->newLine();
                     $this->line("Baris {$rowNum}: " . json_encode([
+                        'id_laporan' => $data['id_laporan'] ?? null,
                         'tanggal_pelaksanaan' => $data['tanggal_pelaksanaan'] ?? null,
                         'badge_pengawas' => $data['badge_pengawas'] ?? null,
                         'nama_pengawas' => $data['nama_pengawas'] ?? null,
                         'aktivitas_kpi_k3_id' => $data['aktivitas_kpi_k3_id'] ?? null,
-                        'id_laporan' => $data['id_laporan'] ?? null,
                         'status' => $data['status'] ?? null,
                     ], JSON_UNESCAPED_UNICODE));
                 } else {
-                    PelaporanPengawas::create($data);
+                    // ✅ updateOrCreate: kalau id_laporan sudah ada, status (dan field lain) di-update
+                    // sesuai isi CSV terbaru — tidak lagi bikin baris duplikat tiap kali di-reimport.
+                    PelaporanPengawas::updateOrCreate(
+                        ['id_laporan' => $data['id_laporan']],
+                        $data
+                    );
                 }
 
                 $imported++;
@@ -170,11 +179,11 @@ class ImportDataPengawasCsv extends Command
             return $val === '' ? null : $val;
         };
 
-        // ── Tanggal Pelaksanaan (M/D/YYYY, format export Google Sheets, boleh tanpa leading zero) ──
+        // ── Tanggal Pelaksanaan ──
         $tanggalRaw = $get('Tanggal Pelaksanaan');
         $tanggal = $tanggalRaw ? $this->parseTanggalIndo($tanggalRaw)?->toDateString() : null;
 
-        // ── Nama Pengawas -> badge_pengawas + nama_pengawas (format "BADGE-Nama", sama seperti Nama Safety Officer) ──
+        // ── Nama Pengawas -> badge_pengawas + nama_pengawas ──
         $namaPengawasRaw = $get('Nama Pengawas');
         $badge = null;
         $nama = null;
@@ -185,46 +194,59 @@ class ImportDataPengawasCsv extends Command
             $nama = $namaPengawasRaw;
         }
 
-        // ── Jenis Aktifitas KPI: "[D.1] Laporan Nearmiss" -> cari id di master aktivitas_kpi_k3 ──
+        // ── Jenis Aktifitas KPI ──
         $jenisRaw = $get('Jenis Aktifitas KPI');
         $aktivitasId = $this->resolveAktivitasId($jenisRaw);
-
-        $timestampRaw = $get('Timestamp');
-        $waktuSubmit = $timestampRaw ? $this->parseTanggalIndo($timestampRaw) : null;
-
-        // ── TANGGAL DIPERIKSA (otomatis), kalau ada di sumber lain ──
-        $data = [
-            'tanggal_pelaksanaan' => $tanggal,
-            'waktu_submit'        => $waktuSubmit, // ← BARU
-            'badge_pengawas' => $badge,
-            'nama_pengawas' => $nama,
-            'aktivitas_kpi_k3_id' => $aktivitasId,
-            'id_laporan' => $this->generateIdLaporan(),
-            'status' => $this->normalizeStatus($get('STATUS (APPROVE / REJECT / CANCEL)')),
-            'lokasi_berkas' => $get('LOKASI BERKAS (otomatis)') ?? 'ARSIP',
-            'diperiksa_oleh' => $get('DIPERIKSA OLEH (otomatis)'),
-        ];
 
         if (!$aktivitasId) {
             throw new \RuntimeException("Jenis Aktifitas KPI \"{$jenisRaw}\" tidak ditemukan di master aktivitas_kpi_k3.");
         }
+
+        $timestampRaw = $get('Timestamp');
+        $waktuSubmit = $timestampRaw ? $this->parseTanggalIndo($timestampRaw) : null;
+
+        // ── ID LAPORAN: pakai ID asli dari CSV kalau ada, supaya re-import bisa update, bukan duplikat ──
+        $idLaporanCsv = $get('ID LAPORAN (otomatis)');
+        $idLaporan = $idLaporanCsv ?: $this->generateIdLaporan();
+
+        // ── STATUS: sumber kebenaran = kolom STATUS di CSV ──
+        $status = $this->normalizeStatus($get('STATUS (APPROVE / REJECT / CANCEL)'));
+
+        // ── TANGGAL DIPERIKSA (otomatis), kalau kolomnya ada di CSV ──
+        $tanggalDiperiksaRaw = $get('TANGGAL DIPERIKSA (otomatis)');
+        $tanggalDiperiksa = $tanggalDiperiksaRaw ? $this->parseTanggalIndo($tanggalDiperiksaRaw) : null;
+
+        $data = [
+            'tanggal_pelaksanaan' => $tanggal,
+            'waktu_submit'        => $waktuSubmit,
+            'badge_pengawas'      => $badge,
+            'nama_pengawas'       => $nama,
+            'aktivitas_kpi_k3_id' => $aktivitasId,
+            'id_laporan'          => $idLaporan,
+            'status'              => $status,
+            'lokasi_berkas'       => $get('LOKASI BERKAS (otomatis)') ?? 'ARSIP',
+            'diperiksa_oleh'      => $get('DIPERIKSA OLEH (otomatis)'),
+            'tanggal_diperiksa'   => $tanggalDiperiksa,
+        ];
 
         // ── Kolom teks & file lainnya (Area Kerja, Sub Area, Unit Kerja, Nearmiss, Safety Briefing) ──
         $handledManually = [
             'Tanggal Pelaksanaan',
             'Nama Pengawas',
             'Jenis Aktifitas KPI',
+            'ID LAPORAN (otomatis)',
             'STATUS (APPROVE / REJECT / CANCEL)',
             'LOKASI BERKAS (otomatis)',
             'DIPERIKSA OLEH (otomatis)',
+            'TANGGAL DIPERIKSA (otomatis)',
         ];
         foreach ($this->columnMap as $csvCol => $dbCol) {
             if (in_array($csvCol, $handledManually, true)) continue;
-            if (in_array($dbCol, $this->fileColumns, true)) continue; // file ditangani terpisah di bawah
+            if (in_array($dbCol, $this->fileColumns, true)) continue; // file ditangani terpisah
             $data[$dbCol] = $get($csvCol);
         }
 
-        // ── Kolom file: simpan link Google Drive apa adanya, TIDAK didownload ──
+        // ── Kolom file: simpan link Google Drive apa adanya ──
         foreach ($this->fileColumns as $dbCol) {
             $csvCol = array_search($dbCol, $this->columnMap, true);
             if ($csvCol === false) continue;
@@ -234,12 +256,7 @@ class ImportDataPengawasCsv extends Command
             }
         }
 
-        return array_filter($data, fn($v) => $v !== null) + [
-            'status' => $data['status'] ?? 'PENDING', // dikembalikan
-            'lokasi_berkas' => $data['lokasi_berkas'] ?? 'ARSIP',
-            'aktivitas_kpi_k3_id' => $data['aktivitas_kpi_k3_id'],
-            'id_laporan' => $data['id_laporan'],
-        ];
+        return $data;
     }
 
     /**
