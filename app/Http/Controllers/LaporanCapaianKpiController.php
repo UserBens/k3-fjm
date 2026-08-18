@@ -737,8 +737,12 @@ class LaporanCapaianKpiController extends Controller
     private function rosterUntukTim(string $flag): Collection
     {
         return match ($flag) {
-            'safety' => Pegawai::where('is_safety_officer', true)->where('is_active', true)
-                ->orderBy('nama')->get(),
+            'safety' => \App\Models\SafetyOfficer::with('pegawai')
+                ->where('is_active', true)
+                ->get()
+                ->map(fn($so) => $so->pegawai)
+                ->filter()
+                ->values(),
 
             // ⬇️ diperbaiki: roster pengawas diambil dari pengguna_id (si pemeriksa),
             // bukan pegawai_id (pegawai yang diperiksa)
