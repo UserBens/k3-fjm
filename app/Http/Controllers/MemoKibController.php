@@ -145,6 +145,15 @@ class MemoKibController extends Controller
         return response()->json(['data' => $data]);
     }
 
+    /**
+     * Transform baris Pegawai jadi array siap tampil di memo (JSON/Excel/PDF).
+     *
+     * PENTING: field jalan/kabupaten_kota/jabatan diambil dari kolom yang
+     * diisi import:pegawai-safety-officer (CSV), BUKAN dari kolom hasil
+     * sync:pegawai (alamat/kotaid_kota/kualifikasi) — kolom-kolom ERP itu
+     * berisi data yang berbeda konteks (mis. kotaid_kota cuma kode ID
+     * referensi ERP, bukan nama kabupaten/kota yang bisa dibaca).
+     */
     private function transformPegawaiRow(Pegawai $p, Pegawai $so, int $no): array
     {
         $statusKib = $p->status_kib_info;
@@ -154,14 +163,12 @@ class MemoKibController extends Controller
             'id_api' => $p->id_api,
             'nama' => $p->nama ?? '-',
             'ktp' => $p->no_ktp ?? '-',
-            'jalan' => $p->alamat ?? '-',
+            'jalan' => $p->jalan ?? '-',
             'rt_rw' => trim(($p->rt ?? '-') . '/' . ($p->rw ?? '-'), '/') ?: '-',
             'kelurahan' => $p->kelurahan ?? '-',
             'kecamatan' => $p->kecamatan ?? '-',
-            // Catatan: belum ada relasi nama Kabupaten/Kota di skema — tampilkan nilai mentah
-            // kotaid_kota. Sambungkan ke relasi Kota (mis. belongsTo) kalau tabelnya sudah ada.
-            'kabupaten_kota' => $p->kotaid_kota ?? '-',
-            'jabatan' => optional($p->kualifikasi)->nama_kualifikasi ?? '-',
+            'kabupaten_kota' => $p->kabupaten_kota ?? '-',
+            'jabatan' => $p->jabatan ?? '-',
             'zonasi' => $p->zonasi ?? '',
             'status_kib' => $statusKib['label'],
             'status_kib_key' => $statusKib['key'],

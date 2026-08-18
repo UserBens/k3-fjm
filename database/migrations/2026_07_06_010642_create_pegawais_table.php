@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string('unit_kerjaid')->nullable();
             $table->string('lokasi_kerjaid')->nullable();
             $table->string('kualifikasiid')->nullable();
+            $table->string('jabatan', 150)->nullable();
+            $table->string('jalan', 255)->nullable();
+            $table->string('kabupaten_kota', 100)->nullable();
+
             $table->boolean('is_active')->default(true);
             $table->boolean('is_safety_officer')->default(false);
             $table->timestamp('safety_officer_since')->nullable();

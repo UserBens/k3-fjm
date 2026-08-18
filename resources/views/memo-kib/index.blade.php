@@ -990,7 +990,7 @@
                                 <div>
                                     <div class="pg-sub" style="margin:0; font-weight:700; color:#1A1D2E;"
                                         id="memoSoTitle">-</div>
-                                    <div class="memo-kode-ok" id="memoKodeOk">-</div>
+                                    {{-- <div class="memo-kode-ok" id="memoKodeOk">-</div> --}}
                                 </div>
 
                                 <div class="dropdown-cetak" id="dropdownCetak">
@@ -1187,7 +1187,7 @@
                 const r = (json.data || []).find(x => x.badge === currentSO.badge);
                 if (!r) return;
 
-                document.getElementById('memoKodeOk').textContent = `Kode OK: ${r.kode_ok}`;
+                // document.getElementById('memoKodeOk').textContent = `Kode OK: ${r.kode_ok}`;
                 document.getElementById('memoSummaryCards').innerHTML = `
                     <div class="memo-summary-card c-total"><div class="val">${r.jumlah_tenaga}</div><div class="lbl">Jumlah Tenaga</div></div>
                     <div class="memo-summary-card c-aktif"><div class="val">${r.kib_aktif}</div><div class="lbl">KIB Aktif</div></div>

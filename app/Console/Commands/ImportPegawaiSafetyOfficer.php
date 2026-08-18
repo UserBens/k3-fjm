@@ -16,22 +16,37 @@ class ImportPegawaiSafetyOfficer extends Command
         {--limit=1000 : Jumlah baris maksimal yang diimport}
         {--offset=0 : Mulai dari baris ke-berapa (0-based, tidak termasuk header)}
         {--dry-run : Hanya tampilkan hasil parsing, tidak menyimpan ke database}
-        {--delimiter=; : Karakter pemisah kolom CSV (";" atau ",")}
-        {--create-missing : Buat record pegawai baru (stub) jika badge belum ada di tabel pegawais}';
+        {--delimiter=; : Karakter pemisah kolom CSV (";" atau ",")}';
 
-    protected $description = 'Import data pegawai (tenaga binaan) beserta penugasan Safety Officer & info KIB dari CSV export sheet Data Safety';
+    protected $description = 'Import data pegawai (tenaga binaan) beserta penugasan Safety Officer & info KIB dari CSV export sheet Data Safety. '
+        . 'Hanya meng-update pegawai yang SUDAH ada (hasil sync:pegawai) — tidak pernah membuat baris pegawai baru, untuk mencegah duplikasi id_api.';
 
     // Mapping header CSV => informasi yang dipakai
     private array $columnMap = [
         'ID_KARYAWAN' => 'id_karyawan',
         'NOMOR_KTP' => 'nomor_ktp',
-        'NOMOR_KIB_PG' => 'nomor_kib',
-        'MASA_BERLAKU_KIB_PG' => 'masa_berlaku_kib',
-        'SISA_HARI_KIB_PG' => 'sisa_hari_kib', // tidak disimpan, informatif saja
+        'NOMOR_KIB' => 'nomor_kib',
+        'MASA_BERLAKU_KIB' => 'masa_berlaku_kib',
+        'SISA_HARI_KIB' => 'sisa_hari_kib', // tidak disimpan, informatif saja
         'STATUS_KIB' => 'status_kib',
         'NAMA_KARYAWAN' => 'nama_karyawan',
+        'JABATAN' => 'jabatan',
+        'ZONASI' => 'zonasi',
+        'JALAN' => 'jalan',
+        'RT/RW' => 'rt_rw',
+        'KELURAHAN/DESA' => 'kelurahan',
+        'KECAMATAN' => 'kecamatan',
+        'KABUPATEN/KOTA' => 'kabupaten_kota',
         'NAMA_SAFETY_OFFICER' => 'nama_safety_officer',
     ];
+
+    // Kolom yang juga diisi sync:pegawai dari API ERP — CSV hanya boleh
+    // mengisi kalau kolom masih kosong, tidak boleh menimpa data ERP.
+    // CATATAN: kecamatan & kelurahan SENGAJA TIDAK di sini — nilai yang
+    // diisi sync:pegawai untuk dua kolom itu ternyata berupa kode wilayah
+    // ERP (mis. "35.25.16.1006"), bukan nama yang bisa dibaca. Untuk
+    // keperluan memo KIB, CSV (yang berisi nama asli) harus selalu menang.
+    private const FILL_ONLY_IF_EMPTY = ['jabatan', 'rt', 'rw'];
 
     public function handle(): int
     {
@@ -44,7 +59,6 @@ class ImportPegawaiSafetyOfficer extends Command
         $limit = (int) $this->option('limit');
         $offset = (int) $this->option('offset');
         $dryRun = (bool) $this->option('dry-run');
-        $createMissing = (bool) $this->option('create-missing');
 
         $handle = fopen($path, 'r');
         $firstLine = fgets($handle);
@@ -112,7 +126,7 @@ class ImportPegawaiSafetyOfficer extends Command
                         continue;
                     }
 
-                    $result = $this->applyRow($parsed, $createMissing);
+                    $result = $this->applyRow($parsed);
 
                     if ($result === 'pegawai_missing') {
                         $pegawaiTidakDitemukan[] = $parsed['badge_tenaga'];
@@ -152,10 +166,10 @@ class ImportPegawaiSafetyOfficer extends Command
         $this->info("Selesai. Berhasil: {$imported}, Dilewati/error: {$skipped}.");
 
         if (!empty($pegawaiTidakDitemukan)) {
-            $this->warn('Badge pegawai tidak ditemukan di tabel pegawais (lewati --create-missing untuk buat stub): ' . implode(', ', array_unique($pegawaiTidakDitemukan)));
+            $this->warn('Badge pegawai tidak ditemukan di tabel pegawais — jalankan sync:pegawai dulu, lalu import ulang: ' . implode(', ', array_unique($pegawaiTidakDitemukan)));
         }
         if (!empty($soTidakDitemukan)) {
-            $this->warn('Badge Safety Officer tidak ditemukan di tabel pegawais: ' . implode(', ', array_unique($soTidakDitemukan)));
+            $this->warn('Badge Safety Officer tidak ditemukan di tabel pegawais — jalankan sync:pegawai dulu, lalu import ulang: ' . implode(', ', array_unique($soTidakDitemukan)));
         }
         if (!empty($ktpCorrupted)) {
             $this->warn('NOMOR_KTP berformat notasi ilmiah (rusak akibat export Excel/Sheets, presisi digit hilang) sehingga DILEWATI/tidak diisi untuk badge: ' . implode(', ', array_unique($ktpCorrupted)) . '. Silakan input ulang manual dari sumber data asli.');
@@ -193,8 +207,8 @@ class ImportPegawaiSafetyOfficer extends Command
             }
         }
 
-        // ── MASA_BERLAKU_KIB_PG: DD/MM/YYYY ──
-        $masaBerlakuRaw = $get('MASA_BERLAKU_KIB_PG');
+        // ── MASA_BERLAKU_KIB: DD/MM/YYYY ──
+        $masaBerlakuRaw = $get('MASA_BERLAKU_KIB');
         $masaBerlaku = $masaBerlakuRaw ? $this->parseTanggalDMY($masaBerlakuRaw)?->toDateString() : null;
 
         // ── NAMA_SAFETY_OFFICER: "K.202737-ARI ANGGI WICAKSONO" -> badge + nama ──
@@ -206,14 +220,31 @@ class ImportPegawaiSafetyOfficer extends Command
             $namaSOOnly = trim($m[2]);
         }
 
+        $rtRwRaw = $get('RT/RW'); // format "003/003"
+        $rt = null;
+        $rw = null;
+        if ($rtRwRaw && str_contains($rtRwRaw, '/')) {
+            [$rt, $rw] = array_map('trim', explode('/', $rtRwRaw, 2));
+        } elseif ($rtRwRaw) {
+            $rt = $rtRwRaw; // fallback kalau format tidak sesuai
+        }
+
         return [
             'badge_tenaga' => $badgeTenaga,
             'nama_tenaga' => $namaTenaga,
             'no_ktp' => $noKtp,
             'ktp_corrupted' => $ktpCorrupted,
-            'nomor_kib' => $get('NOMOR_KIB_PG'),
+            'nomor_kib' => $get('NOMOR_KIB'),
             'masa_berlaku_kib' => $masaBerlaku,
             'status_kib' => $get('STATUS_KIB'),
+            'jabatan' => $get('JABATAN'),
+            'zonasi' => $get('ZONASI'),
+            'jalan' => $get('JALAN'),
+            'rt' => $rt,
+            'rw' => $rw,
+            'kelurahan' => $get('KELURAHAN/DESA'),
+            'kecamatan' => $get('KECAMATAN'),
+            'kabupaten_kota' => $get('KABUPATEN/KOTA'),
             'badge_so' => $badgeSO,
             'nama_so' => $namaSOOnly,
         ];
@@ -221,27 +252,19 @@ class ImportPegawaiSafetyOfficer extends Command
 
     /**
      * Terapkan satu baris hasil parsing ke database:
-     * - update/buat data pegawai (tenaga) beserta info KIB
-     * - pastikan pegawai SO ada & berstatus Safety Officer
+     * - update data pegawai (tenaga) beserta info KIB & alamat — TIDAK PERNAH membuat pegawai baru
+     * - pastikan pegawai SO ada & berstatus Safety Officer — TIDAK PERNAH membuat SO baru
      * - assign tenaga ke SO tersebut (1 tenaga = 1 SO, penugasan lama dihapus)
      */
-    private function applyRow(array $parsed, bool $createMissing): string
+    private function applyRow(array $parsed): string
     {
         if (empty($parsed['badge_tenaga'])) {
             return 'pegawai_missing';
         }
 
         $pegawai = Pegawai::where('badge', $parsed['badge_tenaga'])->first();
-
         if (!$pegawai) {
-            if (!$createMissing) {
-                return 'pegawai_missing';
-            }
-            // Stub minimal — idealnya pegawai sudah ada dari sinkronisasi ERP.
-            $pegawai = new Pegawai();
-            $pegawai->id_api = $parsed['badge_tenaga']; // fallback, sebaiknya diganti saat sync ERP berikutnya
-            $pegawai->badge = $parsed['badge_tenaga'];
-            $pegawai->is_active = true;
+            return 'pegawai_missing';
         }
 
         if ($parsed['nama_tenaga']) {
@@ -259,6 +282,30 @@ class ImportPegawaiSafetyOfficer extends Command
         if ($parsed['status_kib']) {
             $pegawai->status_kib = $parsed['status_kib'];
         }
+
+        // Field murni milik CSV, atau field yang nilai ERP-nya tidak
+        // dapat dipakai untuk memo (kode wilayah, bukan nama) — selalu update.
+        if ($parsed['zonasi']) {
+            $pegawai->zonasi = $parsed['zonasi'];
+        }
+        if ($parsed['jalan']) {
+            $pegawai->jalan = $parsed['jalan'];
+        }
+        if ($parsed['kabupaten_kota']) {
+            $pegawai->kabupaten_kota = $parsed['kabupaten_kota'];
+        }
+        if ($parsed['kecamatan']) {
+            $pegawai->kecamatan = $parsed['kecamatan'];
+        }
+        if ($parsed['kelurahan']) {
+            $pegawai->kelurahan = $parsed['kelurahan'];
+        }
+
+        // Field yang juga diisi sync:pegawai dari ERP dengan nilai yang valid — jangan timpa kalau sudah terisi.
+        $this->fillIfEmpty($pegawai, 'jabatan', $parsed['jabatan']);
+        $this->fillIfEmpty($pegawai, 'rt', $parsed['rt']);
+        $this->fillIfEmpty($pegawai, 'rw', $parsed['rw']);
+
         $pegawai->save();
 
         // ── Safety Officer ──
@@ -267,25 +314,15 @@ class ImportPegawaiSafetyOfficer extends Command
         }
 
         $so = Pegawai::where('badge', $parsed['badge_so'])->first();
-
         if (!$so) {
-            if (!$createMissing) {
-                return 'so_missing';
-            }
-            $so = new Pegawai();
-            $so->id_api = $parsed['badge_so'];
-            $so->badge = $parsed['badge_so'];
-            $so->is_active = true;
+            return 'so_missing';
         }
 
-        if ($parsed['nama_so']) {
-            $so->nama = $parsed['nama_so'];
-        }
         if (!$so->is_safety_officer) {
             $so->is_safety_officer = true;
             $so->safety_officer_since = $so->safety_officer_since ?? now();
+            $so->save();
         }
-        $so->save();
 
         SafetyOfficer::updateOrCreate(
             ['badge' => $so->badge],
@@ -309,7 +346,21 @@ class ImportPegawaiSafetyOfficer extends Command
     }
 
     /**
-     * Parse tanggal format DD/MM/YYYY (format sheet lokal ID untuk MASA_BERLAKU_KIB_PG).
+     * Isi kolom hanya kalau nilainya masih kosong (null/''), supaya tidak
+     * menimpa data yang sudah diisi sync:pegawai dari ERP.
+     */
+    private function fillIfEmpty(Pegawai $pegawai, string $column, ?string $value): void
+    {
+        if ($value === null) {
+            return;
+        }
+        if ($pegawai->{$column} === null || $pegawai->{$column} === '') {
+            $pegawai->{$column} = $value;
+        }
+    }
+
+    /**
+     * Parse tanggal format DD/MM/YYYY (format sheet lokal ID untuk MASA_BERLAKU_KIB).
      */
     private function parseTanggalDMY(string $raw): ?Carbon
     {
