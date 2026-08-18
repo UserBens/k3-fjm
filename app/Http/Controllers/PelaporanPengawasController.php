@@ -463,7 +463,9 @@ class PelaporanPengawasController extends Controller
 
     private function transform(PelaporanPengawas $item): array
     {
-        $fileUrl = fn(?string $path) => $path ? asset('storage/' . $path) : null;
+        $fileUrl = fn(?string $path) => $path
+            ? (str_starts_with($path, 'http') ? $path : asset('storage/' . $path))
+            : null;
 
         return [
             'id'                   => $item->id,
