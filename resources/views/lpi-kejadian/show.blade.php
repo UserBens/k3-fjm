@@ -890,6 +890,13 @@
             height: 16px;
             flex-shrink: 0;
         }
+
+        .field-hint {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 
@@ -919,7 +926,7 @@
                         <div class="pg-sub" id="pgOwnerSub">Memuat data...</div>
                     </div>
                     <div class="pg-actions">
-                       
+
                         <button class="btn-primary" onclick="openKorbanFormModal()">
                             <svg style="width:13px;height:13px" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -1071,28 +1078,28 @@
                 <div class="form-grid">
                     <div class="form-group"><label class="form-label">Evidence 1</label><input type="file"
                             id="kEvidence_1" class="form-input" style="padding:8px 12px; height:auto;" />
-                            href="#" id="kEvidence_1Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                        href="#" id="kEvidence_1Current" class="file-current-link" target="_blank"
+                        style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 2</label><input type="file"
                             id="kEvidence_2" class="form-input" style="padding:8px 12px; height:auto;" />
-                            href="#" id="kEvidence_2Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                        href="#" id="kEvidence_2Current" class="file-current-link" target="_blank"
+                        style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 3</label><input type="file"
                             id="kEvidence_3" class="form-input" style="padding:8px 12px; height:auto;" />
-                            href="#" id="kEvidence_3Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                        href="#" id="kEvidence_3Current" class="file-current-link" target="_blank"
+                        style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 4</label><input type="file"
                             id="kEvidence_4" class="form-input" style="padding:8px 12px; height:auto;" />
-                            href="#" id="kEvidence_4Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                        href="#" id="kEvidence_4Current" class="file-current-link" target="_blank"
+                        style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Evidence 5</label><input type="file"
                             id="kEvidence_5" class="form-input" style="padding:8px 12px; height:auto;" />
-                            href="#" id="kEvidence_5Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                        href="#" id="kEvidence_5Current" class="file-current-link" target="_blank"
+                        style="display:none;">Lihat file ↗</a></div>
                     <div class="form-group"><label class="form-label">Lampiran Dokumen</label><input type="file"
                             id="kLampiran_dokumen" class="form-input" style="padding:8px 12px; height:auto;" />
-                            href="#" id="kLampiran_dokumenCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                        href="#" id="kLampiran_dokumenCurrent" class="file-current-link" target="_blank"
+                        style="display:none;">Lihat file ↗</a></div>
                 </div>
 
                 <div class="form-section-title">Kerugian & PICA</div>
@@ -1518,17 +1525,21 @@
                         key: 'klasifikasi_insiden',
                         label: 'Klasifikasi Insiden',
                         type: 'text',
-                        placeholder: 'MTI / FAC / NM'
+                        placeholder: 'MTI',
+                        hint: 'Contoh: MTI, FAC, NM'
                     },
                     {
                         key: '__saksi_fjm_picker',
                         label: 'Saksi Karyawan FJM',
-                        type: 'picker_saksi'
+                        type: 'picker_saksi',
+                        hint: 'Cari dari daftar karyawan aktif FJM. Kosongkan jika tidak ada saksi FJM.'
                     },
                     {
                         key: 'nama_saksi_karyawan_non_fjm',
                         label: 'Nama Saksi Non-FJM',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Nama saksi dari luar FJM (jika ada)',
+                        hint: 'Isi hanya jika saksi bukan karyawan FJM'
                     },
                 ]
             },
@@ -1537,65 +1548,81 @@
                 fields: [{
                         key: 'pt_asal_korban',
                         label: 'PT Asal Korban',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'FJM',
+                        hint: 'Contoh: FJM'
                     },
                     {
                         key: '__korban_picker',
                         label: 'Nama Korban (Karyawan)',
-                        type: 'picker_korban'
+                        type: 'picker_korban',
+                        hint: 'Cari dari daftar karyawan aktif. Unit kerja, departemen & jabatan akan terisi otomatis.'
                     },
                     {
                         key: 'alamat',
                         label: 'Alamat',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Dusun Guyangan Ds. Kemlegigede Kec. Turi, Gresik'
                     },
                     {
                         key: 'jenis_kelamin',
                         label: 'Jenis Kelamin',
                         type: 'select',
-                        options: ['L', 'P']
+                        options: ['L', 'P'],
+                        hint: 'L = Laki-laki, P = Perempuan'
                     },
                     {
                         key: 'usia',
                         label: 'Usia',
-                        type: 'number'
+                        type: 'number',
+                        placeholder: '36'
                     },
                     {
                         key: 'masa_kerja',
                         label: 'Masa Kerja (tahun)',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '5',
+                        hint: 'Isi dalam satuan tahun'
                     },
                     {
                         key: 'shift',
                         label: 'Shift',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'ND',
+                        hint: 'Contoh: ND, B, C'
                     },
                     {
                         key: 'departemen',
                         label: 'Departemen',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'DEP. PELAYANAN UMUM'
                     },
                     {
                         key: 'unit_kerja',
                         label: 'Unit Kerja',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'SARANA & PERLENGKAPAN'
                     },
                     {
                         key: 'jabatan',
                         label: 'Jabatan',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'HOUSEKEEPING'
                     },
                     {
                         key: 'kode_ok',
                         label: 'Kode OK',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '121',
+                        hint: 'Kode order kerja terkait, contoh: 121'
                     },
                     {
                         key: 'uraian_pekerjaan',
                         label: 'Uraian Pekerjaan',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Jasa pemeliharaan kebersihan, pengangkutan & pembuangan sampah...'
                     },
                 ]
             },
@@ -1604,33 +1631,41 @@
                 fields: [{
                         key: 'jenis_insiden',
                         label: 'Jenis Insiden',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Kontak dengan permukaan kerja (barang kasar, tajam, tersayat)'
                     },
                     {
                         key: 'penjelasan_jenis_insiden',
                         label: 'Penjelasan Jenis Insiden',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: "Jelaskan detail kejadian, isi '-' jika tidak ada"
                     },
                     {
                         key: 'keterlibatan_alat',
                         label: 'Keterlibatan Alat',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Lain-Lain',
+                        hint: 'Contoh: Lain-Lain, Tidak Ada Alat/Unit'
                     },
                     {
                         key: 'keterangan_alat_lain',
                         label: 'Keterangan Alat Lain-lain',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Mesin Pemotong Rumput'
                     },
                     {
                         key: 'nomor_alat',
                         label: 'Nomor Alat',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: "Isi nomor alat, atau '-' jika tidak ada"
                     },
                     {
                         key: 'status_milik_alat_unit',
                         label: 'Status Milik Alat/Unit',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Milik Perusahaan',
+                        hint: 'Contoh: Milik Perusahaan, Tidak Ada Alat/Unit'
                     },
                 ]
             },
@@ -1640,22 +1675,26 @@
                         key: 'tindakan_tidak_aman',
                         label: 'Tindakan Tidak Aman',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Contoh: Membuat alat pengaman tidak berfungsi'
                     },
                     {
                         key: 'ua_sebab_1',
                         label: 'Sebab 1',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: APD tidak memadai'
                     },
                     {
                         key: 'ua_sebab_2',
                         label: 'Sebab 2',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Kurang pengetahuan'
                     },
                     {
                         key: 'ua_sebab_3',
                         label: 'Sebab 3',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Spesifikasi pembelian tidak memadai'
                     },
                 ]
             },
@@ -1665,22 +1704,26 @@
                         key: 'kondisi_tidak_aman',
                         label: 'Kondisi Tidak Aman',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Contoh: Sistem peringatan tidak memadai'
                     },
                     {
                         key: 'uc_sebab_1',
                         label: 'Sebab 1',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Sebab lain'
                     },
                     {
                         key: 'uc_sebab_2',
                         label: 'Sebab 2',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Kurang pengetahuan'
                     },
                     {
                         key: 'uc_sebab_3',
                         label: 'Sebab 3',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Standar / prosedur kerja tidak memadai'
                     },
                 ]
             },
@@ -1690,22 +1733,26 @@
                         key: 'faktor_pribadi',
                         label: 'Faktor Pribadi',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Contoh: Kurang keterampilan'
                     },
                     {
                         key: 'fp_sebab_1',
                         label: 'Sebab 1',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Kurangnya pengalaman'
                     },
                     {
                         key: 'fp_sebab_2',
                         label: 'Sebab 2',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Kelelahan kerja'
                     },
                     {
                         key: 'fp_sebab_3',
                         label: 'Sebab 3',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Kurang pelatihan'
                     },
                 ]
             },
@@ -1715,22 +1762,26 @@
                         key: 'faktor_pekerjaan',
                         label: 'Faktor Pekerjaan',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Contoh: Kurangnya pengawasan'
                     },
                     {
                         key: 'fk_sebab_1',
                         label: 'Sebab 1',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Perkakas / peralatan / material tidak memadai'
                     },
                     {
                         key: 'fk_sebab_2',
                         label: 'Sebab 2',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Standar kerja tidak memadai'
                     },
                     {
                         key: 'fk_sebab_3',
                         label: 'Sebab 3',
-                        type: 'textarea'
+                        type: 'textarea',
+                        placeholder: 'Contoh: Faktor pekerjaan lain; menjelaskan'
                     },
                 ]
             },
@@ -1740,25 +1791,29 @@
                         key: 'sistem_manajemen_terkait',
                         label: 'Nomor & Judul Prosedur',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: "Nomor & judul prosedur terkait, isi '-' jika tidak ada"
                     },
                     {
                         key: 'deskripsi_kegagalan_sistem',
                         label: 'Deskripsi Kegagalan Sistem',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: "Jelaskan kegagalan sistem, isi '-' jika tidak ada"
                     },
                     {
                         key: 'penyebab_kegagalan_sistem',
                         label: 'Penyebab Kegagalan Sistem',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: "Jelaskan penyebabnya, isi '-' jika tidak ada"
                     },
                     {
                         key: 'sebab_sebab_teridentifikasi',
                         label: 'Sebab-sebab Teridentifikasi',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: "Rangkuman sebab yang teridentifikasi, isi '-' jika tidak ada"
                     },
                 ]
             },
@@ -1768,13 +1823,15 @@
                         key: 'pengendalian_risiko',
                         label: 'Pengendalian Risiko',
                         type: 'text',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Contoh: Alat Pelindung Diri (Penggunaan APD yang Sesuai)'
                     },
                     {
                         key: 'penjelasan_pengendalian_risiko',
                         label: 'Penjelasan Pengendalian Risiko',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Jelaskan detail pengendalian risiko yang diterapkan'
                     },
                 ]
             },
@@ -1783,49 +1840,59 @@
                 fields: [{
                         key: 'rincian_cidera',
                         label: 'Rincian Cidera',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Contoh: Kaki, Kepala, Jari tangan'
                     },
                     {
                         key: 'persentase_luka_bakar',
                         label: 'Persentase Luka Bakar (%)',
-                        type: 'number'
+                        type: 'number',
+                        placeholder: '0',
+                        hint: 'Isi 0 jika tidak ada luka bakar'
                     },
                     {
                         key: 'keterangan_detail_cidera',
                         label: 'Keterangan Detail Cidera',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Contoh: Luka baret pada kaki sebelah kanan'
                     },
                     {
                         key: 'kategori_penanganan_medis',
                         label: 'Kategori Penanganan Medis',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Contoh: Rujuk RS'
                     },
                     {
                         key: 'keterangan_penanganan_medis',
                         label: 'Keterangan Penanganan Medis',
                         type: 'textarea',
-                        span: 2
+                        span: 2,
+                        placeholder: 'Jelaskan penanganan medis yang diberikan'
                     },
                     {
                         key: 'nama_dokter',
                         label: 'Nama Dokter',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Nama dokter yang menangani'
                     },
                     {
                         key: 'total_hari_kerja_hilang',
                         label: 'Total Hari Kerja Hilang',
-                        type: 'number'
+                        type: 'number',
+                        placeholder: '0'
                     },
                     {
                         key: 'nominal_biaya_medis',
                         label: 'Nominal Biaya Medis (Rp)',
-                        type: 'number'
+                        type: 'number',
+                        placeholder: '10000000'
                     },
                     {
                         key: 'penjamin_platform',
                         label: 'Penjamin / Platform',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'BPJSTK'
                     },
                 ]
             },
@@ -1848,44 +1915,59 @@
         function renderKorbanField(f) {
             const spanClass = f.span ? ` span-${f.span}` : '';
             const id = fieldInputId(f.key);
+            const hintHtml = f.hint ? `<div class="field-hint">${escapeHtml(f.hint)}</div>` : '';
 
             if (f.type === 'picker_korban') {
                 return `<div class="form-group span-2">
-                    <label class="form-label">${f.label}</label>
-                    <div class="picker-wrap" id="korbanPickerWrap">
-                        <input type="text" id="korbanPickerInput" class="form-input" placeholder="Cari nama atau badge karyawan..." oninput="onKaryawanPickerInput('korban')" autocomplete="off" />
-                        <div class="picker-dropdown" id="korbanPickerDropdown"></div>
-                    </div>
-                    <div class="picker-selected-chip" id="korbanSelectedChip" style="display:none;">
-                        <div><div class="chip-name" id="korbanSelectedName">-</div><div class="chip-sub" id="korbanSelectedSub">-</div></div>
-                        <button type="button" class="picker-clear-btn" onclick="clearKaryawanPicker('korban')">Ganti</button>
-                    </div>
-                    <input type="hidden" id="${fieldInputId('badge_korban')}" />
-                    <input type="hidden" id="${fieldInputId('nama_korban')}" />
-                </div>`;
+            <label class="form-label">${f.label}</label>
+            <div class="picker-wrap" id="korbanPickerWrap">
+                <input type="text" id="korbanPickerInput" class="form-input" placeholder="Cari nama atau badge karyawan..." oninput="onKaryawanPickerInput('korban')" autocomplete="off" />
+                <div class="picker-dropdown" id="korbanPickerDropdown"></div>
+            </div>
+            <div class="picker-selected-chip" id="korbanSelectedChip" style="display:none;">
+                <div><div class="chip-name" id="korbanSelectedName">-</div><div class="chip-sub" id="korbanSelectedSub">-</div></div>
+                <button type="button" class="picker-clear-btn" onclick="clearKaryawanPicker('korban')">Ganti</button>
+            </div>
+            ${hintHtml}
+            <input type="hidden" id="${fieldInputId('badge_korban')}" />
+            <input type="hidden" id="${fieldInputId('nama_korban')}" />
+            </div>`;
             }
             if (f.type === 'picker_saksi') {
                 return `<div class="form-group span-2">
-                    <label class="form-label">${f.label}</label>
-                    <div class="picker-wrap" id="saksiPickerWrap">
-                        <input type="text" id="saksiPickerInput" class="form-input" placeholder="Cari nama atau badge karyawan..." oninput="onKaryawanPickerInput('saksi')" autocomplete="off" />
-                        <div class="picker-dropdown" id="saksiPickerDropdown"></div>
-                    </div>
-                    <div class="picker-selected-chip" id="saksiSelectedChip" style="display:none;">
-                        <div><div class="chip-name" id="saksiSelectedName">-</div><div class="chip-sub" id="saksiSelectedSub">-</div></div>
-                        <button type="button" class="picker-clear-btn" onclick="clearKaryawanPicker('saksi')">Ganti</button>
-                    </div>
-                    <input type="hidden" id="${fieldInputId('badge_saksi_karyawan_fjm')}" />
-                    <input type="hidden" id="${fieldInputId('nama_saksi_karyawan_fjm')}" />
+            <label class="form-label">${f.label}</label>
+            <div class="picker-wrap" id="saksiPickerWrap">
+                <input type="text" id="saksiPickerInput" class="form-input" placeholder="Cari nama atau badge karyawan..." oninput="onKaryawanPickerInput('saksi')" autocomplete="off" />
+                <div class="picker-dropdown" id="saksiPickerDropdown"></div>
+            </div>
+            <div class="picker-selected-chip" id="saksiSelectedChip" style="display:none;">
+                <div><div class="chip-name" id="saksiSelectedName">-</div><div class="chip-sub" id="saksiSelectedSub">-</div></div>
+                <button type="button" class="picker-clear-btn" onclick="clearKaryawanPicker('saksi')">Ganti</button>
+            </div>
+            ${hintHtml}
+            <input type="hidden" id="${fieldInputId('badge_saksi_karyawan_fjm')}" />
+            <input type="hidden" id="${fieldInputId('nama_saksi_karyawan_fjm')}" />
                 </div>`;
             }
             if (f.type === 'textarea') {
-                return `<div class="form-group${spanClass}"><label class="form-label">${f.label}</label><textarea id="${id}" class="form-textarea" rows="2"></textarea></div>`;
+                return `<div class="form-group${spanClass}">
+                    <label class="form-label">${f.label}</label>
+                    <textarea id="${id}" class="form-textarea" rows="2" placeholder="${escapeHtml(f.placeholder || '')}"></textarea>
+                    ${hintHtml}
+                </div>`;
             }
             if (f.type === 'select') {
-                return `<div class="form-group${spanClass}"><label class="form-label">${f.label}</label><select id="${id}" class="form-select"><option value="">-- Pilih --</option>${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select></div>`;
+                return `<div class="form-group${spanClass}">
+                    <label class="form-label">${f.label}</label>
+                    <select id="${id}" class="form-select"><option value="">-- Pilih --</option>${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>
+                    ${hintHtml}
+                </div>`;
             }
-            return `<div class="form-group${spanClass}"><label class="form-label">${f.label}</label><input type="${f.type}" id="${id}" class="form-input" placeholder="${f.placeholder || ''}" /></div>`;
+            return `<div class="form-group${spanClass}">
+                <label class="form-label">${f.label}</label>
+                <input type="${f.type}" id="${id}" class="form-input" placeholder="${escapeHtml(f.placeholder || '')}" />
+                ${hintHtml}
+            </div>`;
         }
 
         function flatKorbanKeys() {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LokasiKerja;
 use App\Models\LpiKejadian;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -64,6 +65,19 @@ class LpiKejadianController extends Controller
             Log::error('Gagal memuat data LPI kejadian: ' . $e->getMessage());
             return response()->json(['message' => 'Gagal mengambil data.'], 500);
         }
+    }
+
+    public function lokasiKerjaOptions(): JsonResponse
+    {
+        $items = LokasiKerja::query()
+            ->select('nama_lokasi')
+            ->whereNotNull('nama_lokasi')
+            ->where('nama_lokasi', '!=', '')
+            ->distinct()
+            ->orderBy('nama_lokasi')
+            ->pluck('nama_lokasi');
+
+        return response()->json(['data' => $items]);
     }
 
     public function store(Request $request): JsonResponse
@@ -195,10 +209,73 @@ class LpiKejadianController extends Controller
             'status_pelaporan_lpi' => 'nullable|string|max:30',
         ];
 
+        // evidence_1..5 -> hanya jpg/jpeg, lampiran_dokumen -> hanya pdf, max 5MB (5120 KB)
         foreach ($this->fileFields as $formField => [$column, $folder]) {
-            $rules[$formField] = 'nullable|file|max:5120';
+            $rules[$formField] = $folder === 'evidence'
+                ? 'nullable|file|mimes:jpg,jpeg|max:5120'
+                : 'nullable|file|mimes:pdf|max:5120';
         }
 
-        return $request->validate($rules);
+        return $request->validate($rules, $this->fileValidationMessages());
+    }
+
+    private function fileValidationMessages(): array
+    {
+        $messages = [];
+        foreach ($this->fileFields as $formField => [$column, $folder]) {
+            $messages["{$formField}.mimes"] = $folder === 'evidence'
+                ? 'File harus berformat JPG atau JPEG.'
+                : 'File harus berformat PDF.';
+            $messages["{$formField}.max"] = 'Ukuran file maksimal 5MB.';
+        }
+        return $messages;
+    }
+
+    public function nextIdLpi(): JsonResponse
+    {
+        try {
+            $year = now()->year;
+            $month = now()->month;
+            $romanMonth = $this->toRoman($month);
+            $suffix = "/LPI/K3/FJM/{$romanMonth}/{$year}";
+
+            // ambil id_lpi terakhir dengan suffix bulan+tahun berjalan yang sama
+            $lastId = LpiKejadian::query()
+                ->where('id_lpi', 'like', "%{$suffix}")
+                ->orderByDesc('id')
+                ->value('id_lpi');
+
+            $nextSequence = 1;
+            if ($lastId) {
+                $sequencePart = explode('/', $lastId)[0] ?? '0';
+                $nextSequence = ((int) $sequencePart) + 1;
+            }
+
+            $nextId = str_pad((string) $nextSequence, 3, '0', STR_PAD_LEFT) . $suffix;
+
+            return response()->json(['data' => $nextId]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal membuat ID LPI otomatis: ' . $e->getMessage());
+            return response()->json(['message' => 'Gagal membuat ID LPI otomatis.'], 500);
+        }
+    }
+
+    private function toRoman(int $month): string
+    {
+        $map = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII',
+        ];
+        return $map[$month] ?? 'I';
     }
 }

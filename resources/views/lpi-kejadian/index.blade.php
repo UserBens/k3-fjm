@@ -905,9 +905,9 @@
         }
 
         .form-modal-box {
-            width: 640px;
-            max-width: calc(100vw - 32px);
-            max-height: 90vh;
+            width: 860px;
+            max-width: calc(100vw - 48px);
+            max-height: 92vh;
             display: flex;
             flex-direction: column;
         }
@@ -1310,6 +1310,12 @@
         .dynamic-form-section-title:first-child {
             margin-top: 0;
         }
+
+        .file-hint {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 4px;
+        }
     </style>
 </head>
 
@@ -1421,10 +1427,20 @@
             <div class="form-modal-body">
                 <div class="form-section-title">Identitas Laporan</div>
                 <div class="form-grid">
-                    <div class="form-group"><label class="form-label">ID LPI</label><input type="text"
-                            id="kId_lpi" class="form-input" placeholder="002/LPI/K3/FJM/I/2026" /></div>
-                    <div class="form-group"><label class="form-label">Owner User</label><input type="text"
-                            id="kOwner_user" class="form-input" placeholder="PT. PETRO GRAHA MEDIKA" /></div>
+                    <div class="form-group">
+                        <label class="form-label">ID LPI</label>
+                        <input type="text" id="kId_lpi" class="form-input" placeholder="002/LPI/K3/FJM/I/2026"
+                            readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Owner User</label>
+                        <div class="picker-wrap" id="ownerUserPickerWrap">
+                            <input type="text" id="kOwner_user" class="form-input"
+                                placeholder="Cari / pilih lokasi kerja..." autocomplete="off"
+                                oninput="onOwnerUserInput()" onfocus="onOwnerUserFocus()" />
+                            <div class="picker-dropdown" id="ownerUserDropdown"></div>
+                        </div>
+                    </div>
                     <div class="form-group"><label class="form-label">Tanggal Insiden</label><input type="date"
                             id="kTanggal_insiden" class="form-input" onchange="autoFillHari()" /></div>
                     <div class="form-group"><label class="form-label">Hari Insiden</label><input type="text"
@@ -1460,30 +1476,48 @@
 
                 <div class="form-section-title">Evidence & Lampiran</div>
                 <div class="form-grid">
-                    <div class="form-group"><label class="form-label">Evidence 1</label><input type="file"
-                            id="kEvidence_1" class="form-input" style="padding:8px 12px; height:auto;" /><a
-                            href="#" id="kEvidence_1Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
-                    <div class="form-group"><label class="form-label">Evidence 2</label><input type="file"
-                            id="kEvidence_2" class="form-input" style="padding:8px 12px; height:auto;" /><a
-                            href="#" id="kEvidence_2Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
-                    <div class="form-group"><label class="form-label">Evidence 3</label><input type="file"
-                            id="kEvidence_3" class="form-input" style="padding:8px 12px; height:auto;" /><a
-                            href="#" id="kEvidence_3Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
-                    <div class="form-group"><label class="form-label">Evidence 4</label><input type="file"
-                            id="kEvidence_4" class="form-input" style="padding:8px 12px; height:auto;" /><a
-                            href="#" id="kEvidence_4Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
-                    <div class="form-group"><label class="form-label">Evidence 5</label><input type="file"
-                            id="kEvidence_5" class="form-input" style="padding:8px 12px; height:auto;" /><a
-                            href="#" id="kEvidence_5Current" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
-                    <div class="form-group"><label class="form-label">Lampiran Dokumen</label><input type="file"
-                            id="kLampiran_dokumen" class="form-input" style="padding:8px 12px; height:auto;" /><a
-                            href="#" id="kLampiran_dokumenCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat file ↗</a></div>
+                    <div class="form-group"><label class="form-label">Evidence 1</label>
+                        <input type="file" id="kEvidence_1" class="form-input" accept=".jpg,.jpeg"
+                            style="padding:8px 12px; height:auto;" />
+                        <div class="file-hint">Format: JPG, JPEG · Maks 5MB</div>
+                        <a href="#" id="kEvidence_1Current" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file ↗</a>
+                    </div>
+                    <div class="form-group"><label class="form-label">Evidence 2</label>
+                        <input type="file" id="kEvidence_2" class="form-input" accept=".jpg,.jpeg"
+                            style="padding:8px 12px; height:auto;" />
+                        <div class="file-hint">Format: JPG, JPEG · Maks 5MB</div>
+                        <a href="#" id="kEvidence_2Current" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file ↗</a>
+                    </div>
+                    <div class="form-group"><label class="form-label">Evidence 3</label>
+                        <input type="file" id="kEvidence_3" class="form-input" accept=".jpg,.jpeg"
+                            style="padding:8px 12px; height:auto;" />
+                        <div class="file-hint">Format: JPG, JPEG · Maks 5MB</div>
+                        <a href="#" id="kEvidence_3Current" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file ↗</a>
+                    </div>
+                    <div class="form-group"><label class="form-label">Evidence 4</label>
+                        <input type="file" id="kEvidence_4" class="form-input" accept=".jpg,.jpeg"
+                            style="padding:8px 12px; height:auto;" />
+                        <div class="file-hint">Format: JPG, JPEG · Maks 5MB</div>
+                        <a href="#" id="kEvidence_4Current" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file ↗</a>
+                    </div>
+                    <div class="form-group"><label class="form-label">Evidence 5</label>
+                        <input type="file" id="kEvidence_5" class="form-input" accept=".jpg,.jpeg"
+                            style="padding:8px 12px; height:auto;" />
+                        <div class="file-hint">Format: JPG, JPEG · Maks 5MB</div>
+                        <a href="#" id="kEvidence_5Current" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file ↗</a>
+                    </div>
+                    <div class="form-group"><label class="form-label">Lampiran Dokumen</label>
+                        <input type="file" id="kLampiran_dokumen" class="form-input" accept=".pdf"
+                            style="padding:8px 12px; height:auto;" />
+                        <div class="file-hint">Format: PDF · Maks 5MB</div>
+                        <a href="#" id="kLampiran_dokumenCurrent" class="file-current-link" target="_blank"
+                            style="display:none;">Lihat file ↗</a>
+                    </div>
                 </div>
 
                 <div class="form-section-title">Kerugian & PICA</div>
@@ -1653,6 +1687,8 @@
 
     <script>
         const KEJADIAN_DATA_ENDPOINT = "{{ route('lpi-kejadian.data') }}";
+        const LOKASI_KERJA_OPTIONS_ENDPOINT = "{{ route('lpi-kejadian.lokasi-options') }}";
+        const KEJADIAN_NEXT_ID_ENDPOINT = "{{ route('lpi-kejadian.next-id') }}";
         const KEJADIAN_STORE_ENDPOINT = "{{ route('lpi-kejadian.store') }}";
         const KEJADIAN_BASE_ENDPOINT = "{{ url('/lpi-kejadian') }}";
         const KORBAN_BASE_ENDPOINT = "{{ url('/lpi-korban') }}";
@@ -1677,6 +1713,9 @@
             currentDetailKejadian = null,
             activeKaryawanPickerTarget = null,
             karyawanPickerDebounce = null;
+
+        let lokasiKerjaOptions = [];
+        let lokasiKerjaLoaded = false;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1920,9 +1959,10 @@
             }
         }
 
-        function openKejadianModal(row = null) {
+        async function openKejadianModal(row = null) {
             currentEditKejadianId = row ? row.id : null;
-            document.getElementById('kejadianModalTitle').textContent = row ? 'Edit Kejadian LPI' : 'Tambah Kejadian LPI';
+            document.getElementById('kejadianModalTitle').textContent = row ? 'Edit Kejadian LPI' :
+                'Tambah Kejadian LPI';
 
             Object.entries(KEJADIAN_TEXT_MAP).forEach(([elId, field]) => {
                 document.getElementById(elId).value = row?.[field] ?? (field === 'status_penyelesaian_lpi' ?
@@ -1940,6 +1980,29 @@
             });
 
             document.getElementById('kejadianModalOverlay').classList.add('open');
+
+            // ── auto-generate ID LPI untuk data baru ──
+            if (!row) {
+                await generateNextIdLpi();
+            }
+        }
+
+        async function generateNextIdLpi() {
+            const idInput = document.getElementById('kId_lpi');
+            idInput.value = 'Memuat...';
+            try {
+                const res = await fetch(KEJADIAN_NEXT_ID_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!res.ok) throw new Error();
+                const json = await res.json();
+                idInput.value = json.data;
+            } catch (e) {
+                idInput.value = '';
+                showToast('Gagal membuat ID LPI otomatis, silakan coba lagi.', 'error');
+            }
         }
 
         function closeKejadianModal() {
@@ -1951,13 +2014,69 @@
             if (e.target.id === 'kejadianModalOverlay') closeKejadianModal();
         }
 
+        const FILE_VALIDATION_RULES = {
+            evidence_1: {
+                exts: ['jpg', 'jpeg'],
+                maxMB: 5,
+                label: 'Evidence 1'
+            },
+            evidence_2: {
+                exts: ['jpg', 'jpeg'],
+                maxMB: 5,
+                label: 'Evidence 2'
+            },
+            evidence_3: {
+                exts: ['jpg', 'jpeg'],
+                maxMB: 5,
+                label: 'Evidence 3'
+            },
+            evidence_4: {
+                exts: ['jpg', 'jpeg'],
+                maxMB: 5,
+                label: 'Evidence 4'
+            },
+            evidence_5: {
+                exts: ['jpg', 'jpeg'],
+                maxMB: 5,
+                label: 'Evidence 5'
+            },
+            lampiran_dokumen: {
+                exts: ['pdf'],
+                maxMB: 5,
+                label: 'Lampiran Dokumen'
+            },
+        };
+
+        function validateKejadianFiles() {
+            for (const f of KEJADIAN_FILE_FIELDS) {
+                const inputId = 'k' + f.replace(/(^|_)([a-z])/g, (_, p1, p2) => p2.toUpperCase());
+                const input = document.getElementById(inputId);
+                if (!input || input.files.length === 0) continue;
+
+                const file = input.files[0];
+                const rule = FILE_VALIDATION_RULES[f];
+                const ext = file.name.split('.').pop().toLowerCase();
+
+                if (!rule.exts.includes(ext)) {
+                    showToast(`${rule.label}: format harus ${rule.exts.join('/').toUpperCase()}.`, 'error');
+                    return false;
+                }
+                if (file.size > rule.maxMB * 1024 * 1024) {
+                    showToast(`${rule.label}: ukuran file maksimal ${rule.maxMB}MB.`, 'error');
+                    return false;
+                }
+            }
+            return true;
+        }
+
         async function submitKejadian() {
-            const btn = document.getElementById('btnSubmitKejadian');
+            const btn = document.getElementById('btnSubmitKejadian'); // ← baris ini yang hilang
             const idLpi = document.getElementById('kId_lpi').value.trim();
             if (!idLpi) {
                 showToast('ID LPI wajib diisi.', 'error');
                 return;
             }
+            if (!validateKejadianFiles()) return;
 
             btn.disabled = true;
             const originalText = btn.textContent;
@@ -1969,11 +2088,7 @@
             });
             KEJADIAN_FILE_FIELDS.forEach(f => {
                 const inputId = 'k' + f.replace(/(^|_)([a-z])/g, (_, p1, p2) => p2.toUpperCase());
-
-                console.log(f, inputId, document.getElementById(inputId));
-
                 const input = document.getElementById(inputId);
-
                 if (input && input.files.length > 0) {
                     formData.append(f, input.files[0]);
                 }
@@ -2635,14 +2750,66 @@
         }
 
         document.addEventListener('click', (e) => {
-            ['korbanPickerWrap', 'saksiPickerWrap'].forEach(wrapId => {
+            ['korbanPickerWrap', 'saksiPickerWrap', 'ownerUserPickerWrap'].forEach(wrapId => {
                 const wrap = document.getElementById(wrapId);
                 const dropdownId = wrapId === 'korbanPickerWrap' ? 'korbanPickerDropdown' :
-                    'saksiPickerDropdown';
+                    wrapId === 'saksiPickerWrap' ? 'saksiPickerDropdown' : 'ownerUserDropdown';
                 if (wrap && !wrap.contains(e.target)) document.getElementById(dropdownId)?.classList.remove(
                     'open');
             });
         });
+
+        async function loadLokasiKerjaOptions() {
+            if (lokasiKerjaLoaded) return;
+            try {
+                const res = await fetch(LOKASI_KERJA_OPTIONS_ENDPOINT, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                lokasiKerjaOptions = json.data || [];
+                lokasiKerjaLoaded = true;
+            } catch (e) {
+                lokasiKerjaOptions = [];
+            }
+        }
+
+        function renderOwnerUserDropdown(list) {
+            const dropdown = document.getElementById('ownerUserDropdown');
+            if (!list.length) {
+                dropdown.innerHTML =
+                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada lokasi kerja ditemukan.</div>`;
+                dropdown.classList.add('open');
+                return;
+            }
+            dropdown.innerHTML = list.map(nama => `
+        <div class="picker-item" onclick='pilihOwnerUser(${JSON.stringify(nama)})'>
+            <div class="picker-item-name">${escapeHtml(nama)}</div>
+        </div>
+    `).join('');
+            dropdown.classList.add('open');
+        }
+
+        function onOwnerUserFocus() {
+            loadLokasiKerjaOptions().then(() => {
+                const q = document.getElementById('kOwner_user').value.trim().toLowerCase();
+                const filtered = q ? lokasiKerjaOptions.filter(n => n.toLowerCase().includes(q)) :
+                    lokasiKerjaOptions;
+                renderOwnerUserDropdown(filtered);
+            });
+        }
+
+        function onOwnerUserInput() {
+            const q = document.getElementById('kOwner_user').value.trim().toLowerCase();
+            const filtered = q ? lokasiKerjaOptions.filter(n => n.toLowerCase().includes(q)) : lokasiKerjaOptions;
+            renderOwnerUserDropdown(filtered);
+        }
+
+        function pilihOwnerUser(nama) {
+            document.getElementById('kOwner_user').value = nama;
+            document.getElementById('ownerUserDropdown').classList.remove('open');
+        }
 
         // ══════ MODAL FORM KORBAN — open/submit ══════
         function openKorbanFormModal(korbanId = null) {

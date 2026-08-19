@@ -178,6 +178,8 @@ Route::middleware(['auth.custom'])->group(function () {
         // LPI KEJADIAN
         Route::get('/lpi-kejadian', [LpiKejadianController::class, 'index'])->name('lpi-kejadian.index');
         Route::get('/lpi-kejadian/data', [LpiKejadianController::class, 'data'])->name('lpi-kejadian.data');
+        Route::get('/lpi-kejadian/lokasi-kerja-options', [LpiKejadianController::class, 'lokasiKerjaOptions'])->name('lpi-kejadian.lokasi-options');
+        Route::get('/lpi-kejadian/next-id', [LpiKejadianController::class, 'nextIdLpi'])->name('lpi-kejadian.next-id'); // ← tambahan
         Route::get('/lpi-kejadian/{lpiKejadian}', [LpiKejadianController::class, 'show'])->name('lpi-kejadian.show');
         Route::get('/lpi-kejadian/{lpiKejadian}/detail', [LpiKejadianController::class, 'detail'])->name('lpi-kejadian.detail');
         Route::post('/lpi-kejadian', [LpiKejadianController::class, 'store'])->name('lpi-kejadian.store');
