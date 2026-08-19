@@ -32,7 +32,6 @@ class ToolboxMeetingController extends Controller
     /**
      * Data tabel: list + search + filter + pagination.
      */
-
     public function data(Request $request): JsonResponse
     {
         try {
@@ -77,7 +76,6 @@ class ToolboxMeetingController extends Controller
 
             $paginator = $query->paginate($perPage);
 
-            // PENAMBAHAN PENGECEKAN HTTP DI SINI
             $transformed = collect($paginator->items())->map(fn(ToolboxMeeting $item) => [
                 'id' => $item->id,
                 'tanggal' => optional($item->tanggal)->format('Y-m-d'),
@@ -222,12 +220,25 @@ class ToolboxMeetingController extends Controller
 
     private function deleteFileIfExists(?string $path): void
     {
-        if ($path && Storage::disk('public')->exists($path)) {
+        // Jangan coba hapus dari storage lokal kalau isinya link eksternal (Google Drive)
+        if ($path && !str_starts_with($path, 'http') && Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
     }
 
-    // PENAMBAHAN PENGECEKAN HTTP PADA TRANSFORM
+    /**
+     * Bangun URL untuk kolom foto/dokumen, mendukung 2 kondisi:
+     *  - Path storage lokal hasil upload form (mis. "tbm/foto-tbm/xxx.jpg")
+     *    -> dibungkus jadi asset('storage/...')
+     *  - Link eksternal penuh hasil import CSV (mis. "https://drive.google.com/...")
+     *    -> dikembalikan apa adanya
+     */
+    private function fileUrl(?string $path): ?string
+    {
+        if (!$path) return null;
+        return str_starts_with($path, 'http') ? $path : asset('storage/' . $path);
+    }
+
     private function transform(ToolboxMeeting $item): array
     {
         $base = $item->toArray();

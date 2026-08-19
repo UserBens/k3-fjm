@@ -1289,7 +1289,6 @@
                                 <th>Safety Officer</th>
                                 <th>Area Kerja</th>
                                 <th>Unit Kerja</th>
-                                <th>Dokumentasi</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -1308,12 +1307,10 @@
                                     <div class="skeleton-bar" style="width:120px;"></div>
                                 </td>
                                 <td>
-                                    <div class="skeleton-bar" style="width:80px;"></div>
-                                </td>
-                                <td>
                                     <div class="skeleton-bar" style="width:60px;"></div>
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -1721,19 +1718,10 @@
             const tbody = document.getElementById('tableBody');
 
             if (!rows || rows.length === 0) {
-                // Menggunakan gaya empty state yang lebih ringkas dari script referensi (disesuaikan dengan 6 kolom)
                 tbody.innerHTML =
-                    `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
+                    `<tr><td colspan="5"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
                 return;
             }
-
-            // Icon tetap dipertahankan karena dibutuhkan oleh fungsi docChip() Anda
-            const camIcon =
-                '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.174C2.999 7.58 2.25 8.507 2.25 9.574v9.176c0 1.24 1.01 2.25 2.25 2.25h15c1.24 0 2.25-1.01 2.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.174 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>';
-            const listIcon =
-                '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 8.25h16.5M3.75 5.25h16.5" /></svg>';
-            const docIcon =
-                '<svg style="width:13px;height:13px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-1.519-2.394a2.98 2.98 0 01-1.106.235c-1.03 0-1.984-.397-2.708-1.043m3.814.808l1.519 2.394m-5.333-3.202a2.98 2.98 0 001.106.235" /></svg>';
 
             tbody.innerHTML = rows.map(row => `
                 <tr>
@@ -1741,13 +1729,6 @@
                     <td><div class="td-name-cell"><div class="td-avatar">${escapeHtml(initials(row.nama_so))}</div><div><div class="td-name-main">${escapeHtml(row.nama_so || '-')}</div><div class="td-name-sub">${escapeHtml(row.badge_so || '-')}</div></div></div></td>
                     <td>${escapeHtml(row.area_kerja || '-')}</td>
                     <td>${escapeHtml(row.unit_kerja || '-')}</td>
-                    <td>
-                        <div class="doc-links">
-                            ${docChip(row.foto_tbm, 'Foto TBM', camIcon)}
-                            ${docChip(row.foto_daftar_hadir, 'Daftar Hadir', listIcon)}
-                            ${docChip(row.dokumen_laporan_kegiatan, 'Laporan Kegiatan', docIcon)}
-                        </div>
-                    </td>
                     <td style="text-align:center; white-space:nowrap;">
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>
                         <button class="btn-outline" style="padding:5px 8px;" onclick='openEditModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
@@ -1757,10 +1738,11 @@
             `).join('');
         }
 
+
         function renderError(message) {
             document.getElementById('tableBody').innerHTML = `
             <tr>
-                <td colspan="6">
+                <td colspan="5">
                     <div class="error-state">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m9.75-.75a9 9 0 11-18 0 9 9 0 0118 0zm-8.25 3.75h.008v.008h-.008v-.008z" />

@@ -254,9 +254,12 @@ class RekapKpiProgramController extends Controller
         $selesai = $filters['periode_selesai'];
         $area = $filters['area'];
 
+        // Modul Unsafe Action/Condition tidak memakai alur approval (keputusan),
+        // jadi semua temuan pada rentang periode & area dihitung — tidak
+        // difilter berdasarkan status_temuan (OPEN/CLOSE) juga, karena rekap
+        // ini menghitung SEMUA temuan yang dilaporkan pada periode tsb.
         $query = DB::table('data_unsafe')
-            ->whereBetween('tanggal_temuan', [$mulai->toDateString(), $selesai->toDateString()])
-            ->where('keputusan', 'APPROVE'); // hanya temuan yang sudah disetujui
+            ->whereBetween('tanggal_temuan', [$mulai->toDateString(), $selesai->toDateString()]);
 
         if ($area && strtoupper($area) !== 'SEMUA') {
             $query->where('area_kerja', $area);
@@ -290,6 +293,7 @@ class RekapKpiProgramController extends Controller
 
         return $hasil;
     }
+
 
     private function areaOptions(): Collection
     {

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DataUnsafeController extends Controller
 {
+    // Daftar field file: form_field => [kolom_db, folder_storage]
     private array $fileFields = [
         'foto_temuan' => ['foto_temuan_path', 'foto-temuan'],
         'dokumen_laporan' => ['dokumen_laporan_path', 'dokumen-laporan'],
@@ -46,7 +47,6 @@ class DataUnsafeController extends Controller
                 $query->where('status_temuan', $status);
             }
 
-            // BARU — filter status keputusan
             if ($keputusan = $request->query('keputusan')) {
                 $query->where('keputusan', $keputusan);
             }
@@ -64,23 +64,26 @@ class DataUnsafeController extends Controller
             $paginator = $query->paginate($perPage);
 
             $data = collect($paginator->items())->values()->map(function (DataUnsafe $item, $index) use ($paginator) {
-                return [
-                    'no' => ($paginator->currentPage() - 1) * $paginator->perPage() + $index + 1,
-                    'id' => $item->id,
-                    'tanggal_temuan' => optional($item->tanggal_temuan)->format('Y-m-d'),
-                    'badge_so' => $item->badge_so ?? '-',
-                    'nama_so' => $item->nama_so ?? '-',
-                    'area_kerja' => $item->area_kerja ?? '-',
-                    'unit_kerja' => $item->unit_kerja ?? '-',
-                    'item_temuan' => $item->item_temuan ?? '-',
-                    'jenis_penyebab' => $item->jenis_penyebab ?? '-',
-                    'deskripsi_temuan' => $item->deskripsi_temuan ?? '-',
-                    'rekomendasi_perbaikan' => $item->rekomendasi_perbaikan ?? '-',
-                    'status_temuan' => $item->status_temuan,
-                    'keputusan' => $item->keputusan, // BARU
-                    'foto_temuan_url' => $item->foto_temuan_path ? asset('storage/' . $item->foto_temuan_path) : null,
-                    'dokumen_laporan_url' => $item->dokumen_laporan_path ? asset('storage/' . $item->dokumen_laporan_path) : null,
-                ];
+                $row = $this->transform($item);
+                $row['no'] = ($paginator->currentPage() - 1) * $paginator->perPage() + $index + 1;
+
+                // fallback tampilan "-" untuk kolom teks yang kosong
+                foreach (
+                    [
+                        'badge_so',
+                        'nama_so',
+                        'area_kerja',
+                        'unit_kerja',
+                        'item_temuan',
+                        'jenis_penyebab',
+                        'deskripsi_temuan',
+                        'rekomendasi_perbaikan',
+                    ] as $field
+                ) {
+                    $row[$field] = $row[$field] ?? '-';
+                }
+
+                return $row;
             });
 
             return response()->json([
@@ -96,11 +99,15 @@ class DataUnsafeController extends Controller
                 'filter_options' => [
                     'jenis_penyebab' => ['Unsafe Action', 'Unsafe Condition'],
                     'status_temuan' => ['OPEN', 'CLOSE'],
-                    'keputusan' => ['PENDING', 'APPROVE', 'REJECT'], // BARU
+                    'keputusan' => ['PENDING', 'APPROVE', 'REJECT'],
                     'tahun' => DataUnsafe::whereNotNull('tanggal_temuan')
                         ->selectRaw('DISTINCT EXTRACT(YEAR FROM tanggal_temuan) as tahun')
                         ->orderByDesc('tahun')
                         ->pluck('tahun'),
+                    'area_kerja' => DataUnsafe::whereNotNull('area_kerja')
+                        ->distinct()
+                        ->orderBy('area_kerja')
+                        ->pluck('area_kerja'),
                 ],
             ]);
         } catch (\Throwable $e) {
@@ -116,7 +123,7 @@ class DataUnsafeController extends Controller
         try {
             $validated['waktu_submit'] = now();
             $validated['status_temuan'] = $validated['status_temuan'] ?? 'OPEN';
-            $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING'; // BARU
+            $validated['keputusan'] = $validated['keputusan'] ?? 'PENDING';
 
             $validated['foto_temuan_path'] = $this->storeFileIfPresent($request, 'foto_temuan', 'foto-temuan');
             $validated['dokumen_laporan_path'] = $this->storeFileIfPresent($request, 'dokumen_laporan', 'dokumen-laporan');
@@ -126,6 +133,7 @@ class DataUnsafeController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => "Laporan temuan {$data->item_temuan} berhasil ditambahkan.",
+                'data' => $this->transform($data),
             ], 201);
         } catch (\Throwable $e) {
             Log::error('Gagal menyimpan data unsafe: ' . $e->getMessage());
@@ -223,17 +231,32 @@ class DataUnsafeController extends Controller
 
     private function deleteFileIfExists(?string $path): void
     {
-        if ($path && Storage::disk('public')->exists($path)) {
+        // Jangan coba hapus dari storage lokal kalau isinya link eksternal (mis. Google Drive hasil import)
+        if ($path && !str_starts_with($path, 'http') && Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
     }
 
+    /**
+     * Mengubah model jadi array untuk response JSON, sekaligus membangun URL
+     * untuk kolom file. Mendukung 2 kondisi:
+     *  - Path storage lokal hasil upload form (mis. "data-unsafe/foto-temuan/xxx.jpg")
+     *    -> dibungkus jadi asset('storage/...')
+     *  - Link eksternal penuh hasil import CSV (mis. "https://drive.google.com/...")
+     *    -> dikembalikan apa adanya
+     */
     private function transform(DataUnsafe $d): array
     {
         $base = $d->toArray();
+        $base['tanggal_temuan'] = $d->tanggal_temuan?->format('Y-m-d');
+
         foreach ($this->fileFields as [$column, $folder]) {
-            $base[$column . '_url'] = $d->{$column} ? asset('storage/' . $d->{$column}) : null;
+            $value = $d->{$column};
+            $base[$column . '_url'] = $value
+                ? (str_starts_with($value, 'http') ? $value : asset('storage/' . $value))
+                : null;
         }
+
         return $base;
     }
 
@@ -250,8 +273,7 @@ class DataUnsafeController extends Controller
             'deskripsi_temuan' => 'nullable|string',
             'rekomendasi_perbaikan' => 'nullable|string',
             'status_temuan' => 'nullable|string|max:20|in:OPEN,CLOSE',
-            'keputusan' => 'nullable|string|in:PENDING,APPROVE,REJECT', // BARU
-
+            'keputusan' => 'nullable|string|in:PENDING,APPROVE,REJECT',
         ];
 
         foreach ($this->fileFields as $formField => [$column, $folder]) {
