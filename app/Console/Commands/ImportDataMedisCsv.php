@@ -252,26 +252,16 @@ class ImportDataMedisCsv extends Command
             $timePart .= ':00';
         }
 
-        if (!preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', $datePart, $m)) {
-            return null;
-        }
-        [, $first, $second, $year] = $m;
-
-        if ((int) $second > 12) {
-            $month = $first;
-            $day = $second;
-        } else {
-            $day = $first;
-            $month = $second;
-        }
-
         try {
-            return Carbon::createFromFormat(
-                'Y-m-d H:i:s',
-                sprintf('%04d-%02d-%02d %s', $year, $month, $day, $timePart)
-            );
+            // Karena format dari Sheet adalah MM/DD/YYYY
+            return Carbon::createFromFormat('m/d/Y H:i:s', "$datePart $timePart");
         } catch (\Throwable $e) {
-            return null;
+            // Fallback jika ada format lain
+            try {
+                return Carbon::parse("$datePart $timePart");
+            } catch (\Throwable $e2) {
+                return null;
+            }
         }
     }
 
