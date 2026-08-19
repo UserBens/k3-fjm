@@ -855,7 +855,9 @@
                     request()->routeIs('matriks-apd.*') ||
                     request()->routeIs('matriks-apd-jabatan.*') ||
                     request()->routeIs('hiradc.*') ||
-                    request()->routeIs('rab-anggaran.*');
+                    request()->routeIs('rab-anggaran.*') ||
+                    request()->routeIs('apd.parameter.*') || // <-- Tambahan route parameter
+                    request()->routeIs('k3.profil-kerja.*'); // <-- 1. Tambahan untuk Profil Kerja K3
             @endphp
 
             <a href="javascript:void(0)"
@@ -879,6 +881,18 @@
             </a>
 
             <div id="assetsmanagementDropdown" class="dropdown-menu {{ $assetsmanagementActive ? 'show' : '' }}">
+
+                {{-- MENU BARU: Parameter Sistem APD --}}
+                <a class="nav-link {{ request()->routeIs('apd.parameter.*') ? 'active' : '' }}"
+                    href="{{ route('apd.parameter.index') }}">
+                    <span class="nav-label">Parameter Sistem</span>
+                </a>
+
+                {{-- 2. MENU BARU: Profil Kerja K3 --}}
+                <a class="nav-link {{ request()->routeIs('k3.profil-kerja.*') ? 'active' : '' }}"
+                    href="{{ route('k3.profil-kerja.index') }}">
+                    <span class="nav-label">Profil Kerja APD</span>
+                </a>
 
                 <a class="nav-link {{ request()->routeIs('dashboard-apd-alkes.*') ? 'active' : '' }}"
                     href="{{ route('dashboard-apd-alkes.index') }}">
@@ -948,10 +962,6 @@
                     href="{{ route('rab-anggaran.index') }}">
                     <span class="nav-label">RAB</span>
                 </a>
-
-                {{-- <a class="nav-link {{ request()->routeIs('lembar-folowup.*') ? 'active' : '' }}" href="#">
-                <span class="nav-label">Lembar Folowup</span>
-            </a> --}}
 
             </div>
         </div>

@@ -35,11 +35,13 @@ use App\Http\Controllers\MonitoringkpiController;
 use App\Http\Controllers\MonitoringLaporanController;
 use App\Http\Controllers\MonitoringLaporanSoController;
 use App\Http\Controllers\OperatorAlatBeratController;
+use App\Http\Controllers\ParameterApdController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PelaporanPengawasController;
 use App\Http\Controllers\PengawasController;
 use App\Http\Controllers\PengembalianKibApdController;
 use App\Http\Controllers\PermintaanPembelianController;
+use App\Http\Controllers\ProfilKerjaApdController;
 use App\Http\Controllers\PusatReminderController;
 use App\Http\Controllers\RabAnggaranController;
 use App\Http\Controllers\ReferensiKodeOkController;
@@ -105,7 +107,7 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::post('/{badge}/assign-tenaga', [PengawasController::class, 'assignTenaga'])->name('assign-tenaga');
             Route::delete('/{badge}/unassign-tenaga/{pegawaiId}', [PengawasController::class, 'unassignTenaga'])->name('unassign-tenaga');
         });
-        
+
         // DATA SAFETY OFFICER
         Route::prefix('safety-officer')->name('safety-officer.')->group(function () {
             Route::get('/', [SafetyOfficerController::class, 'index'])->name('index');
@@ -242,6 +244,53 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
             Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
             Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
+        });
+
+        Route::prefix('apd/parameter-sistem')->name('apd.parameter.')->group(function () {
+            Route::get('/', [ParameterApdController::class, 'index'])->name('index');
+
+            // A · Setelan Global
+            Route::get('/global', [ParameterApdController::class, 'globalShow'])->name('global.show');
+            Route::get('/global/periode', [ParameterApdController::class, 'globalPeriodeList'])->name('global.periode-list');
+            Route::put('/global', [ParameterApdController::class, 'globalUpdate'])->name('global.update');
+
+            // B · Basis Frekuensi
+            Route::get('/basis-frekuensi', [ParameterApdController::class, 'basisFrekuensiIndex'])->name('basis-frekuensi.index');
+            Route::post('/basis-frekuensi', [ParameterApdController::class, 'basisFrekuensiStore'])->name('basis-frekuensi.store');
+            Route::put('/basis-frekuensi/{basisFrekuensi}', [ParameterApdController::class, 'basisFrekuensiUpdate'])->name('basis-frekuensi.update');
+            Route::delete('/basis-frekuensi/{basisFrekuensi}', [ParameterApdController::class, 'basisFrekuensiDestroy'])->name('basis-frekuensi.destroy');
+
+            // B2 · Sumber Frekuensi
+            Route::get('/sumber-frekuensi', [ParameterApdController::class, 'sumberFrekuensiIndex'])->name('sumber-frekuensi.index');
+            Route::post('/sumber-frekuensi', [ParameterApdController::class, 'sumberFrekuensiStore'])->name('sumber-frekuensi.store');
+            Route::put('/sumber-frekuensi/{sumberFrekuensi}', [ParameterApdController::class, 'sumberFrekuensiUpdate'])->name('sumber-frekuensi.update');
+            Route::delete('/sumber-frekuensi/{sumberFrekuensi}', [ParameterApdController::class, 'sumberFrekuensiDestroy'])->name('sumber-frekuensi.destroy');
+
+            // C · Konversi Simbol Matriks
+            Route::get('/konversi-simbol', [ParameterApdController::class, 'konversiSimbolIndex'])->name('konversi-simbol.index');
+            Route::post('/konversi-simbol', [ParameterApdController::class, 'konversiSimbolStore'])->name('konversi-simbol.store');
+            Route::put('/konversi-simbol/{konversiSimbol}', [ParameterApdController::class, 'konversiSimbolUpdate'])->name('konversi-simbol.update');
+            Route::delete('/konversi-simbol/{konversiSimbol}', [ParameterApdController::class, 'konversiSimbolDestroy'])->name('konversi-simbol.destroy');
+
+            // D · Daftar Nilai Sah (dropdown per kategori)
+            Route::get('/nilai-dropdown', [ParameterApdController::class, 'nilaiDropdownIndex'])->name('nilai-dropdown.index');
+            Route::post('/nilai-dropdown', [ParameterApdController::class, 'nilaiDropdownStore'])->name('nilai-dropdown.store');
+            Route::put('/nilai-dropdown/{nilaiDropdown}', [ParameterApdController::class, 'nilaiDropdownUpdate'])->name('nilai-dropdown.update');
+            Route::delete('/nilai-dropdown/{nilaiDropdown}', [ParameterApdController::class, 'nilaiDropdownDestroy'])->name('nilai-dropdown.destroy');
+
+            // E · Jenis Transaksi 60_LOG_APD
+            Route::get('/jenis-transaksi', [ParameterApdController::class, 'jenisTransaksiIndex'])->name('jenis-transaksi.index');
+            Route::post('/jenis-transaksi', [ParameterApdController::class, 'jenisTransaksiStore'])->name('jenis-transaksi.store');
+            Route::put('/jenis-transaksi/{jenisTransaksi}', [ParameterApdController::class, 'jenisTransaksiUpdate'])->name('jenis-transaksi.update');
+            Route::delete('/jenis-transaksi/{jenisTransaksi}', [ParameterApdController::class, 'jenisTransaksiDestroy'])->name('jenis-transaksi.destroy');
+        });
+
+        Route::prefix('k3/profil-kerja')->name('k3.profil-kerja.')->group(function () {
+            Route::get('/', [ProfilKerjaApdController::class, 'index'])->name('index');
+            Route::get('/api', [ProfilKerjaApdController::class, 'api'])->name('api');
+            Route::post('/', [ProfilKerjaApdController::class, 'store'])->name('store');
+            Route::put('/{profilKerjaK3}', [ProfilKerjaApdController::class, 'update'])->name('update');
+            Route::delete('/{profilKerjaK3}', [ProfilKerjaApdController::class, 'destroy'])->name('destroy');
         });
     });
 
