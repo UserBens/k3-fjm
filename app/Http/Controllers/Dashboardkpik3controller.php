@@ -354,22 +354,18 @@ class DashboardKpiK3Controller extends Controller
         }
 
         // ── 2. TIM PENGAWAS (Meniru Logic Subquery LaporanCapaianKpiController) ──
+        // ── 2. TIM PENGAWAS (Sumber sama dengan PengawasController: flag is_pengawas) ──
         if (!$tim || $tim === 'SEMUA' || $tim === 'PENGAWAS') {
             $pengawasList = \App\Models\Pegawai::where('is_active', true)
-                ->whereIn('badge', function ($q) {
-                    $q->select('username')
-                        ->from('pengawas_intra_users')
-                        ->whereNotNull('username')
-                        ->whereIn('id_api', function ($q2) {
-                            $q2->select('pengguna_id')
-                                ->from('pengawas_pekerjaans')
-                                ->whereNotNull('pengguna_id');
-                        });
-                })
+                ->where('is_pengawas', true)
                 ->orderBy('nama')
                 ->get();
 
             foreach ($pengawasList as $p) {
+                if (!$p->badge) {
+                    continue;
+                }
+
                 $key = "PENGAWAS|{$p->badge}|{$p->nama}";
                 $out->put($key, [
                     'key' => $key,
@@ -551,7 +547,7 @@ class DashboardKpiK3Controller extends Controller
         // $persentaseCapaianAktivitasRaw = $bobotDitugaskanRaw > 0
         //     ? ($capaianAktivitasTotalRaw / $bobotDitugaskanRaw)
         //     : 0.0;
-        
+
         $persentaseCapaianAktivitasRaw = $capaianAktivitasTotalRaw;
 
         $nilaiKpiFinalRaw = ($pengaturan->porsi_capaian_aktivitas / 100 * $persentaseCapaianAktivitasRaw)

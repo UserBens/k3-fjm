@@ -234,8 +234,8 @@ class ToolboxMeetingController extends Controller
 
         foreach ($this->fileFields as [$column, $folder]) {
             $value = $item->{$column};
-            $base[$column] = $value
-                ? (str_starts_with($value, 'http') ? $value : asset('storage/' . $value))
+            $base[$column] = $value 
+                ? (str_starts_with($value, 'http') ? $value : asset('storage/' . $value)) 
                 : null;
         }
 
