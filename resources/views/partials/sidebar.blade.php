@@ -577,7 +577,8 @@
                     request()->routeIs('leading-dashboard.*') ||
                     request()->routeIs('leading-input.*') ||
                     request()->routeIs('master-jadwal-shift.*') ||
-                    request()->routeIs('master-hari-libur.*');
+                    // request()->routeIs('master-hari-libur.*');
+                    request()->routeIs('hari-libur.*'); // Diubah menjadi hari-libur.*
             @endphp
 
             <a href="javascript:void(0)" class="nav-link nav-dropdown-toggle {{ $jkaActive ? 'active' : '' }}"
@@ -631,8 +632,14 @@
                     <span class="nav-label">Master Jadwal Shift</span>
                 </a>
 
-                <a class="nav-link {{ request()->routeIs('master-hari-libur.*') ? 'active' : '' }}"
+                {{-- <a class="nav-link {{ request()->routeIs('master-hari-libur.*') ? 'active' : '' }}"
                     href="{{ route('master-hari-libur.index') }}">
+                    <span class="nav-label">Master Hari Libur</span>
+                </a> --}}
+
+                {{-- Bagian ini yang diubah --}}
+                <a class="nav-link {{ request()->routeIs('hari-libur.*') ? 'active' : '' }}"
+                    href="{{ route('hari-libur.index') }}">
                     <span class="nav-label">Master Hari Libur</span>
                 </a>
 

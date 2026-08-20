@@ -13,6 +13,7 @@ use App\Http\Controllers\DataRejectMonitoringController;
 use App\Http\Controllers\DataSafetyController;
 use App\Http\Controllers\DataUnsafeController;
 use App\Http\Controllers\DcuController;
+use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\HiradcController;
 use App\Http\Controllers\JKARecordInsidenController;
 use App\Http\Controllers\KartuStokController;
@@ -192,6 +193,15 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'update'])->name('lpi-korban.update');
         Route::delete('/lpi-korban/{lpiKorban}', [LpiKorbanController::class, 'destroy'])->name('lpi-korban.destroy');
         Route::get('/lpi-korban/cari-karyawan', [LpiKorbanController::class, 'cariKaryawan'])->name('lpi-korban.cari-karyawan');
+
+        Route::middleware(['role.custom:admin'])->prefix('hari-libur')->name('hari-libur.')->group(function () {
+            Route::get('/', [HariLiburController::class, 'index'])->name('index');
+            Route::get('/data', [HariLiburController::class, 'data'])->name('data');
+            Route::post('/generate', [HariLiburController::class, 'generate'])->name('generate');
+            Route::post('/', [HariLiburController::class, 'store'])->name('store');
+            Route::put('/{hariLibur}', [HariLiburController::class, 'update'])->name('update');
+            Route::delete('/{hariLibur}', [HariLiburController::class, 'destroy'])->name('destroy');
+        });
 
         // APD
         Route::prefix('master-stok-apd')->name('master-stok-apd.')->group(function () {
