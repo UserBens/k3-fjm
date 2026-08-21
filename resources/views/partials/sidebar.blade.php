@@ -840,6 +840,7 @@
         </div>
     @endif
 
+    {{-- APD --}}
     @if (session('auth_user.role') === 'super_admin')
         {{-- Assets Management --}}
         <div class="sb-section">
@@ -864,6 +865,7 @@
                     request()->routeIs('hiradc.*') ||
                     request()->routeIs('rab-anggaran.*') ||
                     request()->routeIs('apd.parameter.*') || // <-- Tambahan route parameter
+                    request()->routeIs('master-area-kerja.*') || // <-- Tambahan untuk Area Kerja
                     request()->routeIs('k3.profil-kerja.*'); // <-- 1. Tambahan untuk Profil Kerja K3
             @endphp
 
@@ -888,6 +890,12 @@
             </a>
 
             <div id="assetsmanagementDropdown" class="dropdown-menu {{ $assetsmanagementActive ? 'show' : '' }}">
+
+                {{-- MENU BARU: Master Area Kerja APD --}}
+                <a class="nav-link {{ request()->routeIs('master-area-kerja.*') ? 'active' : '' }}"
+                    href="{{ route('master-area-kerja.index') }}">
+                    <span class="nav-label">Master Area Kerja</span>
+                </a>
 
                 {{-- MENU BARU: Parameter Sistem APD --}}
                 <a class="nav-link {{ request()->routeIs('apd.parameter.*') ? 'active' : '' }}"

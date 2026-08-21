@@ -22,69 +22,53 @@ class DataUnsafeController extends Controller
         return view('data-unsafe.index');
     }
 
+    private const KATEGORI_FORM_UA_UC = ['temuan'];
+    
     public function data(Request $request): JsonResponse
     {
         try {
-            $query = DataUnsafe::query();
+            $unsafeQuery = $this->buildDataUnsafeQuery($request);
+            $safetyQuery = $this->buildDataSafetyUaUcQuery($request);
 
-            if ($badgeSo = $request->query('badge_so')) {
-                $query->where('badge_so', $badgeSo);
-            }
-
-            if ($tahun = $request->query('tahun')) {
-                $query->whereYear('tanggal_temuan', $tahun);
-            }
-
-            if ($bulan = $request->query('bulan')) {
-                $query->whereMonth('tanggal_temuan', $bulan);
-            }
-
-            if ($jenis = $request->query('jenis_penyebab')) {
-                $query->where('jenis_penyebab', $jenis);
-            }
-
-            if ($status = $request->query('status_temuan')) {
-                $query->where('status_temuan', $status);
-            }
-
-            if ($keputusan = $request->query('keputusan')) {
-                $query->where('keputusan', $keputusan);
-            }
-
-            if ($search = trim((string) $request->query('search', ''))) {
-                $query->search($search);
-            }
-
-            $total = $query->count();
-
-            $query->orderByDesc('tanggal_temuan')->orderByDesc('id');
+            $union = $unsafeQuery->unionAll($safetyQuery);
 
             $perPage = (int) $request->query('per_page', 15);
             $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 15;
-            $paginator = $query->paginate($perPage);
 
-            $data = collect($paginator->items())->values()->map(function (DataUnsafe $item, $index) use ($paginator) {
-                $row = $this->transform($item);
+            $paginator = $union
+                ->orderByDesc('tanggal_temuan')
+                ->orderByDesc('id')
+                ->paginate($perPage, ['*'], 'page', (int) $request->query('page', 1));
+
+            $data = collect($paginator->items())->values()->map(function ($row, $index) use ($paginator) {
+                $row = (array) $row;
                 $row['no'] = ($paginator->currentPage() - 1) * $paginator->perPage() + $index + 1;
 
-                // fallback tampilan "-" untuk kolom teks yang kosong
                 foreach (
-                    [
-                        'badge_so',
-                        'nama_so',
-                        'area_kerja',
-                        'unit_kerja',
-                        'item_temuan',
-                        'jenis_penyebab',
-                        'deskripsi_temuan',
-                        'rekomendasi_perbaikan',
-                    ] as $field
+                    ['badge_so', 'nama_so', 'area_kerja', 'unit_kerja', 'item_temuan', 'jenis_penyebab', 'deskripsi_temuan', 'rekomendasi_perbaikan'] as $field
                 ) {
                     $row[$field] = $row[$field] ?? '-';
                 }
 
+                $row['tanggal_temuan'] = $row['tanggal_temuan']
+                    ? \Illuminate\Support\Carbon::parse($row['tanggal_temuan'])->format('Y-m-d')
+                    : null;
+
+                // Bangun URL file — path lokal (data-unsafe/... atau data-safety/...) vs link eksternal
+                foreach (['foto_temuan_path', 'dokumen_laporan_path'] as $col) {
+                    $value = $row[$col] ?? null;
+                    $row[$col . '_url'] = $value
+                        ? (str_starts_with($value, 'http') ? $value : asset('storage/' . $value))
+                        : null;
+                }
+
+                // Data dari data_safety bersifat read-only di halaman ini
+                $row['is_editable'] = $row['sumber_tabel'] === 'data_unsafe';
+
                 return $row;
             });
+
+            $total = $paginator->total();
 
             return response()->json([
                 'data' => $data,
@@ -107,13 +91,131 @@ class DataUnsafeController extends Controller
                     'area_kerja' => DataUnsafe::whereNotNull('area_kerja')
                         ->distinct()
                         ->orderBy('area_kerja')
-                        ->pluck('area_kerja'),
+                        ->pluck('area_kerja')
+                        ->merge(
+                            \Illuminate\Support\Facades\DB::table('data_safety')
+                                ->whereIn('kategori_form', self::KATEGORI_FORM_UA_UC)
+                                ->whereNotNull('area_kerja')
+                                ->distinct()
+                                ->orderBy('area_kerja')
+                                ->pluck('area_kerja')
+                        )
+                        ->unique()
+                        ->sort()
+                        ->values(),
                 ],
             ]);
         } catch (\Throwable $e) {
             Log::error('Gagal memuat monitoring laporan: ' . $e->getMessage());
             return response()->json(['message' => 'Gagal mengambil data monitoring laporan.'], 500);
         }
+    }
+
+    private function buildDataUnsafeQuery(Request $request): \Illuminate\Database\Query\Builder
+    {
+        $query = \Illuminate\Support\Facades\DB::table('data_unsafe')
+            ->select([
+                'id',
+                'badge_so',
+                'nama_so',
+                'area_kerja',
+                'unit_kerja',
+                'item_temuan',
+                'jenis_penyebab',
+                'deskripsi_temuan',
+                'rekomendasi_perbaikan',
+                'status_temuan',
+                'tanggal_temuan',
+                'keputusan',
+                'foto_temuan_path',
+                'dokumen_laporan_path',
+                \Illuminate\Support\Facades\DB::raw("'data_unsafe' as sumber_tabel"),
+            ]);
+
+        if ($badgeSo = $request->query('badge_so')) {
+            $query->where('badge_so', $badgeSo);
+        }
+        if ($tahun = $request->query('tahun')) {
+            $query->whereYear('tanggal_temuan', $tahun);
+        }
+        if ($bulan = $request->query('bulan')) {
+            $query->whereMonth('tanggal_temuan', $bulan);
+        }
+        if ($areaKerja = $request->query('area_kerja')) {
+            $query->where('area_kerja', $areaKerja);
+        }
+        if ($jenis = $request->query('jenis_penyebab')) {
+            $query->where('jenis_penyebab', $jenis);
+        }
+        if ($status = $request->query('status_temuan')) {
+            $query->where('status_temuan', $status);
+        }
+        if ($keputusan = $request->query('keputusan')) {
+            $query->where('keputusan', $keputusan);
+        }
+        if ($search = trim((string) $request->query('search', ''))) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_so', 'ilike', "%{$search}%")
+                    ->orWhere('badge_so', 'ilike', "%{$search}%")
+                    ->orWhere('item_temuan', 'ilike', "%{$search}%");
+            });
+        }
+
+        return $query;
+    }
+
+    private function buildDataSafetyUaUcQuery(Request $request): \Illuminate\Database\Query\Builder
+    {
+        $query = \Illuminate\Support\Facades\DB::table('data_safety')
+            ->whereIn('kategori_form', self::KATEGORI_FORM_UA_UC)
+            ->select([
+                'id',
+                'badge_tenaga as badge_so',
+                'nama_tenaga as nama_so',
+                'area_kerja',
+                'unit_kerja',
+                'item_temuan',
+                'jenis_penyebab',
+                'deskripsi_temuan',
+                'rekomendasi_tindakan_temuan as rekomendasi_perbaikan',
+                'status_temuan',
+                'tanggal_pelaksanaan as tanggal_temuan',
+                'keputusan',
+                'foto_temuan_uauc_path as foto_temuan_path',
+                'formulir_kegiatan_inspeksi_area_kerja_path as dokumen_laporan_path',
+                \Illuminate\Support\Facades\DB::raw("'data_safety' as sumber_tabel"),
+            ]);
+
+        if ($badgeSo = $request->query('badge_so')) {
+            $query->where('badge_tenaga', $badgeSo);
+        }
+        if ($tahun = $request->query('tahun')) {
+            $query->whereYear('tanggal_pelaksanaan', $tahun);
+        }
+        if ($bulan = $request->query('bulan')) {
+            $query->whereMonth('tanggal_pelaksanaan', $bulan);
+        }
+        if ($areaKerja = $request->query('area_kerja')) {
+            $query->where('area_kerja', $areaKerja);
+        }
+        if ($jenis = $request->query('jenis_penyebab')) {
+            $query->where('jenis_penyebab', $jenis);
+        }
+        if ($status = $request->query('status_temuan')) {
+            $query->where('status_temuan', $status);
+        }
+        if ($keputusan = $request->query('keputusan')) {
+            $query->where('keputusan', $keputusan);
+        }
+        if ($search = trim((string) $request->query('search', ''))) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_tenaga', 'ilike', "%{$search}%")
+                    ->orWhere('badge_tenaga', 'ilike', "%{$search}%")
+                    ->orWhere('item_temuan', 'ilike', "%{$search}%");
+            });
+        }
+
+        return $query;
     }
 
     public function store(Request $request): JsonResponse

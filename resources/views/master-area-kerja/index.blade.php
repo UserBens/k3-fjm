@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Data Unsafe — PT. Fokus Jasa Mitra</title>
+    <title>Data Safety — PT. Fokus Jasa Mitra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -931,7 +931,7 @@
         }
 
         .form-section-title:first-child {
-            margin-top: 0;
+            margin-top: 20px;
         }
 
         .form-grid {
@@ -1248,27 +1248,35 @@
         .category-select-wrap {
             margin-bottom: 14px;
         }
+
+        .file-hint {
+            font-size: 10.5px;
+            color: #94A3B8;
+            margin-top: 4px;
+        }
+
+        .file-hint.file-hint-error {
+            color: #D0021B;
+            font-weight: 600;
+        }
     </style>
 </head>
 
 <body class="flex h-screen overflow-hidden">
-
     @include('partials.sidebar')
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
     <div id="main-content">
         @include('partials.topbar')
-
         <div id="page-content">
             <div class="page-hdr">
                 <div class="page-hdr-top">
                     <div>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
                             <span class="pulse-dot"></span>
-                            <span class="pg-eyebrow">Master Data Safety · PT. Fokus Jasa Mitra</span>
+                            <span class="pg-eyebrow">Master Data · PT. Fokus Jasa Mitra</span>
                         </div>
-                        <div class="pg-title">UNSAFE <span>ACTION / CONDITION</span></div>
-                        <div class="pg-sub">Kelola temuan unsafe action & unsafe condition di lapangan.</div>
+                        <div class="pg-title">MASTER AREA <span>& ZONA RISIKO</span></div>
+                        <div class="pg-sub">Kelola daftar area kerja beserta zona risiko dan aturan APD.</div>
                     </div>
                     <div class="pg-actions">
                         <button class="btn-primary" onclick="openFormModal()">
@@ -1277,7 +1285,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Tambah Temuan
+                            Tambah Area
                         </button>
                     </div>
                 </div>
@@ -1291,21 +1299,18 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Cari SO, badge, atau item temuan..."
+                        <input type="text" id="searchInput" placeholder="Cari kompleks atau nama area..."
                             oninput="onSearchInput()" />
                     </div>
-                    <select id="filterAreaKerja" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Area Kerja</option>
+                    <select id="filterKompleks" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Kompleks</option>
                     </select>
-                    <select id="filterJenisPenyebab" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Jenis Penyebab</option>
-                        <option value="Unsafe Action">Unsafe Action</option>
-                        <option value="Unsafe Condition">Unsafe Condition</option>
-                    </select>
-                    <select id="filterStatusTemuan" class="filter-select" onchange="onFilterChange()">
-                        <option value="">Semua Status Temuan</option>
-                        <option value="OPEN">OPEN</option>
-                        <option value="CLOSE">CLOSE</option>
+                    <select id="filterZona" class="filter-select" onchange="onFilterChange()">
+                        <option value="">Semua Zona</option>
+                        <option value="HIJAU">Hijau</option>
+                        <option value="PUTIH">Putih</option>
+                        <option value="KUNING">Kuning</option>
+                        <option value="MERAH">Merah</option>
                     </select>
                     <button class="btn-outline filter-reset" onclick="resetFilters()">Reset Filter</button>
                 </div>
@@ -1316,18 +1321,17 @@
                     <table class="rtable">
                         <thead>
                             <tr>
-                                <th>Safety Officer</th>
-                                <th>Item Temuan</th>
-                                <th>Area / Unit Kerja</th>
-                                <th>Jenis Penyebab</th>
-                                <th>Tgl Temuan</th>
-                                <th>Status Temuan</th>
+                                <th>Kompleks</th>
+                                <th>Nama Area</th>
+                                <th>Zona</th>
+                                <th>Urutan Risiko</th>
+                                <th>Keterangan</th>
                                 <th style="text-align:center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="7">
+                                <td colspan="6">
                                     <div class="skeleton-bar" style="width:100%;height:40px;"></div>
                                 </td>
                             </tr>
@@ -1339,7 +1343,7 @@
                     <div class="pagination-info">
                         <span id="paginationText">—</span>
                         <select id="perPageSelect" class="per-page-select" onchange="onPerPageChange()">
-                            <option value="10">10 / halaman</option>
+                            <option value="15">15 / halaman</option>
                             <option value="25">25 / halaman</option>
                             <option value="50">50 / halaman</option>
                         </select>
@@ -1354,97 +1358,55 @@
     <div id="formModalOverlay" class="modal-overlay" onclick="closeFormModalOutside(event)">
         <div class="modal-box form-modal-box" onclick="event.stopPropagation()">
             <div class="form-modal-header">
-                <div class="modal-title" id="formModalTitle">Tambah Temuan Unsafe</div>
-                <div class="pg-sub" style="margin:0;">Lengkapi data temuan unsafe action / unsafe condition.</div>
+                <div class="modal-title" id="formModalTitle">Tambah Area Kerja</div>
+                <div class="pg-sub" style="margin:0;">Zona menentukan aturan APD dan urutan risiko area ini.</div>
             </div>
 
             <div class="form-modal-body">
-                <div class="form-section-title">Safety Officer & Waktu</div>
                 <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">Safety Officer (Pelapor)</label>
-                        <div class="picker-wrap" id="soPickerWrap">
-                            <input type="text" id="soPickerInput" class="form-input"
-                                placeholder="Cari nama atau badge Safety Officer..." oninput="onSoPickerInput()"
-                                autocomplete="off" />
-                            <div class="picker-dropdown" id="soPickerDropdown"></div>
+                    <div class="form-group">
+                        <label class="form-label">Kompleks</label>
+                        <div class="picker-wrap">
+                            <input type="text" id="komplekInput" class="form-input"
+                                placeholder="Cari / ketik nama kompleks..." oninput="onKomplekPickerInput()"
+                                onfocus="onKomplekPickerFocus()" autocomplete="off" />
+                            <div class="picker-dropdown" id="komplekDropdown"></div>
                         </div>
-                        <div class="picker-selected-chip" id="soSelectedChip" style="display:none;">
-                            <div>
-                                <div class="chip-name" id="soSelectedName">-</div>
-                                <div class="chip-sub" id="soSelectedSub">-</div>
-                            </div>
-                            <button type="button" class="picker-clear-btn" onclick="clearSoPicker()">Ganti
-                                SO</button>
-                        </div>
-                        <input type="hidden" id="fBadgeSo" />
-                        <input type="hidden" id="fNamaSo" />
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Tanggal Temuan</label>
-                        <input type="date" id="fTanggalTemuan" class="form-input" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Lokasi</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Area Kerja</label>
-                        <input type="text" id="fAreaKerja" class="form-input" placeholder="KAWASAN" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Unit Kerja</label>
-                        <input type="text" id="fUnitKerja" class="form-input" placeholder="PA BABAT" />
-                    </div>
-                </div>
-
-                <div class="form-section-title">Detail Temuan</div>
-                <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">Item Temuan</label>
-                        <input type="text" id="fItemTemuan" class="form-input"
-                            placeholder="Tembok Chlorine babat I boncel" />
+                        <label class="form-label">Nama Area</label>
+                        <input type="text" id="fNamaArea" class="form-input" placeholder="PPBJ & PPSB" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Jenis Penyebab</label>
-                        <select id="fJenisPenyebab" class="form-select">
-                            <option value="Unsafe Action">Unsafe Action</option>
-                            <option value="Unsafe Condition">Unsafe Condition</option>
+                        <label class="form-label">Zona</label>
+                        <select id="fZona" class="form-select" onchange="onZonaChange()">
+                            <option value="HIJAU">Hijau</option>
+                            <option value="PUTIH">Putih</option>
+                            <option value="KUNING">Kuning</option>
+                            <option value="MERAH">Merah</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Status Temuan</label>
-                        <select id="fStatusTemuan" class="form-select">
-                            <option value="OPEN">OPEN</option>
-                            <option value="CLOSE">CLOSE</option>
+                        <label class="form-label">Status</label>
+                        <select id="fAktif" class="form-select">
+                            <option value="1">Aktif</option>
+                            <option value="0">Nonaktif</option>
                         </select>
                     </div>
                     <div class="form-group span-2">
-                        <label class="form-label">Deskripsi Temuan</label>
-                        <textarea id="fDeskripsiTemuan" class="form-textarea" rows="2"></textarea>
+                        <label class="form-label"
+                            style="display:flex; justify-content:space-between; align-items:center;">
+                            Keterangan (Aturan APD)
+                            <button type="button" class="btn-outline" style="padding:3px 8px; font-size:11px;"
+                                onclick="isiKeteranganDefault()">Isi Otomatis dari Zona</button>
+                        </label>
+                        <textarea id="fKeterangan" class="form-textarea" rows="2"></textarea>
                     </div>
                     <div class="form-group span-2">
-                        <label class="form-label">Rekomendasi Perbaikan</label>
-                        <textarea id="fRekomendasiPerbaikan" class="form-textarea" rows="2"></textarea>
-                    </div>
-                </div>
-
-                <div class="form-section-title">Dokumentasi</div>
-                <div class="form-grid">
-                    <div class="form-group span-2">
-                        <label class="form-label">Foto Temuan UA/UC</label>
-                        <input type="file" id="fFotoTemuan" class="form-input"
-                            style="padding:8px 12px; height:auto;" accept=".jpg,.jpeg,.png,.webp" />
-                        <a href="#" id="fFotoTemuanCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat foto saat ini ↗</a>
-                    </div>
-                    <div class="form-group span-2">
-                        <label class="form-label">Dokumen Laporan Kegiatan</label>
-                        <input type="file" id="fDokumenLaporan" class="form-input"
-                            style="padding:8px 12px; height:auto;"
-                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" />
-                        <a href="#" id="fDokumenLaporanCurrent" class="file-current-link" target="_blank"
-                            style="display:none;">Lihat dokumen saat ini ↗</a>
+                        <label class="form-label">Potensi Bahaya <span
+                                style="font-weight:400;color:#94A3B8;">(pisahkan dengan titik koma ;)</span></label>
+                        <textarea id="fPotensiBahaya" class="form-textarea" rows="2"
+                            placeholder="Bahan Mudah Meledak; Bahan Mudah Terbakar; Gas Beracun (Amoniak); ..."></textarea>
                     </div>
                 </div>
             </div>
@@ -1456,62 +1418,45 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL DETAIL ══════ -->
-    <div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModalOutside(event)">
-        <div class="modal-box detail-modal-box" onclick="event.stopPropagation()">
-            <div class="detail-modal-header" style="display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="detail-avatar" id="detailAvatar">--</div>
-                    <div>
-                        <div class="modal-title" id="detailNamaTitle" style="margin-bottom:2px;">-</div>
-                        <div class="detail-subtitle" id="detailBadgeSub">-</div>
-                    </div>
-                </div>
-                <button class="toast-close" style="font-size:18px;" onclick="closeDetailModal()">✕</button>
-            </div>
-
-            <div class="detail-modal-body">
-                <div class="detail-section">
-                    <div class="detail-section-title">Waktu & Lokasi</div>
-                    <div class="form-grid" id="detailUmumGrid"></div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-section-title">Detail Temuan</div>
-                    <div class="form-grid" id="detailTemuanGrid"></div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-section-title">Dokumentasi & Status</div>
-                    <div class="form-grid" id="detailDokumenGrid"></div>
-                </div>
-            </div>
-
-            <div class="modal-actions" style="margin-top:16px;">
-                <button class="btn-modal-cancel" onclick="closeDetailModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
     <div id="toastContainer" class="toast-container"></div>
 
     <script>
-        const DATA_ENDPOINT = "{{ route('data-unsafe.data') }}";
-        const STORE_ENDPOINT = "{{ route('data-unsafe.store') }}";
-        const BASE_ENDPOINT = "{{ url('/data-unsafe') }}";
-        const CARI_SO_ENDPOINT = "{{ route('data-unsafe.cari-so') }}";
+        const DATA_ENDPOINT = "{{ route('master-area-kerja.data') }}";
+        const STORE_ENDPOINT = "{{ route('master-area-kerja.store') }}";
+        const BASE_ENDPOINT = "{{ url('/master-area-kerja') }}";
+        const KOMPLEKS_OPTIONS_ENDPOINT = "{{ route('master-area-kerja.kompleks-options') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";
+
+        const ZONA_LABEL = {
+            HIJAU: 'Hijau',
+            PUTIH: 'Putih',
+            KUNING: 'Kuning',
+            MERAH: 'Merah'
+        };
+        const ZONA_PILL_CLASS = {
+            HIJAU: 'sp-green',
+            PUTIH: 'sp-slate',
+            KUNING: 'sp-amber',
+            MERAH: 'sp-red'
+        };
+        const KETERANGAN_DEFAULT = {
+            HIJAU: 'Boleh tidak menggunakan APD jika tidak ada pekerjaan; APD menyesuaikan JSA/JRA saat ada pekerjaan.',
+            PUTIH: 'APD dasar wajib digunakan; APD tambahan menyesuaikan JSA/JRA saat ada pekerjaan.',
+            KUNING: 'APD tambahan (Face Shield/Welding Goggles/dll.) menyesuaikan JSA untuk pekerjaan panas, ketinggian, atau kelistrikan.',
+            MERAH: 'APD tambahan (Chemical Suit/SAR/dll.) menyesuaikan JSA untuk pekerjaan radiografi, ruang terbatas, atau handling bahan kimia; SCBA wajib saat kondisi darurat.',
+        };
 
         const state = {
             search: '',
-            area_kerja: '',
-            jenis_penyebab: '',
-            status_temuan: '',
+            kompleks: '',
+            zona: '',
             page: 1,
-            per_page: 10
+            per_page: 15
         };
         let searchDebounce = null,
             filterOptionsLoaded = false,
-            currentEditId = null,
-            soPickerDebounce = null;
+            currentEditId = null;
+        let komplekOptionsCache = [];
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -1522,22 +1467,6 @@
             const div = document.createElement('div');
             div.textContent = str ?? '';
             return div.innerHTML;
-        }
-
-        function initials(name) {
-            if (!name || name === '-') return '—';
-            const p = (name || '').trim().split(/\s+/);
-            return ((p[0]?.[0] || '') + (p[1]?.[0] || '')).toUpperCase();
-        }
-
-        function formatDate(d) {
-            if (!d) return '-';
-            const dt = new Date(d);
-            return isNaN(dt.getTime()) ? d : dt.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            });
         }
 
         function showToast(message, type = 'success') {
@@ -1564,9 +1493,8 @@
         }
 
         function onFilterChange() {
-            state.area_kerja = document.getElementById('filterAreaKerja').value;
-            state.jenis_penyebab = document.getElementById('filterJenisPenyebab').value;
-            state.status_temuan = document.getElementById('filterStatusTemuan').value;
+            state.kompleks = document.getElementById('filterKompleks').value;
+            state.zona = document.getElementById('filterZona').value;
             state.page = 1;
             loadData();
         }
@@ -1579,14 +1507,12 @@
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('filterAreaKerja').value = '';
-            document.getElementById('filterJenisPenyebab').value = '';
-            document.getElementById('filterStatusTemuan').value = '';
+            document.getElementById('filterKompleks').value = '';
+            document.getElementById('filterZona').value = '';
             Object.assign(state, {
                 search: '',
-                area_kerja: '',
-                jenis_penyebab: '',
-                status_temuan: '',
+                kompleks: '',
+                zona: '',
                 page: 1
             });
             loadData();
@@ -1603,16 +1529,13 @@
 
         function populateFilterOptions(options) {
             if (filterOptionsLoaded || !options) return;
-            const build = (id, values) => {
-                const s = document.getElementById(id);
-                values.forEach(v => {
-                    const o = document.createElement('option');
-                    o.value = v;
-                    o.textContent = v;
-                    s.appendChild(o);
-                });
-            };
-            build('filterAreaKerja', options.area_kerja || []);
+            const sel = document.getElementById('filterKompleks');
+            (options.kompleks || []).forEach(v => {
+                const o = document.createElement('option');
+                o.value = v;
+                o.textContent = v;
+                sel.appendChild(o);
+            });
             filterOptionsLoaded = true;
         }
 
@@ -1620,39 +1543,28 @@
             const tbody = document.getElementById('tableBody');
             if (!rows || rows.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
+                    `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">Data tidak ditemukan</div></div></td></tr>`;
                 return;
             }
-            tbody.innerHTML = rows.map(row => {
-                const sourceBadge = row.sumber_tabel === 'data_safety' ?
-                    `<span class="status-pill sp-blue" style="margin-left:6px;font-size:10px;">Input SO</span>` :
-                    '';
-                const actions = row.is_editable ?
-                    `
-                <button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>
-                <button class="btn-outline" style="padding:5px 8px;" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
-                <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteData(${row.id}, ${JSON.stringify(row.item_temuan || 'data ini')})">Hapus</button>
-              ` :
-                    `<button class="btn-outline" style="padding:5px 8px;" onclick='openDetailModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Detail</button>`;
-
-                return `
+            tbody.innerHTML = rows.map(row => `
                 <tr>
-                    <td><div class="td-name-cell"><div class="td-avatar">${escapeHtml(initials(row.nama_so))}</div><div><div class="td-name-main">${escapeHtml(row.nama_so || '-')}${sourceBadge}</div><div class="td-name-sub">${escapeHtml(row.badge_so || '-')}</div></div></div></td>
-                    <td>${escapeHtml(row.item_temuan || '-')}</td>
-                    <td><div style="font-weight:600; font-size:12.5px;">${escapeHtml(row.area_kerja || '-')}</div><div class="td-name-sub">${escapeHtml(row.unit_kerja || '-')}</div></td>
-                    <td><span class="status-pill ${row.jenis_penyebab === 'Unsafe Condition' ? 'sp-blue' : 'sp-amber'}">${escapeHtml(row.jenis_penyebab || '-')}</span></td>
-                    <td>${formatDate(row.tanggal_temuan)}</td>
-                    <td><span class="status-pill ${row.status_temuan === 'CLOSE' ? 'sp-green' : 'sp-red'}">${row.status_temuan}</span></td>
-                    <td style="text-align:center; white-space:nowrap;">${actions}</td>
+                    <td style="font-weight:600;">${escapeHtml(row.kompleks)}</td>
+                    <td>${escapeHtml(row.nama_area)}</td>
+                    <td><span class="status-pill ${ZONA_PILL_CLASS[row.zona] || ''}">${ZONA_LABEL[row.zona] || row.zona}</span></td>
+                    <td>${row.urutan_risiko}</td>
+                    <td class="td-name-sub" style="max-width:260px;">${escapeHtml((row.keterangan || '').substring(0, 60))}${(row.keterangan || '').length > 60 ? '…' : ''}</td>
+                    <td style="text-align:center; white-space:nowrap;">
+                        <button class="btn-outline" style="padding:5px 8px;" onclick='openFormModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
+                        <button class="btn-outline" style="padding:5px 8px; color:#D0021B; border-color:rgba(208,2,27,0.25);" onclick="deleteData(${row.id}, ${JSON.stringify(row.nama_area)})">Hapus</button>
+                    </td>
                 </tr>
-            `;
-            }).join('');
+            `).join('');
         }
 
         function renderPagination(meta) {
             document.getElementById('paginationText').textContent = meta.total > 0 ?
                 `Menampilkan ${meta.from}–${meta.to} dari ${meta.total} data` : 'Tidak ada data';
-            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> data ditemukan`;
+            document.getElementById('dataSummary').innerHTML = `<strong>${meta.total}</strong> area ditemukan`;
             const container = document.getElementById('paginationPages');
             const current = meta.current_page,
                 last = meta.last_page;
@@ -1691,111 +1603,76 @@
                 populateFilterOptions(json.filter_options);
             } catch (e) {
                 document.getElementById('tableBody').innerHTML =
-                    `<tr><td colspan="7"><div class="error-state">${escapeHtml(e.message)}</div></td></tr>`;
+                    `<tr><td colspan="6"><div class="error-state">${escapeHtml(e.message)}</div></td></tr>`;
             }
         }
 
-        // ══════ PICKER SAFETY OFFICER ══════
-        function onSoPickerInput() {
-            clearTimeout(soPickerDebounce);
-            soPickerDebounce = setTimeout(searchSoPicker, 350);
-        }
-
-        async function searchSoPicker() {
-            const search = document.getElementById('soPickerInput').value.trim();
-            const dropdown = document.getElementById('soPickerDropdown');
-            if (search.length < 2) {
-                dropdown.classList.remove('open');
-                return;
-            }
+        // ══════ PICKER KOMPLEKS ══════
+        async function loadKomplekOptions() {
+            if (komplekOptionsCache.length > 0) return;
             try {
-                const res = await fetch(`${CARI_SO_ENDPOINT}?search=${encodeURIComponent(search)}`, {
+                const res = await fetch(KOMPLEKS_OPTIONS_ENDPOINT, {
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
                 const json = await res.json();
-                dropdown.innerHTML = (!json.data || json.data.length === 0) ?
-                    `<div class="picker-item" style="color:#94A3B8;">Tidak ada Safety Officer ditemukan.</div>` :
-                    json.data.map(t =>
-                        `<div class="picker-item" onclick='pilihSo(${JSON.stringify(t).replace(/'/g, "&#39;")})'><div class="picker-item-name">${escapeHtml(t.nama)}</div><div class="picker-item-sub">${escapeHtml(t.badge)} · ${escapeHtml(t.unit_kerja)}</div></div>`
-                    ).join('');
-                dropdown.classList.add('open');
+                komplekOptionsCache = json.data || [];
             } catch (e) {
-                dropdown.innerHTML = `<div class="picker-item" style="color:#D0021B;">Gagal memuat data.</div>`;
-                dropdown.classList.add('open');
-            }
+                /* diamkan */ }
         }
 
-        function pilihSo(t) {
-            document.getElementById('fBadgeSo').value = t.badge;
-            document.getElementById('fNamaSo').value = t.nama;
-            document.getElementById('soPickerDropdown').classList.remove('open');
-            showSoChip(t.nama, t.badge);
+        function renderKomplekDropdown(keyword = '') {
+            const dropdown = document.getElementById('komplekDropdown');
+            const filtered = keyword ? komplekOptionsCache.filter(v => v.toLowerCase().includes(keyword.toLowerCase())) :
+                komplekOptionsCache;
+            dropdown.innerHTML = filtered.length === 0 ?
+                `<div class="picker-item" style="color:#94A3B8;">Ketik nama kompleks baru jika belum ada.</div>` :
+                filtered.map(v =>
+                    `<div class="picker-item" onclick="pilihKomplek('${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`)
+                .join('');
+            dropdown.classList.add('open');
         }
 
-        function showSoChip(nama, badge) {
-            document.getElementById('soSelectedName').textContent = nama;
-            document.getElementById('soSelectedSub').textContent = badge && badge !== '-' ? badge : '-';
-            document.getElementById('soSelectedChip').style.display = 'flex';
-            document.getElementById('soPickerWrap').style.display = 'none';
+        function onKomplekPickerInput() {
+            renderKomplekDropdown(document.getElementById('komplekInput').value.trim());
+        }
+        async function onKomplekPickerFocus() {
+            await loadKomplekOptions();
+            renderKomplekDropdown(document.getElementById('komplekInput').value.trim());
         }
 
-        function hideSoChip() {
-            document.getElementById('soSelectedChip').style.display = 'none';
-            document.getElementById('soPickerWrap').style.display = 'block';
+        function pilihKomplek(value) {
+            document.getElementById('komplekInput').value = value;
+            document.getElementById('komplekDropdown').classList.remove('open');
         }
-
-        function clearSoPicker() {
-            document.getElementById('fBadgeSo').value = '';
-            document.getElementById('fNamaSo').value = '';
-            document.getElementById('soPickerInput').value = '';
-            hideSoChip();
-            document.getElementById('soPickerInput').focus();
-        }
-
         document.addEventListener('click', (e) => {
-            const wrap = document.getElementById('soPickerWrap');
-            if (wrap && !wrap.contains(e.target)) document.getElementById('soPickerDropdown')?.classList.remove(
+            const wrap = document.getElementById('komplekInput')?.closest('.picker-wrap');
+            if (wrap && !wrap.contains(e.target)) document.getElementById('komplekDropdown')?.classList.remove(
                 'open');
         });
 
-        // ══════ MODAL FORM ══════
-        function setCurrentFileLink(id, url) {
-            const el = document.getElementById(id);
-            if (url) {
-                el.href = url;
-                el.style.display = 'inline-block';
-            } else {
-                el.style.display = 'none';
-            }
+        function onZonaChange() {
+            // Tidak auto-overwrite kalau Keterangan sudah diisi manual — cuma isi kalau kosong
+            const ket = document.getElementById('fKeterangan');
+            if (!ket.value.trim()) isiKeteranganDefault();
         }
 
+        function isiKeteranganDefault() {
+            const zona = document.getElementById('fZona').value;
+            document.getElementById('fKeterangan').value = KETERANGAN_DEFAULT[zona] || '';
+        }
+
+        // ══════ MODAL FORM ══════
         function openFormModal(row = null) {
             currentEditId = row ? row.id : null;
-            document.getElementById('formModalTitle').textContent = row ? 'Edit Temuan Unsafe' : 'Tambah Temuan Unsafe';
-
-            document.getElementById('soPickerInput').value = '';
-            document.getElementById('soPickerDropdown').classList.remove('open');
-            document.getElementById('fBadgeSo').value = row?.badge_so || '';
-            document.getElementById('fNamaSo').value = row?.nama_so || '';
-            if (row && row.nama_so) showSoChip(row.nama_so, row.badge_so);
-            else hideSoChip();
-
-            document.getElementById('fTanggalTemuan').value = row?.tanggal_temuan || '';
-            document.getElementById('fAreaKerja').value = row?.area_kerja || '';
-            document.getElementById('fUnitKerja').value = row?.unit_kerja || '';
-            document.getElementById('fItemTemuan').value = row?.item_temuan || '';
-            document.getElementById('fJenisPenyebab').value = row?.jenis_penyebab || 'Unsafe Action';
-            document.getElementById('fDeskripsiTemuan').value = row?.deskripsi_temuan || '';
-            document.getElementById('fRekomendasiPerbaikan').value = row?.rekomendasi_perbaikan || '';
-            document.getElementById('fStatusTemuan').value = row?.status_temuan || 'OPEN';
-
-            document.getElementById('fFotoTemuan').value = '';
-            document.getElementById('fDokumenLaporan').value = '';
-            setCurrentFileLink('fFotoTemuanCurrent', row?.foto_temuan_path_url);
-            setCurrentFileLink('fDokumenLaporanCurrent', row?.dokumen_laporan_path_url);
-
+            document.getElementById('formModalTitle').textContent = row ? 'Edit Area Kerja' : 'Tambah Area Kerja';
+            document.getElementById('komplekInput').value = row?.kompleks || '';
+            document.getElementById('fNamaArea').value = row?.nama_area || '';
+            document.getElementById('fZona').value = row?.zona || 'HIJAU';
+            document.getElementById('fAktif').value = row ? (row.aktif ? '1' : '0') : '1';
+            document.getElementById('fKeterangan').value = row?.keterangan || '';
+            document.getElementById('fPotensiBahaya').value = row?.potensi_bahaya || '';
             document.getElementById('formModalOverlay').classList.add('open');
         }
 
@@ -1810,9 +1687,10 @@
 
         async function submitForm() {
             const btn = document.getElementById('btnSubmitForm');
-            const namaSo = document.getElementById('fNamaSo').value.trim();
-            if (!namaSo) {
-                showToast('Silakan pilih Safety Officer terlebih dahulu.', 'error');
+            const kompleks = document.getElementById('komplekInput').value.trim();
+            const namaArea = document.getElementById('fNamaArea').value.trim();
+            if (!kompleks || !namaArea) {
+                showToast('Kompleks dan Nama Area wajib diisi.', 'error');
                 return;
             }
 
@@ -1820,24 +1698,15 @@
             const originalText = btn.textContent;
             btn.textContent = 'Menyimpan...';
 
-            const formData = new FormData();
-            formData.append('badge_so', document.getElementById('fBadgeSo').value.trim());
-            formData.append('nama_so', namaSo);
-            formData.append('tanggal_temuan', document.getElementById('fTanggalTemuan').value || '');
-            formData.append('area_kerja', document.getElementById('fAreaKerja').value.trim());
-            formData.append('unit_kerja', document.getElementById('fUnitKerja').value.trim());
-            formData.append('item_temuan', document.getElementById('fItemTemuan').value.trim());
-            formData.append('jenis_penyebab', document.getElementById('fJenisPenyebab').value);
-            formData.append('deskripsi_temuan', document.getElementById('fDeskripsiTemuan').value.trim());
-            formData.append('rekomendasi_perbaikan', document.getElementById('fRekomendasiPerbaikan').value.trim());
-            formData.append('status_temuan', document.getElementById('fStatusTemuan').value);
-
-            const fotoFile = document.getElementById('fFotoTemuan').files[0];
-            if (fotoFile) formData.append('foto_temuan', fotoFile);
-            const dokumenFile = document.getElementById('fDokumenLaporan').files[0];
-            if (dokumenFile) formData.append('dokumen_laporan', dokumenFile);
-
-            if (currentEditId) formData.append('_method', 'PUT');
+            const payload = {
+                kompleks,
+                nama_area: namaArea,
+                zona: document.getElementById('fZona').value,
+                aktif: document.getElementById('fAktif').value,
+                keterangan: document.getElementById('fKeterangan').value.trim(),
+                potensi_bahaya: document.getElementById('fPotensiBahaya').value.trim(),
+            };
+            if (currentEditId) payload._method = 'PUT';
             const url = currentEditId ? `${BASE_ENDPOINT}/${currentEditId}` : STORE_ENDPOINT;
 
             try {
@@ -1845,9 +1714,10 @@
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN
                     },
-                    body: formData,
+                    body: JSON.stringify(payload),
                 });
                 const json = await res.json();
                 if (!res.ok) {
@@ -1855,6 +1725,7 @@
                     throw new Error(firstError || json.message || `Status ${res.status}`);
                 }
                 closeFormModal();
+                komplekOptionsCache = []; // refresh cache siapa tahu ada kompleks baru
                 await loadData();
                 showToast(json.message, 'success');
             } catch (e) {
@@ -1865,82 +1736,8 @@
             }
         }
 
-        // ══════ MODAL DETAIL ══════
-        function openDetailModal(row) {
-            document.getElementById('detailAvatar').textContent = initials(row.nama_so);
-            document.getElementById('detailNamaTitle').textContent = row.nama_so || '-';
-            document.getElementById('detailBadgeSub').textContent = row.badge_so || '-';
-
-            const umum = [{
-                    label: 'Tanggal Temuan',
-                    value: formatDate(row.tanggal_temuan)
-                },
-                {
-                    label: 'Area Kerja',
-                    value: row.area_kerja || '-'
-                },
-                {
-                    label: 'Unit Kerja',
-                    value: row.unit_kerja || '-'
-                },
-            ];
-            document.getElementById('detailUmumGrid').innerHTML = umum.map(f =>
-                `<div class="detail-field"><label>${f.label}</label><div class="detail-value">${escapeHtml(f.value)}</div></div>`
-            ).join('');
-
-            const temuan = [{
-                    label: 'Item Temuan',
-                    value: row.item_temuan || '-',
-                    span: 2
-                },
-                {
-                    label: 'Jenis Penyebab',
-                    value: row.jenis_penyebab || '-'
-                },
-                {
-                    label: 'Status Temuan',
-                    value: row.status_temuan || '-'
-                },
-                {
-                    label: 'Deskripsi Temuan',
-                    value: row.deskripsi_temuan || '-',
-                    span: 4
-                },
-                {
-                    label: 'Rekomendasi Perbaikan',
-                    value: row.rekomendasi_perbaikan || '-',
-                    span: 4
-                },
-            ];
-            document.getElementById('detailTemuanGrid').innerHTML = temuan.map(f =>
-                `<div class="detail-field${f.span ? ' span-' + f.span : ''}"><label>${f.label}</label><div class="detail-value">${escapeHtml(f.value)}</div></div>`
-            ).join('');
-
-            const fotoLink = row.foto_temuan_path_url ?
-                `<a class="detail-link" href="${escapeHtml(row.foto_temuan_path_url)}" target="_blank" rel="noopener">Buka Foto Temuan ↗</a>` :
-                `<div class="detail-value" style="color:#CBD5E1;">Belum ada foto</div>`;
-            const dokumenLink = row.dokumen_laporan_path_url ?
-                `<a class="detail-link" href="${escapeHtml(row.dokumen_laporan_path_url)}" target="_blank" rel="noopener">Buka Dokumen ↗</a>` :
-                `<div class="detail-value" style="color:#CBD5E1;">Belum ada dokumen</div>`;
-
-            document.getElementById('detailDokumenGrid').innerHTML = `
-                <div class="detail-field span-2"><label>Foto Temuan UA/UC</label>${fotoLink}</div>
-                <div class="detail-field span-2"><label>Dokumen Laporan Kegiatan</label>${dokumenLink}</div>
-            `;
-
-            document.getElementById('detailModalOverlay').classList.add('open');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModalOverlay').classList.remove('open');
-        }
-
-        function closeDetailModalOutside(e) {
-            if (e.target.id === 'detailModalOverlay') closeDetailModal();
-        }
-
         async function deleteData(id, nama) {
-            if (!confirm(`Hapus temuan "${nama}"? Dokumen terkait juga akan dihapus.`)) return;
+            if (!confirm(`Hapus area "${nama}"?`)) return;
             try {
                 const res = await fetch(`${BASE_ENDPOINT}/${id}`, {
                     method: 'DELETE',

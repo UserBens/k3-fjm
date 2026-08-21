@@ -1307,8 +1307,21 @@
             const sel = document.getElementById(`fPersonil_${LOCKED_TIM}`);
             if (sel) {
                 sel.disabled = true;
-                refreshEnhancedSelect(sel); // ⬅️ supaya class .disabled ikut terpasang di cs-wrap
+                refreshEnhancedSelect(sel);
             }
+
+            // 🆕 Sembunyikan field "Periode" & "Area" untuk role terbatas,
+            // dan paksa nilainya ke default (26-25 & SEMUA)
+            const fieldPeriode = document.getElementById('fPeriode')?.closest('.saklar-field');
+            const fieldArea = document.getElementById('fArea')?.closest('.saklar-field');
+            if (fieldPeriode) fieldPeriode.style.display = 'none';
+            if (fieldArea) fieldArea.style.display = 'none';
+
+            const selPeriode = document.getElementById('fPeriode');
+            if (selPeriode) selPeriode.value = '26_25';
+
+            const selArea = document.getElementById('fArea');
+            if (selArea) selArea.value = 'SEMUA';
         }
 
         // Helper: Format tanggal dari YYYY-MM-DD menjadi DD/MM/YYYY (Sesuai Gambar Dashboard Sheet)
@@ -1351,8 +1364,13 @@
             const tglMulaiFormatted = formatDateIndo(p.periode_mulai);
             const tglSelesaiFormatted = formatDateIndo(p.periode_selesai);
 
+            // 🆕 Bagian Area disembunyikan untuk role terbatas
+            const areaHtml = LOCKED_TIM ?
+                '' :
+                ` &nbsp;·&nbsp; Area: <b>${p.area}</b>`;
+
             document.getElementById('periodeAktifLine').innerHTML =
-                `Periode aktif: &nbsp; <b>${tglMulaiFormatted} s/d ${tglSelesaiFormatted}</b> &nbsp;|&nbsp; <b>${p.bulan_label}</b> &nbsp;|&nbsp; Tim: <b>${p.tim}</b> &nbsp;·&nbsp; Area: <b>${p.area}</b>`;
+                `Periode aktif: &nbsp; <b>${tglMulaiFormatted} s/d ${tglSelesaiFormatted}</b> &nbsp;|&nbsp; <b>${p.bulan_label}</b> &nbsp;|&nbsp; Tim: <b>${p.tim}</b>${areaHtml}`;
         }
 
         function renderRingkasan(r) {
@@ -1376,7 +1394,7 @@
             const current = el.value;
             el.innerHTML = '<option value="SEMUA">SEMUA</option>' + areas.map(a => `<option value="${a}">${a}</option>`)
                 .join('');
-            el.value = current || 'SEMUA';
+            el.value = LOCKED_TIM ? 'SEMUA' : (current || 'SEMUA'); // 🆕
         }
 
         function kategoriClass(k) {

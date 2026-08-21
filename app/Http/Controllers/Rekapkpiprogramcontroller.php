@@ -258,14 +258,23 @@ class RekapKpiProgramController extends Controller
         // jadi semua temuan pada rentang periode & area dihitung — tidak
         // difilter berdasarkan status_temuan (OPEN/CLOSE) juga, karena rekap
         // ini menghitung SEMUA temuan yang dilaporkan pada periode tsb.
-        $query = DB::table('data_unsafe')
-            ->whereBetween('tanggal_temuan', [$mulai->toDateString(), $selesai->toDateString()]);
+        // Digabung dari 2 sumber: input langsung modul Data Unsafe (data_unsafe)
+        // dan input Safety Officer via form umum dengan kategori_form 'temuan' (data_safety).
+        $queryUnsafe = DB::table('data_unsafe')
+            ->whereBetween('tanggal_temuan', [$mulai->toDateString(), $selesai->toDateString()])
+            ->select('area_kerja', 'jenis_penyebab');
+
+        $querySafety = DB::table('data_safety')
+            ->where('kategori_form', 'temuan')
+            ->whereBetween('tanggal_pelaksanaan', [$mulai->toDateString(), $selesai->toDateString()])
+            ->select('area_kerja', 'jenis_penyebab');
 
         if ($area && strtoupper($area) !== 'SEMUA') {
-            $query->where('area_kerja', $area);
+            $queryUnsafe->where('area_kerja', $area);
+            $querySafety->where('area_kerja', $area);
         }
 
-        $rows = $query->select('area_kerja', 'jenis_penyebab')->get();
+        $rows = $queryUnsafe->get()->merge($querySafety->get());
 
         $grouped = $rows->groupBy(fn($r) => $r->area_kerja ?: 'TANPA AREA');
 

@@ -28,6 +28,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LpiKejadianController;
 use App\Http\Controllers\LpiKorbanController;
 use App\Http\Controllers\ManajemenApdPegawaiController;
+use App\Http\Controllers\MasterAreaKerjaController;
 use App\Http\Controllers\MasterHariLiburController;
 use App\Http\Controllers\MasterJadwalShiftController;
 use App\Http\Controllers\MatriksApdJabatanController;
@@ -256,6 +257,16 @@ Route::middleware(['auth.custom'])->group(function () {
             Route::get('/cari-pegawai', [AlatKesehatanPenggunaController::class, 'cariPegawai'])->name('cari-pegawai');
             Route::get('/cari-alat', [AlatKesehatanPenggunaController::class, 'cariAlat'])->name('cari-alat');
             Route::get('/daftar-alat', [AlatKesehatanPenggunaController::class, 'daftarAlat'])->name('daftar-alat');
+        });
+
+        // MASTER AREA KERJA APD
+        Route::prefix('master-area-kerja')->name('master-area-kerja.')->group(function () {
+            Route::get('/', [MasterAreaKerjaController::class, 'index'])->name('index');
+            Route::get('/data', [MasterAreaKerjaController::class, 'data'])->name('data');
+            Route::get('/kompleks-options', [MasterAreaKerjaController::class, 'komplekOptions'])->name('kompleks-options');
+            Route::post('/', [MasterAreaKerjaController::class, 'store'])->name('store');
+            Route::put('/{masterAreaKerja}', [MasterAreaKerjaController::class, 'update'])->name('update');
+            Route::delete('/{masterAreaKerja}', [MasterAreaKerjaController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('apd/parameter-sistem')->name('apd.parameter.')->group(function () {
@@ -503,7 +514,6 @@ Route::middleware(['auth.custom'])->group(function () {
         ->name('dashboard-apd-alkes.data');
 
 
-
     // KARTU STOK
     Route::prefix('kartu-stok')->name('kartu-stok.')->group(function () {
         Route::get('/', [KartuStokController::class, 'index'])->name('index');
@@ -627,8 +637,6 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::put('/{pengembalianKibApd}', [PengembalianKibApdController::class, 'update'])->name('update');
         Route::delete('/{pengembalianKibApd}', [PengembalianKibApdController::class, 'destroy'])->name('destroy');
     });
-
-
 
     // ROLE PENGAWAS
     Route::middleware(['role.custom:pengawas'])->prefix('pelaporan-pengawas')->name('pelaporan-pengawas.')->group(function () {

@@ -111,8 +111,10 @@ class DashboardKpiK3Controller extends Controller
             if ($isTerbatas) {
                 $tim = strtoupper($userRole);
                 $personilKey = null;
+                $periodeType = '26_25'; // 🆕 paksa cutoff 26-25, abaikan input query
+                $area = 'SEMUA';        // 🆕 paksa area SEMUA, abaikan input query
             }
-
+            
             [$periodeMulai, $periodeSelesai] = $this->hitungRentangPeriode($pengaturan, $tahun, $bulan, $periodeType);
 
             $filters = [

@@ -1467,16 +1467,28 @@
                     <div class="form-grid">
                         <div class="form-group span-2"><label class="form-label">Item Temuan</label><input
                                 type="text" id="fItemTemuan" class="form-input" /></div>
-                        <div class="form-group span-2"><label class="form-label">Jenis Penyebab</label><input
-                                type="text" id="fJenisPenyebab" class="form-input" /></div>
+                        <div class="form-group span-2">
+                            <label class="form-label">Jenis Penyebab</label>
+                            <select id="fJenisPenyebab" class="form-select">
+                                <option value="">— Pilih Jenis Penyebab —</option>
+                                <option value="Unsafe Action">Unsafe Action</option>
+                                <option value="Unsafe Condition">Unsafe Condition</option>
+                            </select>
+                        </div>
                         <div class="form-group span-4"><label class="form-label">Deskripsi Temuan</label>
                             <textarea id="fDeskripsiTemuan" class="form-textarea" rows="2"></textarea>
                         </div>
                         <div class="form-group span-4"><label class="form-label">Rekomendasi Tindakan</label>
                             <textarea id="fRekomendasiTindakanTemuan" class="form-textarea" rows="2"></textarea>
                         </div>
-                        <div class="form-group"><label class="form-label">Status Temuan</label><input type="text"
-                                id="fStatusTemuan" class="form-input" /></div>
+                        <div class="form-group">
+                            <label class="form-label">Status Temuan</label>
+                            <select id="fStatusTemuan" class="form-select">
+                                <option value="">— Pilih Status —</option>
+                                <option value="OPEN">OPEN</option>
+                                <option value="CLOSE">CLOSE</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label class="form-label">Foto Temuan UA/UC</label>
                             <input type="file" id="f_foto_temuan_uauc" class="form-input" accept="image/*" />
