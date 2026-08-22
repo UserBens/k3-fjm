@@ -22,31 +22,38 @@ class LeadingInputController extends Controller
         if ($search = $request->get('search')) {
             $query->where('nama_kegiatan', 'like', "%{$search}%");
         }
-        if ($tahun = $request->get('tahun')) {
-            $query->where('tahun', $tahun);
+
+        // Default = tahun berjalan. User bisa pilih "Semua Tahun" (kirim tahun=semua atau kosong eksplisit)
+        $tahunParam = $request->query('tahun', (string) now()->year);
+        if ($tahunParam !== '' && strtolower($tahunParam) !== 'semua') {
+            $query->where('tahun', $tahunParam);
         }
+
         if ($kategori = $request->get('kategori')) {
             $query->where('kategori', $kategori);
         }
-        if ($status = $request->get('status')) {
-            // status dihitung di accessor, jadi difilter setelah query dasar
-        }
+
+        $status = $request->get('status');
         if ($request->filled('aktif')) {
             $query->where('aktif', $request->get('aktif') === '1');
         }
 
-        $perPage = (int) $request->get('per_page', 10);
+        $perPage = (int) $request->get('per_page', 25);
         $page = (int) $request->get('page', 1);
 
         $all = $query->orderBy('tahun', 'desc')->orderBy('no_urut')->get();
 
-        // Filter by computed status (kalau diminta)
         if ($status) {
             $all = $all->filter(fn($row) => $row->status['label'] === $status)->values();
         }
 
         $total = $all->count();
         $items = $all->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $tahunOptions = LeadingInput::query()->distinct()->orderByDesc('tahun')->pluck('tahun');
+        if (!$tahunOptions->contains(now()->year)) {
+            $tahunOptions = $tahunOptions->push(now()->year)->sortDesc()->values();
+        }
 
         return response()->json([
             'data' => $items,
@@ -58,10 +65,11 @@ class LeadingInputController extends Controller
                 'to' => min($page * $perPage, $total),
             ],
             'filter_options' => [
-                'tahun' => LeadingInput::query()->distinct()->orderByDesc('tahun')->pluck('tahun'),
+                'tahun' => $tahunOptions,
                 'kategori' => LeadingInput::query()->distinct()->orderBy('kategori')->pluck('kategori'),
-                'status' => ['TERCAPAI', 'SEBAGIAN', 'DI BAWAH', 'belum jatuh tempo'],
+                'status' => ['TERCAPAI', 'SEBAGIAN', 'DI BAWAH', 'belum jatuh tempo', 'belum ada data'],
             ],
+            'tahun_berjalan' => now()->year,
         ]);
     }
 
@@ -74,7 +82,8 @@ class LeadingInputController extends Controller
             'nama_kegiatan' => 'required|string|max:255',
             'satuan' => 'nullable|string|max:30',
             'target' => 'required|numeric|min:0',
-            'tipe_capaian' => ['required', Rule::in(['Persentase', 'Kumulatif Tahunan', 'Rata-rata Bulanan'])],
+            // tipe_capaian TIDAK divalidasi/diinput manual lagi — otomatis
+            // diturunkan dari satuan lewat model event (booted()->saving).
             'aktif' => 'boolean',
             'bulan_mulai' => 'nullable|integer|min:1|max:12',
             'setiap_n_bulan' => 'nullable|integer|min:1|max:12',

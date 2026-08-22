@@ -333,6 +333,7 @@ class ImportDataSafetyCsv extends Command
             'direview_oleh' => $get('DIPERIKSA OLEH (otomatis)'),
             'direview_at' => $direviewAt,
             'keputusan' => $this->normalizeKeputusan($get('STATUS (APPROVE / REJECT / CANCEL)')),
+            'status_temuan' => $get('Item Temuan') ? 'OPEN' : null,
         ];
 
         // ── Kolom teks biasa (selain yang sudah ditangani manual di atas) ──
@@ -353,7 +354,10 @@ class ImportDataSafetyCsv extends Command
             }
         }
 
-        return array_filter($data, fn($v) => $v !== null) + ['keputusan' => $data['keputusan'] ?? 'PENDING'];
+        return array_filter($data, fn($v) => $v !== null) + [
+            'keputusan' => $data['keputusan'] ?? 'PENDING',
+            'status_temuan' => $data['status_temuan'] ?? null,
+        ];
     }
 
     /**

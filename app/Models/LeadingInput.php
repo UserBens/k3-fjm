@@ -55,6 +55,7 @@ class LeadingInput extends Model
         'realisasi_ytd',
         'target_ytd',
         'persen_capai',
+        'persen_capai_pembanding',
         'status',
         'monthly',
     ];
@@ -74,7 +75,44 @@ class LeadingInput extends Model
         12 => 'Des',
     ];
 
-    /** Array 12 nilai bulan (index 1-12) untuk mempermudah loop di view/JS. */
+    // ─────────────────────────────────────────────────────────
+    // AUTO: Tipe Capaian selalu diturunkan dari Satuan (persis
+    // rumus sheet), jadi tidak perlu dipilih manual di form.
+    //   =IF(E2="%";"Persentase";
+    //       IF(SEARCH("Tahun";E2);"Kumulatif Tahunan";"Rata-rata Bulanan"))
+    // ─────────────────────────────────────────────────────────
+    protected static function booted(): void
+    {
+        static::saving(function (LeadingInput $model) {
+            $model->tipe_capaian = self::deriveTipeCapaian($model->satuan);
+        });
+    }
+
+    public static function deriveTipeCapaian(?string $satuan): string
+    {
+        $satuan = trim((string) $satuan);
+        if ($satuan === '%') {
+            return 'Persentase';
+        }
+        if (stripos($satuan, 'Tahun') !== false) {
+            return 'Kumulatif Tahunan';
+        }
+        return 'Rata-rata Bulanan';
+    }
+
+    /**
+     * "Helper!D5" di sheet = bulan berjalan (global, sama untuk semua baris
+     * apa pun tahunnya — persis kelakuan sheet Anda dimana baris tahun 2025
+     * yang datanya kosong tetap menghasilkan Target YTD proporsional
+     * terhadap bulan berjalan sekarang).
+     *
+     * Kalau mau ikut setting PengaturanKpiK3, ganti isi method ini.
+     */
+    public function bulanBerjalan(): int
+    {
+        return max(1, min(12, (int) now()->month));
+    }
+
     public function getMonthlyAttribute(): array
     {
         $out = [];
@@ -95,108 +133,202 @@ class LeadingInput extends Model
         return $this->tahun . '|' . $this->nama_kegiatan;
     }
 
-    /**
-     * "Bulan terkini" = bulan terakhir yang sudah ada nilai realisasinya.
-     * Ini dipakai sebagai acuan proporsi Target YTD, meniru pola pada sheet
-     * (mis. baris dengan data s.d. Jun dianggap posisi bulan berjalan = 6).
-     */
     public function getBulanTerkiniAttribute(): int
     {
         $last = 0;
         foreach ($this->monthly as $m => $val) {
-            if ($val !== null) {
-                $last = $m;
-            }
+            if ($val !== null) $last = $m;
         }
         return $last;
     }
 
+    /** Nilai bulan yang TERISI (bukan null) dalam rentang 1..bulanBerjalan */
+    private function filledValuesInRange(): array
+    {
+        $monthly = $this->monthly;
+        $bulanJalan = $this->bulanBerjalan();
+        $out = [];
+        foreach (range(1, $bulanJalan) as $m) {
+            if ($monthly[$m] !== null) {
+                $out[$m] = (float) $monthly[$m];
+            }
+        }
+        return $out;
+    }
+
     /**
-     * Realisasi YTD (Otomatis):
-     * - Persentase       -> nilai bulan terakhir yang terisi (snapshot capaian terkini)
-     * - Kumulatif        -> jumlah seluruh nilai bulan yang terisi (akumulasi kejadian)
-     * - Rata-rata Bulanan -> jumlah seluruh nilai bulan yang terisi (dibandingkan
-     *                        terhadap target per-bulan yang diakumulasi juga, lihat target_ytd)
+     * Jumlah "jatuh tempo" kegiatan berkala non-bulanan dalam setahun,
+     * opsional dibatasi sampai bulan tertentu.
+     *   month >= bulan_mulai DAN (month - bulan_mulai) % setiap_n_bulan == 0
+     */
+    private function occurrences(?int $sampaiBulan = null): int
+    {
+        if (!$this->bulan_mulai) {
+            return 0;
+        }
+        $n = max(1, (int) ($this->setiap_n_bulan ?: 13));
+        $total = 0;
+        foreach (range(1, 12) as $m) {
+            if ($m >= $this->bulan_mulai && ($m - $this->bulan_mulai) % $n === 0) {
+                if ($sampaiBulan === null || $m <= $sampaiBulan) {
+                    $total++;
+                }
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Realisasi YTD:
+     * - Persentase        -> AVERAGE nilai bulan yang terisi (s.d. bulan berjalan)
+     * - Kumulatif/RataRata -> SUM nilai bulan yang terisi
      */
     public function getRealisasiYtdAttribute(): float
     {
-        if ($this->tipe_capaian === 'Persentase') {
-            $bulan = $this->bulan_terkini;
-            return $bulan ? (float) $this->monthly[$bulan] : 0;
-        }
+        $vals = $this->filledValuesInRange();
+        if (empty($vals)) return 0.0;
 
-        return array_sum(array_filter($this->monthly, fn($v) => $v !== null));
+        if ($this->tipe_capaian === 'Persentase') {
+            return round(array_sum($vals) / count($vals), 2);
+        }
+        return round(array_sum($vals), 2);
     }
 
     /**
-     * Target YTD (Otomatis):
-     * - Persentase        -> sama dengan Target (target akhir tahun)
-     * - Kumulatif Tahunan -> Target diproporsikan terhadap bulan terkini (Target * bulan/12)
-     * - Rata-rata Bulanan -> Target adalah target PER BULAN, jadi Target YTD =
-     *                        Target * jumlah bulan yang sudah berjalan (Target * bulan_terkini)
-     *
-     * CATATAN: rumus "Rata-rata Bulanan" ini asumsi awal berdasarkan pola
-     * Persentase & Kumulatif Tahunan pada contoh sheet — belum tervalidasi 1:1
-     * terhadap angka "P2K3 Bulanan" / "General Safety Talk" dsb. di screenshot.
-     * Kalau hasilnya belum pas dibanding sheet asli, kirim rumus persisnya biar
-     * saya sesuaikan.
+     * Target YTD:
+     * - Persentase        -> Target (tahunan, konstan)
+     * - Kumulatif Tahunan -> proporsi berdasar jadwal berkala jika ada
+     *                        (Bulan Mulai + Setiap N Bulan), kalau tidak ada
+     *                        jadwal -> Target * bulanBerjalan/12
+     * - Rata-rata Bulanan -> Target(per bulan) * jumlah bulan yang TERISI
      */
     public function getTargetYtdAttribute(): float
     {
+        $target = (float) $this->target;
+        $bulanJalan = $this->bulanBerjalan();
+
         if ($this->tipe_capaian === 'Persentase') {
-            return (float) $this->target;
+            return $target;
         }
 
-        if ($this->tipe_capaian === 'Rata-rata Bulanan') {
-            return round(((float) $this->target) * $this->bulan_terkini, 2);
+        if ($this->tipe_capaian === 'Kumulatif Tahunan') {
+            $totalOcc = $this->occurrences();
+            if ($totalOcc > 0) {
+                $uptoOcc = $this->occurrences($bulanJalan);
+                return round($target * $uptoOcc / $totalOcc, 2);
+            }
+            return round($target * $bulanJalan / 12, 2);
         }
 
-        return round(((float) $this->target) * ($this->bulan_terkini / 12), 2);
+        // Rata-rata Bulanan
+        return round(count($this->filledValuesInRange()) * $target, 2);
+    }
+
+    /** rasio nilai/target per bulan terisi, dibatasi maksimal 1 (capped) */
+    private function cappedRatios(): array
+    {
+        $target = (float) $this->target;
+        $denom = $target != 0 ? $target : 1;
+        $out = [];
+        foreach ($this->filledValuesInRange() as $v) {
+            $ratio = $v / $denom;
+            $out[] = $ratio > 1 ? 1 : $ratio;
+        }
+        return $out;
     }
 
     /**
-     * % Capai (Otomatis) = Realisasi YTD / Target YTD, dibulatkan, dibatasi
-     * maksimal informatif (tidak dipaksa cap 100% agar over-achievement tetap terlihat).
-     *
-     * CATATAN UNTUK BENI: pada contoh sheet, baris "Persentase" dengan Realisasi
-     * YTD 50 & Target YTD 100 menghasilkan 83% (bukan 50%) di kolom "% Capai
-     * (utama)" — sedangkan kolom "% Capai (pembanding)" menunjukkan 50% (cocok
-     * dengan rumus sederhana Realisasi/Target). Formula pasti untuk "utama" pada
-     * baris itu belum bisa saya pastikan dari data yang diberikan. Yang saya
-     * pakai di bawah ini setara dengan kolom "pembanding" (Realisasi YTD /
-     * Target YTD). Kalau ada formula khusus untuk "% Capai (utama)", kasih tahu
-     * saya rumusnya biar saya sesuaikan accessor ini.
+     * % Capai (utama):
+     * - Kumulatif Tahunan -> MIN(Realisasi/Target,1); null jika belum jatuh
+     *                        tempo atau belum ada data sama sekali
+     * - Persentase/RataRata -> 1 - (jumlah_bulan_terisi - total_rasio_capped)/12
      */
     public function getPersenCapaiAttribute(): ?float
     {
-        $targetYtd = $this->target_ytd;
-        if ($targetYtd <= 0) {
-            return $this->realisasi_ytd > 0 ? 100.0 : null;
+        $filled = $this->filledValuesInRange();
+        $bulanJalan = $this->bulanBerjalan();
+
+        if ($this->tipe_capaian === 'Kumulatif Tahunan') {
+            $totalOcc = $this->occurrences();
+            $uptoOcc = $this->occurrences($bulanJalan);
+
+            if ($totalOcc > 0 && $uptoOcc === 0) {
+                return null; // belum jatuh tempo
+            }
+            if (empty($filled)) {
+                return null; // belum ada data
+            }
+
+            $targetYtd = $this->target_ytd;
+            $realisasi = $this->realisasi_ytd;
+
+            if ($targetYtd == 0) {
+                return $realisasi > 0 ? 100.0 : 0.0;
+            }
+            return round(min($realisasi / $targetYtd, 1) * 100);
         }
-        return round(($this->realisasi_ytd / $targetYtd) * 100);
+
+        if (empty($filled)) {
+            return null;
+        }
+
+        $capped = $this->cappedRatios();
+        $result = 1 - ((count($filled) - array_sum($capped)) / 12);
+        $result = max(0, min(1, $result));
+
+        return round($result * 100);
     }
 
     /**
-     * Status (Otomatis), meniru label pada sheet:
-     * ✓ TERCAPAI / ⚠ SEBAGIAN / ✗ DI BAWAH / ◷ belum jatuh tempo
+     * % Capai (pembanding):
+     * - Kumulatif Tahunan -> sama dengan % Capai utama
+     * - Persentase/RataRata -> rata-rata rasio capped (bukan sekadar
+     *                          realisasi/target polos)
+     */
+    public function getPersenCapaiPembandingAttribute(): ?float
+    {
+        if ($this->tipe_capaian === 'Kumulatif Tahunan') {
+            return $this->persen_capai;
+        }
+
+        $filled = $this->filledValuesInRange();
+        if (empty($filled)) {
+            return null;
+        }
+
+        $capped = $this->cappedRatios();
+        return round((array_sum($capped) / count($filled)) * 100);
+    }
+
+    /**
+     * Status:
+     *   >= 100%           -> ✓ TERCAPAI
+     *   >= 80%  (bukan 70%!) -> ⚠ SEBAGIAN
+     *   selebihnya        -> ✗ DI BAWAH
+     *   null krn jatuh tempo -> ◷ belum jatuh tempo
+     *   null krn tak ada data -> – belum ada data
      */
     public function getStatusAttribute(): array
     {
-        // Kegiatan berkala (mis. training 1x/tahun) yang bulan mulainya belum
-        // terlewati dan belum ada realisasi sama sekali -> belum jatuh tempo.
-        if ($this->bulan_mulai && $this->bulan_terkini < $this->bulan_mulai && $this->realisasi_ytd == 0) {
-            return ['label' => 'belum jatuh tempo', 'icon' => '◷', 'class' => 'sp-gray'];
+        if ($this->tipe_capaian === 'Kumulatif Tahunan') {
+            $bulanJalan = $this->bulanBerjalan();
+            $totalOcc = $this->occurrences();
+            $uptoOcc = $this->occurrences($bulanJalan);
+
+            if ($totalOcc > 0 && $uptoOcc === 0) {
+                return ['label' => 'belum jatuh tempo', 'icon' => '◷', 'class' => 'sp-gray'];
+            }
         }
 
         $persen = $this->persen_capai;
 
         if ($persen === null) {
-            return ['label' => 'belum ada data', 'icon' => '—', 'class' => 'sp-gray'];
+            return ['label' => 'belum ada data', 'icon' => '–', 'class' => 'sp-gray'];
         }
         if ($persen >= 100) {
             return ['label' => 'TERCAPAI', 'icon' => '✓', 'class' => 'sp-green'];
         }
-        if ($persen >= 70) {
+        if ($persen >= 80) {
             return ['label' => 'SEBAGIAN', 'icon' => '⚠', 'class' => 'sp-amber'];
         }
         return ['label' => 'DI BAWAH', 'icon' => '✗', 'class' => 'sp-red'];

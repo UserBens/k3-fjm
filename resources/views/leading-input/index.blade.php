@@ -1678,14 +1678,6 @@
                               mengikuti format sheet.</div>
                       </div>
                       <div class="pg-actions">
-                          <button class="btn-outline" onclick="loadData()">
-                              <svg style="width:12px;height:12px;display:inline;margin-right:4px" fill="none"
-                                  stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                              </svg>
-                              Muat Ulang
-                          </button>
                           <button class="btn-primary" onclick="openModal()">
                               <svg style="width:12px;height:12px" fill="none" stroke="currentColor"
                                   viewBox="0 0 24 24">
@@ -1820,7 +1812,8 @@
                           </div>
                           <div class="form-field">
                               <label>Satuan</label>
-                              <input type="text" id="f_satuan" placeholder="%, Kali/Tahun, Kali/Bulan, dsb." />
+                              <input type="text" id="f_satuan" placeholder="%, Kali/Tahun, Kali/Bulan, dsb."
+                                  oninput="refreshTipeCapaianDisplay()" />
                           </div>
                       </div>
 
@@ -1838,12 +1831,10 @@
                               <input type="number" step="0.01" id="f_target" />
                           </div>
                           <div class="form-field">
-                              <label>Tipe Capaian</label>
-                              <select id="f_tipe_capaian">
-                                  <option value="Persentase">Persentase</option>
-                                  <option value="Kumulatif Tahunan">Kumulatif Tahunan</option>
-                                  <option value="Rata-rata Bulanan">Rata-rata Bulanan</option>
-                              </select>
+                              <label>Tipe Capaian (Otomatis)</label>
+                              <input type="text" id="f_tipe_capaian_display" readonly
+                                  style="background:#F1F5F9;color:#64748B;"
+                                  placeholder="Terisi otomatis dari Satuan" />
                           </div>
                           <div class="form-field">
                               <label>Bulan Mulai (opsional)</label>
@@ -1891,12 +1882,13 @@
 
           const state = {
               search: '',
-              tahun: '',
+              tahun: '{{ date('Y') }}', // default: tahun berjalan
               kategori: '',
               status: '',
               page: 1,
               per_page: 25
           };
+
           let searchDebounce = null;
           let filterOptionsLoaded = false;
           let editingId = null;
@@ -1981,6 +1973,10 @@
                   opt.value = k;
                   dl.appendChild(opt);
               });
+
+              // set default tampilan sesuai state.tahun (tahun berjalan)
+              document.getElementById('filterTahun').value = state.tahun;
+
               filterOptionsLoaded = true;
           }
 
@@ -2031,8 +2027,7 @@
                     <td class="col-tipe">${escapeHtml(row.tipe_capaian)}</td>
                     <td class="col-key2">${escapeHtml(row.key2)}</td>
                     <td class="col-aktif">${row.aktif ? 'Ya' : 'Tidak'}</td>
-                    <td class="col-pembanding">${persen === null ? '-' : fmt(Math.min(100, Math.round((row.realisasi_ytd / (row.target || 1)) * 100))) + '%'}</td>
-                    <td class="col-bulan-n">${row.bulan_mulai ?? ''}</td>
+                    <td class="col-pembanding">${row.persen_capai_pembanding === null || row.persen_capai_pembanding === undefined ? '-' : fmt(row.persen_capai_pembanding) + '%'}</td>                    <td class="col-bulan-n">${row.bulan_mulai ?? ''}</td>
                     <td class="col-bulan-n">${row.setiap_n_bulan ?? ''}</td>
                     <td class="col-aksi">
                         <button class="row-edit-btn" onclick='editRecord(${JSON.stringify(row).replace(/'/g, "&#39;")})' title="Edit">
@@ -2142,13 +2137,15 @@
               document.getElementById('f_satuan').value = '';
               document.getElementById('f_nama_kegiatan').value = '';
               document.getElementById('f_target').value = '';
-              document.getElementById('f_tipe_capaian').value = 'Kumulatif Tahunan';
               document.getElementById('f_bulan_mulai').value = '';
               document.getElementById('f_setiap_n_bulan').value = '';
               document.getElementById('f_aktif').checked = true;
+              refreshTipeCapaianDisplay
+                  (); // ganti dari: document.getElementById('f_tipe_capaian').value = 'Kumulatif Tahunan';
               buildMonthGrid();
               document.getElementById('modalOverlay').classList.add('open');
           }
+
 
           function editRecord(row) {
               editingId = row.id;
@@ -2161,10 +2158,10 @@
               document.getElementById('f_satuan').value = row.satuan || '';
               document.getElementById('f_nama_kegiatan').value = row.nama_kegiatan;
               document.getElementById('f_target').value = row.target;
-              document.getElementById('f_tipe_capaian').value = row.tipe_capaian;
               document.getElementById('f_bulan_mulai').value = row.bulan_mulai || '';
               document.getElementById('f_setiap_n_bulan').value = row.setiap_n_bulan || '';
               document.getElementById('f_aktif').checked = !!row.aktif;
+              refreshTipeCapaianDisplay(); // ganti dari: document.getElementById('f_tipe_capaian').value = row.tipe_capaian;
               buildMonthGrid(row.monthly || {});
               document.getElementById('modalOverlay').classList.add('open');
           }
@@ -2185,7 +2182,7 @@
                   satuan: document.getElementById('f_satuan').value.trim(),
                   nama_kegiatan: document.getElementById('f_nama_kegiatan').value.trim(),
                   target: parseFloat(document.getElementById('f_target').value || 0),
-                  tipe_capaian: document.getElementById('f_tipe_capaian').value,
+                  // baris tipe_capaian dihapus dari sini
                   bulan_mulai: document.getElementById('f_bulan_mulai').value || null,
                   setiap_n_bulan: document.getElementById('f_setiap_n_bulan').value || null,
                   aktif: document.getElementById('f_aktif').checked,
@@ -2201,7 +2198,7 @@
           async function saveRecord() {
               const payload = collectPayload();
               if (!payload.kategori || !payload.nama_kegiatan || !payload.tahun || !payload.no_urut) {
-                  alert('Tahun, No Urut, Kategori, dan Nama Kegiatan wajib diisi.');
+                  showToast('Tahun, No Urut, Kategori, dan Nama Kegiatan wajib diisi.', 'error');
                   return;
               }
               const url = editingId ? `${STORE_ENDPOINT}/${editingId}` : STORE_ENDPOINT;
@@ -2216,14 +2213,15 @@
                       },
                       body: JSON.stringify(payload),
                   });
+                  const json = await res.json().catch(() => null);
                   if (!res.ok) {
-                      const errJson = await res.json().catch(() => null);
-                      throw new Error(errJson?.message || 'Gagal menyimpan data.');
+                      throw new Error(json?.message || 'Gagal menyimpan data.');
                   }
                   closeModal();
                   loadData();
+                  showToast(json?.message || 'Data berhasil disimpan', 'success');
               } catch (e) {
-                  alert(e.message);
+                  showToast(e.message, 'error');
               }
           }
 
@@ -2238,14 +2236,41 @@
                           'X-CSRF-TOKEN': CSRF_TOKEN
                       },
                   });
-                  if (!res.ok) throw new Error('Gagal menghapus data.');
+                  const json = await res.json().catch(() => null);
+                  if (!res.ok) throw new Error(json?.message || 'Gagal menghapus data.');
                   closeModal();
                   loadData();
+                  showToast(json?.message || 'Data berhasil dihapus', 'success');
               } catch (e) {
-                  alert(e.message);
+                  showToast(e.message, 'error');
               }
           }
 
+          function deriveTipeCapaian(satuan) {
+              const s = (satuan || '').trim();
+              if (s === '%') return 'Persentase';
+              if (/tahun/i.test(s)) return 'Kumulatif Tahunan';
+              return 'Rata-rata Bulanan';
+          }
+
+          function refreshTipeCapaianDisplay() {
+              const satuan = document.getElementById('f_satuan').value;
+              document.getElementById('f_tipe_capaian_display').value = deriveTipeCapaian(satuan);
+          }
+
+          function showToast(message, type = 'success') {
+              const container = document.getElementById('toastContainer');
+              const toast = document.createElement('div');
+              toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+              toast.innerHTML =
+                  `<div class="toast-icon">${type === 'error' ? '✕' : '✓'}</div><div><div class="toast-title">${type === 'error' ? 'Gagal' : 'Berhasil'}</div><div class="toast-msg">${escapeHtml(message)}</div></div><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`;
+              container.appendChild(toast);
+              requestAnimationFrame(() => toast.classList.add('show'));
+              setTimeout(() => {
+                  toast.classList.remove('show');
+                  setTimeout(() => toast.remove(), 250);
+              }, 4000);
+          }
           document.addEventListener('DOMContentLoaded', loadData);
       </script>
 
